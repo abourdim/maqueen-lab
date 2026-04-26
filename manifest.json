@@ -1,11 +1,11 @@
 {
-    "name": "micro:bit Playground",
-    "short_name": "Playground",
-    "description": "BBC micro:bit BLE controller with sensors, servos, graph & simulation",
+    "name": "Maqueen Lab",
+    "short_name": "Maqueen",
+    "description": "BLE component lab for the DFRobot Maqueen Lite v4 — every actuator and sensor, live in your browser",
     "start_url": "index.html",
     "display": "standalone",
-    "background_color": "#020617",
-    "theme_color": "#020617",
+    "background_color": "#0a1628",
+    "theme_color": "#00d4ff",
     "orientation": "any",
     "icons": [
         {
