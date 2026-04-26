@@ -299,10 +299,50 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () 
         handleI2C(verb.substr(4))
     } else if (verb == "HELLO") {
         send("HELLO:" + BUILD_VERSION)
+    }
+    // ---- bit-playground bridge verbs (so existing UI tabs work) ----
+    else if (verb.substr(0, 5) == "TEXT:") {
+        let msg = verb.substr(5)
+        if (msg.length > 0) basic.showString(msg)
+        execlog("TEXT " + msg)
+    } else if (verb.substr(0, 4) == "CMD:") {
+        handleIcon(verb.substr(4))
+    } else if (verb.substr(0, 7) == "SERVO1:") {
+        handleServo("1," + verb.substr(7))
+    } else if (verb.substr(0, 7) == "SERVO2:") {
+        handleServo("2," + verb.substr(7))
+    } else if (verb.substr(0, 4) == "TAB:") {
+        // tab-change notification — silent ack
+        execlog("tab=" + verb.substr(4))
+    } else if (verb.substr(0, 9) == "SIMULATE:") {
+        // ignore — bit-playground simulator (graph demo data)
+    } else if (verb.substr(0, 4) == "CAL:") {
+        // calibration request (e.g. CAL:COMPASS) — minimal ack
+        send("CAL:" + verb.substr(4) + ":DONE")
+    } else if (verb.substr(0, 6) == "OTHER:") {
+        // bit-playground "Others" tab commands — ack silently
+        send("OTHER:ACK:" + verb.substr(6))
+    } else if (verb.substr(0, 3) == "LM:") {
+        // 5x5 LED matrix hex — bit-playground specific, not implemented yet
+        execlog("LM (not impl): " + verb.substr(3))
     } else {
         err(seq, "UNKNOWN_VERB")
     }
 })
+
+// ---------- icon dispatch (bit-playground CMD: bridge) ----------
+function handleIcon(name: string) {
+    if (name == "HEART") basic.showIcon(IconNames.Heart)
+    else if (name == "SMILE") basic.showIcon(IconNames.Happy)
+    else if (name == "SAD") basic.showIcon(IconNames.Sad)
+    else if (name == "FIRE") basic.showIcon(IconNames.Fabulous)
+    else if (name == "UP") basic.showArrow(ArrowNames.North)
+    else if (name == "DOWN") basic.showArrow(ArrowNames.South)
+    else if (name == "LEFT") basic.showArrow(ArrowNames.West)
+    else if (name == "RIGHT") basic.showArrow(ArrowNames.East)
+    else if (name == "CLEAR") basic.clearScreen()
+    execlog("icon=" + name)
+}
 
 // ---------- accelerometer streaming (~20 Hz, on change) ----------
 basic.forever(function () {
@@ -319,6 +359,38 @@ basic.forever(function () {
         }
     }
     basic.pause(50)
+})
+
+// ---------- temperature streaming (~1 Hz, on change) ----------
+let lastTemp = -999
+basic.forever(function () {
+    if (btConnected) {
+        let t = input.temperature()
+        if (t != lastTemp) {
+            lastTemp = t
+            send("TEMP:" + t)
+        }
+    }
+    basic.pause(1000)
+})
+
+// ---------- light + sound streaming (~3 Hz, on change) ----------
+let lastLight = -1
+let lastSound = -1
+basic.forever(function () {
+    if (btConnected) {
+        let l = input.lightLevel()
+        if (Math.abs(l - lastLight) > 4) {
+            lastLight = l
+            send("LIGHT:" + l)
+        }
+        let s = input.soundLevel()
+        if (Math.abs(s - lastSound) > 4) {
+            lastSound = s
+            send("SOUND:" + s)
+        }
+    }
+    basic.pause(300)
 })
 
 // ---------- buttons ----------
