@@ -396,6 +396,88 @@
     });
   }
 
+  // -------- LINE FOLLOW (auto-mode using P13/P14 line eyes) -----
+  // Convention from pxt-maqueen: 0 = on black line, 1 = on white floor
+  let lineState = { l: 1, r: 1 };
+  let following = false;
+  let followTimer = null;
+
+  function setLineStateUI(l, r) {
+    lineState.l = +l; lineState.r = +r;
+    const el = document.getElementById('mqLineState');
+    if (el) {
+      const fmt = v => v == 0 ? '●' : '○';   // ● = on line (black)
+      el.textContent = `L:${fmt(l)} R:${fmt(r)}`;
+      el.style.color = (l == 0 || r == 0) ? '#fbbf24' : '#4ade80';
+    }
+  }
+
+  function followTick() {
+    if (!window.bleScheduler || !window.bleScheduler.isConnected()) return;
+    // Poll line state for the next iteration
+    window.bleScheduler.send('LINE?').catch(() => {});
+    // Compute motors from CURRENT lineState (last reply)
+    const base = speed;
+    const turn = Math.round(base * 0.4);
+    let L = base, R = base;
+    if (lineState.l === 0 && lineState.r === 1) {
+      // Left eye sees line — steer LEFT (slow left wheel)
+      L = turn; R = base;
+    } else if (lineState.l === 1 && lineState.r === 0) {
+      // Right eye sees line — steer RIGHT (slow right wheel)
+      L = base; R = turn;
+    } else if (lineState.l === 0 && lineState.r === 0) {
+      // Both on line — go straight (could also be intersection)
+      L = base; R = base;
+    } else {
+      // Both off line — lost it, slow crawl forward
+      L = Math.round(base * 0.5); R = Math.round(base * 0.5);
+    }
+    window.bleScheduler.send(`M:${L},${R}`, { coalesce: true }).catch(() => {});
+    setLastVerb(`M:${L},${R}`);
+  }
+
+  function startFollow() {
+    if (following) return;
+    if (!window.bleScheduler || !window.bleScheduler.isConnected()) {
+      alert('Connect to the robot first.');
+      return;
+    }
+    following = true;
+    const btn = document.getElementById('mqFollowBtn');
+    if (btn) {
+      btn.textContent = '🔴 Stop following';
+      btn.style.color = '#f87171';
+      btn.style.borderColor = '#f87171';
+    }
+    followTimer = setInterval(followTick, 100);
+  }
+  function stopFollow() {
+    if (!following) return;
+    following = false;
+    if (followTimer) { clearInterval(followTimer); followTimer = null; }
+    const btn = document.getElementById('mqFollowBtn');
+    if (btn) {
+      btn.textContent = '🟢 Follow line';
+      btn.style.color = '#4ade80';
+      btn.style.borderColor = '#4ade80';
+    }
+    if (window.bleScheduler && window.bleScheduler.isConnected()) {
+      window.bleScheduler.send('STOP').catch(() => {});
+    }
+    setLastVerb('STOP');
+    lastDir = null;
+  }
+  function initLineFollow() {
+    const btn = document.getElementById('mqFollowBtn');
+    if (!btn) return;
+    btn.addEventListener('click', () => following ? stopFollow() : startFollow());
+    // Stop following automatically on disconnect
+    if (window.bleScheduler) {
+      window.bleScheduler.on('disconnected', stopFollow);
+    }
+  }
+
   // ---- Register reply listeners eagerly (retry until scheduler exists) ----
   function attachReplyListeners() {
     if (!window.bleScheduler) {
@@ -409,6 +491,8 @@
         setDist(m[1]);
       } else if ((m = line.match(/^IR:(\d+)$/)) && +m[1] > 0) {
         setIR(m[1]);
+      } else if ((m = line.match(/^LINE:(\d+),(\d+)$/))) {
+        setLineStateUI(m[1], m[2]);
       }
     });
   }
@@ -423,6 +507,7 @@
     initBuzzer();
     initUltrasonic();
     initIR();
+    initLineFollow();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
