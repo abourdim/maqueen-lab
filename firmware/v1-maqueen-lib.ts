@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.11"
-const BUILD_DATE = "2026-04-26 15:48 UTC"
+const BUILD_VERSION = "0.1.12"
+const BUILD_DATE = "2026-04-26 15:56 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -262,32 +262,23 @@ function handleDistQuery() {
     if (logLevel >= 3) execlog("DIST cm=" + cm)
 }
 
-// IR? — STUBBED. pxt-maqueen v1.7.16 doesn't expose maqueen.IR_read();
-// the IR receiver lives in the separate 'maqueenIR' namespace and is
-// event-based (onPressEvent per named RemoteButton) rather than a
-// 'give me the last code' poll.
-//
-// IR queries are accepted, echoed, and logged but always reply IR:0.
-// To enable real IR support, uncomment the IR BLOCK at the bottom of
-// this file (you'll need to know your IR receiver pin).
+// IR? — uses the IR namespace from pxt-maqueen.
+// Per the DFRobot wiki example (rob0148-en-lb/docs/21450), the IR
+// receiver is wired internally to P16 and exposed via a single
+// callback that fires on EVERY IR press with the raw code as `message`.
 let lastIRCode = 0
 function handleIRQuery() {
     send("IR:" + lastIRCode)
-    if (logLevel >= 3) execlog("IR code=" + lastIRCode + "  (stub)")
+    if (logLevel >= 3) execlog("IR code=" + lastIRCode)
 }
 
-// ============================================================
-// IR BLOCK — uncomment ONLY if you want to receive IR codes.
-// You must know your IR receiver pin (check DFRobot wiki for your kit).
-// Each remote button must be registered individually via onPressEvent.
-// ============================================================
-// maqueenIR.initIR(maqueenIR.Pins.P16)   // change to your IR pin
-// maqueenIR.onPressEvent(maqueenIR.RemoteButton.Power, () => { lastIRCode = 0x00; if (btConnected) send("IR:0") })
-// maqueenIR.onPressEvent(maqueenIR.RemoteButton.Up,    () => { lastIRCode = 0x0a; if (btConnected) send("IR:10") })
-// maqueenIR.onPressEvent(maqueenIR.RemoteButton.Down,  () => { lastIRCode = 0x08; if (btConnected) send("IR:8") })
-// maqueenIR.onPressEvent(maqueenIR.RemoteButton.VolUp, () => { lastIRCode = 0x01; if (btConnected) send("IR:1") })
-// maqueenIR.onPressEvent(maqueenIR.RemoteButton.VolDown, () => { lastIRCode = 0x09; if (btConnected) send("IR:9") })
-// // ...add more buttons as needed: 0-9, EQ, StRept, FuncStop, Suspended, LeftTwo, RightTwo
+// Push every received IR code automatically — saves the user from
+// having to click 'Poll IR'. Web-side dedupes consecutive same codes.
+IR.IR_callbackUser(function (message: number) {
+    lastIRCode = message
+    if (btConnected) send("IR:" + message)
+    execlog("IR press code=" + message)
+})
 
 // LOG:n
 function handleLog(arg: string) {
