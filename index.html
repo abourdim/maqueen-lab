@@ -1,447 +1,1911 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Maqueen Lab</title>
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#00d4ff" />
+    <meta charset="UTF-8">
+    <title>Maqueen Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a1628">
+    <meta name="description" content="BLE component lab for the DFRobot Maqueen Lite v4 — every actuator and sensor, live in your browser">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+    <!-- Chart.js: for full offline support, download and serve locally -->
+    <!-- e.g. <script src="chart.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/lang.js" defer></script>
+    <!-- Modular scripts (load order matters) -->
+    <script src="js/core.js" defer></script>
+    <script src="js/ble.js" defer></script>
+    <script src="js/sensors.js" defer></script>
+    <script src="js/controls.js" defer></script>
+    <script src="js/servos.js" defer></script>
+    <script src="js/others.js" defer></script>
+    <script src="js/graph.js" defer></script>
+    <script src="js/models/microbit.js" defer></script>
+    <script src="js/models/buggy.js" defer></script>
+    <script src="js/models/arm.js" defer></script>
+    <script src="js/models/balance.js" defer></script>
+    <script src="js/models/weather.js" defer></script>
+    <script src="js/board3d.js" defer></script>
 <style>
-  :root {
-    --bg: #0a1628;
-    --bg-elev: #0f1e35;
-    --bg-card: #122844;
-    --border: #1d3556;
-    --text: #e6eef9;
-    --text-dim: #93a8c4;
-    --accent: #00d4ff;
-    --accent-glow: #00d4ff66;
-    --green: #4ade80;
-    --amber: #fbbf24;
-    --red: #f87171;
-    --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-  }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-    line-height: 1.5;
-    font-size: 15px;
-  }
-
-  /* ---- header ---- */
-  header {
-    background: var(--bg-elev);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .brand {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    background: linear-gradient(135deg, #fff, var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .brand small {
-    display: block;
-    font-size: 11px;
-    color: var(--text-dim);
-    font-weight: 400;
-    margin-top: 2px;
-    -webkit-text-fill-color: var(--text-dim);
-  }
-  .ble-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .status-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--text-dim);
-  }
-  .status-disconnected { background: var(--text-dim); }
-  .status-connecting { background: var(--amber); box-shadow: 0 0 8px var(--amber); animation: pulse 1.2s infinite; }
-  .status-connected { background: var(--green); box-shadow: 0 0 8px var(--green); }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-  button {
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
-    padding: 8px 18px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-  button:hover { box-shadow: 0 0 16px var(--accent-glow); transform: scale(1.02); }
-  button:active { transform: scale(0.98); }
-  button.secondary {
-    background: var(--bg-card);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-  button.secondary:hover { border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
-
-  /* ---- layout ---- */
-  main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px 32px 48px;
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: 24px;
-  }
-  @media (max-width: 900px) {
-    main { grid-template-columns: 1fr; }
-  }
-
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-  }
-  .card h2 {
-    margin: 0 0 16px;
-    font-size: 18px;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .card h2 .badge {
-    background: var(--accent);
-    color: var(--bg);
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-  }
-
-  /* ---- servo explorer ---- */
-  .explorer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-  @media (max-width: 700px) {
-    .explorer-grid { grid-template-columns: 1fr; }
-  }
-  .visual {
-    background: radial-gradient(circle at center, #1a3a5e, var(--bg-elev));
-    border-radius: 8px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
-    position: relative;
-  }
-  .servo-svg { width: 100%; height: 100%; max-width: 280px; }
-  .servo-readout {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font-family: var(--mono);
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--accent);
-    text-shadow: 0 0 12px var(--accent-glow);
-  }
-  .controls > * { margin-bottom: 14px; }
-  .control-row { display: flex; align-items: center; gap: 12px; }
-  .control-row label { color: var(--text-dim); font-size: 13px; min-width: 60px; }
-  input[type="range"] {
-    flex: 1;
-    accent-color: var(--accent);
-  }
-  input[type="number"] {
-    width: 64px;
-    background: var(--bg-elev);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-family: var(--mono);
-    font-size: 13px;
-  }
-  .preset-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .servo-preset {
-    background: var(--bg-elev);
-    color: var(--text);
-    border: 1px solid var(--border);
-    padding: 6px 12px;
-    font-size: 13px;
-    font-family: var(--mono);
-  }
-  .servo-preset:hover { border-color: var(--accent); }
-  .port-radios { display: flex; gap: 16px; }
-  .port-radios label { display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text); }
-  .port-radios input[type="radio"] { accent-color: var(--accent); }
-
-  /* ---- code panel ---- */
-  .code-panel {
-    margin-top: 20px;
-    grid-column: 1 / -1;
-  }
-  .code-tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 0;
-  }
-  .code-tab {
-    background: var(--bg-elev);
-    border: 1px solid var(--border);
-    border-bottom: none;
-    color: var(--text-dim);
-    padding: 6px 14px;
-    font-size: 13px;
-    border-radius: 6px 6px 0 0;
-    font-family: var(--mono);
-  }
-  .code-tab.active { background: #061121; color: var(--accent); border-color: var(--accent); }
-  .code-block {
-    background: #061121;
-    border: 1px solid var(--accent);
-    border-radius: 0 6px 6px 6px;
-    padding: 14px 18px;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.6;
-    white-space: pre;
-    color: var(--text);
-    overflow-x: auto;
-    min-height: 90px;
-  }
-  .code-block em {
-    font-style: normal;
-    color: var(--accent);
-    background: rgba(0, 212, 255, 0.1);
-    padding: 1px 4px;
-    border-radius: 3px;
-    text-shadow: 0 0 6px var(--accent-glow);
-  }
-  .code-status {
-    margin-top: 8px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text-dim);
-    transition: opacity 0.3s;
-  }
-  .code-status.flash { animation: flash 0.35s; }
-  @keyframes flash { 0% { opacity: 0.3; } 100% { opacity: 1; } }
-  .status-ok { color: var(--green); }
-  .status-err { color: var(--red); }
-
-  /* ---- console ---- */
-  .console {
-    background: #061121;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px;
-    font-family: var(--mono);
-    font-size: 12px;
-    height: 320px;
-    overflow-y: auto;
-    line-height: 1.4;
-  }
-  .log-line { padding: 2px 6px; border-radius: 2px; }
-  .log-tx { color: var(--accent); }
-  .log-rx { color: var(--green); }
-  .log-err { color: var(--red); }
-  .log-warn { color: var(--amber); }
-  .log-ok { color: var(--green); font-weight: 600; }
-  .log-info { color: var(--text-dim); }
-
-  /* ---- bench stats ---- */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-    font-family: var(--mono);
-    font-size: 12px;
-  }
-  .stat { background: var(--bg-elev); border-radius: 4px; padding: 6px 10px; }
-  .stat .k { color: var(--text-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .stat .v { color: var(--accent); font-size: 16px; font-weight: 700; }
-
-  footer {
-    text-align: center;
-    color: var(--text-dim);
-    font-size: 12px;
-    padding: 32px;
-    border-top: 1px solid var(--border);
-  }
-  footer a { color: var(--accent); text-decoration: none; }
+.lang-picker { display: flex; gap: 2px; }
+.lang-picker .lang-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; background: transparent; color: inherit; opacity: 0.5; }
+.lang-picker .lang-btn.active { opacity: 1; background: var(--accent, #22c55e); color: #fff; }
+html[dir="rtl"] .step-num { margin-right: 0; margin-left: 8px; }
+html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 </style>
 </head>
 <body>
-
-<header>
-  <div>
-    <div class="brand">Maqueen Lab</div>
-    <small>v0.1.0 — DFRobot Maqueen Lite v4 component lab</small>
+<!-- Compatibility banner: Web Bluetooth is only on Chromium-based browsers (Chrome/Edge/Opera).
+     Shows once on Safari/Firefox/iOS, dismissable, persists via localStorage. -->
+<style>
+  #compat-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b); color: #020617;
+    padding: 14px 22px; display: none; align-items: center; gap: 14px;
+    font-family: system-ui, -apple-system, sans-serif; font-weight: 600;
+    box-shadow: 0 4px 18px rgba(0,0,0,.3); font-size: 0.95rem; }
+  #compat-banner .c-ic { font-size: 1.5rem; }
+  #compat-banner .c-msg { flex: 1; line-height: 1.35; }
+  #compat-banner .c-msg strong { font-weight: 900; }
+  #compat-banner .c-msg a { color: #020617; text-decoration: underline; }
+  #compat-banner button { background: #020617; color: #fbbf24; border: none;
+    padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;
+    font-family: inherit; font-size: 0.9rem; }
+  #compat-banner button:hover { background: #1e293b; }
+  @media (max-width: 600px) { #compat-banner { flex-wrap: wrap; font-size: 0.85rem; } #compat-banner .c-msg { flex-basis: 100%; } }
+</style>
+<div id="compat-banner" role="alert">
+  <span class="c-ic">⚠️</span>
+  <div class="c-msg">
+    <strong>Your browser doesn't support Web Bluetooth.</strong>
+    Maqueen Lab needs <strong>Chrome</strong>, <strong>Edge</strong>, or <strong>Opera</strong> on desktop / Android.
+    It will <strong>not</strong> connect to a micro:bit on Safari, Firefox, iPhone, or iPad.
   </div>
-  <div class="ble-bar">
-    <span id="ble-status" class="status-dot status-disconnected"></span>
-    <span id="ble-status-text">Disconnected</span>
-    <button id="ble-connect-btn">Connect micro:bit</button>
-  </div>
-</header>
-
-<main>
-
-  <!-- LEFT: Servo Explorer -->
-  <section class="card" id="servo-explorer">
-    <h2>Servo Explorer <span class="badge">PILOT</span></h2>
-
-    <div class="explorer-grid">
-      <!-- visual -->
-      <div class="visual">
-        <div class="servo-readout" id="servo-readout">90°</div>
-        <svg class="servo-svg" viewBox="0 0 200 200">
-          <!-- servo body -->
-          <rect x="40" y="60" width="120" height="80" rx="8" fill="#0a1628" stroke="#1d3556" stroke-width="2"/>
-          <rect x="40" y="60" width="120" height="20" fill="#1d3556"/>
-          <text x="100" y="135" text-anchor="middle" fill="#93a8c4" font-family="Inter, sans-serif" font-size="9">SERVO S1</text>
-
-          <!-- angular ruler arc -->
-          <path d="M 30 100 A 70 70 0 0 1 170 100" fill="none" stroke="#1d3556" stroke-width="1"/>
-          <g stroke="#1d3556" stroke-width="1">
-            <line x1="100" y1="30" x2="100" y2="38"/>
-            <line x1="65" y1="40" x2="71" y2="46"/>
-            <line x1="135" y1="40" x2="129" y2="46"/>
-            <line x1="40" y1="68" x2="46" y2="74"/>
-            <line x1="160" y1="68" x2="154" y2="74"/>
-          </g>
-          <text x="100" y="22" text-anchor="middle" fill="#93a8c4" font-size="8">90°</text>
-          <text x="30" y="92" text-anchor="middle" fill="#93a8c4" font-size="8">0°</text>
-          <text x="170" y="92" text-anchor="middle" fill="#93a8c4" font-size="8">180°</text>
-
-          <!-- ghost arm (target) -->
-          <g id="servo-ghost" transform="rotate(0 100 100)" opacity="0.25">
-            <rect x="98" y="40" width="4" height="60" fill="#00d4ff"/>
-            <circle cx="100" cy="40" r="6" fill="#00d4ff"/>
-          </g>
-
-          <!-- live horn -->
-          <g id="servo-horn" transform="rotate(0 100 100)">
-            <rect x="97" y="42" width="6" height="58" fill="#00d4ff" filter="url(#glow)"/>
-            <circle cx="100" cy="100" r="10" fill="#1d3556" stroke="#00d4ff" stroke-width="2"/>
-            <circle cx="100" cy="42" r="5" fill="#00d4ff" filter="url(#glow)"/>
-          </g>
-
-          <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="2" result="blur"/>
-              <feMerge>
-                <feMergeNode in="blur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-        </svg>
-      </div>
-
-      <!-- controls -->
-      <div class="controls">
-        <div class="port-radios">
-          <label><input type="radio" name="servo-port" value="1" checked /> S1</label>
-          <label><input type="radio" name="servo-port" value="2" /> S2</label>
-        </div>
-
-        <div class="control-row">
-          <label>Angle</label>
-          <input type="range" id="servo-slider" min="0" max="180" value="90" />
-        </div>
-
-        <div class="preset-row">
-          <button class="servo-preset" data-angle="0">0°</button>
-          <button class="servo-preset" data-angle="45">45°</button>
-          <button class="servo-preset" data-angle="90">90°</button>
-          <button class="servo-preset" data-angle="135">135°</button>
-          <button class="servo-preset" data-angle="180">180°</button>
-        </div>
-
-        <button id="servo-sweep-btn" class="secondary">▶ Sweep</button>
-
-        <div>
-          <div style="color: var(--text-dim); font-size: 12px; margin-bottom: 6px;">Calibration (saved per port)</div>
-          <div class="control-row">
-            <label>Min °</label>
-            <input type="number" id="servo-min" min="0" max="180" value="0" />
-            <label>Max °</label>
-            <input type="number" id="servo-max" min="0" max="180" value="180" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- code panel -->
-    <div class="code-panel">
-      <div class="code-tabs">
-        <span class="code-tab active">maqueen.* (lib)</span>
-        <span class="code-tab">pins.* (raw)</span>
-      </div>
-      <div class="code-block" id="servo-code-lib">maqueen.servoRun(maqueen.Servos.S1, <em>90</em>)</div>
-      <div class="code-block" id="servo-code-raw" style="margin-top: 8px;">let buf = pins.createBuffer(2)
-buf[0] = 0x14
-buf[1] = <em>90</em>
-pins.i2cWriteBuffer(0x10, buf)</div>
-      <div id="servo-code-status" class="code-status">— move slider to send —</div>
-    </div>
-  </section>
-
-  <!-- RIGHT: BLE console + bench -->
-  <aside class="card">
-    <h2>BLE Console</h2>
-    <div id="ble-log" class="console"></div>
-
-    <div class="stats" id="bench">
-      <div class="stat"><div class="k">Sent</div><div class="v" id="stat-sent">0</div></div>
-      <div class="stat"><div class="k">Echoed</div><div class="v" id="stat-echoed">0</div></div>
-      <div class="stat"><div class="k">Lost</div><div class="v" id="stat-lost">0</div></div>
-      <div class="stat"><div class="k">Avg latency</div><div class="v" id="stat-latency">— ms</div></div>
-    </div>
-  </aside>
-
-</main>
-
-<footer>
-  Maqueen Lab v0.1.0 ·
-  <a href="plan.html">plan</a> ·
-  <a href="pinout.html">pinout</a> ·
-  <a href="https://github.com/abourdim/maqueen-app">github</a> ·
-  forked from <a href="https://github.com/abourdim/bit-playground">bit-playground</a>
-</footer>
-
-<script src="js/ble-minimal.js"></script>
-<script src="js/ble-scheduler.js"></script>
-<script src="js/explorers/servo.js"></script>
+  <button onclick="this.parentElement.style.display='none';try{localStorage.setItem('compatBannerDismissed','1')}catch{}">Got it</button>
+</div>
 <script>
-  // Wire bench stats
-  if (window.bleScheduler) {
-    window.bleScheduler.on('stats', s => {
-      document.getElementById('stat-sent').textContent = s.sent;
-      document.getElementById('stat-echoed').textContent = s.echoed;
-      document.getElementById('stat-lost').textContent = s.lost;
-      document.getElementById('stat-latency').textContent = (s.avgLatencyMs || '—') + ' ms';
-    });
-  }
+(function(){
+  try {
+    var ok = ('bluetooth' in navigator) && typeof navigator.bluetooth.requestDevice === 'function';
+    if (!ok && localStorage.getItem('compatBannerDismissed') !== '1') {
+      var b = document.getElementById('compat-banner');
+      if (b) b.style.display = 'flex';
+    }
+    // Chromebook positive signal — big trust win for school buyers.
+    var isCrOS = /CrOS/i.test(navigator.userAgent || '');
+    if (ok && isCrOS && localStorage.getItem('chromebookBadgeSeen') !== '1') {
+      setTimeout(function(){
+        var bar = document.createElement('div');
+        bar.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9998;background:linear-gradient(90deg,#22c55e,#16a34a);color:#020617;padding:12px 22px;border-radius:30px;font:600 0.9rem system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35);cursor:pointer';
+        bar.innerHTML = '✅ <strong>Chromebook detected</strong> — you\'re good to go.';
+        bar.title = 'Click to dismiss';
+        bar.onclick = function(){ bar.remove(); try{localStorage.setItem('chromebookBadgeSeen','1');}catch{} };
+        document.body.appendChild(bar);
+        setTimeout(function(){ if (bar.isConnected) bar.style.opacity='0.35'; }, 5000);
+      }, 1200);
+    }
+  } catch(e) {}
+})();
+</script>
+<div class="app beginner-mode">
+    <!-- Header -->
+<div class="header">
+    <div style="width:100%; text-align:center; padding:4px 0 6px; font-family:'Aref Ruqaa',serif; font-size:1.15rem; font-weight:700; color:#5d7a94; opacity:0.55; direction:rtl; letter-spacing:1px;">✦ بسم الله الرَّحمٰن الرَّحيم ✦</div>
+    <div class="title-block">
+        <img src="assets/logo.svg" alt="Maqueen Lab Logo" class="site-logo animated-logo">
+        <h1 data-i18n="app_title">Maqueen Lab</h1>
+        <div class="subtitle"><span data-i18n="app_subtitle">Play • Learn • Create</span> <span style="opacity:0.4; font-size:0.75em;">v0.1.0</span></div>
+    </div>
+    <div class="theme-picker" aria-label="Theme selector">
+        <button class="theme-btn active" data-theme="stealth" title="Stealth">🌙</button>
+        <button class="theme-btn" data-theme="neon" title="Neon">⚡</button>
+        <button class="theme-btn" data-theme="arctic" title="Arctic">☁️</button>
+        <button class="theme-btn" data-theme="blaze" title="Blaze">🔥</button>
+    </div>
+    <div style="width:1px; height:24px; background:var(--card-border, rgba(148,163,184,0.3)); margin:0 4px;"></div>
+    <div class="lang-picker" aria-label="Language selector">
+        <button class="lang-btn" data-lang="en" title="English"><svg width="24" height="16" viewBox="0 0 60 40"><rect width="60" height="40" fill="#012169"/><path d="M0 0L60 40M60 0L0 40" stroke="#fff" stroke-width="6.5"/><path d="M0 0L60 40M60 0L0 40" stroke="#C8102E" stroke-width="3.5"/><path d="M30 0V40M0 20H60" stroke="#fff" stroke-width="11"/><path d="M30 0V40M0 20H60" stroke="#C8102E" stroke-width="6.5"/></svg></button>
+        <button class="lang-btn" data-lang="fr" title="Français"><svg width="24" height="16" viewBox="0 0 60 40"><rect width="20" height="40" fill="#002395"/><rect x="20" width="20" height="40" fill="#fff"/><rect x="40" width="20" height="40" fill="#ED2939"/></svg></button>
+        <button class="lang-btn" data-lang="ar" title="العربية"><svg width="24" height="16" viewBox="0 0 900 600"><defs><clipPath id="gl"><rect width="450" height="600"/></clipPath></defs><rect width="450" height="600" fill="#006233"/><rect x="450" width="450" height="600" fill="#FFF"/><g fill="#D21034" transform="translate(450,300)"><circle r="125"/><circle cx="25" r="100" fill="#FFF"/><g clip-path="url(#gl)" transform="translate(-450,-300)"><circle cx="475" cy="300" r="100" fill="#006233"/></g><path d="M85-12l22 67h71l-57 42 22 67-58-42-57 42 21-67-57-42h71z"/></g></svg></button>
+    </div>
+    <div style="width:1px; height:24px; background:var(--card-border, rgba(148,163,184,0.3)); margin:0 4px;"></div>
+    <div style="display:flex; gap:2px; align-items:center;">
+        <a href="lab.html" title="Component Lab (Servo Explorer pilot)" style="text-decoration:none; font-size:1rem; opacity:0.6; padding:2px 4px;">🧪</a>
+        <a href="schematics-kids.html" title="Meet your robot! (kid-friendly)" style="text-decoration:none; font-size:1rem; opacity:0.6; padding:2px 4px;">🤖</a>
+        <a href="schematics.html" title="Engineer schematic" style="text-decoration:none; font-size:1rem; opacity:0.6; padding:2px 4px;">📐</a>
+        <a href="pinout.html" title="Pinout reference" style="text-decoration:none; font-size:1rem; opacity:0.6; padding:2px 4px;">📌</a>
+        <a href="docs/USER_GUIDE.md" title="User Guide" style="text-decoration:none; font-size:1rem; opacity:0.6; padding:2px 4px;">📖</a>
+        <button id="clearCacheBtn" title="Reset" style="border:none; background:none; cursor:pointer; font-size:1rem; opacity:0.5; padding:2px 4px;">🗑️</button>
+    </div>
+    <div style="width:1px; height:24px; background:var(--card-border, rgba(148,163,184,0.3)); margin:0 4px;"></div>
+    <div class="chip" role="status" aria-live="polite" aria-atomic="true">
+        <div class="chip-dot"></div>
+        <span data-i18n="ready">Ready!</span>
+    </div>
+</div>
+
+    <div class="rows-container" style="display:flex; flex-direction:column; gap:16px;">
+        <!-- ROW 1: Live link + Message log -->
+        <div class="row row-top" style="display:flex; gap:20px;">
+            <!-- LEFT: Connection -->
+            <div class="col-left">
+                <div class="card connection-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                <span class="icon">📡</span>
+                                <span data-i18n="connect_title">Connect</span>
+                            </div>
+                            <div class="card-subtitle expert-only">
+                                Bluetooth connection to your micro:bit
+                            </div>
+                        </div>
+                        <div class="badge beginner-only" data-i18n="beginner_mode">Beginner Mode</div>
+                    </div>
+
+                    <div class="connection-grid">
+                        <div class="connection-main">
+                            <div class="connection-status-block">
+                                <div class="status-row">
+                                    <div id="connectionStatus" class="status-pill">
+                                        <span class="status-dot"></span>
+                                        <span data-i18n="ready_to_connect">Ready to connect</span>
+                                    </div>
+                                </div>
+
+                                <div class="button-row">
+                                    <button id="connectBtn" class="primary" aria-label="Connect to micro:bit">
+                                        <span class="btn-icon">🔗</span>
+                                        <span data-i18n="connect_btn">Connect</span>
+                                    </button>
+                                    <button id="disconnectBtn" class="secondary" disabled aria-label="Disconnect micro:bit">
+                                        <span class="btn-icon">✕</span>
+                                        <span data-i18n="disconnect_btn">Disconnect</span>
+                                    </button>
+                                </div>
+
+                                <div class="hint">
+                                    <div class="hint-title" data-i18n="how_to_connect">How to connect</div>
+                                    <ol>
+                                        <li data-i18n="step1_connect">Turn on your micro:bit</li>
+                                        <li data-i18n="step2_connect">Click Connect</li>
+                                        <li data-i18n="step3_connect">Pick your micro:bit from the list</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="connection-details">
+                                <div class="connection-section-title" data-i18n="mode_label">Mode</div>
+                                <div class="pill-group">
+                                    <button id="beginnerModeBtn" class="pill active" aria-pressed="true">
+                                        <div class="pill-dot"></div>
+                                        <span class="pill-text" data-i18n="beginner">Beginner</span>
+                                    </button>
+                                    <button id="expertModeBtn" class="pill" aria-pressed="false">
+                                        <div class="pill-dot"></div>
+                                        <span class="pill-text" data-i18n="expert">Expert</span>
+                                    </button>
+                                </div>
+
+                                <div class="connection-section-title expert-only" data-i18n="device_label">Device</div>
+                                <div class="device-row expert-only">
+                                    <span class="device-label" data-i18n="name_label">Name</span>
+                                    <span id="deviceName" class="device-value" data-i18n="none">None</span>
+                                </div>
+
+                                <!-- Hidden technical info -->
+                                <div id="serialNumber" style="display:none;"></div>
+                                <code id="serviceUuidDisplay" style="display:none;"></code>
+                                <code id="rxCharUuidDisplay" style="display:none;"></code>
+                                <code id="txCharUuidDisplay" style="display:none;"></code>
+                            </div>
+                        </div>
+
+                        <div class="connection-footer">
+                            <button id="firmwareBtn" class="secondary small" style="width:100%;">
+                                <span>🤖</span> <span data-i18n="firmware_btn">Firmware</span>
+                            </button>
+                            <div class="badge soft expert-only" style="margin-top:6px;">
+                                <span class="dot"></span>
+                                <span data-i18n="waiting_msg">Waiting for messages…</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Message log / Activity -->
+            <div class="col-right">
+                <!-- Simple Activity for Beginners -->
+                <div class="card activity-card beginner-only">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                <span class="icon">⚡</span>
+                                <span data-i18n="activity_title">Activity</span>
+                            </div>
+                        </div>
+                        <button id="clearActivityBtn" class="secondary small" data-i18n="clear">Clear</button>
+                    </div>
+                    <div id="activity" class="activity-feed" aria-live="polite"></div>
+                </div>
+
+                <!-- Technical Log for Experts -->
+                <div class="card log-card expert-only">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">
+                                <span class="icon">📜</span>
+                                <span data-i18n="message_log">Message Log</span>
+                            </div>
+                            <div class="card-subtitle">
+                                Raw UART messages
+                            </div>
+                        </div>
+                        <div class="log-controls">
+                            <button id="clearLogBtn" class="secondary small" aria-label="Clear log" data-i18n="clear">Clear</button>
+                            <button id="exportLogBtn" class="small" aria-label="Export log">
+                                <span class="btn-icon">⬇</span>
+                                <span data-i18n="export">Export</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="log" class="log" aria-live="polite" role="log"></div>
+
+                    <div class="log-footer">
+                        <div class="badge">
+                            micro:bit ⇄ Playground
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2: Tabs -->
+        <div class="row row-bottom" style="display:flex; gap:20px; align-items:flex-start; width:100%;">
+            <div class="col-left">
+                <!-- Tab bar -->
+                <div class="mode-selector-container">
+                    <div class="mode-selector" style="display:flex; width:100%;">
+                        <button
+                            id="controlsTabBtn"
+                            class="mode-btn tab-btn"
+                            data-page="controls"
+                            style="flex:1;">
+                            <span class="mode-icon">🎛️</span>
+                            <span data-i18n="tab_controls">Controls</span>
+                        </button>
+                        <button
+                            id="sensesTabBtn"
+                            class="mode-btn tab-btn"
+                            data-page="senses"
+                            style="flex:1;">
+                            <span class="mode-icon">👀</span>
+                            <span data-i18n="tab_sensors">Sensors</span>
+                        </button>
+                        <button
+                            id="servosTabBtn"
+                            class="mode-btn tab-btn"
+                            data-page="servos"
+                            style="flex:1;">
+                            <span class="mode-icon">⚙️</span>
+                            <span data-i18n="tab_motors">Motors</span>
+                        </button>
+                        <button
+                            id="gamepadTabBtn"
+                            class="mode-btn tab-btn"
+                            data-page="gamepad"
+                            style="flex:1;">
+                            <span class="mode-icon">🎮</span>
+                            <span data-i18n="tab_gamepad">GamePad</span>
+                        </button>
+                        <button
+                            id="graphTabBtn"
+                            class="mode-btn tab-btn active"
+                            data-page="graph"
+                            style="flex:1;">
+                            <span class="mode-icon">📈</span>
+                            <span data-i18n="tab_graph">Graph</span>
+                        </button>
+                        <button
+                            id="board3dTabBtn"
+                            class="mode-btn tab-btn"
+                            data-page="board3d"
+                            style="flex:1;">
+                            <span class="mode-icon">🎲</span>
+                            <span data-i18n="tab_3d">3D</span>
+                        </button>
+                        <button
+                            id="benchTabBtn"
+                            class="mode-btn tab-btn expert-only"
+                            data-page="bench"
+                            style="flex:1;">
+                            <span class="mode-icon">🔧</span>
+                            <span data-i18n="tab_bench">Bench</span>
+                        </button>
+                        <button
+                            id="othersTabBtn"
+                            class="mode-btn tab-btn"
+                            data-page="others"
+                            style="flex:1;">
+                            <span class="mode-icon">✨</span>
+                            <span data-i18n="tab_more">More</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tab-pages">
+                    <!-- CONTROLS PAGE -->
+                    <div class="tab-page" data-page="controls">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        <span class="icon">🎮</span>
+                                        <span data-i18n="controls_title">Controls</span>
+                                    </div>
+                                    <div class="card-subtitle expert-only">
+                                        Send commands to your micro:bit
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="controls-grid">
+                                <!-- Message -->
+                                <div class="control-section">
+                                    <div class="section-header">
+                                        <div class="section-title">
+                                            <span class="section-icon">💬</span>
+                                            <span data-i18n="show_message">Show a message</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <input id="textInput" type="text" placeholder="Hello!" aria-label="Message to micro:bit">
+                                        <button id="sendTextBtn" class="primary" aria-label="Send text">
+                                            <span class="btn-icon">📨</span>
+                                            <span data-i18n="send">Send</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- LED matrix -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div>
+                                            <div class="card-title">
+                                                <span class="icon">🎨</span>
+                                                <span data-i18n="draw_leds">Draw on LEDs</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="microbit-matrix-wrapper">
+                                        <div class="microbit-outline">
+                                            <div class="microbit-header">
+                                                <div class="microbit-chip"></div>
+                                                <div class="microbit-ears">
+                                                    <div class="microbit-ear"></div>
+                                                    <div class="microbit-ear"></div>
+                                                </div>
+                                            </div>
+                                            <div id="ledMatrix" class="led-matrix" role="grid" aria-label="5 by 5 LED drawing board"></div>
+                                            <div class="drawing-mode-hint" data-i18n="click_drag">Click and drag to draw!</div>
+                                        </div>
+
+<div class="matrix-controls">
+    <!-- Main actions -->
+    <div class="button-row">
+        <button id="sendLedPatternBtn" class="small primary" aria-label="Send LED pattern">
+            <span class="btn-icon">📤</span>
+            <span data-i18n="send">Send</span>
+        </button>
+        <button id="clearMatrixBtn" class="small secondary" aria-label="Clear LED matrix">
+            <span class="btn-icon">🧽</span>
+            <span data-i18n="clear">Clear</span>
+        </button>
+    </div>
+
+    <!-- Quick shapes -->
+    <div class="matrix-groups">
+        <div class="matrix-group">
+            <div class="matrix-group-label" data-i18n="quick_shapes">Quick shapes</div>
+            <div class="button-row compact">
+                <button class="chip-btn small" data-preset="heart">❤️ <span data-i18n="heart">Heart</span></button>
+                <button class="chip-btn small" data-preset="smile">😊 <span data-i18n="smile">Smile</span></button>
+                <button class="chip-btn small" data-preset="tick">✔ <span data-i18n="tick">Tick</span></button>
+            </div>
+        </div>
+
+        <!-- Show icons -->
+        <div class="matrix-group">
+            <div class="matrix-group-label" data-i18n="show_icons">Show icons</div>
+            <div class="button-row compact">
+                <button class="chip-btn small" data-cmd="HEART">❤️</button>
+                <button class="chip-btn small" data-cmd="SMILE">😊</button>
+                <button class="chip-btn small" data-cmd="SAD">😢</button>
+                <button class="chip-btn small" data-cmd="CLEAR">✖️</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+                                    </div>
+                                </div>
+<!-- BUZZER CONTROL -->
+<div class="control-section">
+    <div class="section-header">
+        <div class="section-title">
+            <span class="section-icon">🎵</span>
+            <span data-i18n="make_sounds">Make sounds</span>
+        </div>
+    </div>
+
+    <!-- Kid-friendly preset buttons -->
+    <div class="button-row compact beginner-show">
+        <button class="chip-btn" id="buzzLow">🔈 <span data-i18n="low_beep">Low beep</span></button>
+        <button class="chip-btn" id="buzzMid">🔉 <span data-i18n="beep">Beep</span></button>
+        <button class="chip-btn" id="buzzHigh">🔊 <span data-i18n="high_beep">High beep</span></button>
+        <button class="chip-btn" id="buzzMelody">🎶 <span data-i18n="melody">Melody</span></button>
+    </div>
+
+    <!-- Expert controls -->
+    <div class="expert-only">
+        <div class="form-row" style="align-items:center; margin-top:8px;">
+            <label style="font-size:0.75rem; width:70px;">Frequency</label>
+            <input id="buzzFreq" type="range" min="100" max="2000" value="440" step="10" style="flex:1;">
+            <span id="buzzFreqValue" style="font-size:0.75rem; margin-left:8px;">440 Hz</span>
+        </div>
+
+        <div class="form-row" style="align-items:center; margin-top:6px;">
+            <label style="font-size:0.75rem; width:70px;">Duration</label>
+            <input id="buzzDur" type="number" min="50" max="2000" value="200" style="width:80px;">
+            <span style="font-size:0.75rem; margin-left:6px;">ms</span>
+        </div>
+    </div>
+
+    <div class="button-row" style="margin-top:8px;">
+        <button id="buzzPlay" class="primary">▶ <span data-i18n="play">Play</span></button>
+        <button id="buzzStop" class="secondary">⏹ <span data-i18n="stop">Stop</span></button>
+    </div>
+</div>
+
+                                <!-- Custom JSON (expert) -->
+                                <div class="control-section expert-only">
+                                    <div class="section-header">
+                                        <div class="section-title">
+                                            <span class="section-icon">🧪</span>
+                                            Custom JSON command
+                                        </div>
+                                        <div class="section-subtitle">
+                                            Send raw JSON payloads to the micro:bit for advanced experiments.
+                                        </div>
+                                    </div>
+<textarea id="customJsonInput" rows="4" class="code-input" aria-label="Custom JSON">
+{"type":"custom","payload":{"example":true}}</textarea>
+                                    <div class="button-row">
+                                        <button id="sendCustomJsonBtn" class="primary" aria-label="Send custom JSON">
+                                            <span class="btn-icon">📡</span>
+                                            Send JSON
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SENSES PAGE -->
+                    <div class="tab-page" data-page="senses">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        <span class="icon">👀</span>
+                                        <span data-i18n="sensors_title">Sensors</span>
+                                    </div>
+                                    <div class="card-subtitle">
+                                        See what your micro:bit senses!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sensor-layout">
+                                <!-- Temperature -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_temp">🌡️ Temperature</div>
+                                        <div class="sensor-value">
+                                            <span id="tempValue">–</span><span class="sensor-unit">°C</span>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_temp">Is it warm or cold?</div>
+                                    </div>
+                                    <div class="chart-container small expert-only">
+                                        <canvas id="tempChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Light -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_light">💡 Light</div>
+                                        <div class="sensor-value">
+                                            <span id="lightValue">–</span>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_light">Bright or dark?</div>
+                                    </div>
+                                    <div class="chart-container small expert-only">
+                                        <canvas id="lightChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Sound -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_sound">🔊 Sound</div>
+                                        <div class="sensor-value">
+                                            <span id="soundValue">–</span>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_sound">Clap or talk!</div>
+                                    </div>
+                                    <div class="chart-container small expert-only">
+                                        <canvas id="soundChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Motion / Tilt (simplified for kids) -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_tilt">📱 Tilt & Shake</div>
+                                        <div class="sensor-value">
+                                            <span id="motionValue">–</span>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_tilt">Move your micro:bit!</div>
+                                    </div>
+                                    <div class="chart-container small expert-only">
+                                        <canvas id="motionChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Accel X (expert only) -->
+                                <div class="sensor-block expert-only">
+                                    <div class="sensor-card">
+                                        <div class="sensor-label" data-i18n="sensor_accel_x">Acceleration X</div>
+                                        <div class="sensor-value">
+                                            <span id="accelXValue">–</span><span class="sensor-unit">mg</span>
+                                        </div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="accelXChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Accel Y (expert only) -->
+                                <div class="sensor-block expert-only">
+                                    <div class="sensor-card">
+                                        <div class="sensor-label" data-i18n="sensor_accel_y">Acceleration Y</div>
+                                        <div class="sensor-value">
+                                            <span id="accelYValue">–</span><span class="sensor-unit">mg</span>
+                                        </div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="accelYChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Accel Z (expert only) -->
+                                <div class="sensor-block expert-only">
+                                    <div class="sensor-card">
+                                        <div class="sensor-label" data-i18n="sensor_accel_z">Acceleration Z</div>
+                                        <div class="sensor-value">
+                                            <span id="accelZValue">–</span><span class="sensor-unit">mg</span>
+                                        </div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="accelZChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Compass -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card">
+                                        <div class="sensor-label" data-i18n="sensor_compass">🧭 Compass</div>
+                                        <div class="sensor-value">
+                                            <span id="compassHeadingValue">–</span><span class="sensor-unit">°</span>
+                                        </div>
+                                        <div class="sensor-hint beginner-show" data-i18n="hint_compass">Which way is North?</div>
+                                    </div>
+                                    <div class="chart-container small chart-placeholder expert-only">
+                                        <span class="chart-placeholder-text">No chart</span>
+                                    </div>
+                                </div>
+
+                                <!-- Button A -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_btn_a">Button A</div>
+                                        <div style="display:flex; gap:4px; margin-top:4px;">
+                                            <div id="btnAState" class="pill big">
+                                                <div id="btnADot" class="pill-dot"></div>
+                                                <span id="btnAText" class="pill-text">Ready</span>
+                                            </div>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_btn_a">Press the A button!</div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="btnAChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Button B -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_btn_b">Button B</div>
+                                        <div style="display:flex; gap:4px; margin-top:4px;">
+                                            <div id="btnBState" class="pill big">
+                                                <div id="btnBDot" class="pill-dot"></div>
+                                                <span id="btnBText" class="pill-text">Ready</span>
+                                            </div>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_btn_b">Press the B button!</div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="btnBChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Touch P0 -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_touch_p0">Touch P0</div>
+                                        <div style="display:flex; gap:4px; margin-top:4px;">
+                                            <div id="touchP0State" class="pill big">
+                                                <div id="touchP0Dot" class="pill-dot"></div>
+                                                <span id="touchP0Text" class="pill-text">Ready</span>
+                                            </div>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_touch_p0">Touch pin P0</div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="touchP0Chart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Touch P1 -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_touch_p1">Touch P1</div>
+                                        <div style="display:flex; gap:4px; margin-top:4px;">
+                                            <div id="touchP1State" class="pill big">
+                                                <div id="touchP1Dot" class="pill-dot"></div>
+                                                <span id="touchP1Text" class="pill-text">Ready</span>
+                                            </div>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_touch_p1">Touch pin P1</div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="touchP1Chart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Touch P2 -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_touch_p2">Touch P2</div>
+                                        <div style="display:flex; gap:4px; margin-top:4px;">
+                                            <div id="touchP2State" class="pill big">
+                                                <div id="touchP2Dot" class="pill-dot"></div>
+                                                <span id="touchP2Text" class="pill-text">Ready</span>
+                                            </div>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_touch_p2">Touch pin P2</div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="touchP2Chart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Logo Touch -->
+                                <div class="sensor-block">
+                                    <div class="sensor-card big">
+                                        <div class="sensor-label" data-i18n="sensor_logo">Logo Touch</div>
+                                        <div style="display:flex; gap:4px; margin-top:4px;">
+                                            <div id="logoState" class="pill big">
+                                                <div id="logoDot" class="pill-dot"></div>
+                                                <span id="logoText" class="pill-text">Ready</span>
+                                            </div>
+                                        </div>
+                                        <div class="sensor-hint" data-i18n="hint_logo">Touch the logo</div>
+                                    </div>
+                                    <div class="chart-container small">
+                                        <canvas id="logoChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ⚙️ CALIBRATION SECTION -->
+                            <div class="calibration-section">
+                                <div class="section-title"><span class="section-icon">⚙️</span> <span data-i18n="calibration">Calibration</span></div>
+                                <div class="calibration-grid">
+
+                                    <!-- 🧭 Compass Calibration -->
+                                    <div class="cal-item">
+                                        <div class="cal-label" data-i18n="cal_compass">🧭 Compass</div>
+                                        <div class="cal-status" id="calCompassStatus" data-i18n="not_calibrated">Not calibrated</div>
+                                        <button id="calCompassBtn" class="secondary small" data-i18n="calibrate">Calibrate</button>
+                                        <div class="cal-hint" data-i18n="cal_compass_hint">Tilt micro:bit to fill the LED screen</div>
+                                    </div>
+
+                                    <!-- ⚖️ Accelerometer Zero -->
+                                    <div class="cal-item">
+                                        <div class="cal-label" data-i18n="cal_accel">⚖️ Accel Zero</div>
+                                        <div class="cal-status" id="calAccelStatus" data-i18n="no_offset">No offset</div>
+                                        <div class="cal-values" id="calAccelValues"></div>
+                                        <div class="cal-row">
+                                            <button id="calAccelSetBtn" class="secondary small" data-i18n="set_level">Set Level</button>
+                                            <button id="calAccelResetBtn" class="secondary small" data-i18n="reset">Reset</button>
+                                        </div>
+                                        <div class="cal-hint" data-i18n="cal_accel_hint">Place micro:bit flat, then click Set Level</div>
+                                    </div>
+
+                                    <!-- 🔊 Sound Baseline -->
+                                    <div class="cal-item">
+                                        <div class="cal-label" data-i18n="cal_sound">🔊 Sound Baseline</div>
+                                        <div class="cal-status" id="calSoundStatus" data-i18n="no_baseline">No baseline</div>
+                                        <div class="cal-row">
+                                            <button id="calSoundSetBtn" class="secondary small" data-i18n="set_ambient">Set Ambient</button>
+                                            <button id="calSoundResetBtn" class="secondary small" data-i18n="reset">Reset</button>
+                                        </div>
+                                        <div class="cal-hint" data-i18n="cal_sound_hint">Quiet room → click Set Ambient</div>
+                                    </div>
+
+                                    <!-- 💡 Light Baseline -->
+                                    <div class="cal-item">
+                                        <div class="cal-label" data-i18n="cal_light">💡 Light Baseline</div>
+                                        <div class="cal-status" id="calLightStatus" data-i18n="no_baseline">No baseline</div>
+                                        <div class="cal-row">
+                                            <button id="calLightSetBtn" class="secondary small" data-i18n="set_ambient">Set Ambient</button>
+                                            <button id="calLightResetBtn" class="secondary small" data-i18n="reset">Reset</button>
+                                        </div>
+                                        <div class="cal-hint" data-i18n="cal_light_hint">Normal lighting → click Set Ambient</div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- SERVOS PAGE -->
+                    <div class="tab-page" data-page="servos">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        <span class="icon">⚙️</span>
+                                        <span data-i18n="motors_title">Motors</span>
+                                    </div>
+                                    <div class="card-subtitle">
+                                        Move servos left and right!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="controls-grid">
+                              <div class="control-section">
+                                <div class="section-title">🔵 <span data-i18n="servo1">Motor 1</span> <span class="expert-only">(P1)</span></div>
+                                
+                                <div class="servo-gauge" id="gauge1Container">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+        <defs>
+            <linearGradient id="gauge1Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ff6b6b"/>
+                <stop offset="25%" style="stop-color:#ffd93d"/>
+                <stop offset="50%" style="stop-color:#6bcb77"/>
+                <stop offset="75%" style="stop-color:#4d96ff"/>
+                <stop offset="100%" style="stop-color:#9b5de5"/>
+            </linearGradient>
+            <filter id="glow1" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <!-- Background arc -->
+        <path d="M20 80 A60 60 0 0 1 140 80" stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <!-- Colorful arc -->
+        <path d="M20 80 A60 60 0 0 1 140 80" stroke="url(#gauge1Grad)" stroke-width="10" fill="none" stroke-linecap="round" filter="url(#glow1)"/>
+        <!-- Tick marks -->
+        <text x="15" y="85" fill="#888" font-size="10">0°</text>
+        <text x="72" y="22" fill="#888" font-size="10">90°</text>
+        <text x="135" y="85" fill="#888" font-size="10">180°</text>
+        <!-- Needle -->
+        <line id="servo1Needle" x1="80" y1="80" x2="80" y2="30" stroke="#fff" stroke-width="5"
+              stroke-linecap="round" transform="rotate(-90 80 80)" filter="url(#glow1)"/>
+        <!-- Center hub -->
+        <circle cx="80" cy="80" r="12" fill="url(#gauge1Grad)"/>
+        <circle cx="80" cy="80" r="7" fill="#1e293b"/>
+        <circle cx="80" cy="80" r="4" fill="#f97316"/>
+    </svg>
+    <div class="gauge-value" id="servo1GaugeValue">90°</div>
+    <div class="gauge-emoji">🎯</div>
+</div>
+
+
+                                <div class="form-row">
+                                  <input id="servo1Angle" type="range" min="0" max="180" value="90" aria-label="Motor 1 angle">
+                                  <input id="servo1Number" type="number" min="0" max="180" value="90" style="width:72px;" aria-label="Motor 1 numeric angle" class="expert-only">
+                                </div>
+                                <div class="button-row">
+                                  <button id="servo1Send" class="primary" aria-label="Move motor 1" data-i18n="move">Move</button>
+                                  <button id="servo1Off" class="secondary" aria-label="Stop motor 1" data-i18n="stop">Stop</button>
+                                </div>
+                                <div class="servo-trim expert-only">
+                                    <label class="trim-label">🔧 Trim: <span id="servo1TrimVal">0°</span></label>
+                                    <input id="servo1Trim" type="range" min="-15" max="15" value="0" aria-label="Servo 1 trim offset">
+                                    <button id="servo1TrimReset" class="secondary small">Reset</button>
+                                </div>
+                              </div>
+
+                              <div class="control-section">
+                                <div class="section-title">🟢 <span data-i18n="servo2">Motor 2</span> <span class="expert-only">(P2)</span></div>
+                                <div class="servo-gauge" id="gauge2Container">
+    <svg width="160" height="100" viewBox="0 0 160 100">
+        <defs>
+            <linearGradient id="gauge2Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#0ea5e9"/>
+                <stop offset="25%" style="stop-color:#06b6d4"/>
+                <stop offset="50%" style="stop-color:#38bdf8"/>
+                <stop offset="75%" style="stop-color:#34d399"/>
+                <stop offset="100%" style="stop-color:#a3e635"/>
+            </linearGradient>
+            <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <!-- Background arc -->
+        <path d="M20 80 A60 60 0 0 1 140 80" stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <!-- Colorful arc -->
+        <path d="M20 80 A60 60 0 0 1 140 80" stroke="url(#gauge2Grad)" stroke-width="10" fill="none" stroke-linecap="round" filter="url(#glow2)"/>
+        <!-- Tick marks -->
+        <text x="15" y="85" fill="#888" font-size="10">0°</text>
+        <text x="72" y="22" fill="#888" font-size="10">90°</text>
+        <text x="135" y="85" fill="#888" font-size="10">180°</text>
+        <!-- Needle -->
+        <line id="servo2Needle" x1="80" y1="80" x2="80" y2="30" stroke="#fff" stroke-width="5"
+              stroke-linecap="round" transform="rotate(-90 80 80)" filter="url(#glow2)"/>
+        <!-- Center hub -->
+        <circle cx="80" cy="80" r="12" fill="url(#gauge2Grad)"/>
+        <circle cx="80" cy="80" r="7" fill="#1e293b"/>
+        <circle cx="80" cy="80" r="4" fill="#22c55e"/>
+    </svg>
+    <div class="gauge-value" id="servo2GaugeValue">90°</div>
+    <div class="gauge-emoji">🎯</div>
+</div>
+
+
+                                <div class="form-row">
+                                  <input id="servo2Angle" type="range" min="0" max="180" value="90" aria-label="Motor 2 angle">
+                                  <input id="servo2Number" type="number" min="0" max="180" value="90" style="width:72px;" aria-label="Motor 2 numeric angle" class="expert-only">
+                                </div>
+                                <div class="button-row">
+                                  <button id="servo2Send" class="primary" aria-label="Move motor 2" data-i18n="move">Move</button>
+                                  <button id="servo2Off" class="secondary" aria-label="Stop motor 2" data-i18n="stop">Stop</button>
+                                </div>
+                                <div class="servo-trim expert-only">
+                                    <label class="trim-label">🔧 Trim: <span id="servo2TrimVal">0°</span></label>
+                                    <input id="servo2Trim" type="range" min="-15" max="15" value="0" aria-label="Servo 2 trim offset">
+                                    <button id="servo2TrimReset" class="secondary small">Reset</button>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+  <!-- ✅ GAMEPAD PAGE -->
+                    <div class="tab-page" data-page="gamepad">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">
+                                        <span class="icon">🎮</span>
+                                        <span data-i18n="gamepad_title">GamePad</span>
+                                    </div>
+                                    <div class="card-subtitle">
+                                        Control your robot or game!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="controls-grid">
+<div class="control-section">
+    <div class="section-title">🕹️ D-Pad Controller</div>
+
+    <div class="dpad-wrapper">
+
+        <!-- Up -->
+        <button class="primary cmd-btn dpad-btn dpad-up" data-cmd="UP" aria-label="Move up">⬆</button>
+
+        <div class="dpad-middle-row">
+            <!-- Left -->
+            <button class="primary cmd-btn dpad-btn dpad-left" data-cmd="LEFT" aria-label="Move left">⬅</button>
+
+            <!-- Center "stick" circle -->
+            <div class="dpad-center"></div>
+
+            <!-- Right -->
+            <button class="primary cmd-btn dpad-btn dpad-right" data-cmd="RIGHT" aria-label="Move right">➡</button>
+        </div>
+
+        <!-- Down -->
+        <button class="primary cmd-btn dpad-btn dpad-down" data-cmd="DOWN" aria-label="Move down">⬇</button>
+
+        <!-- Fire button -->
+        <button class="primary cmd-btn fire-btn" data-cmd="FIRE" aria-label="Fire">🔥 <span data-i18n="fire">Fire</span></button>
+    </div>
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+<!-- GRAPH PAGE -->
+<div class="tab-page active" data-page="graph">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">
+                    <span class="icon">📈</span>
+                    <span data-i18n="graph_title">Live Graph</span>
+                </div>
+                <div class="card-subtitle">
+                    Plot sensor data and custom values in real time.
+                </div>
+            </div>
+        </div>
+
+        <!-- Graph Type Selector -->
+        <div class="graph-controls">
+            <div class="graph-row">
+                <label class="graph-label">Type</label>
+                <div class="graph-type-group">
+                    <button class="graph-type-btn active" data-type="line" title="Line">📈 <span data-i18n="graph_line">Line</span></button>
+                    <button class="graph-type-btn" data-type="bar" title="Bar">📊 <span data-i18n="graph_bar">Bar</span></button>
+                    <button class="graph-type-btn" data-type="scatter" title="Scatter">🔘 <span data-i18n="graph_scatter">Scatter</span></button>
+                    <button class="graph-type-btn" data-type="area" title="Area">📐 <span data-i18n="graph_area">Area</span></button>
+                    <button class="graph-type-btn" data-type="realtime" title="Realtime">⚡ <span data-i18n="graph_realtime">Realtime</span></button>
+                </div>
+            </div>
+
+            <!-- Sensor Toggles -->
+            <div class="graph-row">
+                <label class="graph-label">Sensors</label>
+                <div class="graph-sensor-toggles">
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="accelX" checked> Accel X</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="accelY" checked> Accel Y</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="accelZ" checked> Accel Z</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="compass" checked> Compass</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="sound" checked> Sound</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="light" checked> Light</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="temp" checked> Temp</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="touchP0" checked> Touch P0</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="touchP1" checked> Touch P1</label>
+                    <label class="graph-toggle"><input type="checkbox" data-sensor="touchP2" checked> Touch P2</label>
+                </div>
+            </div>
+
+            <!-- Options Row -->
+            <div class="graph-row">
+                <label class="graph-label">Options</label>
+                <div class="graph-options">
+                    <div class="graph-option">
+                        <label>Window</label>
+                        <select id="graphWindow">
+                            <option value="50">50 pts</option>
+                            <option value="100" selected>100 pts</option>
+                            <option value="200">200 pts</option>
+                            <option value="500">500 pts</option>
+                        </select>
+                    </div>
+                    <div class="graph-option">
+                        <label>Y-Axis</label>
+                        <select id="graphYAxis">
+                            <option value="auto" selected>Auto</option>
+                            <option value="0-255">0 – 255</option>
+                            <option value="0-1023">0 – 1023</option>
+                            <option value="-1024-1024">±1024</option>
+                            <option value="0-360">0 – 360</option>
+                        </select>
+                    </div>
+                    <div class="graph-option">
+                        <label>Lines</label>
+                        <select id="graphLineWidth">
+                            <option value="1">Thin</option>
+                            <option value="2" selected>Normal</option>
+                            <option value="3">Thick</option>
+                        </select>
+                    </div>
+                    <label class="graph-toggle"><input type="checkbox" id="graphGrid" checked> Grid</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Canvas -->
+        <div class="graph-chart-wrap" id="graphChartWrap">
+            <canvas id="graphCanvas"></canvas>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="graph-actions">
+            <button id="graphSimBtn" class="secondary">🎲 <span data-i18n="simulate">Simulate</span></button>
+            <button id="graphPauseBtn" class="secondary">⏸ <span data-i18n="pause">Pause</span></button>
+            <button id="graphClearBtn" class="secondary">🗑 <span data-i18n="clear">Clear</span></button>
+            <button id="graphFullscreenBtn" class="secondary">🔲 <span data-i18n="fullscreen">Fullscreen</span></button>
+            <button id="graphRecordBtn" class="secondary">⏺ <span data-i18n="record">Record</span></button>
+            <button id="graphRecordPlay" class="secondary">▶ <span data-i18n="replay">Replay</span></button>
+            <button id="graphRecordExport" class="secondary">💾 <span data-i18n="save_session">Save Session</span></button>
+            <button id="graphAnnotateBtn" class="secondary">📝 <span data-i18n="note">Note</span></button>
+            <button id="graphExportPng" class="secondary">📷 <span data-i18n="png">PNG</span></button>
+            <button id="graphExportCsv" class="secondary">📄 <span data-i18n="csv">CSV</span></button>
+            <span class="graph-point-count" id="graphPointCount">0 pts</span>
+        </div>
+
+        <!-- Code Snippets (collapsible) -->
+        <details class="code-snippets">
+            <summary>📖 MakeCode Examples</summary>
+            <div class="snippet">
+                <div class="snippet-title">Send custom data to graph</div>
+                <pre><code>basic.forever(function () {
+    let distance = pins.analogReadPin(AnalogPin.P1)
+    serial.writeLine("GRAPH:Distance:" + distance)
+    basic.pause(200)
+})</code></pre>
+            </div>
+            <div class="snippet">
+                <div class="snippet-title">Plot multiple values</div>
+                <pre><code>serial.writeLine("GRAPH:Speed:" + speed)
+serial.writeLine("GRAPH:Angle:" + angle)
+serial.writeLine("GRAPH:Force:" + force)</code></pre>
+            </div>
+            <div class="snippet">
+                <div class="snippet-title">Conditional alert</div>
+                <pre><code>if (input.soundLevel() > 150) {
+    serial.writeLine("GRAPH:Loud:1")
+} else {
+    serial.writeLine("GRAPH:Loud:0")
+}</code></pre>
+            </div>
+        </details>
+    </div>
+</div>
+
+<!-- 3D BOARD PAGE -->
+<div class="tab-page" data-page="board3d">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">
+                    <span class="icon">🎲</span>
+                    <span data-i18n="board3d_title">3D micro:bit</span>
+                </div>
+                <div class="card-subtitle" data-i18n="board3d_subtitle">
+                    Interactive 3D board — mirrors live sensor data
+                </div>
+            </div>
+        </div>
+
+        <div class="board3d-controls">
+            <select id="board3dModel" class="board3d-select" aria-label="3D model">
+                <option value="microbit">🎲 micro:bit V2</option>
+                <option value="buggy">🚗 Robot Buggy</option>
+                <option value="arm">🦾 Robot Arm</option>
+                <option value="balance">🎯 Balance Game</option>
+                <option value="weather">🌦️ Weather Station</option>
+            </select>
+            <button id="board3dResetView" class="secondary small">🔄 <span data-i18n="reset_view">Reset View</span></button>
+            <button id="board3dAutoRotate" class="secondary small">🔁 <span data-i18n="auto_rotate">Auto Rotate</span></button>
+            <button id="board3dLiveSync" class="secondary small active">📡 <span data-i18n="live_sync">Live Sync</span></button>
+            <div class="board3d-info">
+                <span id="board3dAccelInfo" class="board3d-pill">Accel: –</span>
+                <span id="board3dTempInfo" class="board3d-pill">Temp: –</span>
+            </div>
+        </div>
+
+        <div class="board3d-container" id="board3dContainer">
+            <canvas id="board3dCanvas"></canvas>
+        </div>
+
+        <div class="board3d-legend">
+            <span>🖱️ <span data-i18n="drag_rotate">Drag to rotate</span></span>
+            <span>🔍 <span data-i18n="scroll_zoom">Scroll to zoom</span></span>
+            <span>📡 <span data-i18n="live_info">Live: LEDs, tilt, buttons, touch</span></span>
+        </div>
+    </div>
+</div>
+
+<!-- BENCH PAGE -->
+<div class="tab-page" data-page="bench">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">
+                    <span class="icon">🪑</span>
+                    <span data-i18n="bench_title">Bench</span>
+                </div>
+                <div class="card-subtitle" data-i18n="bench_subtitle">
+                    Tools and experiments for testing micro:bit features.
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-grid">
+            <div class="control-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">🧪</span>
+                        Bench Tools
+                    </div>
+                    <div class="section-subtitle">
+                        Try out experimental commands or diagnostics here.
+                    </div>
+                </div>
+                <div class="form-row">
+                    <input id="benchInput" type="text" placeholder="Enter test command">
+                    <button id="benchSendBtn" class="primary" data-i18n="bench_send">Run</button>
+                </div>
+                <div class="hint">Use this area for experiments and debugging.</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="control-section">
+  <div class="section-header">
+    <div class="section-title">
+      <span class="section-icon">📥</span>
+      <span data-i18n="bench_response">Bench Response</span>
+    </div>
+    <div class="section-subtitle">
+      Output from the micro:bit will appear here.
+    </div>
+  </div>
+
+  <!-- Response window -->
+  <div id="benchResponse" class="bench-response"></div>
+</div>
+
+
+</div>
+                 
+                    <!-- OTHERS PAGE -->
+<!-- OTHERS PAGE -->
+<div class="tab-page" data-page="others">
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">
+                    <span class="icon">✨</span>
+                    <span data-i18n="more_title">More</span>
+                </div>
+                <div class="card-subtitle" data-i18n="more_subtitle">
+                    Extra fun stuff!
+                </div>
+            </div>
+        </div>
+
+        <div class="tool-groups">
+
+            <!-- BASIC CONTROLS (Kid-friendly) -->
+            <details class="tool-group" open>
+                <summary class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">🎛️</span>
+                        <span data-i18n="fun_controls">Fun Controls</span>
+                    </div>
+                </summary>
+
+                <div class="controls-grid">
+                    <!-- Button -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🔘</span><span data-i18n="other_button">Button</span></div>
+                        </div>
+                        <button id="otherButton" class="primary" style="width:100%;" data-i18n="press_me">Press me!</button>
+                    </div>
+
+                    <!-- Switch -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">⏻</span><span data-i18n="other_switch">Switch</span></div>
+                        </div>
+                        <div class="form-row" style="align-items:center;">
+                            <label style="display:flex; align-items:center; gap:8px;">
+                                <input id="otherSwitch" type="checkbox">
+                                <span id="otherSwitchLabel">Off</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Slider -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🎚️</span><span data-i18n="other_slider">Slider</span></div>
+                        </div>
+                        <div class="form-row">
+                            <input id="otherSlider" type="range" min="0" max="100" value="50" style="flex:1;">
+                            <span id="otherSliderValue" style="margin-left:8px;">50</span>
+                        </div>
+                    </div>
+
+                    <!-- Keypad (moved up for kids) -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🔢</span><span data-i18n="other_keypad">Keypad</span></div>
+                        </div>
+                        <div id="otherKeypad"
+                             style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
+                            <button class="chip-btn other-keypad-btn" data-key="1">1</button>
+                            <button class="chip-btn other-keypad-btn" data-key="2">2</button>
+                            <button class="chip-btn other-keypad-btn" data-key="3">3</button>
+                            <button class="chip-btn other-keypad-btn" data-key="4">4</button>
+                            <button class="chip-btn other-keypad-btn" data-key="5">5</button>
+                            <button class="chip-btn other-keypad-btn" data-key="6">6</button>
+                            <button class="chip-btn other-keypad-btn" data-key="7">7</button>
+                            <button class="chip-btn other-keypad-btn" data-key="8">8</button>
+                            <button class="chip-btn other-keypad-btn" data-key="9">9</button>
+                        </div>
+                        <div style="margin-top:6px;font-size:0.8rem;">
+                            You pressed: <span id="otherKeypadLast">–</span>
+                        </div>
+                    </div>
+
+                    <!-- Joystick -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🕹️</span><span data-i18n="other_joystick">Joystick</span></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(3,40px);grid-template-rows:repeat(3,40px);gap:4px;justify-content:center;">
+                            <div></div>
+                            <button class="chip-btn other-joy-btn" data-other-dir="UP">&#9650;</button>
+                            <div></div>
+                            <button class="chip-btn other-joy-btn" data-other-dir="LEFT">&#9668;</button>
+                            <button class="chip-btn other-joy-btn" data-other-dir="CENTER" style="font-size:0.6rem;">&#9679;</button>
+                            <button class="chip-btn other-joy-btn" data-other-dir="RIGHT">&#9658;</button>
+                            <div></div>
+                            <button class="chip-btn other-joy-btn" data-other-dir="DOWN">&#9660;</button>
+                            <div></div>
+                        </div>
+                    </div>
+
+                    <!-- Text string (simplified) -->
+                    <div class="control-section expert-only">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">📝</span><span data-i18n="other_text">Text</span></div>
+                        </div>
+                        <div class="form-row">
+                            <input id="otherTextInput" type="text" placeholder="Enter text">
+                            <button id="otherTextSendBtn" class="primary">Send</button>
+                        </div>
+                        <div style="margin-top:6px; font-size:0.8rem;">
+                            Last: <span id="otherTextLast">(none)</span>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- INDICATORS & OUTPUTS (Expert) -->
+            <details class="tool-group expert-only">
+                <summary class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">💡</span>
+                        <span data-i18n="indicators_outputs">Indicators & Outputs</span>
+                    </div>
+                    <div class="section-subtitle">
+                        Visual feedback from the system.
+                    </div>
+                </summary>
+
+                <div class="controls-grid">
+                    <!-- LED -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">💡</span><span data-i18n="other_led">LED</span></div>
+                        </div>
+                        <div class="form-row" style="align-items:center; gap:10px;">
+                            <div id="otherLed" style="width:18px;height:18px;border-radius:50%;background:#333;"></div>
+                            <span id="otherLedState">Off</span>
+                            <button id="otherLedToggle" class="chip-btn">Toggle</button>
+                        </div>
+                    </div>
+
+                    <!-- Level -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">📊</span><span data-i18n="other_level">Level</span></div>
+                        </div>
+                        <progress id="otherLevel" max="100" value="30" style="width:100%;"></progress>
+                        <span id="otherLevelLabel" style="font-size:0.8rem;">30%</span>
+                    </div>
+
+                    <!-- Live graph -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">📈</span><span data-i18n="other_live_graph">Live Graph</span></div>
+                        </div>
+                        <div class="chart-container small">
+                            <canvas id="otherLiveChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Multi-series graph -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">📊</span><span data-i18n="other_multi_graph">Multi-Graph</span></div>
+                        </div>
+                        <div class="chart-container small">
+                            <canvas id="otherMultiChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Debug console -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🧾</span><span data-i18n="other_debug_console">Debug Console</span></div>
+                        </div>
+                        <div id="otherConsole"
+                             style="height:120px;overflow:auto;border-radius:8px;border:1px solid var(--border-color,#555);padding:6px;font-family:var(--font-mono,monospace);font-size:0.7rem;background:rgba(0,0,0,0.4);">
+                        </div>
+                        <button id="otherConsoleClear" class="chip-btn" style="margin-top:6px;">Clear log</button>
+                    </div>
+
+                    <!-- Data capture -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">📄</span><span data-i18n="other_data_capture">Data Capture</span></div>
+                        </div>
+                        <div id="otherDataTable"
+                             style="height:120px;overflow:auto;border-radius:8px;border:1px solid var(--border-color,#555);padding:6px;font-size:0.7rem;">
+                            (No samples yet)
+                        </div>
+                        <button id="otherCsvDownloadBtn" class="chip-btn" style="margin-top:6px;">Download CSV</button>
+                    </div>
+                </div>
+            </details>
+
+            <!-- AUDIO, TIME & RANDOM (Expert) -->
+            <details class="tool-group expert-only">
+                <summary class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">⏱️</span>
+                        <span data-i18n="audio_time_random">Audio, Time & Random</span>
+                    </div>
+                    <div class="section-subtitle">
+                        Buzzer, timers and random tests.
+                    </div>
+                </summary>
+
+                <div class="controls-grid">
+                    <!-- Buzzer -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🎵</span><span data-i18n="other_buzzer">Buzzer</span></div>
+                        </div>
+                        <div class="form-row">
+                            <label style="width:90px;">Freq</label>
+                            <input id="otherBuzzFreq" type="range" min="100" max="2000" value="500">
+                            <span id="otherBuzzFreqValue">500 Hz</span>
+                        </div>
+                        <div class="form-row" style="margin-top:6px;">
+                            <label style="width:90px;">Duration</label>
+                            <input id="otherBuzzDur" type="number" min="50" max="2000" value="200" style="width:80px;">
+                            <span>ms</span>
+                        </div>
+                        <button id="otherBuzzPlayBtn" class="primary" style="width:100%;margin-top:8px;">Play</button>
+                    </div>
+
+                    <!-- Timer / stopwatch -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">⏱️</span><span data-i18n="other_timer">Timer</span></div>
+                        </div>
+                        <div id="otherTimerDisplay"
+                             style="font-family:var(--font-mono,monospace);font-size:1.1rem;margin-bottom:6px;">
+                            00:00.0
+                        </div>
+                        <div class="form-row">
+                            <button id="otherTimerStartBtn" class="chip-btn">Start</button>
+                            <button id="otherTimerStopBtn" class="chip-btn">Stop</button>
+                            <button id="otherTimerResetBtn" class="chip-btn">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Delayed action -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">⏲️</span><span data-i18n="other_delay_action">Delay Action</span></div>
+                        </div>
+                        <div class="form-row">
+                            <input id="otherScheduleDelay" type="number" min="100" max="60000" value="1000"
+                                   style="width:100%;">
+                            <span style="font-size:0.75rem;margin-left:4px;">ms</span>
+                        </div>
+                        <button id="otherScheduleActionBtn" class="chip-btn" style="margin-top:6px;width:100%;">Schedule
+                            action
+                        </button>
+                    </div>
+
+                    <!-- Random generator -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🎲</span><span data-i18n="other_random">Random</span></div>
+                        </div>
+                        <button id="otherRandomNumberBtn" class="primary" style="width:100%;">Generate random</button>
+                        <div style="margin-top:6px;font-size:0.85rem;">
+                            Value: <span id="otherRandomNumberValue">–</span>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- ADVANCED CONTROLS & PRESETS (Expert) -->
+            <details class="tool-group expert-only">
+                <summary class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">🧠</span>
+                        <span data-i18n="advanced_controls">Advanced Controls & Presets</span>
+                    </div>
+                    <div class="section-subtitle">
+                        Modes, ranges, presets and global actions.
+                    </div>
+                </summary>
+
+                <div class="controls-grid">
+                    <!-- Mode selector -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">📂</span><span data-i18n="other_mode">Mode</span></div>
+                        </div>
+                        <select id="otherModeSelect" style="width:100%;">
+                            <option value="idle">Idle</option>
+                            <option value="test1">Test mode 1</option>
+                            <option value="test2">Test mode 2</option>
+                            <option value="safe">Safe mode</option>
+                        </select>
+                    </div>
+
+                    <!-- Numeric input -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🔢</span><span data-i18n="other_numeric">Numeric</span></div>
+                        </div>
+                        <input id="otherNumberInput" type="number" min="0" max="1000" value="100" style="width:100%;">
+                    </div>
+
+                    <!-- Dual range -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🏁</span><span data-i18n="other_range">Range</span></div>
+                        </div>
+                        <div class="form-row" style="flex-direction:column; gap:6px;">
+                            <div class="form-row">
+                                <span style="width:40px;font-size:0.75rem;">Min</span>
+                                <input id="otherRangeMin" type="range" min="0" max="100" value="20" style="flex:1;">
+                                <span id="otherRangeMinValue"
+                                      style="margin-left:6px;font-size:0.75rem;">20</span>
+                            </div>
+                            <div class="form-row">
+                                <span style="width:40px;font-size:0.75rem;">Max</span>
+                                <input id="otherRangeMax" type="range" min="0" max="100" value="80" style="flex:1;">
+                                <span id="otherRangeMaxValue"
+                                      style="margin-left:6px;font-size:0.75rem;">80</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Color picker -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🎨</span><span data-i18n="other_color">Color</span></div>
+                        </div>
+                        <div class="form-row" style="align-items:center; gap:8px;">
+                            <input id="otherColorPicker" type="color" value="#ff0000"
+                                   style="width:50px; height:32px;">
+                            <span id="otherColorValue" style="font-size:0.8rem;">#ff0000</span>
+                        </div>
+                    </div>
+
+                    <!-- Presets -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">💾</span><span data-i18n="other_presets">Presets</span></div>
+                        </div>
+                        <input id="otherPresetName" type="text" placeholder="Preset name"
+                               style="width:100%;margin-bottom:6px;">
+                        <div class="form-row">
+                            <button id="otherPresetSaveBtn" class="chip-btn">Save</button>
+                            <select id="otherPresetLoadSelect" style="flex:1; margin-left:6px;">
+                                <option value="">(no presets)</option>
+                            </select>
+                        </div>
+                        <button id="otherPresetLoadBtn" class="chip-btn" style="margin-top:6px;width:100%;">Load preset
+                        </button>
+                    </div>
+
+                    <!-- Global controls -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🧹</span><span data-i18n="other_global">Global</span></div>
+                        </div>
+                        <button id="otherGlobalResetBtn" class="chip-btn" style="width:100%;margin-bottom:4px;">Reset
+                            controls
+                        </button>
+                        <button id="otherGlobalClearBtn" class="chip-btn" style="width:100%;">Clear graphs & logs</button>
+                    </div>
+
+                    <!-- Theme -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🎭</span><span data-i18n="other_theme">Theme</span></div>
+                        </div>
+                        <select id="otherThemeSelect" style="width:100%;">
+                            <option value="system">System default</option>
+                            <option value="dark">Dark</option>
+                            <option value="light">Light</option>
+                            <option value="funny">Funny mode</option>
+                        </select>
+                    </div>
+                </div>
+            </details>
+
+            <!-- SIMULATORS & HARDWARE-LIKE TOOLS (Expert) -->
+            <details class="tool-group expert-only">
+                <summary class="section-header">
+                    <div class="section-title">
+                        <span class="section-icon">🧪</span>
+                        <span data-i18n="simulators_hardware">Simulators & Hardware</span>
+                    </div>
+                    <div class="section-subtitle">
+                        LED matrix, sensors, pins, servo, keypad…
+                    </div>
+                </summary>
+
+                <div class="controls-grid">
+                    <!-- XY Pad -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">📐</span><span data-i18n="other_xy_pad">XY Pad</span></div>
+                        </div>
+                        <div id="otherXYPad"
+                             style="position:relative;width:100%;padding-top:100%;border-radius:8px;border:1px dashed var(--border-color,#555);background:rgba(255,255,255,0.03);cursor:crosshair;">
+                            <div id="otherXYDot"
+                                 style="position:absolute;width:12px;height:12px;border-radius:50%;background:var(--accent-color,#0ff);transform:translate(-50%,-50%);top:50%;left:50%;">
+                            </div>
+                        </div>
+                        <div style="margin-top:6px;font-size:0.75rem;">
+                            X: <span id="otherXValue">0.5</span> &nbsp; Y: <span id="otherYValue">0.5</span>
+                        </div>
+                    </div>
+
+                    <!-- LED matrix -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🔲</span><span data-i18n="other_led_matrix">LED Matrix</span></div>
+                        </div>
+                        <div id="otherLedMatrix"
+                             style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;max-width:140px;">
+                            <!-- 25 cells -->
+                            <div class="other-matrix-cell" data-index="0"></div>
+                            <div class="other-matrix-cell" data-index="1"></div>
+                            <div class="other-matrix-cell" data-index="2"></div>
+                            <div class="other-matrix-cell" data-index="3"></div>
+                            <div class="other-matrix-cell" data-index="4"></div>
+                            <div class="other-matrix-cell" data-index="5"></div>
+                            <div class="other-matrix-cell" data-index="6"></div>
+                            <div class="other-matrix-cell" data-index="7"></div>
+                            <div class="other-matrix-cell" data-index="8"></div>
+                            <div class="other-matrix-cell" data-index="9"></div>
+                            <div class="other-matrix-cell" data-index="10"></div>
+                            <div class="other-matrix-cell" data-index="11"></div>
+                            <div class="other-matrix-cell" data-index="12"></div>
+                            <div class="other-matrix-cell" data-index="13"></div>
+                            <div class="other-matrix-cell" data-index="14"></div>
+                            <div class="other-matrix-cell" data-index="15"></div>
+                            <div class="other-matrix-cell" data-index="16"></div>
+                            <div class="other-matrix-cell" data-index="17"></div>
+                            <div class="other-matrix-cell" data-index="18"></div>
+                            <div class="other-matrix-cell" data-index="19"></div>
+                            <div class="other-matrix-cell" data-index="20"></div>
+                            <div class="other-matrix-cell" data-index="21"></div>
+                            <div class="other-matrix-cell" data-index="22"></div>
+                            <div class="other-matrix-cell" data-index="23"></div>
+                            <div class="other-matrix-cell" data-index="24"></div>
+                        </div>
+                        <button id="otherLedMatrixClear" class="chip-btn" style="margin-top:8px;">Clear</button>
+                    </div>
+
+                    <!-- Sensor simulator -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🌡️</span><span data-i18n="other_sensors">Sensors</span></div>
+                        </div>
+                        <div class="form-row">
+                            <span style="width:80px;font-size:0.75rem;">Temp</span>
+                            <input id="otherSimTemp" type="range" min="-10" max="50" value="20" style="flex:1;">
+                            <span id="otherSimTempValue" style="margin-left:4px;font-size:0.75rem;">20°C</span>
+                        </div>
+                        <div class="form-row" style="margin-top:4px;">
+                            <span style="width:80px;font-size:0.75rem;">Light</span>
+                            <input id="otherSimLight" type="range" min="0" max="255" value="128" style="flex:1;">
+                            <span id="otherSimLightValue" style="margin-left:4px;font-size:0.75rem;">128</span>
+                        </div>
+                        <div class="form-row" style="margin-top:4px;">
+                            <span style="width:80px;font-size:0.75rem;">Sound</span>
+                            <input id="otherSimSound" type="range" min="0" max="255" value="64" style="flex:1;">
+                            <span id="otherSimSoundValue" style="margin-left:4px;font-size:0.75rem;">64</span>
+                        </div>
+                    </div>
+
+                    <!-- Pin control -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🔌</span><span data-i18n="other_pins">Pins</span></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;font-size:0.75rem;">
+                            <label><input id="otherPinD0" type="checkbox"> P0</label>
+                            <label><input id="otherPinD1" type="checkbox"> P1</label>
+                            <label><input id="otherPinD2" type="checkbox"> P2</label>
+                            <label><input id="otherPinD8" type="checkbox"> P8</label>
+                            <label><input id="otherPinD12" type="checkbox"> P12</label>
+                            <label><input id="otherPinD16" type="checkbox"> P16</label>
+                        </div>
+                        <div class="form-row" style="margin-top:6px;">
+                            <span style="font-size:0.75rem;">PWM P0</span>
+                            <input id="otherPinPwm0" type="range" min="0" max="1023" value="0" style="flex:1;">
+                        </div>
+                    </div>
+
+                    <!-- Servo -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">⚙️</span><span data-i18n="other_servo">Servo</span></div>
+                        </div>
+                        <div class="form-row">
+                            <label style="width:60px;font-size:0.75rem;">Angle</label>
+                            <input id="otherServoAngle" type="range" min="0" max="180" value="90" style="flex:1;">
+                            <span id="otherServoAngleValue" style="margin-left:6px;font-size:0.75rem;">90°</span>
+                        </div>
+                        <div class="form-row" style="margin-top:6px;">
+                            <label style="width:60px;font-size:0.75rem;">Speed</label>
+                            <input id="otherServoSpeed" type="range" min="1" max="10" value="5" style="flex:1;">
+                            <span id="otherServoSpeedValue" style="margin-left:6px;font-size:0.75rem;">5</span>
+                        </div>
+                        <button id="otherServoRunBtn" class="primary" style="width:100%;margin-top:8px;">Move Servo</button>
+                        <button id="otherServoOffBtn" class="secondary" style="width:100%;margin-top:4px;">Stop Servo</button>
+                    </div>
+
+                    <!-- RGB strip -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">💡</span><span data-i18n="other_rgb_strip">RGB Strip</span></div>
+                        </div>
+                        <div id="otherStrip"
+                             style="display:flex;gap:4px;flex-wrap:wrap;">
+                            <div class="other-strip-led" data-index="0"></div>
+                            <div class="other-strip-led" data-index="1"></div>
+                            <div class="other-strip-led" data-index="2"></div>
+                            <div class="other-strip-led" data-index="3"></div>
+                            <div class="other-strip-led" data-index="4"></div>
+                            <div class="other-strip-led" data-index="5"></div>
+                            <div class="other-strip-led" data-index="6"></div>
+                            <div class="other-strip-led" data-index="7"></div>
+                        </div>
+                        <button id="otherStripClearBtn" class="chip-btn" style="margin-top:6px;">Clear strip</button>
+                    </div>
+
+                    <!-- Keypad -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">🔢</span><span data-i18n="other_keypad_sim">Keypad</span></div>
+                        </div>
+                        <div id="otherKeypad"
+                             style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
+                            <button class="chip-btn other-keypad-btn" data-key="1">1</button>
+                            <button class="chip-btn other-keypad-btn" data-key="2">2</button>
+                            <button class="chip-btn other-keypad-btn" data-key="3">3</button>
+                            <button class="chip-btn other-keypad-btn" data-key="4">4</button>
+                            <button class="chip-btn other-keypad-btn" data-key="5">5</button>
+                            <button class="chip-btn other-keypad-btn" data-key="6">6</button>
+                            <button class="chip-btn other-keypad-btn" data-key="7">7</button>
+                            <button class="chip-btn other-keypad-btn" data-key="8">8</button>
+                            <button class="chip-btn other-keypad-btn" data-key="9">9</button>
+                        </div>
+                        <div style="margin-top:6px;font-size:0.8rem;">
+                            Last key: <span id="otherKeypadLast">–</span>
+                        </div>
+                    </div>
+
+                    <!-- File I/O -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <div class="section-title"><span class="section-icon">📁</span><span data-i18n="other_file_io">File I/O</span></div>
+                        </div>
+                        <input id="otherFileUpload" type="file" style="width:100%;margin-bottom:6px;">
+                        <div id="otherFileUploadLabel" style="font-size:0.75rem;">No file loaded</div>
+                    </div>
+                </div>
+            </details>
+
+        </div>
+    </div>
+
+    <!-- Response area (micro:bit output) -->
+    <div class="control-section">
+        <div class="section-header">
+            <div class="section-title"><span class="section-icon">📥</span><span data-i18n="other_response">Response</span></div>
+            <div class="section-subtitle" data-i18n="other_response_subtitle">Output from micro:bit.</div>
+        </div>
+        <div id="otherResponse" class="bench-response"></div>
+    </div>
+
+</div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Firmware Code Overlay -->
+<div id="firmwareOverlay" class="overlay">
+    <div class="overlay-card" style="max-width:800px; width:95vw;">
+        <div class="overlay-title" data-i18n="fw_title">🤖 micro:bit Firmware</div>
+        <div style="margin-bottom:12px; font-size:0.85rem; opacity:0.8;" data-i18n="fw_intro">
+            Flash this code to your micro:bit V2 using MakeCode:
+        </div>
+        <ol style="font-size:0.8rem; margin-bottom:12px; padding-left:20px; opacity:0.8;">
+            <li data-i18n="fw_step1">Click Copy Code below</li>
+            <li data-i18n="fw_step2">Open MakeCode and switch to JavaScript mode</li>
+            <li data-i18n="fw_step3">Select all (Ctrl+A) and paste (Ctrl+V)</li>
+            <li data-i18n="fw_step4">Click Download and flash to your micro:bit</li>
+        </ol>
+        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+            <button id="firmwareCopyBtn" class="primary" data-i18n="copy_code">Copy Code</button>
+            <a href="https://makecode.microbit.org/" target="_blank" rel="noopener" class="secondary" style="display:inline-flex; align-items:center; text-decoration:none; padding:8px 16px; border-radius:8px;" data-i18n="open_makecode">Open MakeCode</a>
+            <button id="firmwareCloseBtn" class="secondary" data-i18n="close">Close</button>
+        </div>
+        <div id="firmwareCodeWrap" style="max-height:60vh; overflow:auto; border-radius:8px; border:1px solid var(--card-border, #333); -webkit-overflow-scrolling:touch;">
+            <pre id="firmwareCode" style="margin:0; padding:12px; font-size:0.7rem; line-height:1.4; white-space:pre; tab-size:4; font-family:var(--font-mono, monospace); background:rgba(0,0,0,0.3); overflow-x:auto;"></pre>
+        </div>
+        <script id="firmwareSource" type="text/plain">LyoqCiAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogKiAgbWljcm86Yml0IFBsYXlncm91bmQgLSBCTEUgRmlybXdhcmUgKFY4LjEpCiAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogKgogKiBVQVJUIG92ZXIgQmx1ZXRvb3RoIExFIC0gZnVsbCB0ZWxlbWV0cnksIGNvbnRyb2wgJiAzRCBzeW5jCiAqCiAqIFRFTEVNRVRSWSAobWljcm86Yml0IC0+IGJyb3dzZXIpOgogKiAgIFRFTVA6PEM+ICAgICAgICAgICAgICAgICAgICAgICAgICAgZXZlcnkgMTAwbXMgKG9uIGNoYW5nZSkKICogICBMSUdIVDo8MC0yNTU+ICAgICAgICAgICAgICAgICAgICAgIGV2ZXJ5IDEwMG1zIChvbiBjaGFuZ2UpCiAqICAgU09VTkQ6PDAtMjU1PiAgICAgICAgICAgICAgICAgICAgICBldmVyeSAxMDBtcyAob24gY2hhbmdlKQogKiAgIEFDQzo8eD4sPHk+LDx6PiAgICAgICAgICAgICAgICAgICAgZXZlcnkgMzAwbXMgKG9uIGNoYW5nZSwgMTVtZyBkZWFkYmFuZCkKICogICBDT01QQVNTOjwwLTM2MD4gICAgICAgICAgICAgICAgICAgIGV2ZXJ5IDIwMG1zIChhZnRlciBjYWxpYnJhdGlvbiBvbmx5KQogKiAgIEJUTjpBOjwwfDE+ICBCVE46Qjo8MHwxPiAgICAgICAgICBldmVyeSAxMDBtcyAob24gY2hhbmdlKQogKiAgIEJUTjpQMC9QMS9QMjo8MHwxPiAgICAgICAgICAgICAgICBldmVyeSAxMDBtcyAob24gY2hhbmdlKQogKiAgIEJUTjpMT0dPOjwwfDE+ICAgICAgICAgICAgICAgICAgICBldmVyeSAxMDBtcyAob24gY2hhbmdlKQogKiAgIExFRFM6PHIwPiw8cjE+LDxyMj4sPHIzPiw8cjQ+ICAgICBldmVyeSAyNTBtcyAob24gY2hhbmdlKQogKiAgICAgICBlYWNoIHJvdyAwLTMxICg1IGJpdHMpLCBzeW5jcyB3aXRoIDNEIGJvYXJkIG1vZGVsCiAqICAgU0VSVk8xX1BPUzo8YW5nbGU+ICAgICAgICAgICAgICAgICBldmVyeSA1MDBtcyAob24gY2hhbmdlKQogKiAgIFNFUlZPMl9QT1M6PGFuZ2xlPiAgICAgICAgICAgICAgICAgZXZlcnkgNTAwbXMgKG9uIGNoYW5nZSkKICogICBHUkFQSDo8bGFiZWw+Ojx2YWx1ZT4gICAgICAgICAgICAgIHNpbXVsYXRlIG1vZGUgb25seSAoU2luZS9SYW5kb20vUmFtcCkKICogICBTSU1VTEFURTpBQ0s6T04vT0ZGICAgICAgICAgICAgICAgIHNpbXVsYXRlIGFja25vd2xlZGdlbWVudAogKiAgIENBTDpDT01QQVNTOkRPTkUgICAgICAgICAgICAgICAgICAgYWZ0ZXIgY2FsaWJyYXRpb24gY29tcGxldGUKICogICBJTkZPOkNPTk5FQ1RFRCAvIElORk86RElTQ09OTkVDVEVEIEJMRSBzdGF0ZSBjaGFuZ2VzCiAqICAgSU5GTzpTRVJJQUw6PGlkPiAgICAgICAgICAgICAgICAgICBkZXZpY2Ugc2VyaWFsIG51bWJlcgogKiAgIE9USEVSOkFDSzo8Y21kPiAgICAgICAgICAgICAgICAgICAgYWNrbm93bGVkZ2VtZW50IGZvciBPdGhlcnMgdGFiIGNvbW1hbmRzCiAqICAgT1RIRVI6TkFDSzo8cmVhc29uPiAgICAgICAgICAgICAgICByZWplY3Rpb24gKGUuZy4gcGluIGNvbmZsaWN0KQogKgogKiBDT01NQU5EUyAoYnJvd3NlciAtPiBtaWNybzpiaXQpOgogKiAgIFRFWFQ6PHN0cmluZz4gICAgICAgICAgIFNob3cgc2Nyb2xsaW5nIHRleHQgb24gTEVECiAqICAgTE06PGhleDEwPiAgICAgICAgICAgICBTZXQgNXg1IExFRCBtYXRyaXggKGhleCBlbmNvZGVkKQogKiAgIENNRDpIRUFSVC9TTUlMRS9TQUQvQ0xFQVIvRklSRS9VUC9ET1dOL0xFRlQvUklHSFQKICogICBTRVJWTzE6PGFuZ2xlPiAgICAgICAgIFNFUlZPMjo8YW5nbGU+ICAgICAgICgwLTE4MCwgc21vb3RoIHN0ZXBwaW5nKQogKiAgIFNFUlZPMTpPRkYgICAgICAgICAgICAgU0VSVk8yOk9GRiAgICAgICAgICAgKHJlbGVhc2UgUFdNKQogKiAgIEJVWlo6PGZyZXE+LDxtcz4gICAgICAgQlVaWjpPRkYgICAgICAgICAgICAgKG5vbi1ibG9ja2luZywgVjIgc3BlYWtlciArIFAwKQogKiAgIFRBQjo8bmFtZT4gICAgICAgICAgICAgTm90aWZ5IGZpcm13YXJlIG9mIGFjdGl2ZSBicm93c2VyIHRhYgogKiAgIEJFTkNIOjxjbWQ+ICAgICAgICAgICAgKFBJTkcsIFNUQVRVUywgUkVTRVQpCiAqICAgSlNPTjp7Li4ufSAgICAgICAgICAgICBFY2hvIHdpdGggYnl0ZSBjb3VudAogKiAgIFNJTVVMQVRFOk9OL09GRiAgICAgICAgU3RhcnQvc3RvcCBncmFwaCBkZW1vIGRhdGEKICogICBDQUw6Q09NUEFTUyAgICAgICAgICAgIFRyaWdnZXIgY29tcGFzcyBjYWxpYnJhdGlvbiBnYW1lCiAqICAgSEVMTE8gICAgICAgICAgICAgICAgICBTZW50IG9uIGNvbm5lY3QgdG8gY29uZmlybSBsaW5rCiAqCiAqIE9USEVSUyBUQUIgQ09NTUFORFMgKGJyb3dzZXIgLT4gbWljcm86Yml0KToKICogICBPVEhFUjpCVE46UFJFU1MgICAgICAgIEJ1dHRvbiBwcmVzcyAtPiBMRUQgZmxhc2gKICogICBPVEhFUjpTV0lUQ0g6T04vT0ZGICAgIFRvZ2dsZSAtPiB0aWNrL2Nyb3NzIG9uIExFRAogKiAgIE9USEVSOlNMSURFUjo8MC0xMDA+ICAgU2xpZGVyIC0+IGJhciBncmFwaCBvbiBMRUQKICogICBPVEhFUjpKT1k6PGRpcj4gICAgICAgIEpveXN0aWNrIC0+IGFycm93IG9uIExFRCAoVVAvRE9XTi9MRUZUL1JJR0hUKQogKiAgIE9USEVSOktFWTo8MS05PiAgICAgICAgS2V5cGFkIC0+IHNob3cgZGlnaXQgb24gTEVECiAqICAgT1RIRVI6VEVYVDo8c3RyaW5nPiAgICBUZXh0IC0+IHNjcm9sbCBvbiBMRUQKICogICBPVEhFUjpMRUQ6T04vT0ZGICAgICAgIExFRCBpbmRpY2F0b3IgLT4gY2VudGVyIExFRCBvbi9vZmYKICogICBPVEhFUjpQSU46PHBpbj46PDB8MT4gIERpZ2l0YWwgcGluIHdyaXRlIChEMC9EMS9EMi9EOC9EMTIvRDE2KQogKiAgIE9USEVSOlBXTTpQMDo8MC0xMDIzPiAgUFdNIG91dHB1dCBvbiBQMAogKiAgIE9USEVSOlNFUlZPOjxhbmdsZT4sPHNwZWVkPiAgU2Vydm8gdmlhIE90aGVycyB0YWIKICogICBPVEhFUjpTVFJJUDo8aT46PGhleD4gIFJHQiBzdHJpcCAocGxhY2Vob2xkZXIsIEFDSyBvbmx5KQogKiAgIE9USEVSOk1PREU6PG1vZGU+ICAgICAgTW9kZSBzZWxlY3RvciAtPiBzaG93IGluaXRpYWwgb24gTEVECiAqICAgT1RIRVI6WFk6PHg+LDx5PiAgICAgICBYWSBwYWQgLT4gcGxvdCBkb3Qgb24gNXg1IExFRAogKiAgIE9USEVSOlJBTkRPTTo8bj4gICAgICAgUmFuZG9tIC0+IHNob3cgbnVtYmVyIG9uIExFRAogKiAgIE9USEVSOk5VTUJFUjo8bj4gICAgICAgTnVtZXJpYyAtPiBzaG93IG51bWJlciBvbiBMRUQKICogICBPVEhFUjpSQU5HRV9NSU46PG4+ICAgIFJhbmdlIG1pbiAtPiBiYXIgZ3JhcGggb24gTEVECiAqICAgT1RIRVI6UkFOR0VfTUFYOjxuPiAgICBSYW5nZSBtYXggLT4gYmFyIGdyYXBoIG9uIExFRAogKiAgIE9USEVSOkNPTE9SOjxoZXg+ICAgICAgQ29sb3IgLT4gZGlhbW9uZCBmbGFzaCBvbiBMRUQKICogICBPVEhFUjpERUxBWUVEX0FDVElPTiAgIERlbGF5ZWQgdHJpZ2dlciAtPiB0YXJnZXQgaWNvbiArIGJlZXAKICoKICogUElOIENPTkZMSUNUIEdVQVJEUzoKICogICBzZXJ2bzFBY3RpdmUgIC0+IGJsb2NrcyB0b3VjaCBQMSBwb2xsaW5nICYgRDEgcGluIHdyaXRlcwogKiAgIHNlcnZvMkFjdGl2ZSAgLT4gYmxvY2tzIHRvdWNoIFAyIHBvbGxpbmcgJiBEMiBwaW4gd3JpdGVzCiAqICAgYnV6emVyQWN0aXZlICAtPiBibG9ja3MgdG91Y2ggUDAgcG9sbGluZwogKgogKiAzRCBCT0FSRCBTWU5DOgogKiAgIExFRFM6ICAgIHRlbGVtZXRyeSBtaXJyb3JzIGFjdHVhbCBMRUQgZGlzcGxheSBvbiAzRCBtb2RlbAogKiAgIEFDQzogICAgIHRpbHRzIDNEIGJvYXJkIG1hdGNoaW5nIHBoeXNpY2FsIG9yaWVudGF0aW9uCiAqICAgQlROOiAgICAgYnV0dG9ucyBkZXByZXNzICsgZ2xvdyBvbiAzRCBtb2RlbAogKiAgIFRvdWNoOiAgIHBpbnMgZ2xvdyBvbiAzRCBtb2RlbAogKiAgIFRFTVA6ICAgIHRpbnRzIDNEIFBDQiBjb2xvciAoYmx1ZSB0byByZWQpCiAqICAgU0VSVk86ICAgZHJpdmVzIDNEIEJ1Z2d5IHdoZWVscywgUm9ib3QgQXJtIGpvaW50cwogKiAgIENPTVBBU1M6IHJvdGF0ZXMgM0QgV2VhdGhlciBTdGF0aW9uIHdpbmQgdmFuZQogKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KICovCi8vIFRvdWNoIHBpbiBldmVudHMgdXNpbmcgaW5wdXQub25QaW5QcmVzc2VkCmlucHV0Lm9uUGluUHJlc3NlZChUb3VjaFBpbi5QMCwgZnVuY3Rpb24gKCkgewogICAgaWYgKGJ0Q29ubmVjdGVkKSB7CiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkVWRU5UOlRPVUNIX1AwX1BSRVNTRUQiKQogICAgfQp9KQovLyBQMiB0b3VjaCBldmVudHMgcmVtb3ZlZDogY29uZmxpY3RzIHdpdGggc2Vydm8yIG9uIFAyIChzYW1lIGFzIFAxIGFib3ZlKQppbnB1dC5vblBpblJlbGVhc2VkKFRvdWNoUGluLlAwLCBmdW5jdGlvbiAoKSB7CiAgICBpZiAoYnRDb25uZWN0ZWQpIHsKICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiRVZFTlQ6VE9VQ0hfUDBfUkVMRUFTRUQiKQogICAgfQp9KQpibHVldG9vdGgub25CbHVldG9vdGhDb25uZWN0ZWQoZnVuY3Rpb24gKCkgewogICAgYnRDb25uZWN0ZWQgPSB0cnVlCiAgICBiYXNpYy5zaG93SWNvbihJY29uTmFtZXMuWWVzKQogICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIklORk86Q09OTkVDVEVEIikKfSkKYmx1ZXRvb3RoLm9uQmx1ZXRvb3RoRGlzY29ubmVjdGVkKGZ1bmN0aW9uICgpIHsKICAgIGJ0Q29ubmVjdGVkID0gZmFsc2UKICAgIGJhc2ljLnNob3dJY29uKEljb25OYW1lcy5ObykKICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJJTkZPOkRJU0NPTk5FQ1RFRCIpCn0pCmlucHV0Lm9uQnV0dG9uUHJlc3NlZChCdXR0b24uQSwgZnVuY3Rpb24gKCkgewogICAgaWYgKGJ0Q29ubmVjdGVkKSB7CiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkVWRU5UOkJVVFRPTl9BX1BSRVNTRUQiKQogICAgfQp9KQovLyAoUDIgcHJlc3NlZCBldmVudCByZW1vdmVkIOKAlCBzZWUgUDIgcmVsZWFzZWQgY29tbWVudCBhYm92ZSkKZnVuY3Rpb24gaGFuZGxlTGVkTWF0cml4SGV4KGhleDI6IHN0cmluZykgewogICAgaWYgKGhleDIubGVuZ3RoICE9IDEwKSB7CiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkxPRzpMTV9CQURfTEVOR1RIOiIgKyBoZXgyLmxlbmd0aCkKICAgICAgICByZXR1cm4KICAgIH0KICAgIGZvciAobGV0IHJvdyA9IDA7IHJvdyA8PSA0OyByb3crKykgewogICAgICAgIGxldCBwYWlyID0gaGV4Mi5zdWJzdHIocm93ICogMiwgMikKICAgICAgICBsZXQgdmFsdWUgPSBoZXhQYWlyVG9CeXRlKHBhaXIpCiAgICAgICAgZm9yIChsZXQgY29sID0gMDsgY29sIDw9IDQ7IGNvbCsrKSB7CiAgICAgICAgICAgIGNvbnN0IG1hc2sgPSAxIDw8IGNvbAogICAgICAgICAgICBsZXQgb24gPSAodmFsdWUgJiBtYXNrKSAhPSAwCiAgICAgICAgICAgIGlmIChvbikgewogICAgICAgICAgICAgICAgbGVkLnBsb3QoY29sLCByb3cpCiAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICBsZWQudW5wbG90KGNvbCwgcm93KQogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQogICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkxPRzpMTV9PSzoiICsgaGV4MikKfQovLyAtLS0tLS0tLS0tIFVBUlQgUlg6IGNvbW1hbmRzIGZyb20gYnJvd3NlciAtLS0tLS0tLS0tCmJsdWV0b290aC5vblVhcnREYXRhUmVjZWl2ZWQoc2VyaWFsLmRlbGltaXRlcnMoRGVsaW1pdGVycy5OZXdMaW5lKSwgZnVuY3Rpb24gKCkgewogICAgbGV0IGxpbmUgPSBibHVldG9vdGgudWFydFJlYWRVbnRpbChzZXJpYWwuZGVsaW1pdGVycyhEZWxpbWl0ZXJzLk5ld0xpbmUpKQogICAgbGluZSA9IGxpbmUudHJpbSgpCiAgICAvLyBFY2hvIGJhY2sgZm9yIGRlYnVnZ2luZwogICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkVDSE86IiArIGxpbmUpCiAgICBpZiAobGluZS5zdWJzdHIoMCwgNSkgPT0gIlRFWFQ6IikgewogICAgICAgIGxldCBtc2cgPSBsaW5lLnN1YnN0cig1KQogICAgICAgIGlmIChtc2cubGVuZ3RoID4gMCkgewogICAgICAgICAgICBiYXNpYy5zaG93U3RyaW5nKG1zZykKICAgICAgICB9CiAgICAgICAgcmV0dXJuCiAgICB9CiAgICBpZiAobGluZS5zdWJzdHIoMCwgMykgPT0gIkxNOiIpIHsKICAgICAgICBsZXQgaGV4MiA9IGxpbmUuc3Vic3RyKDMpCiAgICAgICAgaGFuZGxlTGVkTWF0cml4SGV4KGhleDIpCiAgICAgICAgcmV0dXJuCiAgICB9CiAgICAvLyA9PT09PT09PSBUQUIgY2hhbmdlIGZyb20gYnJvd3NlciA9PT09PT09PT0KICAgIC8vIEV4cGVjdCBtZXNzYWdlcyBsaWtlOiBUQUI6Q29udHJvbHMsIFRBQjpTZW5zZXMsIFRBQjpTZXJ2b3MsIFRBQjpPdGhlcnMKICAgIGlmIChsaW5lLnN1YnN0cigwLCA0KSA9PSAiVEFCOiIpIHsKICAgICAgICBsZXQgdGFiID0gbGluZS5zdWJzdHIoNCkudG9Mb3dlckNhc2UoKQogICAgICAgIGN1cnJlbnRUYWIgPSB0YWIgIC8vIFN0b3JlIGZvciBjb25kaXRpb25hbCBwaW4gcG9sbGluZwogICAgICAgIC8vIEFja25vd2xlZGdlIGJhY2sgdG8gYnJvd3NlcgogICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJUQUI6QUNLOiIgKyB0YWIpCiAgICAgICAgLy8gU2ltcGxlIHZpc3VhbCBmZWVkYmFjayBvbiBtaWNybzpiaXQ6CiAgICAgICAgLy8gc2hvdyBmaXJzdCBsZXR0ZXIgb2YgdGhlIHRhYiAoQyAvIFMgLyBTIC8gTykKICAgICAgICBpZiAodGFiLmxlbmd0aCA+IDApIHsKICAgICAgICAgICAgYmFzaWMuc2hvd1N0cmluZyh0YWIuY2hhckF0KDApLnRvVXBwZXJDYXNlKCkpCiAgICAgICAgfQogICAgICAgIHJldHVybgogICAgfQogICAgLy8gPT09PT09PT0gU0VSVk9TID09PT09PT09PQogICAgLy8gQWNjZXB0IGNvbW1hbmRzOiBTRVJWTzE6PGFuZ2xlPiwgU0VSVk8yOjxhbmdsZT4sIFNFUlZPMTpPRkYsIFNFUlZPMjpPRkYKICAgIGlmIChsaW5lID09ICJTRVJWTzE6T0ZGIikgewogICAgICAgIHBpbnMuYW5hbG9nV3JpdGVQaW4oQW5hbG9nUGluLlAxLCAwKQogICAgICAgIHNlcnZvMVRhcmdldCA9IDAKICAgICAgICBzZXJ2bzFDdXJyZW50ID0gMAogICAgICAgIHNlcnZvMUFjdGl2ZSA9IGZhbHNlCiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIlNFUlZPMTpPRkY6QUNLIikKICAgICAgICByZXR1cm4KICAgIH0KICAgIGlmIChsaW5lID09ICJTRVJWTzI6T0ZGIikgewogICAgICAgIHBpbnMuYW5hbG9nV3JpdGVQaW4oQW5hbG9nUGluLlAyLCAwKQogICAgICAgIHNlcnZvMlRhcmdldCA9IDAKICAgICAgICBzZXJ2bzJDdXJyZW50ID0gMAogICAgICAgIHNlcnZvMkFjdGl2ZSA9IGZhbHNlCiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIlNFUlZPMjpPRkY6QUNLIikKICAgICAgICByZXR1cm4KICAgIH0KICAgIC8vIFJlcGxhY2UgZXhpc3RpbmcgU0VSVk8xOiBoYW5kbGluZyBibG9jayB3aXRoIHRoaXMKICAgIGlmIChsaW5lLnN1YnN0cigwLCA3KSA9PSAiU0VSVk8xOiIpIHsKICAgICAgICBsZXQgcmF3ID0gbGluZS5zdWJzdHIoNykKICAgICAgICBsZXQgYiA9IHBhcnNlRmxvYXQocmF3KQogICAgICAgIGlmICghKGlzTmFOKGIpKSkgewogICAgICAgICAgICBsZXQgYW5nbGUgPSBjbGFtcEFuZ2xlKGIpCiAgICAgICAgICAgIHNlcnZvMUFjdGl2ZSA9IHRydWUKICAgICAgICAgICAgLy8gTGV0IHJlcXVlc3RTZXJ2b01vdmUgaGFuZGxlIHRoZSBwaW4gd3JpdGUgdG8gYXZvaWQgcmFjZSBjb25kaXRpb24KICAgICAgICAgICAgcmVxdWVzdFNlcnZvTW92ZSgxLCBhbmdsZSkKICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIlNFUlZPMTpBQ0s6IiArIGFuZ2xlKQogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiREJHOlNFUlZPMV9SRUNWOiIgKyByYXcpCiAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIlNFUlZPMTpOQUNLIikKICAgICAgICB9CiAgICAgICAgcmV0dXJuCiAgICB9CiAgICAvLyBSZXBsYWNlIGV4aXN0aW5nIFNFUlZPMjogaGFuZGxpbmcgYmxvY2sgd2l0aCB0aGlzCiAgICBpZiAobGluZS5zdWJzdHIoMCwgNykgPT0gIlNFUlZPMjoiKSB7CiAgICAgICAgbGV0IHJhdzIgPSBsaW5lLnN1YnN0cig3KQogICAgICAgIGxldCBjID0gcGFyc2VGbG9hdChyYXcyKQogICAgICAgIGlmICghKGlzTmFOKGMpKSkgewogICAgICAgICAgICBsZXQgYW5nbGUyID0gY2xhbXBBbmdsZShjKQogICAgICAgICAgICBzZXJ2bzJBY3RpdmUgPSB0cnVlCiAgICAgICAgICAgIHJlcXVlc3RTZXJ2b01vdmUoMiwgYW5nbGUyKQogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiU0VSVk8yOkFDSzoiICsgYW5nbGUyKQogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiREJHOlNFUlZPMl9SRUNWOiIgKyByYXcyKQogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJTRVJWTzI6TkFDSyIpCiAgICAgICAgfQogICAgICAgIHJldHVybgogICAgfQogICAgaWYgKGxpbmUgPT0gIkNNRDpIRUFSVCIpIHsKICAgICAgICBiYXNpYy5zaG93SWNvbihJY29uTmFtZXMuSGVhcnQpCiAgICAgICAgcmV0dXJuCiAgICB9CiAgICBpZiAobGluZSA9PSAiQ01EOlNNSUxFIikgewogICAgICAgIGJhc2ljLnNob3dJY29uKEljb25OYW1lcy5IYXBweSkKICAgICAgICByZXR1cm4KICAgIH0KICAgIGlmIChsaW5lID09ICJDTUQ6U0FEIikgewogICAgICAgIGJhc2ljLnNob3dJY29uKEljb25OYW1lcy5TYWQpCiAgICAgICAgcmV0dXJuCiAgICB9CiAgICBpZiAobGluZSA9PSAiQ01EOkNMRUFSIikgewogICAgICAgIGJhc2ljLmNsZWFyU2NyZWVuKCkKICAgICAgICByZXR1cm4KICAgIH0KICAgIGlmIChsaW5lID09ICJDTUQ6RklSRSIpIHsKICAgICAgICBwbGF5RXhwbG9zaW9uKCkKICAgICAgICByZXR1cm4KICAgIH0KICAgIC8vID09PT09PT09IEdBTUVQQUQgRC1QQUQgPT09PT09PT0KICAgIGlmIChsaW5lID09ICJDTUQ6VVAiKSB7CiAgICAgICAgYmFzaWMuc2hvd0Fycm93KEFycm93TmFtZXMuTm9ydGgpCiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkNNRDpBQ0s6VVAiKQogICAgICAgIHJldHVybgogICAgfQogICAgaWYgKGxpbmUgPT0gIkNNRDpET1dOIikgewogICAgICAgIGJhc2ljLnNob3dBcnJvdyhBcnJvd05hbWVzLlNvdXRoKQogICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJDTUQ6QUNLOkRPV04iKQogICAgICAgIHJldHVybgogICAgfQogICAgaWYgKGxpbmUgPT0gIkNNRDpMRUZUIikgewogICAgICAgIGJhc2ljLnNob3dBcnJvdyhBcnJvd05hbWVzLldlc3QpCiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkNNRDpBQ0s6TEVGVCIpCiAgICAgICAgcmV0dXJuCiAgICB9CiAgICBpZiAobGluZSA9PSAiQ01EOlJJR0hUIikgewogICAgICAgIGJhc2ljLnNob3dBcnJvdyhBcnJvd05hbWVzLkVhc3QpCiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkNNRDpBQ0s6UklHSFQiKQogICAgICAgIHJldHVybgogICAgfQogICAgLy8gPT09PT09PT0gQkVOQ0ggKGVjaG8gKyBkaWFnbm9zdGljcykgPT09PT09PT0KICAgIGlmIChsaW5lLnN1YnN0cigwLCA2KSA9PSAiQkVOQ0g6IikgewogICAgICAgIGNvbnN0IGNtZCA9IGxpbmUuc3Vic3RyKDYpLnRyaW0oKQogICAgICAgIC8vIEVjaG8gYmFjayBmb3IgdGVzdGluZwogICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJCRU5DSDpFQ0hPOiIgKyBjbWQpCiAgICAgICAgLy8gU2ltcGxlIGJ1aWx0LWluIGNvbW1hbmRzCiAgICAgICAgaWYgKGNtZCA9PSAiUElORyIpIHsKICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkJFTkNIOlBPTkciKQogICAgICAgIH0gZWxzZSBpZiAoY21kID09ICJTVEFUVVMiKSB7CiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJCRU5DSDpUQUI6IiArIGN1cnJlbnRUYWIpCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJCRU5DSDpTMToiICsgc2Vydm8xQ3VycmVudCkKICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkJFTkNIOlMyOiIgKyBzZXJ2bzJDdXJyZW50KQogICAgICAgIH0gZWxzZSBpZiAoY21kID09ICJSRVNFVCIpIHsKICAgICAgICAgICAgY29udHJvbC5yZXNldCgpCiAgICAgICAgfQogICAgICAgIHJldHVybgogICAgfQogICAgLy8gPT09PT09PT0gSlNPTiAoZWNobyBmb3IgZGVidWcpID09PT09PT09CiAgICBpZiAobGluZS5zdWJzdHIoMCwgNSkgPT0gIkpTT046IikgewogICAgICAgIGNvbnN0IHBheWxvYWQgPSBsaW5lLnN1YnN0cig1KQogICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJKU09OOkFDSzoiICsgcGF5bG9hZC5sZW5ndGggKyAiIGNoYXJzIikKICAgICAgICByZXR1cm4KICAgIH0KICAgIC8vID09PT09PT09IE9USEVSUyBUQUIgV0lER0VUUyA9PT09PT09PQogICAgaWYgKGxpbmUuc3Vic3RyKDAsIDYpID09ICJPVEhFUjoiKSB7CiAgICAgICAgY29uc3QgcmVzdCA9IGxpbmUuc3Vic3RyKDYpCiAgICAgICAgLy8gQnV0dG9uIHByZXNzCiAgICAgICAgaWYgKHJlc3QgPT0gIkJUTjpQUkVTUyIpIHsKICAgICAgICAgICAgYmFzaWMuc2hvd0ljb24oSWNvbk5hbWVzLlNtYWxsRGlhbW9uZCkKICAgICAgICAgICAgYmFzaWMucGF1c2UoMTAwKQogICAgICAgICAgICBiYXNpYy5jbGVhclNjcmVlbigpCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6QlROIikKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgfQogICAgICAgIC8vIFN3aXRjaAogICAgICAgIGlmIChyZXN0LnN1YnN0cigwLCA3KSA9PSAiU1dJVENIOiIpIHsKICAgICAgICAgICAgY29uc3Qgc3RhdGUgPSByZXN0LnN1YnN0cig3KQogICAgICAgICAgICBpZiAoc3RhdGUgPT0gIk9OIikgewogICAgICAgICAgICAgICAgYmFzaWMuc2hvd0ljb24oSWNvbk5hbWVzLlllcykKICAgICAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgICAgIGJhc2ljLnNob3dJY29uKEljb25OYW1lcy5ObykKICAgICAgICAgICAgfQogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiT1RIRVI6QUNLOlNXSVRDSDoiICsgc3RhdGUpCiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgICAgICAvLyBTbGlkZXIKICAgICAgICBpZiAocmVzdC5zdWJzdHIoMCwgNykgPT0gIlNMSURFUjoiKSB7CiAgICAgICAgICAgIGNvbnN0IHZhbCA9IHBhcnNlSW50KHJlc3Quc3Vic3RyKDcpKQogICAgICAgICAgICAvLyBTaG93IGFzIGJhciBncmFwaCBvbiBMRUQKICAgICAgICAgICAgbGVkLnBsb3RCYXJHcmFwaCh2YWwsIDEwMCkKICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIk9USEVSOkFDSzpTTElERVI6IiArIHZhbCkKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgfQogICAgICAgIC8vIEpveXN0aWNrCiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDQpID09ICJKT1k6IikgewogICAgICAgICAgICBjb25zdCBkaXIgPSByZXN0LnN1YnN0cig0KQogICAgICAgICAgICBpZiAoZGlyID09ICJVUCIpIGJhc2ljLnNob3dBcnJvdyhBcnJvd05hbWVzLk5vcnRoKQogICAgICAgICAgICBlbHNlIGlmIChkaXIgPT0gIkRPV04iKSBiYXNpYy5zaG93QXJyb3coQXJyb3dOYW1lcy5Tb3V0aCkKICAgICAgICAgICAgZWxzZSBpZiAoZGlyID09ICJMRUZUIikgYmFzaWMuc2hvd0Fycm93KEFycm93TmFtZXMuV2VzdCkKICAgICAgICAgICAgZWxzZSBpZiAoZGlyID09ICJSSUdIVCIpIGJhc2ljLnNob3dBcnJvdyhBcnJvd05hbWVzLkVhc3QpCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6Sk9ZOiIgKyBkaXIpCiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgICAgICAvLyBUZXh0CiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDUpID09ICJURVhUOiIpIHsKICAgICAgICAgICAgY29uc3QgdHh0ID0gcmVzdC5zdWJzdHIoNSkKICAgICAgICAgICAgYmFzaWMuc2hvd1N0cmluZyh0eHQpCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6VEVYVCIpCiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgICAgICAvLyBMRUQgaW5kaWNhdG9yCiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDQpID09ICJMRUQ6IikgewogICAgICAgICAgICBjb25zdCBzdGF0ZSA9IHJlc3Quc3Vic3RyKDQpCiAgICAgICAgICAgIGlmIChzdGF0ZSA9PSAiT04iKSB7CiAgICAgICAgICAgICAgICBsZWQucGxvdCgyLCAyKQogICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgbGVkLnVucGxvdCgyLCAyKQogICAgICAgICAgICB9CiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6TEVEOiIgKyBzdGF0ZSkKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgfQogICAgICAgIC8vIEtleXBhZAogICAgICAgIGlmIChyZXN0LnN1YnN0cigwLCA0KSA9PSAiS0VZOiIpIHsKICAgICAgICAgICAgY29uc3Qga2V5ID0gcmVzdC5zdWJzdHIoNCkKICAgICAgICAgICAgYmFzaWMuc2hvd1N0cmluZyhrZXkpCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6S0VZOiIgKyBrZXkpCiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgICAgICAvLyBQaW4gY29udHJvbCAoZ3VhcmQgUDEvUDIgYWdhaW5zdCBhY3RpdmUgc2Vydm9zKQogICAgICAgIGlmIChyZXN0LnN1YnN0cigwLCA0KSA9PSAiUElOOiIpIHsKICAgICAgICAgICAgY29uc3QgcGFydHMyID0gcmVzdC5zdWJzdHIoNCkuc3BsaXQoIjoiKQogICAgICAgICAgICBpZiAocGFydHMyLmxlbmd0aCA9PSAyKSB7CiAgICAgICAgICAgICAgICBjb25zdCBwaW5OYW1lID0gcGFydHMyWzBdICAvLyBEMCwgRDEsIEQyLCBEOCwgRDEyLCBEMTYKICAgICAgICAgICAgICAgIGNvbnN0IHBpblZhbCA9IHBhcnNlSW50KHBhcnRzMlsxXSkKICAgICAgICAgICAgICAgIC8vIEJsb2NrIEQxIGlmIHNlcnZvMSBhY3RpdmUsIEQyIGlmIHNlcnZvMiBhY3RpdmUKICAgICAgICAgICAgICAgIGlmIChwaW5OYW1lID09ICJEMSIgJiYgc2Vydm8xQWN0aXZlKSB7CiAgICAgICAgICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIk9USEVSOk5BQ0s6UElOOkQxOlNFUlZPX0FDVElWRSIpCiAgICAgICAgICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBpZiAocGluTmFtZSA9PSAiRDIiICYmIHNlcnZvMkFjdGl2ZSkgewogICAgICAgICAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpOQUNLOlBJTjpEMjpTRVJWT19BQ1RJVkUiKQogICAgICAgICAgICAgICAgICAgIHJldHVybgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgLy8gTWFwIHRvIGFjdHVhbCBwaW5zCiAgICAgICAgICAgICAgICBpZiAocGluTmFtZSA9PSAiRDAiKSBwaW5zLmRpZ2l0YWxXcml0ZVBpbihEaWdpdGFsUGluLlAwLCBwaW5WYWwpCiAgICAgICAgICAgICAgICBlbHNlIGlmIChwaW5OYW1lID09ICJEMSIpIHBpbnMuZGlnaXRhbFdyaXRlUGluKERpZ2l0YWxQaW4uUDEsIHBpblZhbCkKICAgICAgICAgICAgICAgIGVsc2UgaWYgKHBpbk5hbWUgPT0gIkQyIikgcGlucy5kaWdpdGFsV3JpdGVQaW4oRGlnaXRhbFBpbi5QMiwgcGluVmFsKQogICAgICAgICAgICAgICAgZWxzZSBpZiAocGluTmFtZSA9PSAiRDgiKSBwaW5zLmRpZ2l0YWxXcml0ZVBpbihEaWdpdGFsUGluLlA4LCBwaW5WYWwpCiAgICAgICAgICAgICAgICBlbHNlIGlmIChwaW5OYW1lID09ICJEMTIiKSBwaW5zLmRpZ2l0YWxXcml0ZVBpbihEaWdpdGFsUGluLlAxMiwgcGluVmFsKQogICAgICAgICAgICAgICAgZWxzZSBpZiAocGluTmFtZSA9PSAiRDE2IikgcGlucy5kaWdpdGFsV3JpdGVQaW4oRGlnaXRhbFBpbi5QMTYsIHBpblZhbCkKICAgICAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6UElOOiIgKyBwaW5OYW1lICsgIjoiICsgcGluVmFsKQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgICAgICAvLyBQV00KICAgICAgICBpZiAocmVzdC5zdWJzdHIoMCwgNykgPT0gIlBXTTpQMDoiKSB7CiAgICAgICAgICAgIGNvbnN0IHB3bVZhbCA9IHBhcnNlSW50KHJlc3Quc3Vic3RyKDcpKQogICAgICAgICAgICBwaW5zLmFuYWxvZ1dyaXRlUGluKEFuYWxvZ1Bpbi5QMCwgcHdtVmFsKQogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiT1RIRVI6QUNLOlBXTTpQMDoiICsgcHdtVmFsKQogICAgICAgICAgICByZXR1cm4KICAgICAgICB9CiAgICAgICAgLy8gU2Vydm8gZnJvbSBPdGhlcnMgdGFiIOKAlCB1c2Ugc2FtZSBzYWZlIHBhdGggYXMgU2Vydm9zIHRhYgogICAgICAgIGlmIChyZXN0LnN1YnN0cigwLCA2KSA9PSAiU0VSVk86IikgewogICAgICAgICAgICBjb25zdCBwYXJ0czMgPSByZXN0LnN1YnN0cig2KS5zcGxpdCgiLCIpCiAgICAgICAgICAgIGlmIChwYXJ0czMubGVuZ3RoID09IDIpIHsKICAgICAgICAgICAgICAgIGNvbnN0IHNBbmdsZSA9IGNsYW1wQW5nbGUocGFyc2VJbnQocGFydHMzWzBdKSkKICAgICAgICAgICAgICAgIC8vIHNwZWVkIGlzIGlnbm9yZWQgZm9yIG5vdywganVzdCBtb3ZlIHNlcnZvIDEKICAgICAgICAgICAgICAgIHNlcnZvMUFjdGl2ZSA9IHRydWUKICAgICAgICAgICAgICAgIHJlcXVlc3RTZXJ2b01vdmUoMSwgc0FuZ2xlKQogICAgICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIk9USEVSOkFDSzpTRVJWTzoiICsgc0FuZ2xlKQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgICAgICAvLyBTdHJpcCBMRUQgKHBsYWNlaG9sZGVyIC0gd291bGQgbmVlZCBuZW9waXhlbCBleHRlbnNpb24pCiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDYpID09ICJTVFJJUDoiKSB7CiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6U1RSSVAiKQogICAgICAgICAgICByZXR1cm4KICAgICAgICB9CiAgICAgICAgLy8gTW9kZSBzZWxlY3RvciDigJQgc2hvdyBtb2RlIGluaXRpYWwgb24gTEVECiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDUpID09ICJNT0RFOiIpIHsKICAgICAgICAgICAgY29uc3QgbW9kZSA9IHJlc3Quc3Vic3RyKDUpCiAgICAgICAgICAgIGJhc2ljLnNob3dTdHJpbmcobW9kZS5jaGFyQXQoMCkpCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6TU9ERToiICsgbW9kZSkKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgfQogICAgICAgIC8vIFhZIFBhZCDigJQgcGxvdCBkb3Qgb24gTEVEIG1hdHJpeCBhdCBtYXBwZWQgcG9zaXRpb24KICAgICAgICBpZiAocmVzdC5zdWJzdHIoMCwgMykgPT0gIlhZOiIpIHsKICAgICAgICAgICAgY29uc3QgeHlQYXJ0cyA9IHJlc3Quc3Vic3RyKDMpLnNwbGl0KCIsIikKICAgICAgICAgICAgaWYgKHh5UGFydHMubGVuZ3RoID09IDIpIHsKICAgICAgICAgICAgICAgIGNvbnN0IHB4ID0gTWF0aC5yb3VuZChwYXJzZUZsb2F0KHh5UGFydHNbMF0pICogNCkKICAgICAgICAgICAgICAgIGNvbnN0IHB5ID0gTWF0aC5yb3VuZChwYXJzZUZsb2F0KHh5UGFydHNbMV0pICogNCkKICAgICAgICAgICAgICAgIGJhc2ljLmNsZWFyU2NyZWVuKCkKICAgICAgICAgICAgICAgIGxlZC5wbG90KHB4LCBweSkKICAgICAgICAgICAgfQogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiT1RIRVI6QUNLOlhZIikKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgfQogICAgICAgIC8vIFJhbmRvbSBudW1iZXIg4oCUIHNob3cgb24gTEVECiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDcpID09ICJSQU5ET006IikgewogICAgICAgICAgICBjb25zdCByVmFsID0gcmVzdC5zdWJzdHIoNykKICAgICAgICAgICAgYmFzaWMuc2hvd051bWJlcihwYXJzZUludChyVmFsKSkKICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIk9USEVSOkFDSzpSQU5ET006IiArIHJWYWwpCiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgICAgICAvLyBOdW1lcmljIGlucHV0IOKAlCBzaG93IG9uIExFRAogICAgICAgIGlmIChyZXN0LnN1YnN0cigwLCA3KSA9PSAiTlVNQkVSOiIpIHsKICAgICAgICAgICAgY29uc3QgblZhbCA9IHJlc3Quc3Vic3RyKDcpCiAgICAgICAgICAgIGJhc2ljLnNob3dOdW1iZXIocGFyc2VJbnQoblZhbCkpCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6TlVNQkVSOiIgKyBuVmFsKQogICAgICAgICAgICByZXR1cm4KICAgICAgICB9CiAgICAgICAgLy8gUmFuZ2UgbWluIOKAlCBwbG90IGFzIGJhciBncmFwaCAoMC0xMDApCiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDEwKSA9PSAiUkFOR0VfTUlOOiIpIHsKICAgICAgICAgICAgY29uc3Qgck1pbiA9IHBhcnNlSW50KHJlc3Quc3Vic3RyKDEwKSkKICAgICAgICAgICAgbGVkLnBsb3RCYXJHcmFwaChyTWluLCAxMDApCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6UkFOR0VfTUlOOiIgKyByTWluKQogICAgICAgICAgICByZXR1cm4KICAgICAgICB9CiAgICAgICAgLy8gUmFuZ2UgbWF4IOKAlCBwbG90IGFzIGJhciBncmFwaCAoMC0xMDApCiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDEwKSA9PSAiUkFOR0VfTUFYOiIpIHsKICAgICAgICAgICAgY29uc3Qgck1heCA9IHBhcnNlSW50KHJlc3Quc3Vic3RyKDEwKSkKICAgICAgICAgICAgbGVkLnBsb3RCYXJHcmFwaChyTWF4LCAxMDApCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6UkFOR0VfTUFYOiIgKyByTWF4KQogICAgICAgICAgICByZXR1cm4KICAgICAgICB9CiAgICAgICAgLy8gQ29sb3Ig4oCUIHNob3cgY29sb3IgaGV4IGJyaWVmbHkgb24gTEVECiAgICAgICAgaWYgKHJlc3Quc3Vic3RyKDAsIDYpID09ICJDT0xPUjoiKSB7CiAgICAgICAgICAgIGNvbnN0IGhleCA9IHJlc3Quc3Vic3RyKDYpCiAgICAgICAgICAgIC8vIEZsYXNoIGEgc21hbGwgZGlhbW9uZCB0byBhY2tub3dsZWRnZSBjb2xvciBjaGFuZ2UKICAgICAgICAgICAgYmFzaWMuc2hvd0ljb24oSWNvbk5hbWVzLlNtYWxsRGlhbW9uZCkKICAgICAgICAgICAgYmFzaWMucGF1c2UoMjAwKQogICAgICAgICAgICBiYXNpYy5jbGVhclNjcmVlbigpCiAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJPVEhFUjpBQ0s6Q09MT1I6IiArIGhleCkKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgfQogICAgICAgIC8vIERlbGF5ZWQgYWN0aW9uIOKAlCBiZWVwICsgZmxhc2ggd2hlbiB0cmlnZ2VyZWQKICAgICAgICBpZiAocmVzdCA9PSAiREVMQVlFRF9BQ1RJT04iKSB7CiAgICAgICAgICAgIGJhc2ljLnNob3dJY29uKEljb25OYW1lcy5UYXJnZXQpCiAgICAgICAgICAgIG11c2ljLnBsYXlUb25lKDg4MCwgbXVzaWMuYmVhdChCZWF0RnJhY3Rpb24uUXVhcnRlcikpCiAgICAgICAgICAgIGJhc2ljLnBhdXNlKDMwMCkKICAgICAgICAgICAgYmFzaWMuY2xlYXJTY3JlZW4oKQogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiT1RIRVI6QUNLOkRFTEFZRURfQUNUSU9OIikKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgfQogICAgICAgIC8vIERlZmF1bHQgQUNLCiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIk9USEVSOkFDSzoiICsgcmVzdCkKICAgICAgICByZXR1cm4KICAgIH0KICAgIC8vID09PT09PT09IEJVWlpFUiBDT05UUk9MIChub24tYmxvY2tpbmcpID09PT09PT09CiAgICBpZiAobGluZS5zdWJzdHIoMCwgNSkgPT0gIkJVWlo6IikgewogICAgICAgIGNvbnN0IHJlc3QgPSBsaW5lLnN1YnN0cig1KTsKCiAgICAgICAgLy8gT0ZGCiAgICAgICAgaWYgKHJlc3QgPT0gIk9GRiIpIHsKICAgICAgICAgICAgbXVzaWMuc3RvcEFsbFNvdW5kcygpOwogICAgICAgICAgICBwaW5zLmFuYWxvZ1dyaXRlUGluKEFuYWxvZ1Bpbi5QMCwgMCk7CiAgICAgICAgICAgIGJ1enplckFjdGl2ZSA9IGZhbHNlOwogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiQlVaWjpBQ0s6T0ZGIik7CiAgICAgICAgICAgIHJldHVybjsKICAgICAgICB9CgogICAgICAgIC8vIEZyZXF1ZW5jeSArIGR1cmF0aW9uCiAgICAgICAgY29uc3QgcGFydHMgPSByZXN0LnNwbGl0KCIsIik7CiAgICAgICAgaWYgKHBhcnRzLmxlbmd0aCA9PSAyKSB7CiAgICAgICAgICAgIGNvbnN0IGZyZXEgPSBwYXJzZUludChwYXJ0c1swXSk7CiAgICAgICAgICAgIGNvbnN0IGR1ciA9IHBhcnNlSW50KHBhcnRzWzFdKTsKCiAgICAgICAgICAgIC8vIFNhZmV0eTogcHJldmVudCBkaXZpc2lvbiBieSB6ZXJvIGFuZCBpbnZhbGlkIHZhbHVlcwogICAgICAgICAgICBpZiAoZnJlcSA8IDIwIHx8IGZyZXEgPiAyMDAwMCB8fCBkdXIgPCAxIHx8IGR1ciA+IDUwMDApIHsKICAgICAgICAgICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJCVVpaOk5BQ0s6SU5WQUxJRCIpOwogICAgICAgICAgICAgICAgcmV0dXJuOwogICAgICAgICAgICB9CgogICAgICAgICAgICBidXp6ZXJBY3RpdmUgPSB0cnVlOwoKICAgICAgICAgICAgLy8gTm9uLWJsb2NraW5nOiBydW4gaW4gYmFja2dyb3VuZCB0byBhdm9pZCBCTEUgdGltZW91dAogICAgICAgICAgICBjb250cm9sLmluQmFja2dyb3VuZChmdW5jdGlvbiAoKSB7CiAgICAgICAgICAgICAgICAvLyBWMiBidWlsdC1pbiBzcGVha2VyIChub24tYmxvY2tpbmcgd2l0aCBCYWNrZ3JvdW5kKQogICAgICAgICAgICAgICAgbXVzaWMucGxheVRvbmUoZnJlcSwgZHVyKTsKICAgICAgICAgICAgfSk7CgogICAgICAgICAgICAvLyBFeHRlcm5hbCBidXp6ZXIgb24gUDAgKGFsc28gaW4gYmFja2dyb3VuZCkKICAgICAgICAgICAgY29udHJvbC5pbkJhY2tncm91bmQoZnVuY3Rpb24gKCkgewogICAgICAgICAgICAgICAgcGlucy5hbmFsb2dTZXRQZXJpb2QoQW5hbG9nUGluLlAwLCAxMDAwMDAwIC8gZnJlcSk7CiAgICAgICAgICAgICAgICBwaW5zLmFuYWxvZ1dyaXRlUGluKEFuYWxvZ1Bpbi5QMCwgNTEyKTsKICAgICAgICAgICAgICAgIGJhc2ljLnBhdXNlKGR1cik7CiAgICAgICAgICAgICAgICBwaW5zLmFuYWxvZ1dyaXRlUGluKEFuYWxvZ1Bpbi5QMCwgMCk7CiAgICAgICAgICAgICAgICBidXp6ZXJBY3RpdmUgPSBmYWxzZTsKICAgICAgICAgICAgfSk7CgogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiQlVaWjpBQ0s6IiArIHJlc3QpOwogICAgICAgIH0KICAgICAgICByZXR1cm47CiAgICB9CgogICAgLy8gQ2FsaWJyYXRpb246IENBTDpDT01QQVNTCiAgICBpZiAobGluZSA9PSAiQ0FMOkNPTVBBU1MiKSB7CiAgICAgICAgaW5wdXQuY2FsaWJyYXRlQ29tcGFzcygpCiAgICAgICAgY29tcGFzc0VuYWJsZWQgPSB0cnVlCiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkNBTDpDT01QQVNTOkRPTkUiKQogICAgICAgIHJldHVybjsKICAgIH0KCiAgICAvLyBTaW11bGF0ZSBncmFwaCBkYXRhOiBTSU1VTEFURTpPTiAvIFNJTVVMQVRFOk9GRgogICAgaWYgKGxpbmUgPT0gIlNJTVVMQVRFOk9OIikgewogICAgICAgIHNpbXVsYXRlQWN0aXZlID0gdHJ1ZTsKICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiU0lNVUxBVEU6QUNLOk9OIik7CiAgICAgICAgcmV0dXJuOwogICAgfQogICAgaWYgKGxpbmUgPT0gIlNJTVVMQVRFOk9GRiIpIHsKICAgICAgICBzaW11bGF0ZUFjdGl2ZSA9IGZhbHNlOwogICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJTSU1VTEFURTpBQ0s6T0ZGIik7CiAgICAgICAgcmV0dXJuOwogICAgfQoKfSkKaW5wdXQub25CdXR0b25QcmVzc2VkKEJ1dHRvbi5BQiwgZnVuY3Rpb24gKCkgewogICAgaWYgKGJ0Q29ubmVjdGVkKSB7CiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkVWRU5UOkJVVFRPTl9BQl9QUkVTU0VEIikKICAgIH0KfSkKZnVuY3Rpb24gY2xhbXBBbmdsZShhOiBudW1iZXIpIHsKICAgIGlmIChhIDwgMCkgewogICAgICAgIHJldHVybiAwCiAgICB9CiAgICBpZiAoYSA+IDE4MCkgewogICAgICAgIHJldHVybiAxODAKICAgIH0KICAgIHJldHVybiBNYXRoLmZsb29yKGEpCn0KaW5wdXQub25CdXR0b25QcmVzc2VkKEJ1dHRvbi5CLCBmdW5jdGlvbiAoKSB7CiAgICBpZiAoYnRDb25uZWN0ZWQpIHsKICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiRVZFTlQ6QlVUVE9OX0JfUFJFU1NFRCIpCiAgICB9Cn0pCi8vIC0tLS0tLS0tLS0gSGVscGVycyBmb3IgTE06aGhoaGhoaGhoaCAtLS0tLS0tLS0tCmZ1bmN0aW9uIGhleENoYXJUb05pYmJsZShjaDogc3RyaW5nKSB7CiAgICBjb25zdCB1cCA9IGNoLnRvVXBwZXJDYXNlKCkKICAgIGxldCBkaWdpdHMgPSAiMDEyMzQ1Njc4OUFCQ0RFRiIKICAgIGxldCBpZHggPSBkaWdpdHMuaW5kZXhPZih1cCkKICAgIGlmIChpZHggPCAwKSB7CiAgICAgICAgcmV0dXJuIDAKICAgIH0KICAgIHJldHVybiBpZHgKfQovLyBQMSB0b3VjaCBldmVudHMgcmVtb3ZlZDogaW5wdXQub25QaW5QcmVzc2VkKFRvdWNoUGluLlAxKSBjb25maWd1cmVzIFAxIGZvcgovLyBjYXBhY2l0aXZlIHRvdWNoIHNlbnNpbmcgYXQgdGhlIERBTCBsZXZlbCwgd2hpY2ggY29uZmxpY3RzIHdpdGggc2Vydm8gUFdNIG9uIFAxLgovLyBUaGUgcG9sbGluZyBsb29wIChCVE46UDE6KSBhbHJlYWR5IGhhbmRsZXMgdG91Y2ggZGF0YSB3aXRoIHNlcnZvMUFjdGl2ZSBndWFyZC4KZnVuY3Rpb24gaGV4UGFpclRvQnl0ZShzOiBzdHJpbmcpIHsKICAgIGlmIChzLmxlbmd0aCA8IDIpIHsKICAgICAgICByZXR1cm4gMAogICAgfQogICAgbGV0IGhpID0gaGV4Q2hhclRvTmliYmxlKHMuY2hhckF0KDApKQogICAgbGV0IGxvID0gaGV4Q2hhclRvTmliYmxlKHMuY2hhckF0KDEpKQogICAgcmV0dXJuIGhpICogMTYgKyBsbwp9Ci8vIENhbmNlbCBmbGFnczogc2V0IHRydWUgdG8gc3RvcCBhIHJ1bm5pbmcgYmFja2dyb3VuZCBtb3ZlCmxldCBzZXJ2bzFDYW5jZWwgPSBmYWxzZQpsZXQgc2Vydm8yQ2FuY2VsID0gZmFsc2UKCmZ1bmN0aW9uIHJlcXVlc3RTZXJ2b01vdmUoc2Vydm9JbmRleDogbnVtYmVyLCBhbmdsZTogbnVtYmVyKSB7CiAgICBsZXQgYSA9IGNsYW1wQW5nbGUoYW5nbGUpCiAgICBpZiAoc2Vydm9JbmRleCA9PSAxKSB7CiAgICAgICAgc2Vydm8xVGFyZ2V0ID0gYQogICAgICAgIC8vIENhbmNlbCBhbnkgcnVubmluZyBtb3ZlIGJlZm9yZSBzdGFydGluZyBhIG5ldyBvbmUKICAgICAgICBpZiAoc2Vydm8xTW92aW5nKSB7CiAgICAgICAgICAgIHNlcnZvMUNhbmNlbCA9IHRydWUKICAgICAgICAgICAgLy8gV2FpdCBicmllZmx5IGZvciB0aGUgb2xkIHRocmVhZCB0byBleGl0CiAgICAgICAgICAgIGJhc2ljLnBhdXNlKDMwKQogICAgICAgIH0KICAgICAgICBzZXJ2bzFDYW5jZWwgPSBmYWxzZQogICAgICAgIHNlcnZvMU1vdmluZyA9IHRydWUKICAgICAgICBjb250cm9sLmluQmFja2dyb3VuZChmdW5jdGlvbiAoKSB7CiAgICAgICAgICAgIHdoaWxlIChzZXJ2bzFDdXJyZW50ICE9PSBzZXJ2bzFUYXJnZXQgJiYgIXNlcnZvMUNhbmNlbCkgewogICAgICAgICAgICAgICAgaWYgKHNlcnZvMVRhcmdldCA+IHNlcnZvMUN1cnJlbnQpIHNlcnZvMUN1cnJlbnQrKwogICAgICAgICAgICAgICAgZWxzZSBpZiAoc2Vydm8xVGFyZ2V0IDwgc2Vydm8xQ3VycmVudCkgc2Vydm8xQ3VycmVudC0tCiAgICAgICAgICAgICAgICBwaW5zLnNlcnZvV3JpdGVQaW4oQW5hbG9nUGluLlAxLCBzZXJ2bzFDdXJyZW50KQogICAgICAgICAgICAgICAgYmFzaWMucGF1c2UoMTgpCiAgICAgICAgICAgIH0KICAgICAgICAgICAgc2Vydm8xTW92aW5nID0gZmFsc2UKICAgICAgICB9KQogICAgfSBlbHNlIHsKICAgICAgICBzZXJ2bzJUYXJnZXQgPSBhCiAgICAgICAgaWYgKHNlcnZvMk1vdmluZykgewogICAgICAgICAgICBzZXJ2bzJDYW5jZWwgPSB0cnVlCiAgICAgICAgICAgIGJhc2ljLnBhdXNlKDMwKQogICAgICAgIH0KICAgICAgICBzZXJ2bzJDYW5jZWwgPSBmYWxzZQogICAgICAgIHNlcnZvMk1vdmluZyA9IHRydWUKICAgICAgICBjb250cm9sLmluQmFja2dyb3VuZChmdW5jdGlvbiAoKSB7CiAgICAgICAgICAgIHdoaWxlIChzZXJ2bzJDdXJyZW50ICE9PSBzZXJ2bzJUYXJnZXQgJiYgIXNlcnZvMkNhbmNlbCkgewogICAgICAgICAgICAgICAgaWYgKHNlcnZvMlRhcmdldCA+IHNlcnZvMkN1cnJlbnQpIHNlcnZvMkN1cnJlbnQrKwogICAgICAgICAgICAgICAgZWxzZSBpZiAoc2Vydm8yVGFyZ2V0IDwgc2Vydm8yQ3VycmVudCkgc2Vydm8yQ3VycmVudC0tCiAgICAgICAgICAgICAgICBwaW5zLnNlcnZvV3JpdGVQaW4oQW5hbG9nUGluLlAyLCBzZXJ2bzJDdXJyZW50KQogICAgICAgICAgICAgICAgYmFzaWMucGF1c2UoMTgpCiAgICAgICAgICAgIH0KICAgICAgICAgICAgc2Vydm8yTW92aW5nID0gZmFsc2UKICAgICAgICB9KQogICAgfQp9CmlucHV0Lm9uTG9nb0V2ZW50KFRvdWNoQnV0dG9uRXZlbnQuUHJlc3NlZCwgZnVuY3Rpb24gKCkgewogICAgaWYgKGJ0Q29ubmVjdGVkKSB7CiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkVWRU5UOkxPR09fUFJFU1NFRCIpCiAgICB9Cn0pCmlucHV0Lm9uTG9nb0V2ZW50KFRvdWNoQnV0dG9uRXZlbnQuUmVsZWFzZWQsIGZ1bmN0aW9uICgpIHsKICAgIGlmIChidENvbm5lY3RlZCkgewogICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJFVkVOVDpMT0dPX1JFTEVBU0VEIikKICAgIH0KfSkKLy8gLS0tLS0tLS0tLSBTdGF0ZSB2YXJpYWJsZXMgKG11c3QgYmUgZ2xvYmFsKSAtLS0tLS0tLS0tCmxldCBidENvbm5lY3RlZCA9IGZhbHNlCmxldCBzZXJ2bzJDdXJyZW50ID0gMApsZXQgc2Vydm8xQ3VycmVudCA9IDAKbGV0IHNlcnZvMlRhcmdldCA9IDAKbGV0IHNlcnZvMVRhcmdldCA9IDAKbGV0IHNlcnZvMk1vdmluZyA9IGZhbHNlCmxldCBzZXJ2bzFNb3ZpbmcgPSBmYWxzZQpsZXQgY3VycmVudFRhYiA9ICJjb250cm9scyIgIC8vIFRyYWNrIGFjdGl2ZSB0YWIgZm9yIHBpbiBtYW5hZ2VtZW50Ci8vIFRyYWNrIHdoZXRoZXIgZWFjaCBzZXJ2byBoYXMgYmVlbiBhY3RpdmF0ZWQgKHN1cnZpdmVzIHRhYiBjaGFuZ2VzKQpsZXQgc2Vydm8xQWN0aXZlID0gZmFsc2UKbGV0IHNlcnZvMkFjdGl2ZSA9IGZhbHNlCmxldCBidXp6ZXJBY3RpdmUgPSBmYWxzZSAgLy8gZ3VhcmRzIFAwIGZyb20gdG91Y2ggcG9sbGluZyBkdXJpbmcgYnV6egpsZXQgc2ltdWxhdGVBY3RpdmUgPSBmYWxzZQpsZXQgc2ltVGljayA9IDAKCi8vIFNpbXVsYXRlIGdyYXBoIGRhdGEgbG9vcCAoc2VuZHMgR1JBUEg6IG1lc3NhZ2VzIHdoZW4gYWN0aXZlKQpsb29wcy5ldmVyeUludGVydmFsKDIwMCwgZnVuY3Rpb24gKCkgewogICAgaWYgKCFidENvbm5lY3RlZCB8fCAhc2ltdWxhdGVBY3RpdmUpIHJldHVybjsKICAgIGNvbnN0IHNpbmUgPSBNYXRoLnJvdW5kKDUwICsgNTAgKiBNYXRoLnNpbihzaW1UaWNrICogMC4xKSk7CiAgICBjb25zdCByYW1wID0gc2ltVGljayAlIDEwMDsKICAgIGNvbnN0IHJhbmRvbSA9IE1hdGgucmFuZG9tUmFuZ2UoMCwgMTAwKTsKICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJHUkFQSDpTaW5lOiIgKyBzaW5lKTsKICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJHUkFQSDpSYW5kb206IiArIHJhbmRvbSk7CiAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiR1JBUEg6UmFtcDoiICsgcmFtcCk7CiAgICBzaW1UaWNrKys7Cn0pCmJsdWV0b290aC5zdGFydFVhcnRTZXJ2aWNlKCkKYmFzaWMuc2hvd0ljb24oSWNvbk5hbWVzLk5vKSAgLy8gWCBpY29uID0gYWR2ZXJ0aXNpbmcsIHdhaXRpbmcgZm9yIGNvbm5lY3Rpb24KLy8gLS0tLS0tLS0tLSBTZXJ2byBzdGF0ZSAobWluaW1hbCBhZGRpdGlvbnMpIC0tLS0tLS0tLS0Kc2Vydm8xVGFyZ2V0ID0gOTAKc2Vydm8yVGFyZ2V0ID0gOTAKc2Vydm8xQ3VycmVudCA9IDkwCnNlcnZvMkN1cnJlbnQgPSA5MAovLyAtLS0tLS0tLS0tIFRlbGVtZXRyeTogc2Vuc29ycyAtLS0tLS0tLS0tCmxldCBsYXN0VGVtcCA9IC0xCmxldCBsYXN0TGlnaHQgPSAtMQpsZXQgbGFzdFNvdW5kTGV2ZWwgPSAtMQpsZXQgbGFzdEFjY1ggPSAtMQpsZXQgbGFzdEFjY1kgPSAtMQpsZXQgbGFzdEFjY1ogPSAtMQpsZXQgTGFzdFNlcnZvMUN1cnJlbnQgPSAtMQpsZXQgTGFzdFNlcnZvMkN1cnJlbnQgPSAtMQovLyAtLS0tLS0tLS0tIEJ1dHRvbnMgJiBldmVudHMgLS0tLS0tLS0tLQpsZXQgbGFzdEJ0bkEgPSAtMQpsZXQgbGFzdEJ0bkIgPSAtMQpsZXQgbGFzdExvZ28gPSAtMQpsZXQgbGFzdFRvdWNoUDAgPSAtMQpsZXQgbGFzdFRvdWNoUDEgPSAtMQpsZXQgbGFzdFRvdWNoUDIgPSAtMQovLyByZXBvcnQgc2Vydm8gcG9zaXRpb25zIHBlcmlvZGljYWxseSAobWluaW1hbCB0ZWxlbWV0cnkpCmxvb3BzLmV2ZXJ5SW50ZXJ2YWwoNTAwLCBmdW5jdGlvbiAoKSB7CiAgICBpZiAoIShidENvbm5lY3RlZCkpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGlmIChMYXN0U2Vydm8xQ3VycmVudCA9PSBzZXJ2bzFDdXJyZW50ICYmIExhc3RTZXJ2bzJDdXJyZW50ID09IHNlcnZvMkN1cnJlbnQpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIExhc3RTZXJ2bzFDdXJyZW50ID0gc2Vydm8xQ3VycmVudAogICAgTGFzdFNlcnZvMkN1cnJlbnQgPSBzZXJ2bzJDdXJyZW50CiAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiU0VSVk8xX1BPUzoiICsgc2Vydm8xQ3VycmVudCkKICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJTRVJWTzJfUE9TOiIgKyBzZXJ2bzJDdXJyZW50KQp9KQovLyBBY2NlbGVyb21ldGVyIChtZykKbG9vcHMuZXZlcnlJbnRlcnZhbCgzMDAsIGZ1bmN0aW9uICgpIHsKICAgIGlmICghKGJ0Q29ubmVjdGVkKSkgewogICAgICAgIHJldHVybgogICAgfQogICAgbGV0IHggPSBpbnB1dC5hY2NlbGVyYXRpb24oRGltZW5zaW9uLlgpCiAgICBsZXQgeSA9IGlucHV0LmFjY2VsZXJhdGlvbihEaW1lbnNpb24uWSkKICAgIGxldCB6ID0gaW5wdXQuYWNjZWxlcmF0aW9uKERpbWVuc2lvbi5aKQogICAgaWYgKGxhc3RBY2NYID09IHggJiYgbGFzdEFjY1kgPT0geSAmJiBsYXN0QWNjWiA9PSB6KSB7CiAgICAgICAgcmV0dXJuCiAgICB9CiAgICBsZXQgZGlmZl94ID0gMAogICAgbGV0IGRpZmZfeSA9IDAKICAgIGxldCBkaWZmX3ogPSAwCiAgICBpZiAobGFzdEFjY1ggPiB4KSB7CiAgICAgICAgZGlmZl94ID0gbGFzdEFjY1ggLSB4CiAgICB9IGVsc2UgewogICAgICAgIGRpZmZfeCA9IHggLSBsYXN0QWNjWAogICAgfQogICAgaWYgKGxhc3RBY2NZID4geSkgewogICAgICAgIGRpZmZfeSA9IGxhc3RBY2NZIC0geQogICAgfSBlbHNlIHsKICAgICAgICBkaWZmX3kgPSB5IC0gbGFzdEFjY1kKICAgIH0KICAgIGlmIChsYXN0QWNjWiA+IHopIHsKICAgICAgICBkaWZmX3ogPSBsYXN0QWNjWiAtIHoKICAgIH0gZWxzZSB7CiAgICAgICAgZGlmZl96ID0geiAtIGxhc3RBY2NaCiAgICB9CiAgICBsYXN0QWNjWCA9IHgKICAgIGxhc3RBY2NZID0geQogICAgbGFzdEFjY1ogPSB6CiAgICBpZiAoZGlmZl94IDwgMTUgJiYgZGlmZl95IDwgMTUgJiYgZGlmZl96IDwgMTUpIHsKICAgICAgICByZXR1cm47CiAgICB9CiAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiQUNDOiIgKyB4ICsgIiwiICsgeSArICIsIiArIHopCn0pCi8vIExpZ2h0IGxldmVsCmxvb3BzLmV2ZXJ5SW50ZXJ2YWwoMTAwLCBmdW5jdGlvbiAoKSB7CiAgICBpZiAoIShidENvbm5lY3RlZCkpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGxldCBsID0gaW5wdXQubGlnaHRMZXZlbCgpCiAgICBpZiAobGFzdExpZ2h0ID09IGwpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGxhc3RMaWdodCA9IGwKICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJMSUdIVDoiICsgbCkKfSkKLy8gU291bmQgbGV2ZWwgKFYyKQpsb29wcy5ldmVyeUludGVydmFsKDEwMCwgZnVuY3Rpb24gKCkgewogICAgaWYgKCEoYnRDb25uZWN0ZWQpKSB7CiAgICAgICAgcmV0dXJuCiAgICB9CiAgICAvLyBPbiBWMiB3ZSBoYXZlIHNvdW5kTGV2ZWwoKSwgb24gVjEgdGhpcyBzdGF5cyAwCiAgICBsZXQgcyA9IGlucHV0LnNvdW5kTGV2ZWwoKQogICAgaWYgKGxhc3RTb3VuZExldmVsID09IHMpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGxhc3RTb3VuZExldmVsID0gcwogICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIlNPVU5EOiIgKyBzKQogICAgLy8gYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkJFTkNIOiIgKyBzKQp9KQovLyBCdXR0b24vdG91Y2gvbG9nbyBwb2xsaW5nIChpbmRpdmlkdWFsIEJUTjpQMC9QMS9QMjogbWVzc2FnZXMgZm9yIGJyb3dzZXIpCmxvb3BzLmV2ZXJ5SW50ZXJ2YWwoMTAwLCBmdW5jdGlvbiAoKSB7CiAgICBpZiAoIShidENvbm5lY3RlZCkpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGNvbnN0IGFOb3cgPSBpbnB1dC5idXR0b25Jc1ByZXNzZWQoQnV0dG9uLkEpID8gMSA6IDAKICAgIGNvbnN0IGJOb3cgPSBpbnB1dC5idXR0b25Jc1ByZXNzZWQoQnV0dG9uLkIpID8gMSA6IDAKICAgIGNvbnN0IGxvZ29Ob3cgPSBpbnB1dC5sb2dvSXNQcmVzc2VkKCkgPyAxIDogMAogICAgLy8gU2tpcCBQMCB0b3VjaCByZWFkIGR1cmluZyBidXp6ZXIgKFAwIGlzIGFuYWxvZyBvdXRwdXQgZm9yIGV4dGVybmFsIGJ1enplcikKICAgIGxldCB0b3VjaFAwTm93ID0gMAogICAgaWYgKCFidXp6ZXJBY3RpdmUpIHsKICAgICAgICB0b3VjaFAwTm93ID0gaW5wdXQucGluSXNQcmVzc2VkKFRvdWNoUGluLlAwKSA/IDEgOiAwCiAgICB9CiAgICAvLyBPbmx5IHBvbGwgUDEvUDIgaWYgdGhhdCBzZXJ2byBpcyBOT1QgYWN0aXZlCiAgICBsZXQgdG91Y2hQMU5vdyA9IDAKICAgIGxldCB0b3VjaFAyTm93ID0gMAogICAgaWYgKCFzZXJ2bzFBY3RpdmUpIHsKICAgICAgICB0b3VjaFAxTm93ID0gaW5wdXQucGluSXNQcmVzc2VkKFRvdWNoUGluLlAxKSA/IDEgOiAwCiAgICB9CiAgICBpZiAoIXNlcnZvMkFjdGl2ZSkgewogICAgICAgIHRvdWNoUDJOb3cgPSBpbnB1dC5waW5Jc1ByZXNzZWQoVG91Y2hQaW4uUDIpID8gMSA6IDAKICAgIH0KICAgIGlmIChhTm93ICE9IGxhc3RCdG5BKSB7CiAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkJUTjpBOiIgKyBhTm93KQogICAgICAgIGxhc3RCdG5BID0gYU5vdwogICAgfQogICAgaWYgKGJOb3cgIT0gbGFzdEJ0bkIpIHsKICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiQlROOkI6IiArIGJOb3cpCiAgICAgICAgbGFzdEJ0bkIgPSBiTm93CiAgICB9CiAgICBpZiAobG9nb05vdyAhPSBsYXN0TG9nbykgewogICAgICAgIGJsdWV0b290aC51YXJ0V3JpdGVMaW5lKCJCVE46TE9HTzoiICsgbG9nb05vdykKICAgICAgICBsYXN0TG9nbyA9IGxvZ29Ob3cKICAgIH0KICAgIGlmICghYnV6emVyQWN0aXZlICYmIHRvdWNoUDBOb3cgIT0gbGFzdFRvdWNoUDApIHsKICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiQlROOlAwOiIgKyB0b3VjaFAwTm93KQogICAgICAgIGxhc3RUb3VjaFAwID0gdG91Y2hQME5vdwogICAgfQogICAgLy8gT25seSByZXBvcnQgUDEvUDIgY2hhbmdlcyBpZiB0aGF0IHNlcnZvIGlzIG5vdCBhY3RpdmUKICAgIGlmICghc2Vydm8xQWN0aXZlKSB7CiAgICAgICAgaWYgKHRvdWNoUDFOb3cgIT0gbGFzdFRvdWNoUDEpIHsKICAgICAgICAgICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIkJUTjpQMToiICsgdG91Y2hQMU5vdykKICAgICAgICAgICAgbGFzdFRvdWNoUDEgPSB0b3VjaFAxTm93CiAgICAgICAgfQogICAgfQogICAgaWYgKCFzZXJ2bzJBY3RpdmUpIHsKICAgICAgICBpZiAodG91Y2hQMk5vdyAhPSBsYXN0VG91Y2hQMikgewogICAgICAgICAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiQlROOlAyOiIgKyB0b3VjaFAyTm93KQogICAgICAgICAgICBsYXN0VG91Y2hQMiA9IHRvdWNoUDJOb3cKICAgICAgICB9CiAgICB9Cn0pCi8vIFRlbXBlcmF0dXJlICjCsEMpCmxvb3BzLmV2ZXJ5SW50ZXJ2YWwoMTAwLCBmdW5jdGlvbiAoKSB7CiAgICBpZiAoIShidENvbm5lY3RlZCkpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGxldCB0ID0gaW5wdXQudGVtcGVyYXR1cmUoKQogICAgaWYgKGxhc3RUZW1wID09IHQpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGxhc3RUZW1wID0gdAogICAgYmx1ZXRvb3RoLnVhcnRXcml0ZUxpbmUoIlRFTVA6IiArIHQpCn0pCi8vIENvbXBhc3MgaGVhZGluZyAoZGVncmVlcykg4oCUIG9ubHkgcG9sbCBhZnRlciB1c2VyIGNhbGlicmF0ZXMgdG8gYXZvaWQgYXV0by1jYWxpYnJhdGlvbiBwcm9tcHQKbGV0IGxhc3RDb21wYXNzID0gLTEKbGV0IGNvbXBhc3NFbmFibGVkID0gZmFsc2UKbG9vcHMuZXZlcnlJbnRlcnZhbCgyMDAsIGZ1bmN0aW9uICgpIHsKICAgIGlmICghKGJ0Q29ubmVjdGVkKSB8fCAhY29tcGFzc0VuYWJsZWQpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGNvbnN0IGhlYWRpbmcgPSBpbnB1dC5jb21wYXNzSGVhZGluZygpCiAgICBpZiAobGFzdENvbXBhc3MgPT0gaGVhZGluZykgewogICAgICAgIHJldHVybgogICAgfQogICAgbGFzdENvbXBhc3MgPSBoZWFkaW5nCiAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiQ09NUEFTUzoiICsgaGVhZGluZykKfSkKCi8vIExFRCBzdGF0ZSB0ZWxlbWV0cnkg4oCUIHJlcG9ydHMgYWN0dWFsIDV4NSBMRUQgc2NyZWVuIHRvIGJyb3dzZXIKbGV0IGxhc3RMZWRTdHIgPSAiIgpsb29wcy5ldmVyeUludGVydmFsKDI1MCwgZnVuY3Rpb24gKCkgewogICAgaWYgKCEoYnRDb25uZWN0ZWQpKSB7CiAgICAgICAgcmV0dXJuCiAgICB9CiAgICBsZXQgdmFsczogbnVtYmVyW10gPSBbXQogICAgZm9yIChsZXQgcm93ID0gMDsgcm93IDwgNTsgcm93KyspIHsKICAgICAgICBsZXQgYml0cyA9IDAKICAgICAgICBmb3IgKGxldCBjb2wgPSAwOyBjb2wgPCA1OyBjb2wrKykgewogICAgICAgICAgICBpZiAobGVkLnBvaW50KGNvbCwgcm93KSkgewogICAgICAgICAgICAgICAgYml0cyB8PSAoMSA8PCAoNCAtIGNvbCkpCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgdmFscy5wdXNoKGJpdHMpCiAgICB9CiAgICBsZXQgcyA9ICIiICsgdmFsc1swXSArICIsIiArIHZhbHNbMV0gKyAiLCIgKyB2YWxzWzJdICsgIiwiICsgdmFsc1szXSArICIsIiArIHZhbHNbNF0KICAgIGlmIChzID09IGxhc3RMZWRTdHIpIHsKICAgICAgICByZXR1cm4KICAgIH0KICAgIGxhc3RMZWRTdHIgPSBzCiAgICBibHVldG9vdGgudWFydFdyaXRlTGluZSgiTEVEUzoiICsgcykKfSkKCmZ1bmN0aW9uIHBsYXlFeHBsb3Npb24oKSB7CiAgICAvLyBDbGVhciBzY3JlZW4gZmlyc3QKICAgIGJhc2ljLmNsZWFyU2NyZWVuKCkKCiAgICAvLyAtLS0gU3RhZ2UgMTogc21hbGwgY2VudGVyIHNwYXJrIC0tLQogICAgbGVkLnBsb3QoMiwgMikKICAgIGJhc2ljLnBhdXNlKDEwMCkKCiAgICAvLyAtLS0gU3RhZ2UgMjogY3Jvc3MgYnVyc3QgLS0tCiAgICBiYXNpYy5jbGVhclNjcmVlbigpCiAgICBjb25zdCBjcm9zcyA9IFsKICAgICAgICBbMiwgMV0sIFsyLCAyXSwgWzIsIDNdLAogICAgICAgIFsxLCAyXSwgWzMsIDJdCiAgICBdCiAgICBmb3IgKGxldCBwIG9mIGNyb3NzKSBsZWQucGxvdChwWzBdLCBwWzFdKQogICAgYmFzaWMucGF1c2UoMTIwKQoKICAgIC8vIC0tLSBTdGFnZSAzOiBiaWcgZmxhc2ggLS0tCiAgICBiYXNpYy5jbGVhclNjcmVlbigpCiAgICBjb25zdCBmbGFzaCA9IFsKICAgICAgICBbMCwgMl0sIFs0LCAyXSwgIC8vIGxlZnQvcmlnaHQKICAgICAgICBbMiwgMF0sIFsyLCA0XSwgIC8vIHRvcC9ib3R0b20KICAgICAgICBbMSwgMV0sIFszLCAxXSwgWzEsIDNdLCBbMywgM10sIC8vIGNvcm5lcnMgb2YgZGlhbW9uZAogICAgICAgIFsyLCAyXSAgLy8gY2VudGVyCiAgICBdCiAgICBmb3IgKGxldCBwIG9mIGZsYXNoKSBsZWQucGxvdChwWzBdLCBwWzFdKQogICAgYmFzaWMucGF1c2UoMTUwKQoKICAgIC8vIC0tLSBTdGFnZSA0OiBvdXRlciByaW5nIC0tLQogICAgYmFzaWMuY2xlYXJTY3JlZW4oKQogICAgY29uc3QgcmluZyA9IFsKICAgICAgICBbMCwgMF0sIFs0LCAwXSwKICAgICAgICBbMCwgNF0sIFs0LCA0XSwKICAgICAgICBbMSwgMF0sIFszLCAwXSwKICAgICAgICBbMCwgMV0sIFs0LCAxXSwKICAgICAgICBbMCwgM10sIFs0LCAzXSwKICAgICAgICBbMSwgNF0sIFszLCA0XQogICAgXQogICAgZm9yIChsZXQgcCBvZiByaW5nKSBsZWQucGxvdChwWzBdLCBwWzFdKQogICAgYmFzaWMucGF1c2UoMTQwKQoKICAgIC8vIC0tLSBTdGFnZSA1OiBmYWRpbmcgc3BhcmsgLS0tCiAgICBiYXNpYy5jbGVhclNjcmVlbigpCiAgICBsZWQucGxvdCgyLCAyKQogICAgYmFzaWMucGF1c2UoOTApCgogICAgLy8gLS0tIEVuZCAtLS0KICAgIGJhc2ljLmNsZWFyU2NyZWVuKCkKfQo=</script>
+    </div>
+</div>
+
+<!-- Keyboard Shortcuts Overlay (press K to toggle) -->
+<div id="shortcutsOverlay" class="overlay">
+    <div class="overlay-card">
+        <div class="overlay-title" data-i18n="shortcuts_title">⌨️ Keyboard Shortcuts</div>
+        <div class="shortcut-grid">
+            <div class="shortcut-row"><kbd>Space</kbd> <span data-i18n="shortcut_connect">Connect / Disconnect</span></div>
+            <div class="shortcut-row"><kbd>1</kbd>–<kbd>8</kbd> <span data-i18n="shortcut_tabs">Switch tabs</span></div>
+            <div class="shortcut-row"><kbd>P</kbd> <span data-i18n="shortcut_pause">Pause / Resume graph</span></div>
+            <div class="shortcut-row"><kbd>F</kbd> <span data-i18n="shortcut_fullscreen">Fullscreen graph</span></div>
+            <div class="shortcut-row"><kbd>K</kbd> <span data-i18n="shortcut_help">Toggle this help</span></div>
+            <div class="shortcut-row"><kbd>Esc</kbd> <span data-i18n="shortcut_close">Close overlays</span></div>
+        </div>
+        <button class="secondary" onclick="this.closest('.overlay').classList.remove('visible')" data-i18n="close">Close</button>
+    </div>
+</div>
+
+<!-- Onboarding Overlay (first visit) -->
+<div id="onboardingOverlay" class="overlay">
+    <div class="overlay-card onboarding-card">
+        <div class="overlay-title" data-i18n="welcome">🤖 Welcome to Maqueen Lab!</div>
+        <div class="onboarding-steps">
+            <div class="ob-step"><span class="ob-num">1</span> <span data-i18n="ob_step1">Power on your Maqueen Lite v4 (micro:bit inside)</span></div>
+            <div class="ob-step"><span class="ob-num">2</span> <span data-i18n="ob_step2">Click Connect and pair with the micro:bit</span></div>
+            <div class="ob-step"><span class="ob-num">3</span> <span data-i18n="ob_step3">Explore tabs: Drive, Sensors, Servos, Lights, Buzzer</span></div>
+            <div class="ob-step"><span class="ob-num">4</span> <span data-i18n="ob_step4">🤖 Tap the robot icon up top to meet your robot's parts</span></div>
+        </div>
+        <button class="primary" id="onboardingDismiss" data-i18n="lets_go">Let's Go! 🎮</button>
+    </div>
+</div>
+
+<script>
+// Clear cache / reset button
+document.getElementById('clearCacheBtn')?.addEventListener('click', () => {
+    if (!confirm('Clear all saved settings and reload?')) return;
+    // Clear all app localStorage keys
+    ['mb_theme','mb_active_tab','mb_graph_sensors','mb_onboarded','mb_calibration',
+     'mb_servo1_trim','mb_servo2_trim','mb_board3d_model','mb_other_presets','mb_lang'
+    ].forEach(k => localStorage.removeItem(k));
+    // Unregister service workers and clear caches
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    }
+    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+    // Reload
+    setTimeout(() => window.location.reload(true), 300);
+});
+
+// Firmware overlay
+(function() {
+    const btn = document.getElementById('firmwareBtn');
+    const overlay = document.getElementById('firmwareOverlay');
+    const codeEl = document.getElementById('firmwareCode');
+    const copyBtn = document.getElementById('firmwareCopyBtn');
+    const closeBtn = document.getElementById('firmwareCloseBtn');
+    const sourceEl = document.getElementById('firmwareSource');
+    let codeLoaded = false;
+
+    function loadCode() {
+        if (codeLoaded) return;
+        // Try embedded base64 source first (works on file://)
+        if (sourceEl && sourceEl.textContent.trim().length > 10) {
+            try {
+                codeEl.textContent = atob(sourceEl.textContent.trim());
+                codeLoaded = true;
+                return;
+            } catch(e) {}
+        }
+        // Fallback: fetch (works on http://)
+        fetch('makecode.ts')
+            .then(r => r.text())
+            .then(code => { codeEl.textContent = code; codeLoaded = true; })
+            .catch(() => {
+                codeEl.textContent = '// Could not load firmware code.\n// Open this page via a local web server (e.g. python3 -m http.server)';
+            });
+    }
+
+    if (btn && overlay) {
+        btn.addEventListener('click', () => { overlay.classList.add('visible'); loadCode(); });
+        closeBtn?.addEventListener('click', () => overlay.classList.remove('visible'));
+
+        copyBtn?.addEventListener('click', () => {
+            const code = codeEl.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => { copyBtn.textContent = 'Copy Code'; }, 2000);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = code;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => { copyBtn.textContent = 'Copy Code'; }, 2000);
+            });
+        });
+    }
+})();
+
+// Onboarding: show only on first visit
+(function() {
+    try {
+        if (!localStorage.getItem('mb_onboarded')) {
+            document.getElementById('onboardingOverlay')?.classList.add('visible');
+            document.getElementById('onboardingDismiss')?.addEventListener('click', () => {
+                document.getElementById('onboardingOverlay')?.classList.remove('visible');
+                localStorage.setItem('mb_onboarded', '1');
+            });
+        }
+    } catch {}
+})();
+// Register service worker for PWA
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+}
 </script>
 
 </body>

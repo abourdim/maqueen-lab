@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meet your robot! — Maqueen Lab</title>
+<style>
+  :root {
+    --bg: #0a1628;
+    --bg-elev: #0f1e35;
+    --bg-card: #122844;
+    --border: #1d3556;
+    --text: #fff;
+    --text-dim: #b8c8e0;
+    --accent: #00d4ff;
+    --accent-glow: #00d4ff77;
+    --yellow: #fbbf24;
+    --green: #4ade80;
+    --pink: #f472b6;
+    --orange: #fb923c;
+    --purple: #c084fc;
+    --red: #ef4444;
+    --blue: #3b82f6;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: radial-gradient(ellipse at top, #1a3a5e 0%, var(--bg) 70%);
+    color: var(--text);
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', -apple-system, sans-serif;
+    line-height: 1.4;
+    font-size: 16px;
+    min-height: 100vh;
+  }
+  body { padding: 32px 24px 64px; max-width: 1280px; margin: 0 auto; }
+
+  h1 {
+    font-size: 42px;
+    text-align: center;
+    margin: 0 0 8px;
+    background: linear-gradient(135deg, #fff, var(--accent), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 18px;
+    margin-bottom: 24px;
+  }
+  .stage-wrap {
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.15);
+    overflow: hidden;
+    position: relative;
+  }
+
+  svg.stage { display: block; width: 100%; height: auto; max-width: 100%; }
+
+  /* Tooltip card */
+  .tooltip {
+    position: absolute;
+    background: var(--bg-elev);
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 14px 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 24px var(--accent-glow);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s, transform 0.18s;
+    transform: translate(-50%, calc(-100% - 18px)) scale(0.9);
+    max-width: 280px;
+    text-align: center;
+    z-index: 10;
+  }
+  .tooltip.show { opacity: 1; transform: translate(-50%, calc(-100% - 18px)) scale(1); }
+  .tooltip h3 { margin: 0 0 6px; font-size: 18px; color: var(--accent); }
+  .tooltip p { margin: 0; font-size: 14px; color: var(--text-dim); }
+
+  /* Component groups: hover glow + click feedback */
+  .comp { cursor: pointer; transition: transform 0.2s; transform-origin: center; transform-box: fill-box; }
+  .comp:hover { transform: scale(1.08); }
+  .comp:active { transform: scale(0.95); }
+
+  /* Gentle floating animation for connection lines */
+  .vine { stroke-dasharray: 4 6; animation: flow 6s linear infinite; opacity: 0.55; }
+  @keyframes flow { to { stroke-dashoffset: -100; } }
+
+  /* Pulsing for RGB */
+  .rgb-pulse { animation: pulse 1.6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  .rgb-pulse:nth-child(2) { animation-delay: 0.4s; }
+  .rgb-pulse:nth-child(3) { animation-delay: 0.8s; }
+  .rgb-pulse:nth-child(4) { animation-delay: 1.2s; }
+  @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.25); opacity: 1; } }
+
+  /* Sound waves */
+  .wave { animation: wave-out 1.6s ease-out infinite; opacity: 0; transform-origin: center; transform-box: fill-box; }
+  .wave:nth-child(2) { animation-delay: 0.3s; }
+  .wave:nth-child(3) { animation-delay: 0.6s; }
+  @keyframes wave-out {
+    0% { opacity: 0.8; transform: scale(0.4); }
+    100% { opacity: 0; transform: scale(1.5); }
+  }
+
+  /* Wheel spin */
+  .wheel-spokes { animation: spin 3s linear infinite; transform-origin: center; transform-box: fill-box; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* micro:bit blink */
+  .led-blink { animation: blink 4s ease-in-out infinite; }
+  @keyframes blink { 0%, 90%, 100% { opacity: 0.95; } 92%, 95% { opacity: 0.3; } }
+
+  .controls {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .btn:hover { box-shadow: 0 0 20px var(--accent-glow); transform: scale(1.05); }
+  .btn.secondary { background: var(--bg-elev); color: var(--accent); border: 2px solid var(--accent); }
+
+  .footer-nav {
+    margin-top: 32px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+  .footer-nav a { color: var(--accent); text-decoration: none; padding: 0 8px; }
+  .footer-nav a:hover { text-decoration: underline; }
+
+  .tip {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 12px;
+    font-style: italic;
+  }
+  .pin-badge { font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; font-size: 14px; font-weight: 700; dominant-baseline: middle; }
+</style>
+</head>
+<body>
+
+<h1>Meet your robot! 🤖</h1>
+<div class="subtitle">Tap each part to learn what it does</div>
+
+<div class="stage-wrap">
+  <div id="tooltip" class="tooltip"><h3 id="tt-title"></h3><p id="tt-desc"></p></div>
+
+  <svg class="stage" viewBox="0 0 1280 920" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="3" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="soft-glow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="1.5" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <radialGradient id="ledGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fef08a" stop-opacity="1"/>
+        <stop offset="60%" stop-color="#facc15" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#a16207" stop-opacity="1"/>
+      </radialGradient>
+      <radialGradient id="rgbR" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+        <stop offset="50%" stop-color="#ef4444" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#7f1d1d" stop-opacity="1"/>
+      </radialGradient>
+      <radialGradient id="rgbG" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff"/><stop offset="50%" stop-color="#22c55e"/><stop offset="100%" stop-color="#14532d"/>
+      </radialGradient>
+      <radialGradient id="rgbB" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff"/><stop offset="50%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/>
+      </radialGradient>
+      <radialGradient id="rgbP" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#581c87"/>
+      </radialGradient>
+      <linearGradient id="microbitPCB" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#1a4d2e"/>
+        <stop offset="100%" stop-color="#0f3320"/>
+      </linearGradient>
+      <linearGradient id="servoBody" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#3b82f6"/>
+        <stop offset="100%" stop-color="#1e40af"/>
+      </linearGradient>
+      <linearGradient id="motorBody" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#fbbf24"/>
+        <stop offset="100%" stop-color="#d97706"/>
+      </linearGradient>
+      <linearGradient id="chassisGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#3b82f6"/>
+        <stop offset="60%" stop-color="#1e3a8a"/>
+        <stop offset="100%" stop-color="#0a1628"/>
+      </linearGradient>
+      <radialGradient id="chassisHi" cx="30%" cy="20%" r="80%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="0.18"/>
+        <stop offset="50%" stop-color="#fff" stop-opacity="0.04"/>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- ========================================================
+         TOP-DOWN CAR CHASSIS LAYOUT
+         Each part sits roughly where it lives on the real Maqueen Lite.
+         Front of the robot = top of the page.
+         ======================================================== -->
+
+    <!-- FRONT / BACK direction labels -->
+    <g font-family="Comic Sans MS, sans-serif" font-weight="700" fill="#93a8c4" font-size="14">
+      <text x="640" y="32" text-anchor="middle">▲ FRONT</text>
+      <text x="640" y="900" text-anchor="middle">▼ BACK</text>
+    </g>
+
+    <!-- ===========================================
+         WHEELS — side-view circles attached to chassis sides
+         (more recognizable for kids — proper rim, spokes, lug bolts)
+         =========================================== -->
+    <defs>
+      <radialGradient id="rimMetal" cx="35%" cy="30%" r="80%">
+        <stop offset="0%" stop-color="#9ca3af"/>
+        <stop offset="50%" stop-color="#5a6068"/>
+        <stop offset="100%" stop-color="#1a1c20"/>
+      </radialGradient>
+      <radialGradient id="tireRubber" cx="50%" cy="50%" r="50%">
+        <stop offset="80%" stop-color="#1a1a1c"/>
+        <stop offset="100%" stop-color="#000"/>
+      </radialGradient>
+      <symbol id="sideWheel" viewBox="-100 -100 200 200">
+        <!-- outer rubber tire -->
+        <circle cx="0" cy="0" r="92" fill="url(#tireRubber)" stroke="#000" stroke-width="2.5"/>
+        <!-- tread pattern (radial chevrons around outer ring) -->
+        <g stroke="#2a2a2c" stroke-width="2" stroke-linecap="round">
+          <line x1="0" y1="-90" x2="0" y2="-78"/>
+          <line x1="32" y1="-84" x2="28" y2="-72" transform="rotate(15)"/>
+          <line x1="60" y1="-68" x2="52" y2="-58" transform="rotate(15)"/>
+          <line x1="80" y1="-44" x2="70" y2="-38" transform="rotate(15)"/>
+          <line x1="90" y1="-15" x2="78" y2="-13" transform="rotate(15)"/>
+          <line x1="90" y1="15" x2="78" y2="13" transform="rotate(15)"/>
+          <line x1="80" y1="44" x2="70" y2="38" transform="rotate(15)"/>
+          <line x1="60" y1="68" x2="52" y2="58" transform="rotate(15)"/>
+          <line x1="32" y1="84" x2="28" y2="72" transform="rotate(15)"/>
+          <line x1="0" y1="90" x2="0" y2="78"/>
+          <line x1="-32" y1="84" x2="-28" y2="72" transform="rotate(15)"/>
+          <line x1="-60" y1="68" x2="-52" y2="58" transform="rotate(15)"/>
+          <line x1="-80" y1="44" x2="-70" y2="38" transform="rotate(15)"/>
+          <line x1="-90" y1="15" x2="-78" y2="13" transform="rotate(15)"/>
+          <line x1="-90" y1="-15" x2="-78" y2="-13" transform="rotate(15)"/>
+          <line x1="-80" y1="-44" x2="-70" y2="-38" transform="rotate(15)"/>
+          <line x1="-60" y1="-68" x2="-52" y2="-58" transform="rotate(15)"/>
+          <line x1="-32" y1="-84" x2="-28" y2="-72" transform="rotate(15)"/>
+        </g>
+        <!-- inner sidewall groove -->
+        <circle cx="0" cy="0" r="74" fill="none" stroke="#2e2e30" stroke-width="2"/>
+        <!-- alloy rim disc -->
+        <circle cx="0" cy="0" r="62" fill="url(#rimMetal)" stroke="#0a0a0c" stroke-width="2"/>
+      </symbol>
+    </defs>
+
+    <!-- Left wheel — protrudes from left edge of chassis -->
+    <g class="comp" data-name="motorL"
+       data-title="Left wheel + motor ⚙️"
+       data-desc="The motor that spins the LEFT wheel. Make it turn forward or backward to move the robot!">
+      <!-- forward arrow above wheel -->
+      <g opacity="0.85">
+        <path d="M 200 350 L 188 374 L 196 374 L 196 392 L 204 392 L 204 374 L 212 374 Z"
+              fill="#fb923c" stroke="#000" stroke-width="0.6"/>
+      </g>
+      <!-- the wheel -->
+      <use href="#sideWheel" x="105" y="385" width="190" height="190"/>
+      <!-- 5-spoke star — light spokes radiating from hub through rim -->
+      <g class="wheel-spokes" style="transform-origin: 200px 480px;" stroke="#c0c5cc" stroke-width="6" stroke-linecap="round">
+        <line x1="200" y1="480" x2="200" y2="426"/>
+        <line x1="200" y1="480" x2="251" y2="463"/>
+        <line x1="200" y1="480" x2="232" y2="525"/>
+        <line x1="200" y1="480" x2="168" y2="525"/>
+        <line x1="200" y1="480" x2="149" y2="463"/>
+      </g>
+      <!-- spoke shadow line for depth -->
+      <g class="wheel-spokes" style="transform-origin: 200px 480px;" stroke="#1f242c" stroke-width="2" stroke-linecap="round" opacity="0.6">
+        <line x1="200" y1="480" x2="200" y2="426"/>
+        <line x1="200" y1="480" x2="251" y2="463"/>
+        <line x1="200" y1="480" x2="232" y2="525"/>
+        <line x1="200" y1="480" x2="168" y2="525"/>
+        <line x1="200" y1="480" x2="149" y2="463"/>
+      </g>
+      <!-- center hub cap with bolt -->
+      <circle cx="200" cy="480" r="18" fill="#5a6068" stroke="#0a0a0c" stroke-width="2"/>
+      <circle cx="200" cy="480" r="13" fill="#2a2e34" stroke="#7a8290" stroke-width="0.8"/>
+      <circle cx="200" cy="480" r="4" fill="#9ca3af"/>
+      <!-- specular highlight on rim -->
+      <ellipse cx="172" cy="448" rx="18" ry="10" fill="#fff" opacity="0.18"/>
+      <text x="200" y="600" text-anchor="middle" fill="#fb923c" font-size="14" font-weight="700">Left wheel</text>
+      <text x="200" y="616" text-anchor="middle" fill="#93a8c4" font-size="11">N20 motor</text>
+      <rect x="166" y="624" width="68" height="22" rx="11" fill="#0a1628" stroke="#fb923c" stroke-width="1.2"/>
+      <text x="200" y="636" text-anchor="middle" fill="#fb923c" class="pin-badge">I2C·0x00</text>
+    </g>
+
+    <!-- Right wheel — protrudes from right edge of chassis -->
+    <g class="comp" data-name="motorR"
+       data-title="Right wheel + motor ⚙️"
+       data-desc="The motor that spins the RIGHT wheel. Spin both wheels the same way to drive straight, or different ways to turn!">
+      <g opacity="0.85">
+        <path d="M 1080 350 L 1068 374 L 1076 374 L 1076 392 L 1084 392 L 1084 374 L 1092 374 Z"
+              fill="#fb923c" stroke="#000" stroke-width="0.6"/>
+      </g>
+      <use href="#sideWheel" x="985" y="385" width="190" height="190"/>
+      <g class="wheel-spokes" style="transform-origin: 1080px 480px;" stroke="#c0c5cc" stroke-width="6" stroke-linecap="round">
+        <line x1="1080" y1="480" x2="1080" y2="426"/>
+        <line x1="1080" y1="480" x2="1131" y2="463"/>
+        <line x1="1080" y1="480" x2="1112" y2="525"/>
+        <line x1="1080" y1="480" x2="1048" y2="525"/>
+        <line x1="1080" y1="480" x2="1029" y2="463"/>
+      </g>
+      <g class="wheel-spokes" style="transform-origin: 1080px 480px;" stroke="#1f242c" stroke-width="2" stroke-linecap="round" opacity="0.6">
+        <line x1="1080" y1="480" x2="1080" y2="426"/>
+        <line x1="1080" y1="480" x2="1131" y2="463"/>
+        <line x1="1080" y1="480" x2="1112" y2="525"/>
+        <line x1="1080" y1="480" x2="1048" y2="525"/>
+        <line x1="1080" y1="480" x2="1029" y2="463"/>
+      </g>
+      <circle cx="1080" cy="480" r="18" fill="#5a6068" stroke="#0a0a0c" stroke-width="2"/>
+      <circle cx="1080" cy="480" r="13" fill="#2a2e34" stroke="#7a8290" stroke-width="0.8"/>
+      <circle cx="1080" cy="480" r="4" fill="#9ca3af"/>
+      <ellipse cx="1052" cy="448" rx="18" ry="10" fill="#fff" opacity="0.18"/>
+      <text x="1080" y="600" text-anchor="middle" fill="#fb923c" font-size="14" font-weight="700">Right wheel</text>
+      <text x="1080" y="616" text-anchor="middle" fill="#93a8c4" font-size="11">N20 motor</text>
+      <rect x="1046" y="624" width="68" height="22" rx="11" fill="#0a1628" stroke="#fb923c" stroke-width="1.2"/>
+      <text x="1080" y="636" text-anchor="middle" fill="#fb923c" class="pin-badge">I2C·0x02</text>
+    </g>
+
+    <!-- ===========================================
+         Caster ball at the back
+         =========================================== -->
+    <g>
+      <circle cx="640" cy="780" r="28" fill="#374151" stroke="#9ca3af" stroke-width="2"/>
+      <circle cx="640" cy="780" r="22" fill="#1f2937"/>
+      <circle cx="632" cy="772" r="6" fill="#fff" opacity="0.4"/>
+    </g>
+
+    <!-- ===========================================
+         CAR CHASSIS BODY — rounded rectangle, top-down
+         =========================================== -->
+    <g>
+      <!-- chassis main shell -->
+      <rect x="260" y="80" width="760" height="720" rx="80"
+            fill="url(#chassisGrad)" stroke="#00d4ff" stroke-width="3" filter="url(#soft-glow)"/>
+      <!-- highlight overlay -->
+      <rect x="260" y="80" width="760" height="720" rx="80" fill="url(#chassisHi)"/>
+      <!-- subtle inner panel -->
+      <rect x="290" y="110" width="700" height="660" rx="60" fill="none" stroke="#fff" stroke-width="1" opacity="0.1"/>
+      <!-- chassis label (faint, top-left of chassis to avoid title overlap) -->
+      <text x="290" y="105" fill="#00d4ff" font-size="11" font-weight="700" opacity="0.6">Maqueen Lite v4 chassis</text>
+    </g>
+
+    <!-- ===========================================
+         FRONT CLUSTER — Ultrasonic eyes + IR receiver + Buzzer
+         =========================================== -->
+
+    <!-- Ultrasonic eyes (front center) -->
+    <g class="comp" data-name="ultrasonic"
+       data-title="Ultrasonic eyes 👀"
+       data-desc="Two little eyes that send out sound waves and listen for the echo. That's how the robot 'sees' how far away things are!">
+      <!-- sound cone in front -->
+      <g fill="none" stroke="#4ade80" stroke-width="2.5" opacity="0.55">
+        <path d="M 580 145 Q 540 100, 540 50" stroke-dasharray="6 4"/>
+        <path d="M 700 145 Q 740 100, 740 50" stroke-dasharray="6 4"/>
+        <path d="M 640 130 Q 640 80, 640 30" stroke-dasharray="6 4"/>
+      </g>
+      <rect x="570" y="125" width="140" height="55" rx="8" fill="#1a4d8e" stroke="#4ade80" stroke-width="3"/>
+      <!-- two transducers -->
+      <circle cx="600" cy="152" r="20" fill="#9ca3af" stroke="#fff" stroke-width="2"/>
+      <circle cx="600" cy="152" r="14" fill="#1d3556"/>
+      <circle cx="600" cy="152" r="3" fill="#4ade80"/>
+      <circle cx="680" cy="152" r="20" fill="#9ca3af" stroke="#fff" stroke-width="2"/>
+      <circle cx="680" cy="152" r="14" fill="#1d3556"/>
+      <circle cx="680" cy="152" r="3" fill="#4ade80"/>
+      <text x="640" y="200" text-anchor="middle" fill="#4ade80" font-size="14" font-weight="700">Ultrasonic eyes</text>
+      <!-- pin badges: TRIG=P1, ECHO=P2 -->
+      <g>
+        <rect x="592" y="208" width="44" height="22" rx="11" fill="#0a1628" stroke="#4ade80" stroke-width="1.2"/>
+        <text x="614" y="220" text-anchor="middle" fill="#4ade80" class="pin-badge">P1·TR</text>
+        <rect x="644" y="208" width="44" height="22" rx="11" fill="#0a1628" stroke="#4ade80" stroke-width="1.2"/>
+        <text x="666" y="220" text-anchor="middle" fill="#4ade80" class="pin-badge">P2·EC</text>
+      </g>
+    </g>
+
+    <!-- IR receiver (front-right) -->
+    <g class="comp" data-name="ir"
+       data-title="IR remote receiver 📺"
+       data-desc="A magic eye on the front of the robot. Point a TV-style remote at it and press buttons — the robot listens!">
+      <!-- IR dome poking from chassis front -->
+      <ellipse cx="850" cy="155" rx="22" ry="28" fill="#1d3556" stroke="#c084fc" stroke-width="2.5"/>
+      <ellipse cx="844" cy="143" rx="6" ry="9" fill="#c084fc" opacity="0.6"/>
+      <text x="850" y="208" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="700">IR eye</text>
+      <rect x="822" y="216" width="56" height="22" rx="11" fill="#0a1628" stroke="#c084fc" stroke-width="1.2"/>
+      <text x="850" y="228" text-anchor="middle" fill="#c084fc" class="pin-badge">fixed</text>
+    </g>
+
+    <!-- Buzzer (front-left, piezo disk top-down) -->
+    <g class="comp" data-name="buzzer"
+       data-title="Buzzer 🔊"
+       data-desc="The little speaker that plays beeps and tunes! It can sing low notes and high notes!">
+      <!-- expanding sound waves -->
+      <g fill="none" stroke="#fbbf24" stroke-width="2.5" style="transform-origin:430px 155px;">
+        <circle class="wave" cx="430" cy="155" r="34" style="transform-origin:430px 155px;"/>
+        <circle class="wave" cx="430" cy="155" r="34" style="transform-origin:430px 155px;"/>
+        <circle class="wave" cx="430" cy="155" r="34" style="transform-origin:430px 155px;"/>
+      </g>
+      <!-- piezo metal disk: brass-coloured ring -->
+      <defs>
+        <radialGradient id="piezoBrass" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#fde68a"/>
+          <stop offset="40%" stop-color="#eab308"/>
+          <stop offset="100%" stop-color="#854d0e"/>
+        </radialGradient>
+        <radialGradient id="piezoCeramic" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#9ca3af"/>
+          <stop offset="100%" stop-color="#374151"/>
+        </radialGradient>
+      </defs>
+      <!-- brass outer disk -->
+      <circle cx="430" cy="155" r="32" fill="url(#piezoBrass)" stroke="#3a2906" stroke-width="2"/>
+      <!-- inner ceramic plate -->
+      <circle cx="430" cy="155" r="22" fill="url(#piezoCeramic)" stroke="#1a1c20" stroke-width="1.5"/>
+      <!-- center contact dot -->
+      <circle cx="430" cy="155" r="4" fill="#0a1628" stroke="#fde68a" stroke-width="1"/>
+      <!-- specular highlight -->
+      <ellipse cx="418" cy="143" rx="9" ry="6" fill="#fff" opacity="0.55"/>
+      <!-- + and - terminals at the edge -->
+      <text x="402" y="190" font-size="11" font-weight="900" fill="#ef4444">+</text>
+      <text x="454" y="190" font-size="11" font-weight="900" fill="#3b82f6">−</text>
+      <!-- music notes flying out -->
+      <text x="468" y="125" font-size="22" fill="#fbbf24" filter="url(#soft-glow)">♪</text>
+      <text x="378" y="135" font-size="16" fill="#fbbf24" filter="url(#soft-glow)" opacity="0.7">♫</text>
+      <text x="430" y="220" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="700">Buzzer</text>
+      <!-- pin badge -->
+      <rect x="412" y="228" width="36" height="22" rx="11" fill="#0a1628" stroke="#fbbf24" stroke-width="1.2"/>
+      <text x="430" y="240" text-anchor="middle" fill="#fbbf24" class="pin-badge">P0</text>
+    </g>
+
+    <!-- ===========================================
+         NEOPIXELS × 4 — at chassis corners, big + labelled
+         =========================================== -->
+    <g class="comp" data-name="rgb"
+       data-title="NeoPixels × 4 — Rainbow lights 🌈"
+       data-desc="Four magic lights at the corners that can shine ANY colour! Red, green, blue, purple — or sparkle like a rainbow! Each one is called a NeoPixel and can be controlled separately.">
+
+      <!-- Pixel 0 — top-left (red) -->
+      <g style="transform-origin:320px 220px;">
+        <circle cx="320" cy="220" r="46" fill="#ef4444" opacity="0.18" filter="url(#glow)"/>
+        <circle cx="320" cy="220" r="36" fill="#ef4444" opacity="0.35" filter="url(#glow)"/>
+        <circle class="rgb-pulse" cx="320" cy="220" r="24" fill="url(#rgbR)" stroke="#fff" stroke-width="2" filter="url(#soft-glow)" style="transform-origin:320px 220px;"/>
+        <ellipse cx="312" cy="212" rx="6" ry="8" fill="#fff" opacity="0.7"/>
+        <text x="320" y="278" text-anchor="middle" fill="#f472b6" font-size="13" font-weight="700">RGB 0</text>
+      </g>
+
+      <!-- Pixel 1 — bottom-left (green) -->
+      <g style="transform-origin:320px 700px;">
+        <circle cx="320" cy="700" r="46" fill="#22c55e" opacity="0.18" filter="url(#glow)"/>
+        <circle cx="320" cy="700" r="36" fill="#22c55e" opacity="0.35" filter="url(#glow)"/>
+        <circle class="rgb-pulse" cx="320" cy="700" r="24" fill="url(#rgbG)" stroke="#fff" stroke-width="2" filter="url(#soft-glow)" style="transform-origin:320px 700px;"/>
+        <ellipse cx="312" cy="692" rx="6" ry="8" fill="#fff" opacity="0.7"/>
+        <text x="320" y="666" text-anchor="middle" fill="#f472b6" font-size="13" font-weight="700">RGB 1</text>
+      </g>
+
+      <!-- Pixel 2 — top-right (blue) -->
+      <g style="transform-origin:960px 220px;">
+        <circle cx="960" cy="220" r="46" fill="#3b82f6" opacity="0.18" filter="url(#glow)"/>
+        <circle cx="960" cy="220" r="36" fill="#3b82f6" opacity="0.35" filter="url(#glow)"/>
+        <circle class="rgb-pulse" cx="960" cy="220" r="24" fill="url(#rgbB)" stroke="#fff" stroke-width="2" filter="url(#soft-glow)" style="transform-origin:960px 220px;"/>
+        <ellipse cx="952" cy="212" rx="6" ry="8" fill="#fff" opacity="0.7"/>
+        <text x="960" y="278" text-anchor="middle" fill="#f472b6" font-size="13" font-weight="700">RGB 2</text>
+      </g>
+
+      <!-- Pixel 3 — bottom-right (purple) -->
+      <g style="transform-origin:960px 700px;">
+        <circle cx="960" cy="700" r="46" fill="#a855f7" opacity="0.18" filter="url(#glow)"/>
+        <circle cx="960" cy="700" r="36" fill="#a855f7" opacity="0.35" filter="url(#glow)"/>
+        <circle class="rgb-pulse" cx="960" cy="700" r="24" fill="url(#rgbP)" stroke="#fff" stroke-width="2" filter="url(#soft-glow)" style="transform-origin:960px 700px;"/>
+        <ellipse cx="952" cy="692" rx="6" ry="8" fill="#fff" opacity="0.7"/>
+        <text x="960" y="666" text-anchor="middle" fill="#f472b6" font-size="13" font-weight="700">RGB 3</text>
+      </g>
+
+      <!-- Group title across the top -->
+      <text x="640" y="50" text-anchor="middle" fill="#f472b6" font-size="13" font-weight="700" opacity="0.85">
+        ✨ NeoPixels × 4 — Rainbow lights ✨
+      </text>
+      <!-- I2C address badge under the title -->
+      <rect x="600" y="58" width="80" height="22" rx="11" fill="#0a1628" stroke="#f472b6" stroke-width="1.2"/>
+      <text x="640" y="70" text-anchor="middle" fill="#f472b6" class="pin-badge">I2C·0x10·0x32</text>
+    </g>
+
+    <!-- ===========================================
+         SIMPLE LEDS — left & right sides of the chassis
+         =========================================== -->
+    <!-- Simple LEDs — 5mm dome, top-down with reflective shine -->
+    <defs>
+      <radialGradient id="ledDome" cx="38%" cy="32%" r="62%">
+        <stop offset="0%" stop-color="#fefce8" stop-opacity="1"/>
+        <stop offset="20%" stop-color="#fef9c3" stop-opacity="1"/>
+        <stop offset="55%" stop-color="#facc15" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#854d0e" stop-opacity="1"/>
+      </radialGradient>
+      <radialGradient id="ledHalo" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fef08a" stop-opacity="0.7"/>
+        <stop offset="50%" stop-color="#facc15" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#facc15" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <g class="comp" data-name="ledL"
+       data-title="LED Left 💡"
+       data-desc="A bright yellow light on the LEFT side of the robot. Turn it on or off to flash a signal!">
+      <!-- multi-layer halo -->
+      <circle cx="380" cy="318" r="56" fill="url(#ledHalo)"/>
+      <circle cx="380" cy="318" r="40" fill="url(#ledHalo)" opacity="0.7"/>
+      <!-- LED base / collar -->
+      <ellipse cx="380" cy="335" rx="22" ry="6" fill="#374151" stroke="#1a1c20" stroke-width="1"/>
+      <ellipse cx="380" cy="333" rx="22" ry="4" fill="#4b5563"/>
+      <!-- LED dome body -->
+      <ellipse cx="380" cy="318" rx="20" ry="22" fill="url(#ledDome)" stroke="#fbbf24" stroke-width="1.5" filter="url(#soft-glow)"/>
+      <!-- specular highlights -->
+      <ellipse cx="372" cy="306" rx="6" ry="9" fill="#fff" opacity="0.85"/>
+      <circle cx="385" cy="312" r="2" fill="#fff" opacity="0.6"/>
+      <!-- two leg wires going down -->
+      <line x1="372" y1="340" x2="370" y2="358" stroke="#9ca3af" stroke-width="2"/>
+      <line x1="388" y1="340" x2="390" y2="358" stroke="#9ca3af" stroke-width="2"/>
+      <!-- anode / cathode tag -->
+      <text x="365" y="372" font-size="9" fill="#9ca3af" font-weight="700">+</text>
+      <text x="392" y="372" font-size="9" fill="#9ca3af" font-weight="700">−</text>
+      <text x="380" y="392" text-anchor="middle" fill="#facc15" font-size="13" font-weight="700">LED L</text>
+      <rect x="362" y="400" width="36" height="22" rx="11" fill="#0a1628" stroke="#facc15" stroke-width="1.2"/>
+      <text x="380" y="412" text-anchor="middle" fill="#facc15" class="pin-badge">P8</text>
+    </g>
+
+    <g class="comp" data-name="ledR"
+       data-title="LED Right 💡"
+       data-desc="A bright yellow light on the RIGHT side. Pair with LED Left for blinky patterns!">
+      <circle cx="900" cy="318" r="56" fill="url(#ledHalo)"/>
+      <circle cx="900" cy="318" r="40" fill="url(#ledHalo)" opacity="0.7"/>
+      <ellipse cx="900" cy="335" rx="22" ry="6" fill="#374151" stroke="#1a1c20" stroke-width="1"/>
+      <ellipse cx="900" cy="333" rx="22" ry="4" fill="#4b5563"/>
+      <ellipse cx="900" cy="318" rx="20" ry="22" fill="url(#ledDome)" stroke="#fbbf24" stroke-width="1.5" filter="url(#soft-glow)"/>
+      <ellipse cx="892" cy="306" rx="6" ry="9" fill="#fff" opacity="0.85"/>
+      <circle cx="905" cy="312" r="2" fill="#fff" opacity="0.6"/>
+      <line x1="892" y1="340" x2="890" y2="358" stroke="#9ca3af" stroke-width="2"/>
+      <line x1="908" y1="340" x2="910" y2="358" stroke="#9ca3af" stroke-width="2"/>
+      <text x="885" y="372" font-size="9" fill="#9ca3af" font-weight="700">+</text>
+      <text x="912" y="372" font-size="9" fill="#9ca3af" font-weight="700">−</text>
+      <text x="900" y="392" text-anchor="middle" fill="#facc15" font-size="13" font-weight="700">LED R</text>
+      <rect x="880" y="400" width="40" height="22" rx="11" fill="#0a1628" stroke="#facc15" stroke-width="1.2"/>
+      <text x="900" y="412" text-anchor="middle" fill="#facc15" class="pin-badge">P12</text>
+    </g>
+
+    <!-- ===========================================
+         CENTER: micro:bit BRAIN
+         =========================================== -->
+    <g class="comp" data-name="microbit"
+       data-title="The micro:bit brain 🧠"
+       data-desc="The little computer that thinks for the robot! It listens to your phone over Bluetooth and tells every part what to do.">
+      <!-- PCB body -->
+      <rect x="540" y="290" width="200" height="170" rx="22"
+            fill="url(#microbitPCB)" stroke="#fff" stroke-width="2.5" filter="url(#glow)"/>
+      <!-- gold edge connector teeth -->
+      <g fill="#fbbf24">
+        <rect x="560" y="455" width="14" height="10"/>
+        <rect x="585" y="455" width="14" height="10"/>
+        <rect x="610" y="455" width="14" height="10"/>
+        <rect x="635" y="455" width="14" height="10"/>
+        <rect x="660" y="455" width="14" height="10"/>
+        <rect x="685" y="455" width="14" height="10"/>
+        <rect x="710" y="455" width="14" height="10"/>
+      </g>
+      <!-- LED matrix dim base -->
+      <g fill="#1d3556" opacity="0.4">
+        <rect x="568" y="315" width="8" height="8" rx="1"/><rect x="588" y="315" width="8" height="8" rx="1"/><rect x="608" y="315" width="8" height="8" rx="1"/><rect x="628" y="315" width="8" height="8" rx="1"/><rect x="648" y="315" width="8" height="8" rx="1"/>
+        <rect x="568" y="335" width="8" height="8" rx="1"/><rect x="588" y="335" width="8" height="8" rx="1"/><rect x="608" y="335" width="8" height="8" rx="1"/><rect x="628" y="335" width="8" height="8" rx="1"/><rect x="648" y="335" width="8" height="8" rx="1"/>
+        <rect x="568" y="355" width="8" height="8" rx="1"/><rect x="588" y="355" width="8" height="8" rx="1"/><rect x="608" y="355" width="8" height="8" rx="1"/><rect x="628" y="355" width="8" height="8" rx="1"/><rect x="648" y="355" width="8" height="8" rx="1"/>
+        <rect x="568" y="375" width="8" height="8" rx="1"/><rect x="588" y="375" width="8" height="8" rx="1"/><rect x="608" y="375" width="8" height="8" rx="1"/><rect x="628" y="375" width="8" height="8" rx="1"/><rect x="648" y="375" width="8" height="8" rx="1"/>
+        <rect x="568" y="395" width="8" height="8" rx="1"/><rect x="588" y="395" width="8" height="8" rx="1"/><rect x="608" y="395" width="8" height="8" rx="1"/><rect x="628" y="395" width="8" height="8" rx="1"/><rect x="648" y="395" width="8" height="8" rx="1"/>
+      </g>
+      <!-- Smile pattern (lit) -->
+      <g fill="url(#ledGlow)" filter="url(#soft-glow)" class="led-blink">
+        <rect x="588" y="335" width="8" height="8" rx="1"/>
+        <rect x="628" y="335" width="8" height="8" rx="1"/>
+        <rect x="568" y="375" width="8" height="8" rx="1"/>
+        <rect x="648" y="375" width="8" height="8" rx="1"/>
+        <rect x="588" y="395" width="8" height="8" rx="1"/>
+        <rect x="608" y="395" width="8" height="8" rx="1"/>
+        <rect x="628" y="395" width="8" height="8" rx="1"/>
+      </g>
+      <!-- Buttons A and B -->
+      <circle cx="556" cy="410" r="13" fill="#fff" stroke="#000" stroke-width="2"/>
+      <text x="556" y="416" text-anchor="middle" font-size="13" font-weight="900" fill="#000">A</text>
+      <circle cx="724" cy="410" r="13" fill="#fff" stroke="#000" stroke-width="2"/>
+      <text x="724" y="416" text-anchor="middle" font-size="13" font-weight="900" fill="#000">B</text>
+
+      <text x="640" y="282" text-anchor="middle" fill="#fff" font-size="14" font-weight="900">micro:bit brain</text>
+    </g>
+
+    <!-- ===========================================
+         I2C SWITCHBOARD CHIP — TQFP-style IC, top-down
+         =========================================== -->
+    <defs>
+      <linearGradient id="chipBody" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#3a3a3e"/>
+        <stop offset="50%" stop-color="#1f1f22"/>
+        <stop offset="100%" stop-color="#0a0a0c"/>
+      </linearGradient>
+    </defs>
+    <g class="comp" data-name="i2c"
+       data-title="Magic switchboard 📡"
+       data-desc="A little helper chip the brain talks to. It controls the wheels, the servos, and the rainbow lights all at once!">
+
+      <!-- chip pin teeth — all 4 sides (TQFP-style) -->
+      <g fill="#9ca3af" stroke="#5a5f68" stroke-width="0.5">
+        <!-- top edge pins (10) -->
+        <g>
+          <rect x="558" y="494" width="6" height="10"/><rect x="578" y="494" width="6" height="10"/>
+          <rect x="598" y="494" width="6" height="10"/><rect x="618" y="494" width="6" height="10"/>
+          <rect x="638" y="494" width="6" height="10"/><rect x="658" y="494" width="6" height="10"/>
+          <rect x="678" y="494" width="6" height="10"/><rect x="698" y="494" width="6" height="10"/>
+          <rect x="718" y="494" width="6" height="10"/>
+        </g>
+        <!-- bottom edge pins -->
+        <g>
+          <rect x="558" y="586" width="6" height="10"/><rect x="578" y="586" width="6" height="10"/>
+          <rect x="598" y="586" width="6" height="10"/><rect x="618" y="586" width="6" height="10"/>
+          <rect x="638" y="586" width="6" height="10"/><rect x="658" y="586" width="6" height="10"/>
+          <rect x="678" y="586" width="6" height="10"/><rect x="698" y="586" width="6" height="10"/>
+          <rect x="718" y="586" width="6" height="10"/>
+        </g>
+        <!-- left edge pins -->
+        <g>
+          <rect x="528" y="510" width="10" height="6"/><rect x="528" y="525" width="10" height="6"/>
+          <rect x="528" y="540" width="10" height="6"/><rect x="528" y="555" width="10" height="6"/>
+          <rect x="528" y="570" width="10" height="6"/>
+        </g>
+        <!-- right edge pins -->
+        <g>
+          <rect x="744" y="510" width="10" height="6"/><rect x="744" y="525" width="10" height="6"/>
+          <rect x="744" y="540" width="10" height="6"/><rect x="744" y="555" width="10" height="6"/>
+          <rect x="744" y="570" width="10" height="6"/>
+        </g>
+      </g>
+
+      <!-- chip body (dark IC package) -->
+      <rect x="540" y="502" width="214" height="86" rx="6" fill="url(#chipBody)" stroke="#0a0a0c" stroke-width="1.5"/>
+      <!-- subtle inner bevel -->
+      <rect x="544" y="506" width="206" height="78" rx="4" fill="none" stroke="#5a5f68" stroke-width="0.8" opacity="0.4"/>
+      <!-- pin 1 indicator dot (top-left) -->
+      <circle cx="552" cy="514" r="3" fill="#5a5f68" stroke="#9ca3af" stroke-width="0.5"/>
+      <!-- chip text label (silkscreen) -->
+      <text x="640" y="528" text-anchor="middle" fill="#7a8290" font-size="9" font-family="JetBrains Mono, monospace" letter-spacing="2">DRV8833 · I2C 0x10</text>
+      <!-- chip face: subtle eyes + smile -->
+      <circle cx="612" cy="552" r="5" fill="#c084fc" opacity="0.9"/>
+      <circle cx="613" cy="553" r="2" fill="#0a0a0c"/>
+      <circle cx="668" cy="552" r="5" fill="#c084fc" opacity="0.9"/>
+      <circle cx="669" cy="553" r="2" fill="#0a0a0c"/>
+      <path d="M 610 568 Q 640 580, 670 568" stroke="#c084fc" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.9"/>
+      <text x="640" y="618" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="700">Switchboard chip</text>
+      <!-- I2C bus pins from micro:bit -->
+      <rect x="582" y="626" width="56" height="22" rx="11" fill="#0a1628" stroke="#c084fc" stroke-width="1.2"/>
+      <text x="610" y="638" text-anchor="middle" fill="#c084fc" class="pin-badge">P19·SCL</text>
+      <rect x="642" y="626" width="56" height="22" rx="11" fill="#0a1628" stroke="#c084fc" stroke-width="1.2"/>
+      <text x="670" y="638" text-anchor="middle" fill="#c084fc" class="pin-badge">P20·SDA</text>
+    </g>
+
+    <!-- ===========================================
+         SERVOS S1 + S2 — Tower-Pro SG90 style, top-down
+         =========================================== -->
+    <defs>
+      <linearGradient id="servoBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#60a5fa"/>
+        <stop offset="55%" stop-color="#2563eb"/>
+        <stop offset="100%" stop-color="#1e3a8a"/>
+      </linearGradient>
+      <radialGradient id="servoHorn" cx="40%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#fff"/>
+        <stop offset="60%" stop-color="#e5e7eb"/>
+        <stop offset="100%" stop-color="#9ca3af"/>
+      </radialGradient>
+      <symbol id="servoSG90" viewBox="0 0 100 130">
+        <!-- mounting flanges (ears) -->
+        <rect x="0" y="38" width="100" height="14" rx="3" fill="url(#servoBlue)" stroke="#0c1a3a" stroke-width="1"/>
+        <!-- screw holes in flanges -->
+        <circle cx="8" cy="45" r="3" fill="#0a0a0c"/>
+        <circle cx="92" cy="45" r="3" fill="#0a0a0c"/>
+        <!-- screw heads + cross slot -->
+        <circle cx="8" cy="45" r="2" fill="#3a3a3e" stroke="#000" stroke-width="0.4"/>
+        <line x1="6" y1="45" x2="10" y2="45" stroke="#000" stroke-width="0.6"/>
+        <line x1="8" y1="43" x2="8" y2="47" stroke="#000" stroke-width="0.6"/>
+        <circle cx="92" cy="45" r="2" fill="#3a3a3e" stroke="#000" stroke-width="0.4"/>
+        <line x1="90" y1="45" x2="94" y2="45" stroke="#000" stroke-width="0.6"/>
+        <line x1="92" y1="43" x2="92" y2="47" stroke="#000" stroke-width="0.6"/>
+
+        <!-- main body -->
+        <rect x="22" y="14" width="56" height="100" rx="3" fill="url(#servoBlue)" stroke="#0c1a3a" stroke-width="1.5"/>
+        <!-- top label sticker -->
+        <rect x="28" y="60" width="44" height="22" rx="1.5" fill="#fff" opacity="0.92"/>
+        <text x="50" y="71" text-anchor="middle" fill="#1e3a8a" font-size="6" font-weight="900" font-family="Arial, sans-serif">TowerPro</text>
+        <text x="50" y="79" text-anchor="middle" fill="#1e3a8a" font-size="7" font-weight="900" font-family="Arial, sans-serif">SG90</text>
+        <!-- 3-wire ribbon cable out the bottom -->
+        <rect x="36" y="114" width="3" height="14" fill="#f97316"/>
+        <rect x="40.5" y="114" width="3" height="14" fill="#dc2626"/>
+        <rect x="45" y="114" width="3" height="14" fill="#3f3f46"/>
+        <!-- subtle highlight on body -->
+        <rect x="22" y="14" width="56" height="20" rx="3" fill="#fff" opacity="0.12"/>
+      </symbol>
+      <symbol id="servoHornArm" viewBox="0 0 70 70">
+        <!-- white plastic horn (round disc + arm) -->
+        <circle cx="35" cy="35" r="14" fill="url(#servoHorn)" stroke="#374151" stroke-width="1"/>
+        <rect x="33" y="2" width="4" height="34" fill="url(#servoHorn)" stroke="#374151" stroke-width="0.8"/>
+        <!-- screw holes on the horn arm -->
+        <circle cx="35" cy="8" r="1.4" fill="#0a0a0c"/>
+        <circle cx="35" cy="16" r="1.4" fill="#0a0a0c"/>
+        <circle cx="35" cy="24" r="1.4" fill="#0a0a0c"/>
+        <!-- center spline screw -->
+        <circle cx="35" cy="35" r="3" fill="#1f2937" stroke="#000" stroke-width="0.5"/>
+        <line x1="32" y1="35" x2="38" y2="35" stroke="#000" stroke-width="0.6"/>
+        <line x1="35" y1="32" x2="35" y2="38" stroke="#000" stroke-width="0.6"/>
+      </symbol>
+    </defs>
+
+    <g class="comp" data-name="servos"
+       data-title="Servo arms S1 + S2 🦾"
+       data-desc="Two little arms at the back that swing to any angle! Use them to lift, grab, or push things — perfect for the Forklift, Beetle, and Loader kits!">
+
+      <!-- S1 -->
+      <g transform="translate(465 615)">
+        <use href="#servoSG90" width="100" height="130" x="0" y="0"/>
+        <!-- horn rotated -25° (tilted) -->
+        <g transform="rotate(-25 50 28)">
+          <use href="#servoHornArm" width="70" height="70" x="15" y="-7"/>
+        </g>
+        <text x="50" y="148" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="900">S1</text>
+      </g>
+
+      <!-- S2 -->
+      <g transform="translate(715 615)">
+        <use href="#servoSG90" width="100" height="130" x="0" y="0"/>
+        <g transform="rotate(35 50 28)">
+          <use href="#servoHornArm" width="70" height="70" x="15" y="-7"/>
+        </g>
+        <text x="50" y="148" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="900">S2</text>
+      </g>
+
+      <text x="640" y="785" text-anchor="middle" fill="#00d4ff" font-size="13" font-weight="700">Servo arms (S1 + S2)</text>
+      <!-- I2C addresses of servos -->
+      <rect x="500" y="793" width="68" height="22" rx="11" fill="#0a1628" stroke="#00d4ff" stroke-width="1.2"/>
+      <text x="534" y="805" text-anchor="middle" fill="#00d4ff" class="pin-badge">I2C·0x14</text>
+      <rect x="710" y="793" width="68" height="22" rx="11" fill="#0a1628" stroke="#00d4ff" stroke-width="1.2"/>
+      <text x="744" y="805" text-anchor="middle" fill="#00d4ff" class="pin-badge">I2C·0x15</text>
+    </g>
+
+    <!-- ===========================================
+         LINE EYES — under-front of chassis (look at floor)
+         =========================================== -->
+    <g class="comp" data-name="lineL"
+       data-title="Line eye Left 👁"
+       data-desc="An eye underneath the front-left that looks at the floor. It sees if there's a black line below — for following tape race tracks!">
+      <!-- show below chassis as a dashed peek -->
+      <rect x="345" y="745" width="80" height="40" rx="6" fill="#1a4d2e" stroke="#4ade80" stroke-width="2" stroke-dasharray="5 3"/>
+      <circle cx="385" cy="765" r="11" fill="#fff"/>
+      <circle cx="385" cy="769" r="6" fill="#000"/>
+      <text x="385" y="810" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Line eye L (under)</text>
+      <rect x="365" y="818" width="40" height="22" rx="11" fill="#0a1628" stroke="#4ade80" stroke-width="1.2"/>
+      <text x="385" y="830" text-anchor="middle" fill="#4ade80" class="pin-badge">P13</text>
+    </g>
+
+    <g class="comp" data-name="lineR"
+       data-title="Line eye Right 👁"
+       data-desc="The other floor-watching eye, under the front-right. Together with Line eye L, the robot can stay on a tape line!">
+      <rect x="855" y="745" width="80" height="40" rx="6" fill="#1a4d2e" stroke="#4ade80" stroke-width="2" stroke-dasharray="5 3"/>
+      <circle cx="895" cy="765" r="11" fill="#fff"/>
+      <circle cx="895" cy="769" r="6" fill="#000"/>
+      <text x="895" y="810" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Line eye R (under)</text>
+      <rect x="875" y="818" width="40" height="22" rx="11" fill="#0a1628" stroke="#4ade80" stroke-width="1.2"/>
+      <text x="895" y="830" text-anchor="middle" fill="#4ade80" class="pin-badge">P14</text>
+    </g>
+
+    <!-- =========================================== -->
+    <!-- end of chassis layout                       -->
+    <!-- =========================================== -->
+  </svg>
+</div>
+
+<div class="tip">💡 Hover any part to see what it does · Click to hear it spoken aloud</div>
+
+<div class="controls">
+  <button class="btn" id="play-tour">▶ Play tour of all parts</button>
+  <button class="btn secondary" id="toggle-voice">🔇 Voice: off</button>
+  <a href="schematics.html" class="btn secondary" style="text-decoration:none; display:inline-block;">For grown-ups → engineer view</a>
+</div>
+
+<div class="footer-nav">
+  <a href="index.html">← back to Maqueen Lab</a>
+  <a href="pinout.html">pinout</a>
+  <a href="schematics.html">engineer schematic</a>
+  <a href="plan.html">plan</a>
+</div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+  const ttTitle = document.getElementById('tt-title');
+  const ttDesc = document.getElementById('tt-desc');
+  const stage = document.querySelector('.stage-wrap');
+  const voiceBtn = document.getElementById('toggle-voice');
+  const tourBtn = document.getElementById('play-tour');
+  let voiceOn = false;
+
+  voiceBtn.addEventListener('click', () => {
+    voiceOn = !voiceOn;
+    voiceBtn.textContent = voiceOn ? '🔊 Voice: on' : '🔇 Voice: off';
+  });
+
+  function speak(text) {
+    if (!voiceOn || !window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95;
+    u.pitch = 1.1;
+    speechSynthesis.speak(u);
+  }
+
+  function showTooltip(target) {
+    const rect = target.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
+    ttTitle.textContent = target.dataset.title;
+    ttDesc.textContent = target.dataset.desc;
+    const x = rect.left - stageRect.left + rect.width / 2;
+    const y = rect.top - stageRect.top + rect.height / 2;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+    tooltip.classList.add('show');
+  }
+  function hideTooltip() {
+    tooltip.classList.remove('show');
+  }
+
+  document.querySelectorAll('.comp').forEach(c => {
+    c.addEventListener('mouseenter', e => showTooltip(c));
+    c.addEventListener('mouseleave', hideTooltip);
+    c.addEventListener('click', () => {
+      showTooltip(c);
+      speak(c.dataset.title.replace(/[^\w\s]/g, '') + '. ' + c.dataset.desc);
+    });
+  });
+
+  // Auto-tour
+  tourBtn.addEventListener('click', async () => {
+    const comps = Array.from(document.querySelectorAll('.comp'));
+    for (const c of comps) {
+      showTooltip(c);
+      speak(c.dataset.title.replace(/[^\w\s]/g, '') + '. ' + c.dataset.desc);
+      await new Promise(r => setTimeout(r, voiceOn ? 4500 : 2200));
+    }
+    hideTooltip();
+  });
+</script>
+
+</body>
+</html>

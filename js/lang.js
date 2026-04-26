@@ -1,5 +1,5 @@
 /* ============================================================
-   lang.js  --  i18n translation system for micro:bit Playground
+   lang.js  --  i18n translation system for Maqueen Lab
    Load this file FIRST, before all other JS files.
    ============================================================ */
 (function () {
@@ -18,7 +18,7 @@
     /* ============================  ENGLISH  ============================ */
     en: {
       // Header & Connection
-      app_title:          "micro:bit Playground",
+      app_title:          "Maqueen Lab",
       app_subtitle:       "Play . Learn . Create",
       ready:              "READY!",
       connect_title:      "Connect",
@@ -265,11 +265,11 @@
       close:              "Close",
 
       // Onboarding Overlay
-      welcome:            "Welcome to micro:bit Playground!",
-      ob_step1:           "Turn on your micro:bit V2",
-      ob_step2:           "Click Connect and pick your device",
-      ob_step3:           "Explore tabs: Controls, Sensors, Motors, GamePad, Graph",
-      ob_step4:           "Press K anytime for keyboard shortcuts",
+      welcome:            "Welcome to Maqueen Lab!",
+      ob_step1:           "Power on your Maqueen Lite v4 (micro:bit inside)",
+      ob_step2:           "Click Connect and pair with the micro:bit",
+      ob_step3:           "Explore tabs: Drive, Sensors, Servos, Lights, Buzzer",
+      ob_step4:           "🤖 Tap the robot icon up top to meet your robot's parts",
       lets_go:            "Let's Go!",
 
       // Firmware Overlay
@@ -434,7 +434,7 @@
     /* ============================  FRENCH  ============================= */
     fr: {
       // Header & Connection
-      app_title:          "micro:bit Playground",
+      app_title:          "Maqueen Lab",
       app_subtitle:       "Jouer . Apprendre . Cr\u00e9er",
       ready:              "PR\u00caT !",
       connect_title:      "Connexion",
@@ -681,11 +681,11 @@
       close:              "Fermer",
 
       // Onboarding Overlay
-      welcome:            "Bienvenue dans micro:bit Playground !",
-      ob_step1:           "Allumez votre micro:bit V2",
-      ob_step2:           "Cliquez sur Connecter et choisissez votre appareil",
-      ob_step3:           "Explorez les onglets : Commandes, Capteurs, Moteurs, Manette, Graphique",
-      ob_step4:           "Appuyez sur K pour les raccourcis clavier",
+      welcome:            "Bienvenue dans Maqueen Lab !",
+      ob_step1:           "Allumez votre Maqueen Lite v4 (avec micro:bit dedans)",
+      ob_step2:           "Cliquez sur Connecter et appairez le micro:bit",
+      ob_step3:           "Explorez les onglets : Conduite, Capteurs, Servos, Lumières, Buzzer",
+      ob_step4:           "🤖 Touchez l'icône robot en haut pour découvrir les parties",
       lets_go:            "C\u2019est parti !",
 
       // Firmware Overlay
@@ -850,7 +850,7 @@
     /* ============================  ARABIC  ============================= */
     ar: {
       // Header & Connection
-      app_title:          "micro:bit Playground",
+      app_title:          "Maqueen Lab",
       app_subtitle:       "\u0627\u0644\u0639\u0628 . \u062a\u0639\u0644\u0651\u0645 . \u0623\u0646\u0634\u0626",
       ready:              "\u062c\u0627\u0647\u0632!",
       connect_title:      "\u0627\u0644\u0627\u062a\u0635\u0627\u0644",
@@ -1097,7 +1097,7 @@
       close:              "\u0625\u063a\u0644\u0627\u0642",
 
       // Onboarding Overlay
-      welcome:            "\u0645\u0631\u062d\u0628\u064b\u0627 \u0641\u064a micro:bit Playground!",
+      welcome:            "\u0645\u0631\u062d\u0628\u064b\u0627 \u0641\u064a Maqueen Lab!",
       ob_step1:           "\u0634\u063a\u0651\u0644 micro:bit V2",
       ob_step2:           "\u0627\u0646\u0642\u0631 \u0639\u0644\u0649 \u0627\u062a\u0635\u0627\u0644 \u0648\u0627\u062e\u062a\u0631 \u062c\u0647\u0627\u0632\u0643",
       ob_step3:           "\u0627\u0633\u062a\u0643\u0634\u0641 \u0627\u0644\u0623\u0644\u0633\u0646\u0629: \u0627\u0644\u062a\u062d\u0643\u0645\u060c \u0627\u0644\u0645\u0633\u062a\u0634\u0639\u0631\u0627\u062a\u060c \u0627\u0644\u0645\u062d\u0631\u0643\u0627\u062a\u060c \u0644\u0648\u062d\u0629 \u0627\u0644\u0623\u0644\u0639\u0627\u0628\u060c \u0627\u0644\u0631\u0633\u0645 \u0627\u0644\u0628\u064a\u0627\u0646\u064a",
