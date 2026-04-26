@@ -50,6 +50,7 @@
       export:             "Export",
 
       // Tabs
+      tab_maqueen:        "Maqueen",
       tab_controls:       "Controls",
       tab_sensors:        "Sensors",
       tab_motors:         "Motors",
@@ -466,6 +467,7 @@
       export:             "Exporter",
 
       // Tabs
+      tab_maqueen:        "Maqueen",
       tab_controls:       "Commandes",
       tab_sensors:        "Capteurs",
       tab_motors:         "Moteurs",
@@ -882,6 +884,7 @@
       export:             "\u062a\u0635\u062f\u064a\u0631",
 
       // Tabs
+      tab_maqueen:        "Maqueen",
       tab_controls:       "\u0627\u0644\u062a\u062d\u0643\u0645",
       tab_sensors:        "\u0627\u0644\u0645\u0633\u062a\u0634\u0639\u0631\u0627\u062a",
       tab_motors:         "\u0627\u0644\u0645\u062d\u0631\u0643\u0627\u062a",

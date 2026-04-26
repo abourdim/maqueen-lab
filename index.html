@@ -32,6 +32,7 @@
     <!-- Maqueen-specific layer (wraps ble.js without modifying it) -->
     <script src="js/ble-scheduler.js" defer></script>
     <script src="js/maqueen-panel.js" defer></script>
+    <script src="js/maqueen-tab.js" defer></script>
 <style>
 .lang-picker { display: flex; gap: 2px; }
 .lang-picker .lang-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; background: transparent; color: inherit; opacity: 0.5; }
@@ -317,6 +318,14 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                 <div class="mode-selector-container">
                     <div class="mode-selector" style="display:flex; width:100%;">
                         <button
+                            id="maqueenTabBtn"
+                            class="mode-btn tab-btn"
+                            data-page="maqueen"
+                            style="flex:1;">
+                            <span class="mode-icon">🤖</span>
+                            <span data-i18n="tab_maqueen">Maqueen</span>
+                        </button>
+                        <button
                             id="controlsTabBtn"
                             class="mode-btn tab-btn"
                             data-page="controls"
@@ -384,6 +393,147 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                 </div>
 
                 <div class="tab-pages">
+                    <!-- ============================================ -->
+                    <!-- MAQUEEN PAGE — Drive + Servos + Lights + Buzz -->
+                    <!-- ============================================ -->
+                    <div class="tab-page" data-page="maqueen">
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title"><span class="icon">🤖</span> Maqueen Lite v4</div>
+                                    <div class="card-subtitle expert-only">Native controls — uses the Maqueen firmware verbs (M:, SRV:, LED:, RGB:, BUZZ:)</div>
+                                </div>
+                                <select id="mqKitPicker" style="background:#0a1628; color:#00d4ff; border:1px solid #00d4ff; border-radius:6px; padding:6px 12px; font-family:'JetBrains Mono', monospace; font-size:12px;">
+                                    <option value="base">Base (no kit)</option>
+                                    <option value="forklift">🍴 Forklift (ROB0156-F)</option>
+                                    <option value="loader">🚜 Loader (ROB0156-L)</option>
+                                    <option value="beetle">🪲 Beetle gripper (ROB0156-B)</option>
+                                    <option value="push">🛻 Push / bulldozer (ROB0156-P)</option>
+                                </select>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px; padding:16px;">
+
+                                <!-- DRIVE -->
+                                <div style="background:rgba(251,146,60,0.05); border:1px solid rgba(251,146,60,0.3); border-radius:10px; padding:14px;">
+                                    <div style="font-weight:700; color:#fb923c; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">🛞</span> Drive</div>
+                                    <div style="display:flex; gap:6px; justify-content:center; margin-bottom:10px;">
+                                        <button class="mq-drive-btn" data-l="200" data-r="200" style="width:60px; height:48px; background:#0a1628; color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:18px; cursor:pointer;">↑</button>
+                                    </div>
+                                    <div style="display:flex; gap:6px; justify-content:center; margin-bottom:10px;">
+                                        <button class="mq-drive-btn" data-l="-150" data-r="150" style="width:60px; height:48px; background:#0a1628; color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:18px; cursor:pointer;">↺</button>
+                                        <button class="mq-drive-btn" data-l="0" data-r="0" data-stop="1" style="width:60px; height:48px; background:#0a1628; color:#f87171; border:1px solid #f87171; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer;">STOP</button>
+                                        <button class="mq-drive-btn" data-l="150" data-r="-150" style="width:60px; height:48px; background:#0a1628; color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:18px; cursor:pointer;">↻</button>
+                                    </div>
+                                    <div style="display:flex; gap:6px; justify-content:center; margin-bottom:14px;">
+                                        <button class="mq-drive-btn" data-l="-200" data-r="-200" style="width:60px; height:48px; background:#0a1628; color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:18px; cursor:pointer;">↓</button>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px; font-size:11px; color:#93a8c4;">
+                                        <span>Speed</span>
+                                        <input type="range" id="mqSpeedSlider" min="50" max="255" value="200" style="flex:1; accent-color:#fb923c;"/>
+                                        <span id="mqSpeedReadout" style="font-family:monospace; color:#fb923c; min-width:30px; text-align:right;">200</span>
+                                    </div>
+                                </div>
+
+                                <!-- SERVOS -->
+                                <div id="mqServosCard" style="background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.3); border-radius:10px; padding:14px;">
+                                    <div style="font-weight:700; color:#00d4ff; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">🦾</span> Servos <span id="mqServosKitName" style="color:#93a8c4; font-size:11px; font-weight:400;">(generic)</span></div>
+                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                                        <span id="mqS1Label" style="font-family:monospace; color:#93a8c4; min-width:40px;">S1</span>
+                                        <input type="range" id="mqS1Slider" min="0" max="180" value="90" style="flex:1; accent-color:#00d4ff;"/>
+                                        <span id="mqS1Readout" style="font-family:monospace; color:#00d4ff; min-width:38px; text-align:right;">90°</span>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                                        <span id="mqS2Label" style="font-family:monospace; color:#93a8c4; min-width:40px;">S2</span>
+                                        <input type="range" id="mqS2Slider" min="0" max="180" value="90" style="flex:1; accent-color:#00d4ff;"/>
+                                        <span id="mqS2Readout" style="font-family:monospace; color:#00d4ff; min-width:38px; text-align:right;">90°</span>
+                                    </div>
+                                    <div id="mqServoPresets" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;"></div>
+                                </div>
+
+                                <!-- SIMPLE LEDS -->
+                                <div style="background:rgba(250,204,21,0.05); border:1px solid rgba(250,204,21,0.3); border-radius:10px; padding:14px;">
+                                    <div style="font-weight:700; color:#facc15; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">💡</span> Simple LEDs</div>
+                                    <div style="display:flex; gap:8px;">
+                                        <button class="mq-led-btn" data-led="0" data-state="0" style="flex:1; padding:8px 12px; background:#0a1628; color:#facc15; border:1px solid #facc15; border-radius:6px; cursor:pointer; font-size:12px;">L: OFF</button>
+                                        <button class="mq-led-btn" data-led="1" data-state="0" style="flex:1; padding:8px 12px; background:#0a1628; color:#facc15; border:1px solid #facc15; border-radius:6px; cursor:pointer; font-size:12px;">R: OFF</button>
+                                    </div>
+                                    <div style="display:flex; gap:8px; margin-top:8px;">
+                                        <button id="mqLedBlink" style="flex:1; padding:6px; background:#0a1628; color:#facc15; border:1px solid #facc15; border-radius:6px; cursor:pointer; font-size:11px;">Blink both 5×</button>
+                                        <button id="mqLedAllOff" style="flex:1; padding:6px; background:#0a1628; color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:11px;">All OFF</button>
+                                    </div>
+                                </div>
+
+                                <!-- 4× RGB NEOPIXELS -->
+                                <div style="background:rgba(244,114,182,0.05); border:1px solid rgba(244,114,182,0.3); border-radius:10px; padding:14px;">
+                                    <div style="font-weight:700; color:#f472b6; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">🌈</span> NeoPixels × 4</div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#93a8c4;">
+                                            RGB 0
+                                            <input type="color" class="mq-rgb-picker" data-i="0" value="#ff0000" style="flex:1; height:30px; border:none; background:none; cursor:pointer;"/>
+                                        </label>
+                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#93a8c4;">
+                                            RGB 1
+                                            <input type="color" class="mq-rgb-picker" data-i="1" value="#00ff00" style="flex:1; height:30px; border:none; background:none; cursor:pointer;"/>
+                                        </label>
+                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#93a8c4;">
+                                            RGB 2
+                                            <input type="color" class="mq-rgb-picker" data-i="2" value="#0000ff" style="flex:1; height:30px; border:none; background:none; cursor:pointer;"/>
+                                        </label>
+                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#93a8c4;">
+                                            RGB 3
+                                            <input type="color" class="mq-rgb-picker" data-i="3" value="#ff00ff" style="flex:1; height:30px; border:none; background:none; cursor:pointer;"/>
+                                        </label>
+                                    </div>
+                                    <div style="display:flex; gap:6px; margin-top:10px;">
+                                        <button id="mqRgbAllOff" style="flex:1; padding:6px; background:#0a1628; color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:11px;">All OFF</button>
+                                        <button id="mqRgbRainbow" style="flex:1; padding:6px; background:#0a1628; color:#f472b6; border:1px solid #f472b6; border-radius:6px; cursor:pointer; font-size:11px;">🌈 Rainbow</button>
+                                    </div>
+                                </div>
+
+                                <!-- BUZZER -->
+                                <div style="background:rgba(251,191,36,0.05); border:1px solid rgba(251,191,36,0.3); border-radius:10px; padding:14px;">
+                                    <div style="font-weight:700; color:#fbbf24; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">🔊</span> Buzzer</div>
+                                    <div style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:10px;">
+                                        <button class="mq-note" data-freq="262" style="flex:1; min-width:36px; padding:8px 4px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:11px;">C</button>
+                                        <button class="mq-note" data-freq="294" style="flex:1; min-width:36px; padding:8px 4px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:11px;">D</button>
+                                        <button class="mq-note" data-freq="330" style="flex:1; min-width:36px; padding:8px 4px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:11px;">E</button>
+                                        <button class="mq-note" data-freq="349" style="flex:1; min-width:36px; padding:8px 4px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:11px;">F</button>
+                                        <button class="mq-note" data-freq="392" style="flex:1; min-width:36px; padding:8px 4px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:11px;">G</button>
+                                        <button class="mq-note" data-freq="440" style="flex:1; min-width:36px; padding:8px 4px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:11px;">A</button>
+                                        <button class="mq-note" data-freq="494" style="flex:1; min-width:36px; padding:8px 4px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:11px;">B</button>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                        <span style="font-size:11px; color:#93a8c4; min-width:38px;">Freq</span>
+                                        <input type="number" id="mqBuzzFreq" value="440" min="50" max="5000" step="10" style="flex:1; background:#0a1628; color:#fbbf24; border:1px solid #1d3556; border-radius:4px; padding:4px 8px; font-family:monospace;"/>
+                                        <span style="font-size:11px; color:#93a8c4;">Hz</span>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                        <span style="font-size:11px; color:#93a8c4; min-width:38px;">Dur</span>
+                                        <input type="number" id="mqBuzzMs" value="200" min="50" max="5000" step="50" style="flex:1; background:#0a1628; color:#fbbf24; border:1px solid #1d3556; border-radius:4px; padding:4px 8px; font-family:monospace;"/>
+                                        <span style="font-size:11px; color:#93a8c4;">ms</span>
+                                    </div>
+                                    <div style="display:flex; gap:6px;">
+                                        <button id="mqBuzzPlay" style="flex:1; padding:8px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:12px;">▶ Play</button>
+                                        <button id="mqBuzzOff" style="flex:1; padding:8px; background:#0a1628; color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:12px;">⏹ Off</button>
+                                    </div>
+                                </div>
+
+                                <!-- HELP -->
+                                <div style="background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.2); border-radius:10px; padding:14px; font-size:12px; color:#93a8c4; line-height:1.6;">
+                                    <div style="font-weight:700; color:#00d4ff; margin-bottom:8px;">ℹ️ Quick reference</div>
+                                    <div>• Flash <code>firmware/v1-maqueen-lib.ts</code> first.</div>
+                                    <div>• Click <strong>Connect</strong> top-right.</div>
+                                    <div>• Live readings appear in the strip above (LINE / DIST / IR / ACC).</div>
+                                    <div>• Echo round-trip and lost packets show in <code>BLE</code> bench.</div>
+                                    <div>• Pick a Mechanic Kit (top-right of this panel) to load servo presets.</div>
+                                    <div style="margin-top:8px;"><a href="schematics-kids.html" style="color:#00d4ff;">🤖 Meet your robot →</a></div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- CONTROLS PAGE -->
                     <div class="tab-page" data-page="controls">
                         <div class="card">
