@@ -43,8 +43,8 @@ new_ver = f'{major}.{minor}.{patch}'
 src = re.sub(r'const BUILD_VERSION = "[^"]*"',
              f'const BUILD_VERSION = "{new_ver}"', src)
 
-# ---- Refresh BUILD_DATE ----
-today = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d')
+# ---- Refresh BUILD_DATE (date + UTC time) ----
+today = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
 src = re.sub(r'const BUILD_DATE = "[^"]*"',
              f'const BUILD_DATE = "{today}"', src)
 
