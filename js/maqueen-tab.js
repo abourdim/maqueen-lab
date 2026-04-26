@@ -286,6 +286,120 @@
     document.getElementById('mqBuzzOff').addEventListener('click', () => send('BUZZ:0,0'));
   }
 
+  // -------- ULTRASONIC ------------------------------------
+  let distHistory = [];
+  let distAutoTimer = null;
+  function setDist(cm) {
+    const big = document.getElementById('mqDistBig');
+    const bar = document.getElementById('mqDistBar');
+    const dot = document.getElementById('mqSonarDot');
+    if (!big) return;
+    cm = Math.round(+cm);
+    big.textContent = cm + ' cm';
+    big.style.color = cm < 10 ? '#f87171' : cm < 30 ? '#fbbf24' : '#4ade80';
+    // bar maps 0..200 cm to 0..100%
+    const pct = Math.max(0, Math.min(100, (cm / 200) * 100));
+    if (bar) bar.style.width = pct + '%';
+    // sonar dot — map distance to position on the arc (closer = lower y)
+    if (dot) {
+      const ratio = Math.min(1, cm / 100);     // 0..100 cm maps to full arc height
+      dot.setAttribute('cy', 50 - ratio * 30);   // 50 = near, 20 = far
+      dot.setAttribute('fill', cm < 10 ? '#f87171' : cm < 30 ? '#fbbf24' : '#4ade80');
+    }
+    distHistory.push(cm);
+    if (distHistory.length > 6) distHistory.shift();
+    const hist = document.getElementById('mqDistHistory');
+    if (hist) hist.textContent = distHistory.join(' → ') + ' cm';
+  }
+  function pollDist() {
+    if (window.bleScheduler && window.bleScheduler.isConnected()) {
+      window.bleScheduler.send('DIST?').catch(() => {});
+    }
+  }
+  function initUltrasonic() {
+    const ping = document.getElementById('mqDistPing');
+    const auto = document.getElementById('mqDistAuto');
+    if (!ping) return;
+    ping.addEventListener('click', pollDist);
+    auto.addEventListener('change', e => {
+      if (distAutoTimer) { clearInterval(distAutoTimer); distAutoTimer = null; }
+      if (e.target.checked) distAutoTimer = setInterval(pollDist, 250);
+    });
+    if (auto.checked) distAutoTimer = setInterval(pollDist, 250);
+  }
+
+  // -------- IR REMOTE -------------------------------------
+  const IR_NAMES_KEY = 'maqueen.ir.names';
+  let irNames = {};
+  let lastIRCode = null;
+  let irHistory = [];
+  function loadIRNames() {
+    try { irNames = JSON.parse(localStorage.getItem(IR_NAMES_KEY) || '{}'); } catch { irNames = {}; }
+  }
+  function saveIRNames() {
+    try { localStorage.setItem(IR_NAMES_KEY, JSON.stringify(irNames)); } catch {}
+  }
+  function setIR(code) {
+    const big = document.getElementById('mqIRBig');
+    const name = document.getElementById('mqIRName');
+    const pulse = document.getElementById('mqIRPulse');
+    if (!big) return;
+    lastIRCode = code;
+    big.textContent = code;
+    name.textContent = irNames[code] ? '"' + irNames[code] + '"' : 'unmapped — click 🏷 to name it';
+    // pulse glow
+    if (pulse) {
+      pulse.style.boxShadow = '0 0 16px #c084fc, 0 0 4px #c084fc inset';
+      setTimeout(() => { pulse.style.boxShadow = 'none'; }, 350);
+    }
+    if (irHistory[irHistory.length - 1] !== code) {
+      irHistory.push(code);
+      if (irHistory.length > 5) irHistory.shift();
+    }
+    const hist = document.getElementById('mqIRHistory');
+    if (hist) hist.textContent = irHistory.join(' · ');
+  }
+  function initIR() {
+    const poll = document.getElementById('mqIRPoll');
+    const nameBtn = document.getElementById('mqIRNameBtn');
+    if (!poll) return;
+    loadIRNames();
+    poll.addEventListener('click', () => {
+      if (window.bleScheduler) window.bleScheduler.send('IR?').catch(() => {});
+    });
+    nameBtn.addEventListener('click', () => {
+      if (lastIRCode == null) {
+        alert('Press a button on your IR remote first, then click 🏷 to name that code.');
+        return;
+      }
+      const proposed = irNames[lastIRCode] || '';
+      const newName = prompt(`Name for IR code ${lastIRCode}:`, proposed);
+      if (newName != null && newName.trim()) {
+        irNames[lastIRCode] = newName.trim();
+        saveIRNames();
+        setIR(lastIRCode);   // refresh display
+      }
+    });
+  }
+
+  // ---- Register reply listeners eagerly (retry until scheduler exists) ----
+  function attachReplyListeners() {
+    if (!window.bleScheduler) {
+      setTimeout(attachReplyListeners, 100);
+      return;
+    }
+    window.bleScheduler.on('reply', ({ line }) => {
+      if (!line) return;
+      let m;
+      if ((m = line.match(/^DIST:(\d+(?:\.\d+)?)$/))) {
+        setDist(m[1]);
+      } else if ((m = line.match(/^IR:(\d+)$/)) && +m[1] > 0) {
+        setIR(m[1]);
+      }
+    });
+  }
+  attachReplyListeners();
+
   // -------- init ------------------------------------------
   function init() {
     initDrive();
@@ -293,6 +407,8 @@
     initLEDs();
     initRGB();
     initBuzzer();
+    initUltrasonic();
+    initIR();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

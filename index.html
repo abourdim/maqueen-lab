@@ -519,6 +519,63 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     </div>
                                 </div>
 
+                                <!-- ULTRASONIC -->
+                                <div style="background:rgba(74,222,128,0.05); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:14px;">
+                                    <div style="font-weight:700; color:#4ade80; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">📡</span> Ultrasonic distance <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:#93a8c4; background:#0a1628; padding:1px 6px; border-radius:4px;">P1·P2</span></div>
+                                    <!-- Big distance readout + mini sonar arc -->
+                                    <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+                                        <svg viewBox="0 0 80 60" style="width:80px; height:60px; flex-shrink:0;">
+                                            <path d="M 40 55 A 35 35 0 0 1 40 55" id="mqSonarArc" fill="none" stroke="#4ade80" stroke-width="2"/>
+                                            <path d="M 5 55 Q 40 5 75 55" fill="none" stroke="#1d3556" stroke-width="1.5"/>
+                                            <path d="M 15 55 Q 40 15 65 55" fill="none" stroke="#1d3556" stroke-width="1"/>
+                                            <path d="M 25 55 Q 40 25 55 55" fill="none" stroke="#1d3556" stroke-width="1"/>
+                                            <rect x="36" y="50" width="8" height="6" rx="1" fill="#4ade80"/>
+                                            <circle id="mqSonarDot" cx="40" cy="20" r="3" fill="#4ade80" filter="url(#glow)"/>
+                                        </svg>
+                                        <div style="flex:1; text-align:right;">
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:32px; font-weight:700; color:#4ade80; line-height:1;" id="mqDistBig">— cm</div>
+                                            <div style="font-size:11px; color:#93a8c4; margin-top:4px;" id="mqDistRange">range 0–500 cm</div>
+                                        </div>
+                                    </div>
+                                    <!-- Threshold bar -->
+                                    <div style="height:8px; background:#0a1628; border-radius:4px; overflow:hidden; margin-bottom:10px; position:relative;">
+                                        <div id="mqDistBar" style="height:100%; width:0%; background:linear-gradient(90deg, #f87171 0%, #fbbf24 30%, #4ade80 60%); transition:width 0.3s;"></div>
+                                    </div>
+                                    <!-- Controls -->
+                                    <div style="display:flex; gap:6px; align-items:center;">
+                                        <button id="mqDistPing" style="flex:1; padding:8px; background:#0a1628; color:#4ade80; border:1px solid #4ade80; border-radius:6px; cursor:pointer; font-size:12px;">📏 Ping now</button>
+                                        <label style="font-size:11px; color:#93a8c4; display:flex; align-items:center; gap:4px;">
+                                            <input type="checkbox" id="mqDistAuto" checked style="accent-color:#4ade80;"> auto-poll 4 Hz
+                                        </label>
+                                    </div>
+                                    <div style="margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4;">
+                                        history: <span id="mqDistHistory" style="color:#4ade80;">—</span>
+                                    </div>
+                                </div>
+
+                                <!-- IR REMOTE -->
+                                <div style="background:rgba(192,132,252,0.05); border:1px solid rgba(192,132,252,0.3); border-radius:10px; padding:14px;">
+                                    <div style="font-weight:700; color:#c084fc; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">📺</span> IR remote <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:#93a8c4; background:#0a1628; padding:1px 6px; border-radius:4px;">NEC</span></div>
+                                    <!-- Last code + flash indicator -->
+                                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                                        <div id="mqIRPulse" style="width:36px; height:36px; border-radius:50%; background:radial-gradient(circle, #1d3556 30%, #0a1628 70%); border:2px solid #c084fc; flex-shrink:0; transition:box-shadow 0.2s;"></div>
+                                        <div style="flex:1;">
+                                            <div style="font-size:11px; color:#93a8c4;">last code received</div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:22px; font-weight:700; color:#c084fc; line-height:1.1;" id="mqIRBig">—</div>
+                                            <div style="font-size:11px; color:#93a8c4; margin-top:2px;" id="mqIRName">point a NEC remote at the robot</div>
+                                        </div>
+                                    </div>
+                                    <!-- Recent codes -->
+                                    <div style="font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; margin-bottom:10px; min-height:14px;">
+                                        recent: <span id="mqIRHistory" style="color:#c084fc;">—</span>
+                                    </div>
+                                    <!-- Polling + name learning -->
+                                    <div style="display:flex; gap:6px;">
+                                        <button id="mqIRPoll" style="flex:1; padding:8px; background:#0a1628; color:#c084fc; border:1px solid #c084fc; border-radius:6px; cursor:pointer; font-size:12px;">📡 Poll IR</button>
+                                        <button id="mqIRNameBtn" style="flex:1; padding:8px; background:#0a1628; color:#c084fc; border:1px solid #c084fc; border-radius:6px; cursor:pointer; font-size:12px;">🏷 Name last code</button>
+                                    </div>
+                                </div>
+
                                 <!-- HELP -->
                                 <div style="background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.2); border-radius:10px; padding:14px; font-size:12px; color:#93a8c4; line-height:1.6;">
                                     <div style="font-weight:700; color:#00d4ff; margin-bottom:8px;">ℹ️ Quick reference</div>

@@ -74,6 +74,10 @@
   // ---- polling buttons (send via scheduler) ----
   function sendVerb(verb) {
     if (!window.bleScheduler) return;
+    if (!window.bleScheduler.isConnected()) {
+      // Quietly no-op when disconnected — avoids spamming TX-blocked logs
+      return;
+    }
     window.bleScheduler.send(verb).catch(err => {
       console.warn('[maqueen-panel]', verb, err.message);
     });

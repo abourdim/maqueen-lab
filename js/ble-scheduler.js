@@ -51,14 +51,28 @@
     global.handleUartLine = wrapped;
   }
 
+  // Tracks BLE connection state — set by INFO:CONNECTED / INFO:DISCONNECTED
+  // lines from the firmware. Other modules can read it as
+  // window.bleScheduler.isConnected() to gate polling.
+  let _connected = false;
+
   // Match ECHO:N <verb> or ERR:N <reason>
   function intercept(line) {
     if (!line) return;
+    if (line === 'INFO:CONNECTED') {
+      _connected = true; emit('connected', {}); return;
+    }
+    if (line === 'INFO:DISCONNECTED') {
+      _connected = false; emit('disconnected', {}); return;
+    }
     const echoMatch = line.match(/^ECHO:(\d+)\s*(.*)$/);
     if (echoMatch) {
       const seq = parseInt(echoMatch[1]);
       resolvePending(seq, 'echo');
       emit('echo', { seq, verb: echoMatch[2] });
+      // First echo from a session also counts as "connected" — covers cases
+      // where INFO:CONNECTED arrived before our hook was installed
+      if (!_connected) { _connected = true; emit('connected', {}); }
       return;
     }
     const errMatch = line.match(/^ERR:(\d+)\s*(.*)$/);
@@ -240,5 +254,6 @@
   global.bleScheduler = {
     send, animate, stop, stopAll,
     setRate, on, getStats, resetStats,
+    isConnected: () => _connected,
   };
 })(window);
