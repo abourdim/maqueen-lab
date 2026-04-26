@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.15"
-const BUILD_DATE = "2026-04-26 16:36 UTC"
+const BUILD_VERSION = "0.1.16"
+const BUILD_DATE = "2026-04-26 17:21 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -279,17 +279,20 @@ function handleIRQuery() {
     if (logLevel >= 3) execlog("IR code=" + lastIRCode)
 }
 
-// Initialize the IR background task once + push every received code.
-// Web-side dedupes consecutive same codes.
-IR.IR_init()
-IR.IR_callbackUser(function () {
-    let code = IR.IR_read()
-    if (code != 0) {
-        lastIRCode = code
-        if (btConnected) send("IR:" + code)
-        execlog("IR press code=" + code)
-    }
-})
+// IR setup — moved into setupIR() so it runs from the start block.
+// Top-level calls to IR.IR_init can interact poorly with MakeCode's
+// finalPass when more than one IR extension is in the project.
+function setupIR() {
+    IR.IR_init()
+    IR.IR_callbackUser(function () {
+        let code = IR.IR_read()
+        if (code != 0) {
+            lastIRCode = code
+            if (btConnected) send("IR:" + code)
+            execlog("IR press code=" + code)
+        }
+    })
+}
 
 // LOG:n
 function handleLog(arg: string) {
@@ -506,4 +509,5 @@ basic.forever(function () {
 bluetooth.startUartService()
 bluetooth.startAccelerometerService()
 basic.showIcon(IconNames.No)
+setupIR()
 bootBanner()
