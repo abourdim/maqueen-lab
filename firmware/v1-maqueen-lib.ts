@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.16"
-const BUILD_DATE = "2026-04-26 17:21 UTC"
+const BUILD_VERSION = "0.1.17"
+const BUILD_DATE = "2026-04-26 17:37 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -265,34 +265,46 @@ function handleDistQuery() {
     if (logLevel >= 3) execlog("DIST cm=" + cm)
 }
 
-// IR? — uses the IR namespace from pxt-dfrobot_newir v0.0.4
-// (pulled in transitively by pxt-maqueen v1.7.16). API surface:
-//   IR.IR_init()                                 — start IR background task on P16
-//   IR.IR_callbackUser(handler: () => void)      — fires on every datagram
-//   IR.IR_read(): number                         — last 2 digits of received code
+// IR? — STUBBED (see setupIR comment below for re-enabling)
 let lastIRCode = 0
 function handleIRQuery() {
-    // Refresh from IR.IR_read() in case a press happened since the callback
-    let code = IR.IR_read()
-    if (code != 0) lastIRCode = code
     send("IR:" + lastIRCode)
-    if (logLevel >= 3) execlog("IR code=" + lastIRCode)
+    if (logLevel >= 3) execlog("IR code=" + lastIRCode + "  (stub)")
 }
 
-// IR setup — moved into setupIR() so it runs from the start block.
-// Top-level calls to IR.IR_init can interact poorly with MakeCode's
-// finalPass when more than one IR extension is in the project.
+// IR setup — STUBBED to avoid extension conflicts.
+//
+// The `IR` namespace is provided by BOTH:
+//   • `pxt-dfrobot_newir` v0.0.4 (auto-pulled by pxt-maqueen v1.7.16)
+//   • Some standalone `ir` extensions (e.g. v0.0.2)
+// When both are loaded MakeCode hits an internal '!!proc || !bin.finalPass'
+// assertion failure during finalPass.
+//
+// To enable real IR support:
+//   1. Open MakeCode → Extensions
+//   2. REMOVE any standalone 'ir' extension (only maqueen + bluetooth +
+//      microphone + core + radio should be listed)
+//   3. Uncomment the 'IR BLOCK' below + delete the empty setupIR stub
+//   4. Re-flash
 function setupIR() {
-    IR.IR_init()
-    IR.IR_callbackUser(function () {
-        let code = IR.IR_read()
-        if (code != 0) {
-            lastIRCode = code
-            if (btConnected) send("IR:" + code)
-            execlog("IR press code=" + code)
-        }
-    })
+    // no-op
 }
+
+// ============================================================
+// IR BLOCK — uncomment after removing any standalone 'ir' extension
+// (see comment above). Replaces the stub setupIR() above.
+// ============================================================
+// function setupIR() {
+//     IR.IR_init()
+//     IR.IR_callbackUser(function () {
+//         let code = IR.IR_read()
+//         if (code != 0) {
+//             lastIRCode = code
+//             if (btConnected) send("IR:" + code)
+//             execlog("IR press code=" + code)
+//         }
+//     })
+// }
 
 // LOG:n
 function handleLog(arg: string) {
