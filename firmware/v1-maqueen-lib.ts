@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.20"
-const BUILD_DATE = "2026-04-26 17:55 UTC"
+const BUILD_VERSION = "0.1.21"
+const BUILD_DATE = "2026-04-26 18:00 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -459,8 +459,13 @@ basic.forever(function () {
 })
 
 // ---------- light + sound streaming (~3 Hz, on change) ----------
+// ---------- light streaming only (V1+V2) ----------
+// soundLevel + onLogoEvent are V2-only — they sometimes trigger
+// MakeCode's '!!proc || !bin.finalPass' assertion when target version
+// resolution drifts. Removed for stability. Compass also wrapped in
+// the same forever loop for fewer concurrent fibers.
 let lastLight = -1
-let lastSound = -1
+let lastCompass = -1
 basic.forever(function () {
     if (btConnected) {
         let l = input.lightLevel()
@@ -468,34 +473,13 @@ basic.forever(function () {
             lastLight = l
             send("LIGHT:" + l)
         }
-        let s = input.soundLevel()
-        if (Math.abs(s - lastSound) > 4) {
-            lastSound = s
-            send("SOUND:" + s)
-        }
-    }
-    basic.pause(300)
-})
-
-// ---------- compass heading (fires after first calibration) ----------
-let lastCompass = -1
-basic.forever(function () {
-    if (btConnected) {
-        let h = input.compassHeading()   // -1 if not yet calibrated, 0..359 otherwise
+        let h = input.compassHeading()
         if (h >= 0 && Math.abs(h - lastCompass) > 2) {
             lastCompass = h
             send("COMPASS:" + h)
         }
     }
-    basic.pause(200)
-})
-
-// ---------- logo touch (V2 only — silently no-op on V1) ----------
-input.onLogoEvent(TouchButtonEvent.Pressed, function () {
-    if (btConnected) send("BTN:LOGO:1")
-})
-input.onLogoEvent(TouchButtonEvent.Released, function () {
-    if (btConnected) send("BTN:LOGO:0")
+    basic.pause(300)
 })
 
 // ---------- buttons (poll for press/release; onButtonReleased is not in pxt-microbit) ----------
