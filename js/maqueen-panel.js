@@ -25,6 +25,13 @@
 
   function setDistance(cm) {
     if (!elDist) return;
+    cm = +cm;
+    // 500 = pxt-maqueen's no-echo / no-sensor sentinel; 0 = bad read
+    if (cm <= 0 || cm >= 500) {
+      elDist.textContent = '— cm';
+      elDist.style.color = '#93a8c4';
+      return;
+    }
     elDist.textContent = cm + ' cm';
     elDist.style.color = cm < 10 ? '#f87171'
                        : cm < 30 ? '#fbbf24'

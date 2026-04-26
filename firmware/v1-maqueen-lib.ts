@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.7"
-const BUILD_DATE = "2026-04-26 15:30 UTC"
+const BUILD_VERSION = "0.1.8"
+const BUILD_DATE = "2026-04-26 15:36 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -262,12 +262,27 @@ function handleDistQuery() {
     if (logLevel >= 3) execlog("DIST cm=" + cm)
 }
 
-// IR? — captured asynchronously by the IR handler below
+// IR? — read live from the IR receiver via pxt-maqueen
 let lastIRCode = 0
 function handleIRQuery() {
-    send("IR:" + lastIRCode)
-    if (logLevel >= 3) execlog("IR code=" + lastIRCode)
+    let code = maqueen.IR_read()
+    if (code != 0) lastIRCode = code   // remember last non-zero for the panel
+    send("IR:" + code)
+    if (logLevel >= 3) execlog("IR code=" + code)
 }
+
+// Push IR codes when a remote button is pressed (poll every 100 ms,
+// dedupe consecutive same codes). Saves the user from clicking 'poll IR'.
+basic.forever(function () {
+    if (btConnected) {
+        let code = maqueen.IR_read()
+        if (code != 0 && code != lastIRCode) {
+            lastIRCode = code
+            send("IR:" + code)
+        }
+    }
+    basic.pause(100)
+})
 
 // LOG:n
 function handleLog(arg: string) {

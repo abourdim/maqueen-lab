@@ -293,10 +293,24 @@
     const big = document.getElementById('mqDistBig');
     const bar = document.getElementById('mqDistBar');
     const dot = document.getElementById('mqSonarDot');
+    const range = document.getElementById('mqDistRange');
     if (!big) return;
     cm = Math.round(+cm);
+    // pxt-maqueen returns its max-range value (500) when the SR04 isn't
+    // wired in or doesn't echo. 0 = bad reading. Treat both as "no sensor".
+    const noSensor = (cm <= 0 || cm >= 500);
+    if (noSensor) {
+      big.textContent = '— cm';
+      big.style.color = '#93a8c4';
+      if (range) range.textContent = 'no sensor / no echo';
+      if (bar) bar.style.width = '0%';
+      if (dot) { dot.setAttribute('cy', 20); dot.setAttribute('fill', '#1d3556'); }
+      // don't pollute history with placeholders
+      return;
+    }
     big.textContent = cm + ' cm';
     big.style.color = cm < 10 ? '#f87171' : cm < 30 ? '#fbbf24' : '#4ade80';
+    if (range) range.textContent = 'range 0–500 cm';
     // bar maps 0..200 cm to 0..100%
     const pct = Math.max(0, Math.min(100, (cm / 200) * 100));
     if (bar) bar.style.width = pct + '%';
