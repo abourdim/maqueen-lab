@@ -9,13 +9,16 @@
   'use strict';
 
   // -------- helpers ---------------------------------------
+  // Returns the scheduler promise so callers can await echo confirmation.
+  // Internal callers that don't care just ignore the return value.
   const send = (verb) => {
     if (!window.bleScheduler) {
       console.warn('[maqueen-tab] no scheduler', verb);
-      return;
+      return Promise.resolve(null);
     }
-    window.bleScheduler.send(verb).catch(err => {
+    return window.bleScheduler.send(verb).catch(err => {
       console.warn('[maqueen-tab]', verb, err.message);
+      return null;
     });
   };
   const sendCoalesced = (verb, prefix) => {
@@ -201,9 +204,10 @@
       });
     });
 
-    document.getElementById('mqLedAllOff').addEventListener('click', () => {
-      send('LED:0,0');
-      send('LED:1,0');
+    document.getElementById('mqLedAllOff').addEventListener('click', async () => {
+      // Await each send so they serialize past the rate limit
+      await send('LED:0,0');
+      await send('LED:1,0');
       btns.forEach(b => {
         b.dataset.state = '0';
         const lr = b.dataset.led === '0' ? 'L' : 'R';
@@ -214,10 +218,14 @@
     });
 
     document.getElementById('mqLedBlink').addEventListener('click', async () => {
+      // Serialize each LED command — awaiting echo naturally spaces them
+      // past the rate limit, so BOTH L and R toggle every cycle.
       for (let i = 0; i < 5; i++) {
-        send('LED:0,1'); send('LED:1,1');
+        await send('LED:0,1');
+        await send('LED:1,1');
         await new Promise(r => setTimeout(r, 200));
-        send('LED:0,0'); send('LED:1,0');
+        await send('LED:0,0');
+        await send('LED:1,0');
         await new Promise(r => setTimeout(r, 200));
       }
     });

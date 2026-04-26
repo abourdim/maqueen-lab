@@ -225,7 +225,7 @@
   setRate('M', 10);     // motors — joystick drag
   setRate('SRV', 10);   // servo — slider drag
   setRate('RGB', 10);   // RGB animations
-  setRate('LED', 20);   // simple LED toggles
+  setRate('LED', 50);   // simple LED toggles — 20 ms gap, allows fast L+R pairs
   setRate('BUZZ', 5);   // buzzer
   // queries (LINE?, DIST?, IR?) and BENCH have no limit — they're user-triggered
 
