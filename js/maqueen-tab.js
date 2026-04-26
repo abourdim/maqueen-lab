@@ -337,9 +337,9 @@
     ping.addEventListener('click', pollDist);
     auto.addEventListener('change', e => {
       if (distAutoTimer) { clearInterval(distAutoTimer); distAutoTimer = null; }
-      if (e.target.checked) distAutoTimer = setInterval(pollDist, 350);
+      if (e.target.checked) distAutoTimer = setInterval(pollDist, 600);
     });
-    if (auto.checked) distAutoTimer = setInterval(pollDist, 350);
+    if (auto.checked) distAutoTimer = setInterval(pollDist, 600);
   }
 
   // -------- IR REMOTE -------------------------------------
@@ -448,9 +448,9 @@
     poll.addEventListener('click', pollLine);
     auto.addEventListener('change', e => {
       if (lineAutoTimer) { clearInterval(lineAutoTimer); lineAutoTimer = null; }
-      if (e.target.checked) lineAutoTimer = setInterval(pollLine, 350);
+      if (e.target.checked) lineAutoTimer = setInterval(pollLine, 600);
     });
-    if (auto.checked) lineAutoTimer = setInterval(pollLine, 350);
+    if (auto.checked) lineAutoTimer = setInterval(pollLine, 600);
   }
 
   function followTick() {
@@ -491,7 +491,7 @@
       btn.style.color = '#f87171';
       btn.style.borderColor = '#f87171';
     }
-    followTimer = setInterval(followTick, 150);
+    followTimer = setInterval(followTick, 200);
   }
   function stopFollow() {
     if (!following) return;

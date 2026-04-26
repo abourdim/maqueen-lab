@@ -17,7 +17,7 @@
 (function (global) {
   'use strict';
 
-  const ECHO_TIMEOUT_MS = 500;
+  const ECHO_TIMEOUT_MS = 1500;
   const DEFAULT_RATE_HZ = 8;          // safe BLE UART throughput
 
   // ---- state ----
