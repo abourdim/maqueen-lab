@@ -404,12 +404,53 @@
 
   function setLineStateUI(l, r) {
     lineState.l = +l; lineState.r = +r;
+    // Tiny badge in the Drive panel auto-modes section
     const el = document.getElementById('mqLineState');
     if (el) {
       const fmt = v => v == 0 ? '●' : '○';   // ● = on line (black)
       el.textContent = `L:${fmt(l)} R:${fmt(r)}`;
       el.style.color = (l == 0 || r == 0) ? '#fbbf24' : '#4ade80';
     }
+    // Big eyes in the dedicated Line sensors card
+    const eyeL = document.getElementById('mqLineEyeL');
+    const eyeR = document.getElementById('mqLineEyeR');
+    const valL = document.getElementById('mqLineLVal');
+    const valR = document.getElementById('mqLineRVal');
+    if (eyeL) {
+      // 0 = on black line  -> bright glow
+      // 1 = off line       -> dim
+      const onL = (l == 0);
+      eyeL.style.background = onL ? '#fbbf24' : '#1d3556';
+      eyeL.style.boxShadow = onL ? '0 0 16px #fbbf24' : 'none';
+      eyeL.style.borderColor = onL ? '#fbbf24' : '#4ade80';
+    }
+    if (eyeR) {
+      const onR = (r == 0);
+      eyeR.style.background = onR ? '#fbbf24' : '#1d3556';
+      eyeR.style.boxShadow = onR ? '0 0 16px #fbbf24' : 'none';
+      eyeR.style.borderColor = onR ? '#fbbf24' : '#4ade80';
+    }
+    if (valL) valL.textContent = l;
+    if (valR) valR.textContent = r;
+  }
+
+  // -------- LINE SENSORS auto-poll + manual read button -----
+  let lineAutoTimer = null;
+  function pollLine() {
+    if (window.bleScheduler && window.bleScheduler.isConnected()) {
+      window.bleScheduler.send('LINE?').catch(() => {});
+    }
+  }
+  function initLineCard() {
+    const poll = document.getElementById('mqLinePoll');
+    const auto = document.getElementById('mqLineAuto');
+    if (!poll) return;
+    poll.addEventListener('click', pollLine);
+    auto.addEventListener('change', e => {
+      if (lineAutoTimer) { clearInterval(lineAutoTimer); lineAutoTimer = null; }
+      if (e.target.checked) lineAutoTimer = setInterval(pollLine, 200);
+    });
+    if (auto.checked) lineAutoTimer = setInterval(pollLine, 200);
   }
 
   function followTick() {
@@ -508,6 +549,7 @@
     initUltrasonic();
     initIR();
     initLineFollow();
+    initLineCard();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

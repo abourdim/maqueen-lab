@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.17"
-const BUILD_DATE = "2026-04-26 17:37 UTC"
+const BUILD_VERSION = "0.1.18"
+const BUILD_DATE = "2026-04-26 17:42 UTC"
 
 // ---------- state ----------
 let btConnected = false
