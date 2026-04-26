@@ -28,12 +28,38 @@ if [ ! -f tools/bump-firmware.py ]; then
   exit 0
 fi
 
-echo "[pre-commit] auto-bumping firmware..." >&2
+echo "[pre-commit] auto-bumping firmware + build stamp..." >&2
 python tools/bump-firmware.py >&2 || {
   echo "[pre-commit] bump failed, aborting commit" >&2
   exit 1
 }
 
-# Re-stage the files the bump touched so they go into this commit
-git add firmware/v1-maqueen-lib.ts index.html
+# Refresh build-info.json with current commit + UTC timestamp.
+# Use HEAD~ since this commit hasn't been created yet — but for a
+# more useful display we'll write the *latest committed* hash and let
+# the next commit overwrite it. (HEAD always points to the parent here.)
+python -c "
+import subprocess, json, datetime, re, pathlib
+commit = subprocess.run(['git','rev-parse','--short','HEAD'], capture_output=True, text=True).stdout.strip() or 'initial'
+built = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+# Read firmware BUILD_VERSION so app version mirrors firmware version
+fw = pathlib.Path('firmware/v1-maqueen-lib.ts').read_text(encoding='utf-8')
+m = re.search(r'BUILD_VERSION = \"([^\"]+)\"', fw)
+ver = m.group(1) if m else '0.0.0'
+pathlib.Path('build-info.json').write_text(json.dumps({'commit': commit, 'builtAt': built, 'version': ver}, indent=2), encoding='utf-8')
+# Sync product.json version fields
+prod_path = pathlib.Path('product.json')
+prod = json.loads(prod_path.read_text(encoding='utf-8'))
+prod['VERSION'] = 'v' + ver
+prod['VERSION_UPPER'] = 'V' + ver.upper()
+prod['VERSION_PLAIN'] = ver
+prod_path.write_text(json.dumps(prod, indent=2) + '\n', encoding='utf-8')
+print(f'[pre-commit] stamp -> v{ver}  commit={commit}  built={built}')
+" >&2 || {
+  echo "[pre-commit] build-info refresh failed, aborting commit" >&2
+  exit 1
+}
+
+# Re-stage everything the hook touched
+git add firmware/v1-maqueen-lib.ts index.html build-info.json product.json
 exit 0
