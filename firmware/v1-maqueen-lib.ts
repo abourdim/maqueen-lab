@@ -4,7 +4,9 @@
  * =========================================================
  *
  * Hardware: DFRobot Maqueen Lite v4 (ROB0148)
- * Extension required: pxt-maqueen (https://github.com/DFRobot/pxt-maqueen)
+ * Extensions required (add in MakeCode → Extensions):
+ *   • pxt-maqueen     (https://github.com/DFRobot/pxt-maqueen)
+ *   • neopixel        (search "neopixel" — for the 4 RGB ambient LEDs on P15)
  *
  * BLE UART wire protocol — sequence-numbered, echo-confirmed.
  *
@@ -163,16 +165,34 @@ function handleLED(arg: string) {
     execlog("LED " + v[0] + "=" + v[1])
 }
 
+// ---- 4× RGB NeoPixel strip on P15 ----
+// Maqueen Lite v4's 4 ambient RGB LEDs are NOT exposed by pxt-maqueen v1.7.16.
+// They're standard WS2812/NeoPixel on P15 — needs the 'neopixel' extension
+// added in MakeCode (Extensions → search "neopixel").
+let rgbStrip: neopixel.Strip = null
+function rgbInit() {
+    if (rgbStrip == null) {
+        rgbStrip = neopixel.create(DigitalPin.P15, 4, NeoPixelMode.RGB)
+        rgbStrip.setBrightness(80)
+    }
+}
 // RGB:i,r,g,b — i=0..3 or * for all
 function handleRGB(arg: string) {
     let parts = arg.split(",")
     if (parts.length < 4) return
-    let r = parseInt(parts[1])
-    let g = parseInt(parts[2])
-    let b = parseInt(parts[3])
-    // pxt-maqueen variant: maqueen.showColor(idx, r, g, b) if available; otherwise stub
-    // For Lite v4 the RGB are I2C reg 0x32 — placeholder serial log; real impl in MakeCode UI
-    execlog("RGB " + parts[0] + " = " + r + "," + g + "," + b + "  (TODO: wire to maqueen extension RGB call)")
+    rgbInit()
+    let r = Math.constrain(parseInt(parts[1]), 0, 255)
+    let g = Math.constrain(parseInt(parts[2]), 0, 255)
+    let b = Math.constrain(parseInt(parts[3]), 0, 255)
+    let color = neopixel.rgb(r, g, b)
+    if (parts[0] == "*") {
+        for (let i = 0; i < 4; i++) rgbStrip.setPixelColor(i, color)
+    } else {
+        let idx = Math.constrain(parseInt(parts[0]), 0, 3)
+        rgbStrip.setPixelColor(idx, color)
+    }
+    rgbStrip.show()
+    execlog("RGB " + parts[0] + " = " + r + "," + g + "," + b)
 }
 
 // SRV:i,a
