@@ -10,6 +10,10 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Maqueen Lab: single-mode UI — drop bit-playground's beginner/expert split */
+        .beginner-only { display: none !important; }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
@@ -93,7 +97,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
   } catch(e) {}
 })();
 </script>
-<div class="app beginner-mode">
+<div class="app">
     <!-- Header -->
 <div class="header">
     <div style="width:100%; text-align:center; padding:4px 0 6px; font-family:'Aref Ruqaa',serif; font-size:1.15rem; font-weight:700; color:#5d7a94; opacity:0.55; direction:rtl; letter-spacing:1px;">✦ بسم الله الرَّحمٰن الرَّحيم ✦</div>
@@ -189,7 +193,6 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 Bluetooth connection to your micro:bit
                             </div>
                         </div>
-                        <div class="badge beginner-only" data-i18n="beginner_mode">Beginner Mode</div>
                     </div>
 
                     <div class="connection-grid">
@@ -224,19 +227,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                             </div>
 
                             <div class="connection-details">
-                                <div class="connection-section-title" data-i18n="mode_label">Mode</div>
-                                <div class="pill-group">
-                                    <button id="beginnerModeBtn" class="pill active" aria-pressed="true">
-                                        <div class="pill-dot"></div>
-                                        <span class="pill-text" data-i18n="beginner">Beginner</span>
-                                    </button>
-                                    <button id="expertModeBtn" class="pill" aria-pressed="false">
-                                        <div class="pill-dot"></div>
-                                        <span class="pill-text" data-i18n="expert">Expert</span>
-                                    </button>
-                                </div>
-
-                                <div class="connection-section-title expert-only" data-i18n="device_label">Device</div>
+                                <div class="connection-section-title" data-i18n="device_label">Device</div>
                                 <div class="device-row expert-only">
                                     <span class="device-label" data-i18n="name_label">Name</span>
                                     <span id="deviceName" class="device-value" data-i18n="none">None</span>
