@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.23"
-const BUILD_DATE = "2026-04-26 18:06 UTC"
+const BUILD_VERSION = "0.1.24"
+const BUILD_DATE = "2026-04-26 18:11 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -82,12 +82,10 @@ function execlog(msg: string) {
     if (logLevel >= 2) slog("[exec] " + msg)
 }
 
-// ---------- send line on BLE (also visible on USB serial) ----------
-// In the newer bluetooth ext, the serial module is dual-routed: starting
-// the UART service redirects serial.writeLine to BOTH the BLE UART
-// characteristic AND USB serial. So one writeLine reaches both viewers.
+// ---------- send line on BLE + serial mirror ----------
 function send(line: string) {
-    serial.writeLine(line)
+    if (btConnected) bluetooth.uartWriteLine(line)
+    txlog(line)
 }
 
 // ---------- boot banner ----------
@@ -104,7 +102,7 @@ function bootBanner() {
 bluetooth.onBluetoothConnected(function () {
     btConnected = true
     basic.showIcon(IconNames.Yes)
-    serial.writeLine("INFO:CONNECTED")
+    bluetooth.uartWriteLine("INFO:CONNECTED")
     slog("[ble]  connected")
 })
 
@@ -344,10 +342,8 @@ function handleI2C(arg: string) {
 }
 
 // ---------- main UART RX ----------
-// Newer MakeCode bluetooth extension routes BLE UART through the
-// standard `serial` module — bluetooth.uartReadUntil no longer exists.
-serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
-    let raw = serial.readUntil(serial.delimiters(Delimiters.NewLine))
+bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () {
+    let raw = bluetooth.uartReadUntil(serial.delimiters(Delimiters.NewLine))
     raw = raw.trim()
     rxlog(raw)
 
