@@ -161,6 +161,14 @@
   const MIN_WRITE_GAP_MS = 90;   // ≈ 11 cmd/sec ceiling
   let lastWriteAt = 0;
   let writeQueue = Promise.resolve();
+  // We keep a reference to the original (un-wrapped) sendLine so the
+  // scheduler can call it directly without re-entering the queue wrapper
+  // installed below.
+  let _origSendLine = null;
+  function rawSend(line) {
+    if (_origSendLine) _origSendLine(line);
+    else if (global.sendLine) global.sendLine(line);
+  }
   function throttledSend(line) {
     writeQueue = writeQueue.then(() => {
       const now = performance.now();
@@ -168,10 +176,27 @@
       const delay = gap > 0 ? gap : 0;
       return new Promise(r => setTimeout(r, delay)).then(() => {
         lastWriteAt = performance.now();
-        try { global.sendLine(line); } catch (e) { /* swallow */ }
+        try { rawSend(line); } catch (e) { /* swallow */ }
       });
     });
   }
+  // Wrap window.sendLine so legacy bit-playground modules (controls.js,
+  // others.js, sensors.js — TEXT, CMD, BUZZ, LM, CAL, OTHER:* etc.) also
+  // get serialised through the same write queue. Without this, raw sends
+  // race the scheduler's auto-pollers and trigger
+  //   'TX error: NetworkError: GATT operation already in progress'.
+  function installSendLineWrapper() {
+    if (typeof global.sendLine !== 'function') {
+      setTimeout(installSendLineWrapper, 100);
+      return;
+    }
+    if (global.sendLine._maqueenWrapped) return;
+    _origSendLine = global.sendLine;
+    const wrapped = function (line) { throttledSend(line); };
+    wrapped._maqueenWrapped = true;
+    global.sendLine = wrapped;
+  }
+  installSendLineWrapper();
 
   function dispatch(verb, resolve, reject) {
     if (!global.sendLine) {
