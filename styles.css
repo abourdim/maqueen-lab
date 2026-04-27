@@ -45,6 +45,8 @@
     /* 3D card depth (used by every card) */
     --card-grad: linear-gradient(180deg, #fffdf6 0%, #fbf3df 100%);
     --card-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 6px 16px rgba(80,50,20,0.10), 0 1px 3px rgba(80,50,20,0.06);
+    --log-bg: #3d2817;
+    --log-fg: #fef9eb;
 }
 
 /* ===== THEMES ===== */
@@ -94,6 +96,8 @@
     --bg-deep:   #e8f1fa;
     --card-grad: linear-gradient(180deg, #ffffff 0%, #f0f6fc 100%);
     --card-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 6px 16px rgba(37,99,235,0.10), 0 1px 3px rgba(37,99,235,0.06);
+    --log-bg: #0f2547;
+    --log-fg: #dbeafe;
 }
 
 /* ====================================================================
@@ -141,6 +145,8 @@
     --bg-deep:   #e6f3e8;
     --card-grad: linear-gradient(180deg, #ffffff 0%, #f1f8f2 100%);
     --card-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 6px 16px rgba(22,163,74,0.10), 0 1px 3px rgba(22,163,74,0.06);
+    --log-bg: #16302a;
+    --log-fg: #dcfce7;
 }
 
 /* ====================================================================
@@ -200,6 +206,8 @@
         0 0 0 1px rgba(125,211,252,0.10) inset,
         0 8px 24px rgba(0,0,0,0.5),
         0 2px 6px rgba(0,0,0,0.35);
+    --log-bg: #050b18;
+    --log-fg: #e0f2fe;
 }
 
 /* ====================================================================
@@ -251,6 +259,8 @@
         0 0 0 1px rgba(196,132,252,0.12) inset,
         0 8px 24px rgba(31,21,56,0.5),
         0 2px 6px rgba(0,0,0,0.30);
+    --log-bg: #1a0e30;
+    --log-fg: #e9d5ff;
 }
 
 /* ====================================================================
@@ -302,6 +312,8 @@
         0 0 0 1px rgba(134,239,172,0.10) inset,
         0 8px 24px rgba(15,36,21,0.5),
         0 2px 6px rgba(0,0,0,0.28);
+    --log-bg: #0a1f12;
+    --log-fg: #bbf7d0;
 }
 
 * {
@@ -3005,15 +3017,22 @@ input[type="text"]::placeholder {
     color: var(--text) !important;
 }
 
-/* Log area, activity feed, bench response — apply on EVERY theme
-   (the [data-theme] qualifier was missing the no-attribute default). */
+/* Log area, activity feed, bench response — apply on EVERY theme.
+   The actual message-log element is <div id="log" class="log"> (the
+   .log-output / .log-area selectors were misses). Logs intentionally
+   stay on a SLIGHTLY DARKER inset surface than the card around them
+   so they read as "console output" — terminals are dark, dashboards
+   are light. We use a per-theme code-console color that contrasts
+   with the card but stays in palette. */
+.log,
 .log-output,
 .log-area,
 .activity-feed,
+#log,
 #benchResponse {
-    background: var(--input-bg) !important;
+    background: var(--log-bg, var(--input-bg)) !important;
     border-color: var(--card-border) !important;
-    color: var(--text-secondary) !important;
+    color: var(--log-fg, var(--text-secondary)) !important;
 }
 
 /* Chip buttons (presets, commands) */

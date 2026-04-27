@@ -799,10 +799,24 @@
   }
 
   // -------- SHARED: glossy-dome state helpers --------------
-  // Treat the dome as a 2-state visual: OFF (dark, no pulse) / ON (lit
-  // background-color + pulsing glow via .mq-on class).
+  // Three element types are routed through here:
+  //  1. CSS .mq-glossy-dome divs (LineL/R, IR receiver) — toggle via
+  //     background-color + .mq-on class
+  //  2. SVG-based 5mm LED domes (mqLedDomeL/R) — swap lens fill +
+  //     toggle halo circle opacity. Identified by presence of a child
+  //     <svg> with a [id^="mqLedLens"] inside it.
   function setDomeOn(el, color, on) {
     if (!el) return;
+    // SVG-based LED?
+    const lens = el.querySelector && el.querySelector('[id^="mqLedLens"]');
+    const halo = el.querySelector && el.querySelector('[id^="mqLedHalo"]');
+    if (lens) {
+      const side = el.id.endsWith('L') ? 'L' : 'R';
+      lens.setAttribute('fill', on ? `url(#mqLedLensOn_${side})` : `url(#mqLedLensOff_${side})`);
+      if (halo) halo.setAttribute('opacity', on ? '1' : '0');
+      return;
+    }
+    // Fallback: legacy glossy-dome div
     if (on) {
       el.style.backgroundColor = color;
       el.classList.add('mq-on');
