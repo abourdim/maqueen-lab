@@ -153,45 +153,76 @@
     }, Math.max(0, due));
   }
 
-  // Global write throttle — Web Bluetooth's GATT only permits ONE
-  // writeValue at a time. Without serialising, fast back-to-back sends
-  // raise 'NetworkError: GATT operation already in progress'.
-  // Each call waits MIN_WRITE_GAP_MS after the previous one before
-  // hitting sendLine. Acts as both a serializer and a rate cap.
-  const MIN_WRITE_GAP_MS = 90;   // ≈ 11 cmd/sec ceiling
-  let lastWriteAt = 0;
+  // Global write serializer — Web Bluetooth's GATT only permits ONE
+  // writeValue at a time. The previous implementation gated by an elapsed
+  // time gap (90 ms), but actual BLE writes can take >100 ms when the
+  // link is busy, so back-to-back sends still triggered
+  //   'NetworkError: GATT operation already in progress'.
+  // Now we await the writeValue() Promise itself so the next send can't
+  // start until the previous one is genuinely done.
+  const BLE_MTU_PAYLOAD = 20;
+  const POST_WRITE_GAP_MS = 10;  // tiny breather; mostly unnecessary
   let writeQueue = Promise.resolve();
-  // We keep a reference to the original (un-wrapped) sendLine so the
-  // scheduler can call it directly without re-entering the queue wrapper
-  // installed below.
-  let _origSendLine = null;
-  function rawSend(line) {
-    if (_origSendLine) _origSendLine(line);
-    else if (global.sendLine) global.sendLine(line);
-  }
-  function throttledSend(line) {
-    writeQueue = writeQueue.then(() => {
-      const now = performance.now();
-      const gap = MIN_WRITE_GAP_MS - (now - lastWriteAt);
-      const delay = gap > 0 ? gap : 0;
-      return new Promise(r => setTimeout(r, delay)).then(() => {
-        lastWriteAt = performance.now();
-        try { rawSend(line); } catch (e) { /* swallow */ }
+
+  // Direct write using bit-playground's writeChar (which it sets in ble.js
+  // on connect). We do the encoding + chunking ourselves so we can await
+  // each writeValue and surface success/failure in the message log
+  // identically to the original sendLine.
+  function realWrite(line) {
+    const wc = global.writeChar;
+    if (!wc || !global.isConnected) {
+      if (typeof global.addLogLine === 'function') {
+        global.addLogLine('TX blocked (not connected) > ' + line, 'error');
+      }
+      return Promise.resolve();
+    }
+    const data = new TextEncoder().encode(line + '\n');
+    let chain = Promise.resolve();
+    if (data.byteLength <= BLE_MTU_PAYLOAD) {
+      chain = wc.writeValue(data);
+    } else {
+      // chunk
+      let offset = 0;
+      while (offset < data.byteLength) {
+        const end = Math.min(offset + BLE_MTU_PAYLOAD, data.byteLength);
+        const chunk = data.slice(offset, end);
+        chain = chain.then(() => wc.writeValue(chunk));
+        offset = end;
+      }
+    }
+    return chain
+      .then(() => {
+        if (typeof global.addLogLine === 'function') {
+          global.addLogLine('TX > ' + line, 'tx');
+        }
+      })
+      .catch((err) => {
+        if (typeof global.addLogLine === 'function') {
+          global.addLogLine('TX error: ' + err, 'error');
+        }
       });
-    });
   }
-  // Wrap window.sendLine so legacy bit-playground modules (controls.js,
-  // others.js, sensors.js — TEXT, CMD, BUZZ, LM, CAL, OTHER:* etc.) also
-  // get serialised through the same write queue. Without this, raw sends
-  // race the scheduler's auto-pollers and trigger
-  //   'TX error: NetworkError: GATT operation already in progress'.
+
+  function throttledSend(line) {
+    writeQueue = writeQueue
+      .then(() => realWrite(line))
+      .then(() => new Promise(r => setTimeout(r, POST_WRITE_GAP_MS)));
+    return writeQueue;
+  }
+
+  // Replace global.sendLine so EVERY caller (bit-playground modules and
+  // the scheduler's own dispatch) goes through the awaited queue. The
+  // original ble.js sendLine fired writeValue() without awaiting it,
+  // which is what caused the GATT collisions.
   function installSendLineWrapper() {
+    // We don't need the original anymore — our realWrite() reproduces its
+    // behavior using writeChar directly. Just wait until ble.js has
+    // defined sendLine (so we know writeChar will exist on connect).
     if (typeof global.sendLine !== 'function') {
       setTimeout(installSendLineWrapper, 100);
       return;
     }
     if (global.sendLine._maqueenWrapped) return;
-    _origSendLine = global.sendLine;
     const wrapped = function (line) { throttledSend(line); };
     wrapped._maqueenWrapped = true;
     global.sendLine = wrapped;
