@@ -140,41 +140,41 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 
       <!-- Line sensors -->
       <div title="Line sensors L | R (P13 | P14)" style="display:flex; align-items:center; gap:6px;">
-        <span style="color:#93a8c4; font-size:11px;">LINE</span>
+        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;">LINE</span>
         <span id="mq-line-l" class="mq-dot" style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#1d3556; border:1px solid #4ade80;"></span>
         <span id="mq-line-r" class="mq-dot" style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#1d3556; border:1px solid #4ade80;"></span>
       </div>
 
       <!-- Ultrasonic distance -->
       <div title="Ultrasonic SR04 (P1 trig / P2 echo)" style="display:flex; align-items:center; gap:6px;">
-        <span style="color:#93a8c4; font-size:11px;">DIST</span>
+        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;">DIST</span>
         <span id="mq-dist" style="color:#4ade80; font-weight:700; min-width:50px; text-align:right;">— cm</span>
       </div>
 
       <!-- IR remote -->
       <div title="IR remote (NEC)" style="display:flex; align-items:center; gap:6px;">
-        <span style="color:#93a8c4; font-size:11px;">IR</span>
+        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;">IR</span>
         <span id="mq-ir" style="color:#c084fc; font-weight:700; min-width:42px; text-align:right;">—</span>
       </div>
 
       <!-- Accelerometer (also via new firmware) -->
       <div title="Accelerometer x, y, z (mg)" style="display:flex; align-items:center; gap:6px;">
-        <span style="color:#93a8c4; font-size:11px;">ACC</span>
+        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;">ACC</span>
         <span id="mq-acc" style="color:#fbbf24; font-weight:700; min-width:120px; text-align:right;">—, —, —</span>
       </div>
 
       <!-- BLE scheduler bench (sent / echoed / lost / latency) -->
       <div title="BLE round-trip stats" style="display:flex; align-items:center; gap:6px; margin-left:auto; padding-left:12px; border-left:1px solid rgba(255,255,255,0.1);">
-        <span style="color:#93a8c4; font-size:11px;">BLE</span>
+        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;">BLE</span>
         <span id="mq-bench" style="color:#00d4ff;">0 / 0 · — ms</span>
       </div>
 
       <!-- Polling controls -->
       <div style="display:flex; gap:6px; margin-left:8px;">
-        <button id="mq-poll-line" style="background:#0a1628; color:#4ade80; border:1px solid #4ade80; border-radius:6px; padding:4px 10px; font-family:inherit; font-size:11px; cursor:pointer;">poll LINE</button>
-        <button id="mq-poll-dist" style="background:#0a1628; color:#4ade80; border:1px solid #4ade80; border-radius:6px; padding:4px 10px; font-family:inherit; font-size:11px; cursor:pointer;">poll DIST</button>
-        <button id="mq-poll-ir" style="background:#0a1628; color:#c084fc; border:1px solid #c084fc; border-radius:6px; padding:4px 10px; font-family:inherit; font-size:11px; cursor:pointer;">poll IR</button>
-        <button id="mq-streams-toggle" title="Enable ACC/TEMP/LIGHT/COMPASS/BTN streams (needed for Sensors / Graph / 3D tabs)" style="background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; padding:4px 10px; font-family:inherit; font-size:11px; cursor:pointer;">streams: OFF</button>
+        <button id="mq-poll-line" style="background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid #4ade80; border-radius:6px; padding:4px 10px; font-family:inherit; font-size:11px; cursor:pointer;">poll LINE</button>
+        <button id="mq-poll-dist" style="background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid #4ade80; border-radius:6px; padding:4px 10px; font-family:inherit; font-size:11px; cursor:pointer;">poll DIST</button>
+        <button id="mq-poll-ir" style="background:var(--card-bg-2, #0a1628); color:#c084fc; border:1px solid #c084fc; border-radius:6px; padding:4px 10px; font-family:inherit; font-size:11px; cursor:pointer;">poll IR</button>
+        <button id="mq-streams-toggle" title="Enable ACC/TEMP/LIGHT/COMPASS/BTN streams (needed for Sensors / Graph / 3D tabs)" style="background:var(--card-bg-2, #0a1628); color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; padding:4px 10px; font-family:inherit; font-size:11px; cursor:pointer;">streams: OFF</button>
       </div>
     </div>
 
@@ -223,7 +223,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <div style="opacity:0.7;">built <span style="color:#00d4ff;" id="appBuildDate">2026-04-26</span></div>
                                     <div style="opacity:0.55; margin-top:4px;">commit <span style="color:#00d4ff;" id="appCommit">main</span></div>
                                     <div id="fwVersionLine" style="opacity:0.7; margin-top:6px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06);">
-                                      firmware <span id="fwVersion" style="color:#93a8c4;">— (connect to detect)</span>
+                                      firmware <span id="fwVersion" style="color:var(--text-secondary, #93a8c4);">— (connect to detect)</span>
                                       <span id="fwVersionBadge" style="display:none; font-size:10px; padding:1px 6px; border-radius:4px; margin-left:4px;"></span>
                                     </div>
                                 </div>
@@ -541,7 +541,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <div class="card-title"><span class="icon">🤖</span> Maqueen Lite v4</div>
                                     <div class="card-subtitle expert-only">Native controls — uses the Maqueen firmware verbs (M:, SRV:, LED:, RGB:, BUZZ:)</div>
                                 </div>
-                                <select id="mqKitPicker" style="background:#0a1628; color:#00d4ff; border:1px solid #00d4ff; border-radius:6px; padding:6px 12px; font-family:'JetBrains Mono', monospace; font-size:12px;">
+                                <select id="mqKitPicker" style="background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid #00d4ff; border-radius:6px; padding:6px 12px; font-family:'JetBrains Mono', monospace; font-size:12px;">
                                     <option value="base">Base (no kit)</option>
                                     <option value="forklift">🍴 Forklift (ROB0156-F)</option>
                                     <option value="loader">🚜 Loader (ROB0156-L)</option>
@@ -552,15 +552,15 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 
                             <!-- Maqueen sub-tab strip — show one element at a time -->
                             <div id="mqSubTabBar" style="display:flex; flex-wrap:wrap; gap:6px; padding:14px 16px 0;">
-                                <button class="mq-sub-btn" data-mq-target="drive"      style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:#0a1628; color:#fb923c; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">🛞 Drive</button>
-                                <button class="mq-sub-btn" data-mq-target="servos"     style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:#0a1628; color:#00d4ff; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">🦾 Servos</button>
-                                <button class="mq-sub-btn" data-mq-target="leds"       style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:#0a1628; color:#facc15; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">💡 LEDs</button>
-                                <button class="mq-sub-btn" data-mq-target="neopixels"  style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:#0a1628; color:#f472b6; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">🌈 NeoPixels</button>
-                                <button class="mq-sub-btn" data-mq-target="buzzer"     style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:#0a1628; color:#fbbf24; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">🔊 Buzzer</button>
-                                <button class="mq-sub-btn" data-mq-target="ultrasonic" style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:#0a1628; color:#4ade80; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">📡 Distance</button>
-                                <button class="mq-sub-btn" data-mq-target="lines"      style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:#0a1628; color:#4ade80; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">👀 Line</button>
-                                <button class="mq-sub-btn" data-mq-target="ir"         style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:#0a1628; color:#c084fc; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">📺 IR</button>
-                                <button class="mq-sub-btn" data-mq-target="help"       style="flex:0 0 auto; padding:8px 10px; background:#0a1628; color:#00d4ff; border:1px solid #1d3556; border-radius:8px; cursor:pointer; font-size:12px;">ℹ️</button>
+                                <button class="mq-sub-btn" data-mq-target="drive"      style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">🛞 Drive</button>
+                                <button class="mq-sub-btn" data-mq-target="servos"     style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">🦾 Servos</button>
+                                <button class="mq-sub-btn" data-mq-target="leds"       style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#facc15; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">💡 LEDs</button>
+                                <button class="mq-sub-btn" data-mq-target="neopixels"  style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#f472b6; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">🌈 NeoPixels</button>
+                                <button class="mq-sub-btn" data-mq-target="buzzer"     style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#fbbf24; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">🔊 Buzzer</button>
+                                <button class="mq-sub-btn" data-mq-target="ultrasonic" style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">📡 Distance</button>
+                                <button class="mq-sub-btn" data-mq-target="lines"      style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">👀 Line</button>
+                                <button class="mq-sub-btn" data-mq-target="ir"         style="flex:1 1 auto; min-width:84px; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#c084fc; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">📺 IR</button>
+                                <button class="mq-sub-btn" data-mq-target="help"       style="flex:0 0 auto; padding:8px 10px; background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid var(--border, #1d3556); border-radius:8px; cursor:pointer; font-size:12px;">ℹ️</button>
                             </div>
                             <style>
                               .mq-sub-page { display: none !important; }
@@ -626,7 +626,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 <div data-mq-sub="drive" class="mq-sub-page" style="background:rgba(251,146,60,0.05); border:1px solid rgba(251,146,60,0.3); border-radius:10px; padding:14px;">
                                     <div style="font-weight:700; color:#fb923c; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
                                         <span style="font-size:18px;">🛞</span> Drive
-                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Drive uses the Maqueen 'M:L,R' BLE verb. L,R range -255..+255.">M:L,R</span>
+                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Drive uses the Maqueen 'M:L,R' BLE verb. L,R range -255..+255.">M:L,R</span>
                                     </div>
 
                                     <!-- Top row: mascot + joystick -->
@@ -717,12 +717,12 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:rgba(251,146,60,0.15);"></div>
                                                 <div id="mqJoyThumb" style="position:absolute; left:50%; top:50%; width:48px; height:48px; margin-left:-24px; margin-top:-24px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #fb923c, #c2410c); box-shadow:0 4px 12px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3); cursor:grab; transition:transform 0.15s ease-out;"></div>
                                             </div>
-                                            <div style="font-size:10px; color:#93a8c4; text-align:center;">drag to drive · release = stop</div>
+                                            <div style="font-size:10px; color:var(--text-secondary, #93a8c4); text-align:center;">drag to drive · release = stop</div>
                                         </div>
                                     </div>
 
                                     <!-- Speed -->
-                                    <div style="display:flex; align-items:center; gap:8px; font-size:11px; color:#93a8c4;">
+                                    <div style="display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-secondary, #93a8c4);">
                                         <span>Speed</span>
                                         <input type="range" id="mqSpeedSlider" min="50" max="255" value="200" style="flex:1; accent-color:#fb923c;"/>
                                         <span id="mqSpeedReadout" style="font-family:monospace; color:#fb923c; min-width:30px; text-align:right;">200</span>
@@ -730,72 +730,72 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 
                                     <!-- Live BLE verb tape (geek catnip — shows what the app actually sends) -->
                                     <div style="margin-top:8px;">
-                                        <div style="font-size:10px; color:#93a8c4; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+                                        <div style="font-size:10px; color:var(--text-secondary, #93a8c4); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
                                             <span>📡 Live BLE wire</span>
                                             <span style="font-size:9px; opacity:0.7;">(what your browser sent the robot · newest first)</span>
                                         </div>
-                                        <div id="mqBleTape" style="background:#0a1628; border:1px solid #1d3556; border-radius:6px; padding:6px 10px; font-family:'JetBrains Mono', monospace; font-size:11px; color:#93a8c4; min-height:60px; max-height:80px; overflow-y:auto;">
-                                            <div id="mqDriveLast" style="color:#93a8c4;">last cmd: <span id="mqDriveLastVerb" style="color:#fb923c; font-weight:700;">—</span></div>
+                                        <div id="mqBleTape" style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); border-radius:6px; padding:6px 10px; font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4); min-height:60px; max-height:80px; overflow-y:auto;">
+                                            <div id="mqDriveLast" style="color:var(--text-secondary, #93a8c4);">last cmd: <span id="mqDriveLastVerb" style="color:#fb923c; font-weight:700;">—</span></div>
                                         </div>
                                     </div>
 
                                     <!-- "How does this work?" — visual lesson on differential drive -->
                                     <details style="margin-top:8px;">
                                         <summary style="font-size:11px; color:#4ade80; cursor:pointer; user-select:none;">🧪 How does this work? <span style="opacity:0.6;">(show the physics)</span></summary>
-                                        <div style="margin-top:10px; padding:12px; background:#0a1628; border:1px solid #1d3556; border-radius:8px;">
-                                            <div style="font-size:11px; color:#b8c8e0; margin-bottom:10px; line-height:1.5;">
+                                        <div style="margin-top:10px; padding:12px; background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); border-radius:8px;">
+                                            <div style="font-size:11px; color:var(--text, #b8c8e0); margin-bottom:10px; line-height:1.5;">
                                                 The Maqueen uses <strong style="color:#4ade80;">differential drive</strong> — two wheels, no steering. The robot turns by spinning the two wheels at different speeds.
                                             </div>
                                             <!-- 4 little visual examples -->
                                             <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">
                                                 <!-- Forward -->
-                                                <div style="background:#0f1e35; border:1px solid #1d3556; border-radius:6px; padding:8px; text-align:center;">
+                                                <div style="background:var(--card-bg, #0f1e35); border:1px solid var(--border, #1d3556); border-radius:6px; padding:8px; text-align:center;">
                                                     <svg viewBox="0 0 100 70" style="width:100%; height:50px;">
                                                         <rect x="35" y="10" width="30" height="50" rx="6" fill="none" stroke="#fb923c" stroke-width="1"/>
                                                         <rect x="22" y="20" width="10" height="30" rx="2" fill="#fb923c"/>
                                                         <rect x="68" y="20" width="10" height="30" rx="2" fill="#00d4ff"/>
                                                         <line x1="50" y1="55" x2="50" y2="20" stroke="#4ade80" stroke-width="2" marker-end="url(#mqArrowHead)"/>
                                                     </svg>
-                                                    <div style="font-size:10px; color:#93a8c4; margin-top:4px;">Both wheels +200 → <strong style="color:#4ade80;">forward</strong></div>
+                                                    <div style="font-size:10px; color:var(--text-secondary, #93a8c4); margin-top:4px;">Both wheels +200 → <strong style="color:#4ade80;">forward</strong></div>
                                                 </div>
                                                 <!-- Backward -->
-                                                <div style="background:#0f1e35; border:1px solid #1d3556; border-radius:6px; padding:8px; text-align:center;">
+                                                <div style="background:var(--card-bg, #0f1e35); border:1px solid var(--border, #1d3556); border-radius:6px; padding:8px; text-align:center;">
                                                     <svg viewBox="0 0 100 70" style="width:100%; height:50px;">
                                                         <rect x="35" y="10" width="30" height="50" rx="6" fill="none" stroke="#fb923c" stroke-width="1"/>
                                                         <rect x="22" y="20" width="10" height="30" rx="2" fill="#fb923c" opacity="0.4"/>
                                                         <rect x="68" y="20" width="10" height="30" rx="2" fill="#00d4ff" opacity="0.4"/>
                                                         <line x1="50" y1="20" x2="50" y2="55" stroke="#f87171" stroke-width="2" marker-end="url(#mqArrowHead)"/>
                                                     </svg>
-                                                    <div style="font-size:10px; color:#93a8c4; margin-top:4px;">Both wheels −200 → <strong style="color:#f87171;">backward</strong></div>
+                                                    <div style="font-size:10px; color:var(--text-secondary, #93a8c4); margin-top:4px;">Both wheels −200 → <strong style="color:#f87171;">backward</strong></div>
                                                 </div>
                                                 <!-- Pivot left -->
-                                                <div style="background:#0f1e35; border:1px solid #1d3556; border-radius:6px; padding:8px; text-align:center;">
+                                                <div style="background:var(--card-bg, #0f1e35); border:1px solid var(--border, #1d3556); border-radius:6px; padding:8px; text-align:center;">
                                                     <svg viewBox="0 0 100 70" style="width:100%; height:50px;">
                                                         <rect x="35" y="10" width="30" height="50" rx="6" fill="none" stroke="#fb923c" stroke-width="1"/>
                                                         <rect x="22" y="20" width="10" height="30" rx="2" fill="#fb923c" opacity="0.4"/>
                                                         <rect x="68" y="20" width="10" height="30" rx="2" fill="#00d4ff"/>
                                                         <path d="M 60 50 A 12 12 0 1 1 60 20" fill="none" stroke="#facc15" stroke-width="2" marker-end="url(#mqArrowHead)"/>
                                                     </svg>
-                                                    <div style="font-size:10px; color:#93a8c4; margin-top:4px;">L−150 / R+150 → <strong style="color:#facc15;">spin left</strong></div>
+                                                    <div style="font-size:10px; color:var(--text-secondary, #93a8c4); margin-top:4px;">L−150 / R+150 → <strong style="color:#facc15;">spin left</strong></div>
                                                 </div>
                                                 <!-- Pivot right -->
-                                                <div style="background:#0f1e35; border:1px solid #1d3556; border-radius:6px; padding:8px; text-align:center;">
+                                                <div style="background:var(--card-bg, #0f1e35); border:1px solid var(--border, #1d3556); border-radius:6px; padding:8px; text-align:center;">
                                                     <svg viewBox="0 0 100 70" style="width:100%; height:50px;">
                                                         <rect x="35" y="10" width="30" height="50" rx="6" fill="none" stroke="#fb923c" stroke-width="1"/>
                                                         <rect x="22" y="20" width="10" height="30" rx="2" fill="#fb923c"/>
                                                         <rect x="68" y="20" width="10" height="30" rx="2" fill="#00d4ff" opacity="0.4"/>
                                                         <path d="M 40 20 A 12 12 0 1 1 40 50" fill="none" stroke="#facc15" stroke-width="2" marker-end="url(#mqArrowHead)"/>
                                                     </svg>
-                                                    <div style="font-size:10px; color:#93a8c4; margin-top:4px;">L+150 / R−150 → <strong style="color:#facc15;">spin right</strong></div>
+                                                    <div style="font-size:10px; color:var(--text-secondary, #93a8c4); margin-top:4px;">L+150 / R−150 → <strong style="color:#facc15;">spin right</strong></div>
                                                 </div>
                                             </div>
                                             <!-- BLE wire format -->
-                                            <div style="margin-top:12px; padding-top:10px; border-top:1px solid #1d3556; font-size:11px; color:#b8c8e0; line-height:1.6;">
+                                            <div style="margin-top:12px; padding-top:10px; border-top:1px solid #1d3556; font-size:11px; color:var(--text, #b8c8e0); line-height:1.6;">
                                                 Every move you make becomes a tiny text message over Bluetooth:
-                                                <div style="margin:8px 0; padding:8px 12px; background:#061121; border-left:3px solid #4ade80; font-family:'JetBrains Mono', monospace; font-size:11px; color:#4ade80;">
+                                                <div style="margin:8px 0; padding:8px 12px; background:var(--bg-deep, #061121); border-left:3px solid #4ade80; font-family:'JetBrains Mono', monospace; font-size:11px; color:#4ade80;">
                                                     #42 M:200,200
                                                 </div>
-                                                <span style="color:#93a8c4;">
+                                                <span style="color:var(--text-secondary, #93a8c4);">
                                                     <code style="color:#fb923c;">#42</code> = sequence number (so we know which reply matches) ·
                                                     <code style="color:#4ade80;">M:</code> = "set Motors" ·
                                                     <code style="color:#fb923c;">200,200</code> = left, right (range −255..+255) ·
@@ -807,23 +807,23 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 
                                     <!-- Classic arrow controls (kept as fallback / accessible mode) -->
                                     <details style="margin-top:8px;">
-                                        <summary style="font-size:11px; color:#93a8c4; cursor:pointer;">⌨️ Buttons + keyboard</summary>
+                                        <summary style="font-size:11px; color:var(--text-secondary, #93a8c4); cursor:pointer;">⌨️ Buttons + keyboard</summary>
                                         <div style="margin-top:8px;">
                                             <div style="display:flex; gap:6px; justify-content:center; margin-bottom:6px;">
-                                                <button class="mq-drive-btn" data-l="200" data-r="200" style="width:54px; height:42px; background:#0a1628; color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↑</button>
+                                                <button class="mq-drive-btn" data-l="200" data-r="200" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↑</button>
                                             </div>
                                             <div style="display:flex; gap:6px; justify-content:center; margin-bottom:6px;">
-                                                <button class="mq-drive-btn" data-l="-150" data-r="150" style="width:54px; height:42px; background:#0a1628; color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↺</button>
-                                                <button class="mq-drive-btn" data-l="0" data-r="0" data-stop="1" style="width:54px; height:42px; background:#0a1628; color:#f87171; border:1px solid #f87171; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">STOP</button>
-                                                <button class="mq-drive-btn" data-l="150" data-r="-150" style="width:54px; height:42px; background:#0a1628; color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↻</button>
+                                                <button class="mq-drive-btn" data-l="-150" data-r="150" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↺</button>
+                                                <button class="mq-drive-btn" data-l="0" data-r="0" data-stop="1" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#f87171; border:1px solid #f87171; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">STOP</button>
+                                                <button class="mq-drive-btn" data-l="150" data-r="-150" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↻</button>
                                             </div>
                                             <div style="display:flex; gap:6px; justify-content:center;">
-                                                <button class="mq-drive-btn" data-l="-200" data-r="-200" style="width:54px; height:42px; background:#0a1628; color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↓</button>
+                                                <button class="mq-drive-btn" data-l="-200" data-r="-200" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↓</button>
                                             </div>
-                                            <div style="margin-top:8px; font-size:10px; color:#93a8c4; text-align:center;">
-                                                ⌨️ <kbd style="background:#0a1628; border:1px solid #1d3556; padding:1px 6px; border-radius:3px;">W</kbd> <kbd style="background:#0a1628; border:1px solid #1d3556; padding:1px 6px; border-radius:3px;">A</kbd> <kbd style="background:#0a1628; border:1px solid #1d3556; padding:1px 6px; border-radius:3px;">S</kbd> <kbd style="background:#0a1628; border:1px solid #1d3556; padding:1px 6px; border-radius:3px;">D</kbd> drive · <kbd style="background:#0a1628; border:1px solid #1d3556; padding:1px 6px; border-radius:3px;">Space</kbd> stop
+                                            <div style="margin-top:8px; font-size:10px; color:var(--text-secondary, #93a8c4); text-align:center;">
+                                                ⌨️ <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">W</kbd> <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">A</kbd> <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">S</kbd> <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">D</kbd> drive · <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">Space</kbd> stop
                                             </div>
-                                            <label style="display:flex; align-items:center; gap:6px; margin-top:8px; font-size:11px; color:#93a8c4; cursor:pointer;" title="Hold an arrow to drive, release to stop. Off = click to set, click STOP to brake.">
+                                            <label style="display:flex; align-items:center; gap:6px; margin-top:8px; font-size:11px; color:var(--text-secondary, #93a8c4); cursor:pointer;" title="Hold an arrow to drive, release to stop. Off = click to set, click STOP to brake.">
                                                 <input type="checkbox" id="mqHoldToDrive" style="accent-color:#fb923c;">
                                                 hold to drive (release = stop)
                                             </label>
@@ -835,14 +835,14 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 <div data-mq-sub="servos" class="mq-sub-page" id="mqServosCard" style="background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.3); border-radius:10px; padding:14px;">
                                     <div style="font-weight:700; color:#00d4ff; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
                                         <span style="font-size:18px;">🦾</span> Servos
-                                        <span id="mqServosKitName" style="color:#93a8c4; font-size:11px; font-weight:400;">(generic)</span>
-                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Servos use the 'SRV:port,angle' BLE verb. port=1|2, angle=0..180.">SRV:i,a</span>
+                                        <span id="mqServosKitName" style="color:var(--text-secondary, #93a8c4); font-size:11px; font-weight:400;">(generic)</span>
+                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Servos use the 'SRV:port,angle' BLE verb. port=1|2, angle=0..180.">SRV:i,a</span>
                                     </div>
 
                                     <!-- Twin horn dials -->
                                     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
                                         <!-- S1 -->
-                                        <div style="background:#0a1628; border:1px solid #1d3556; border-radius:10px; padding:12px;">
+                                        <div style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); border-radius:10px; padding:12px;">
                                             <div style="position:relative; width:100%; max-width:220px; margin:0 auto;">
                                                 <svg viewBox="0 0 200 130" style="width:100%; height:auto;">
                                                     <!-- arc track -->
@@ -862,19 +862,19 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 </svg>
                                             </div>
                                             <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-                                                <span id="mqS1Label" style="font-family:monospace; color:#93a8c4; min-width:40px; font-size:12px;">S1</span>
+                                                <span id="mqS1Label" style="font-family:monospace; color:var(--text-secondary, #93a8c4); min-width:40px; font-size:12px;">S1</span>
                                                 <input type="range" id="mqS1Slider" min="0" max="180" value="90" style="flex:1; accent-color:#00d4ff;"/>
                                                 <span id="mqS1Readout" style="font-family:monospace; color:#00d4ff; min-width:38px; text-align:right; font-size:11px;">90°</span>
                                             </div>
                                             <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
-                                                <button class="mq-servo-quick" data-port="1" data-angle="0"   style="flex:1; padding:5px; background:#0a1628; color:#00d4ff; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">0°</button>
-                                                <button class="mq-servo-quick" data-port="1" data-angle="90"  style="flex:1; padding:5px; background:#0a1628; color:#00d4ff; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">90°</button>
-                                                <button class="mq-servo-quick" data-port="1" data-angle="180" style="flex:1; padding:5px; background:#0a1628; color:#00d4ff; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">180°</button>
-                                                <button class="mq-servo-sweep" data-port="1" style="flex:1; padding:5px; background:#0a1628; color:#facc15; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">▶ Sweep</button>
+                                                <button class="mq-servo-quick" data-port="1" data-angle="0"   style="flex:1; padding:5px; background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid var(--border, #1d3556); border-radius:5px; cursor:pointer; font-size:10px;">0°</button>
+                                                <button class="mq-servo-quick" data-port="1" data-angle="90"  style="flex:1; padding:5px; background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid var(--border, #1d3556); border-radius:5px; cursor:pointer; font-size:10px;">90°</button>
+                                                <button class="mq-servo-quick" data-port="1" data-angle="180" style="flex:1; padding:5px; background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid var(--border, #1d3556); border-radius:5px; cursor:pointer; font-size:10px;">180°</button>
+                                                <button class="mq-servo-sweep" data-port="1" style="flex:1; padding:5px; background:var(--card-bg-2, #0a1628); color:#facc15; border:1px solid var(--border, #1d3556); border-radius:5px; cursor:pointer; font-size:10px;">▶ Sweep</button>
                                             </div>
                                         </div>
                                         <!-- S2 -->
-                                        <div style="background:#0a1628; border:1px solid #1d3556; border-radius:10px; padding:12px;">
+                                        <div style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); border-radius:10px; padding:12px;">
                                             <div style="position:relative; width:100%; max-width:220px; margin:0 auto;">
                                                 <svg viewBox="0 0 200 130" style="width:100%; height:auto;">
                                                     <path d="M 15 100 A 85 85 0 0 1 185 100" fill="none" stroke="#1d3556" stroke-width="6"/>
@@ -890,15 +890,15 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 </svg>
                                             </div>
                                             <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-                                                <span id="mqS2Label" style="font-family:monospace; color:#93a8c4; min-width:40px; font-size:12px;">S2</span>
+                                                <span id="mqS2Label" style="font-family:monospace; color:var(--text-secondary, #93a8c4); min-width:40px; font-size:12px;">S2</span>
                                                 <input type="range" id="mqS2Slider" min="0" max="180" value="90" style="flex:1; accent-color:#4ade80;"/>
                                                 <span id="mqS2Readout" style="font-family:monospace; color:#4ade80; min-width:38px; text-align:right; font-size:11px;">90°</span>
                                             </div>
                                             <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
-                                                <button class="mq-servo-quick" data-port="2" data-angle="0"   style="flex:1; padding:5px; background:#0a1628; color:#4ade80; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">0°</button>
-                                                <button class="mq-servo-quick" data-port="2" data-angle="90"  style="flex:1; padding:5px; background:#0a1628; color:#4ade80; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">90°</button>
-                                                <button class="mq-servo-quick" data-port="2" data-angle="180" style="flex:1; padding:5px; background:#0a1628; color:#4ade80; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">180°</button>
-                                                <button class="mq-servo-sweep" data-port="2" style="flex:1; padding:5px; background:#0a1628; color:#facc15; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">▶ Sweep</button>
+                                                <button class="mq-servo-quick" data-port="2" data-angle="0"   style="flex:1; padding:5px; background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid var(--border, #1d3556); border-radius:5px; cursor:pointer; font-size:10px;">0°</button>
+                                                <button class="mq-servo-quick" data-port="2" data-angle="90"  style="flex:1; padding:5px; background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid var(--border, #1d3556); border-radius:5px; cursor:pointer; font-size:10px;">90°</button>
+                                                <button class="mq-servo-quick" data-port="2" data-angle="180" style="flex:1; padding:5px; background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid var(--border, #1d3556); border-radius:5px; cursor:pointer; font-size:10px;">180°</button>
+                                                <button class="mq-servo-sweep" data-port="2" style="flex:1; padding:5px; background:var(--card-bg-2, #0a1628); color:#facc15; border:1px solid var(--border, #1d3556); border-radius:5px; cursor:pointer; font-size:10px;">▶ Sweep</button>
                                             </div>
                                         </div>
                                     </div>
@@ -909,14 +909,14 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <!-- Code preview — what the firmware does when you move the slider -->
                                     <div style="margin-top:12px;">
                                         <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
-                                            <span style="font-size:10px; color:#93a8c4;">🧱 Code that runs on the micro:bit</span>
+                                            <span style="font-size:10px; color:var(--text-secondary, #93a8c4);">🧱 Code that runs on the micro:bit</span>
                                             <span style="margin-left:auto; display:flex; gap:0;">
                                                 <button class="mq-servo-codetab mq-servo-codetab-active" data-tab="lib" style="padding:3px 9px; background:#1d3556; color:#00d4ff; border:1px solid #00d4ff; border-radius:5px 0 0 5px; cursor:pointer; font-size:10px; font-family:'JetBrains Mono', monospace;">maqueen.* (lib)</button>
-                                                <button class="mq-servo-codetab" data-tab="raw" style="padding:3px 9px; background:#0a1628; color:#93a8c4; border:1px solid #1d3556; border-left:none; border-radius:0 5px 5px 0; cursor:pointer; font-size:10px; font-family:'JetBrains Mono', monospace;">pins.* (raw I²C)</button>
+                                                <button class="mq-servo-codetab" data-tab="raw" style="padding:3px 9px; background:var(--card-bg-2, #0a1628); color:var(--text-secondary, #93a8c4); border:1px solid var(--border, #1d3556); border-left:none; border-radius:0 5px 5px 0; cursor:pointer; font-size:10px; font-family:'JetBrains Mono', monospace;">pins.* (raw I²C)</button>
                                             </span>
-                                            <span id="mqServoCodeStatus" style="font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; min-width:80px; text-align:right;">— move slider to send —</span>
+                                            <span id="mqServoCodeStatus" style="font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); min-width:80px; text-align:right;">— move slider to send —</span>
                                         </div>
-                                        <pre id="mqServoCodeView" style="margin:0; padding:10px 12px; background:#061121; border:1px solid #1d3556; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#b8c8e0; line-height:1.6; min-height:50px; white-space:pre-wrap;">maqueen.servoRun(maqueen.Servos.S1, <span style="color:#facc15; background:#fbbf2433; padding:0 4px; border-radius:3px;">90</span>)</pre>
+                                        <pre id="mqServoCodeView" style="margin:0; padding:10px 12px; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:11.5px; color:var(--text, #b8c8e0); line-height:1.6; min-height:50px; white-space:pre-wrap;">maqueen.servoRun(maqueen.Servos.S1, <span style="color:#facc15; background:#fbbf2433; padding:0 4px; border-radius:3px;">90</span>)</pre>
                                     </div>
                                 </div>
 
@@ -924,23 +924,23 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 <div data-mq-sub="leds" class="mq-sub-page" style="background:rgba(250,204,21,0.05); border:1px solid rgba(250,204,21,0.3); border-radius:10px; padding:14px;">
                                     <div style="font-weight:700; color:#facc15; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
                                         <span style="font-size:18px;">💡</span> Simple LEDs
-                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Onboard L/R LEDs use the 'LED:i,s' BLE verb. i=0 (left) | 1 (right), s=0 | 1.">LED:i,s</span>
+                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Onboard L/R LEDs use the 'LED:i,s' BLE verb. i=0 (left) | 1 (right), s=0 | 1.">LED:i,s</span>
                                     </div>
                                     <div style="display:flex; gap:18px; justify-content:center; margin-bottom:14px;">
                                         <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                                            <div class="mq-led-btn mq-glossy-dome" id="mqLedDomeL" data-led="0" data-state="0" style="--glow:#facc15; width:80px; height:80px; background-color:#1d3556;" title="Left LED — click to toggle"></div>
-                                            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#93a8c4;">LEFT · <span id="mqLedDomeLState" style="color:#facc15; font-weight:700;">OFF</span></div>
+                                            <div class="mq-led-btn mq-glossy-dome" id="mqLedDomeL" data-led="0" data-state="0" style="--glow:#facc15; width:80px; height:80px; background-color:var(--border, #1d3556);" title="Left LED — click to toggle"></div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4);">LEFT · <span id="mqLedDomeLState" style="color:#facc15; font-weight:700;">OFF</span></div>
                                         </div>
                                         <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                                            <div class="mq-led-btn mq-glossy-dome" id="mqLedDomeR" data-led="1" data-state="0" style="--glow:#facc15; width:80px; height:80px; background-color:#1d3556;" title="Right LED — click to toggle"></div>
-                                            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#93a8c4;">RIGHT · <span id="mqLedDomeRState" style="color:#facc15; font-weight:700;">OFF</span></div>
+                                            <div class="mq-led-btn mq-glossy-dome" id="mqLedDomeR" data-led="1" data-state="0" style="--glow:#facc15; width:80px; height:80px; background-color:var(--border, #1d3556);" title="Right LED — click to toggle"></div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4);">RIGHT · <span id="mqLedDomeRState" style="color:#facc15; font-weight:700;">OFF</span></div>
                                         </div>
                                     </div>
                                     <div style="display:flex; gap:8px;">
-                                        <button id="mqLedBlink" style="flex:1; padding:8px; background:#0a1628; color:#facc15; border:1px solid #facc15; border-radius:6px; cursor:pointer; font-size:11px;">⚡ Blink both 5×</button>
-                                        <button id="mqLedAllOff" style="flex:1; padding:8px; background:#0a1628; color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:11px;">⏹ All OFF</button>
+                                        <button id="mqLedBlink" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#facc15; border:1px solid #facc15; border-radius:6px; cursor:pointer; font-size:11px;">⚡ Blink both 5×</button>
+                                        <button id="mqLedAllOff" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:11px;">⏹ All OFF</button>
                                     </div>
-                                    <div style="margin-top:10px; padding:8px 10px; background:#061121; border:1px solid #1d3556; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:11px; color:#93a8c4; text-align:center;">
+                                    <div style="margin-top:10px; padding:8px 10px; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4); text-align:center;">
                                         last sent: <span id="mqLedLastVerb" style="color:#facc15; font-weight:700;">—</span>
                                     </div>
                                 </div>
@@ -949,51 +949,51 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 <div data-mq-sub="neopixels" class="mq-sub-page" style="background:rgba(244,114,182,0.05); border:1px solid rgba(244,114,182,0.3); border-radius:10px; padding:14px;">
                                     <div style="font-weight:700; color:#f472b6; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
                                         <span style="font-size:18px;">🌈</span> NeoPixels × 4
-                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Per-pixel RGB. i=0..3, r/g/b each 0..255. Sent on color change.">RGB:i,r,g,b</span>
+                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Per-pixel RGB. i=0..3, r/g/b each 0..255. Sent on color change.">RGB:i,r,g,b</span>
                                     </div>
                                     <!-- Glossy pearl preview row (mirrors the colors) -->
-                                    <div style="display:flex; justify-content:space-around; gap:6px; padding:14px 6px; background:#061121; border:1px solid #1d3556; border-radius:8px; margin-bottom:10px;">
+                                    <div style="display:flex; justify-content:space-around; gap:6px; padding:14px 6px; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:8px; margin-bottom:10px;">
                                         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
                                             <div class="mq-pearl" id="mqPearl0" style="--c:#ff0000;"></div>
-                                            <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:#93a8c4;">0</div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--text-secondary, #93a8c4);">0</div>
                                         </div>
                                         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
                                             <div class="mq-pearl" id="mqPearl1" style="--c:#00ff00;"></div>
-                                            <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:#93a8c4;">1</div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--text-secondary, #93a8c4);">1</div>
                                         </div>
                                         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
                                             <div class="mq-pearl" id="mqPearl2" style="--c:#0000ff;"></div>
-                                            <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:#93a8c4;">2</div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--text-secondary, #93a8c4);">2</div>
                                         </div>
                                         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
                                             <div class="mq-pearl" id="mqPearl3" style="--c:#ff00ff;"></div>
-                                            <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:#93a8c4;">3</div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--text-secondary, #93a8c4);">3</div>
                                         </div>
                                     </div>
                                     <!-- Color pickers -->
                                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#93a8c4;">
+                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary, #93a8c4);">
                                             <span style="min-width:48px; font-family:'JetBrains Mono', monospace;">RGB 0</span>
                                             <input type="color" class="mq-rgb-picker" data-i="0" value="#ff0000" style="flex:1; height:30px; border:none; background:none; cursor:pointer;"/>
                                         </label>
-                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#93a8c4;">
+                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary, #93a8c4);">
                                             <span style="min-width:48px; font-family:'JetBrains Mono', monospace;">RGB 1</span>
                                             <input type="color" class="mq-rgb-picker" data-i="1" value="#00ff00" style="flex:1; height:30px; border:none; background:none; cursor:pointer;"/>
                                         </label>
-                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#93a8c4;">
+                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary, #93a8c4);">
                                             <span style="min-width:48px; font-family:'JetBrains Mono', monospace;">RGB 2</span>
                                             <input type="color" class="mq-rgb-picker" data-i="2" value="#0000ff" style="flex:1; height:30px; border:none; background:none; cursor:pointer;"/>
                                         </label>
-                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#93a8c4;">
+                                        <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary, #93a8c4);">
                                             <span style="min-width:48px; font-family:'JetBrains Mono', monospace;">RGB 3</span>
                                             <input type="color" class="mq-rgb-picker" data-i="3" value="#ff00ff" style="flex:1; height:30px; border:none; background:none; cursor:pointer;"/>
                                         </label>
                                     </div>
                                     <div style="display:flex; gap:6px; margin-top:10px;">
-                                        <button id="mqRgbAllOff" style="flex:1; padding:8px; background:#0a1628; color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:11px;">⏹ All OFF</button>
-                                        <button id="mqRgbRainbow" style="flex:1; padding:8px; background:#0a1628; color:#f472b6; border:1px solid #f472b6; border-radius:6px; cursor:pointer; font-size:11px;">🌈 Rainbow</button>
+                                        <button id="mqRgbAllOff" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:11px;">⏹ All OFF</button>
+                                        <button id="mqRgbRainbow" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#f472b6; border:1px solid #f472b6; border-radius:6px; cursor:pointer; font-size:11px;">🌈 Rainbow</button>
                                     </div>
-                                    <div style="margin-top:8px; font-size:10px; color:#93a8c4; text-align:center; line-height:1.4;">
+                                    <div style="margin-top:8px; font-size:10px; color:var(--text-secondary, #93a8c4); text-align:center; line-height:1.4;">
                                         ⚠️ Standard <code>neopixel</code> conflicts with <code>bluetooth</code> on micro:bit.
                                         The pearls above show your <em>intent</em> — actual on-bot lighting requires a BLE-safe NeoPixel fork.
                                     </div>
@@ -1003,14 +1003,14 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 <div data-mq-sub="buzzer" class="mq-sub-page" style="background:rgba(251,191,36,0.05); border:1px solid rgba(251,191,36,0.3); border-radius:10px; padding:14px;">
                                     <div style="font-weight:700; color:#fbbf24; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
                                         <span style="font-size:18px;">🔊</span> Buzzer
-                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Tone f Hz for ms milliseconds. f=0 stops.">BUZZ:f,ms</span>
+                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Tone f Hz for ms milliseconds. f=0 stops.">BUZZ:f,ms</span>
                                     </div>
                                     <!-- Live waveform of the chosen frequency -->
-                                    <div style="background:#061121; border:1px solid #1d3556; border-radius:8px; padding:10px; margin-bottom:10px;">
+                                    <div style="background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:8px; padding:10px; margin-bottom:10px;">
                                         <svg id="mqBuzzWave" viewBox="0 0 200 40" preserveAspectRatio="none" style="width:100%; height:40px; display:block;">
                                             <path id="mqBuzzWavePath" d="M 0 20 L 200 20" stroke="#fbbf24" stroke-width="1.5" fill="none"/>
                                         </svg>
-                                        <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono', monospace; font-size:9px; color:#93a8c4; margin-top:2px;">
+                                        <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--text-secondary, #93a8c4); margin-top:2px;">
                                             <span><span id="mqBuzzFreqDisplay" style="color:#fbbf24;">440</span> Hz</span>
                                             <span><span id="mqBuzzMsDisplay" style="color:#fbbf24;">200</span> ms</span>
                                         </div>
@@ -1026,18 +1026,18 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         <button class="mq-note mq-piano-key" data-freq="494" data-note="B">B</button>
                                     </div>
                                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                                        <span style="font-size:11px; color:#93a8c4; min-width:38px;">Freq</span>
-                                        <input type="number" id="mqBuzzFreq" value="440" min="50" max="5000" step="10" style="flex:1; background:#0a1628; color:#fbbf24; border:1px solid #1d3556; border-radius:4px; padding:4px 8px; font-family:monospace;"/>
-                                        <span style="font-size:11px; color:#93a8c4;">Hz</span>
+                                        <span style="font-size:11px; color:var(--text-secondary, #93a8c4); min-width:38px;">Freq</span>
+                                        <input type="number" id="mqBuzzFreq" value="440" min="50" max="5000" step="10" style="flex:1; background:var(--card-bg-2, #0a1628); color:#fbbf24; border:1px solid var(--border, #1d3556); border-radius:4px; padding:4px 8px; font-family:monospace;"/>
+                                        <span style="font-size:11px; color:var(--text-secondary, #93a8c4);">Hz</span>
                                     </div>
                                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
-                                        <span style="font-size:11px; color:#93a8c4; min-width:38px;">Dur</span>
-                                        <input type="number" id="mqBuzzMs" value="200" min="50" max="5000" step="50" style="flex:1; background:#0a1628; color:#fbbf24; border:1px solid #1d3556; border-radius:4px; padding:4px 8px; font-family:monospace;"/>
-                                        <span style="font-size:11px; color:#93a8c4;">ms</span>
+                                        <span style="font-size:11px; color:var(--text-secondary, #93a8c4); min-width:38px;">Dur</span>
+                                        <input type="number" id="mqBuzzMs" value="200" min="50" max="5000" step="50" style="flex:1; background:var(--card-bg-2, #0a1628); color:#fbbf24; border:1px solid var(--border, #1d3556); border-radius:4px; padding:4px 8px; font-family:monospace;"/>
+                                        <span style="font-size:11px; color:var(--text-secondary, #93a8c4);">ms</span>
                                     </div>
                                     <div style="display:flex; gap:6px;">
-                                        <button id="mqBuzzPlay" style="flex:1; padding:8px; background:#0a1628; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:12px;">▶ Play</button>
-                                        <button id="mqBuzzOff" style="flex:1; padding:8px; background:#0a1628; color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:12px;">⏹ Off</button>
+                                        <button id="mqBuzzPlay" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:12px;">▶ Play</button>
+                                        <button id="mqBuzzOff" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:12px;">⏹ Off</button>
                                     </div>
                                 </div>
 
@@ -1045,11 +1045,11 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 <div data-mq-sub="ultrasonic" class="mq-sub-page" style="background:rgba(74,222,128,0.05); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:14px;">
                                     <div style="font-weight:700; color:#4ade80; margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                                         <span style="font-size:18px;">📡</span> Ultrasonic distance
-                                        <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:#93a8c4; background:#0a1628; padding:1px 6px; border-radius:4px;">P1·P2</span>
-                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Sends DIST? to the robot, gets DIST:cm back. 'DIST:-' = no echo / out of range.">DIST?</span>
+                                        <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:1px 6px; border-radius:4px;">P1·P2</span>
+                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Sends DIST? to the robot, gets DIST:cm back. 'DIST:-' = no echo / out of range.">DIST?</span>
                                     </div>
                                     <!-- Glossy half-circle gauge -->
-                                    <div style="background:#061121; border:1px solid #1d3556; border-radius:10px; padding:14px 8px 6px; margin-bottom:10px;">
+                                    <div style="background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:10px; padding:14px 8px 6px; margin-bottom:10px;">
                                         <div style="position:relative; max-width:300px; margin:0 auto;">
                                             <svg viewBox="0 0 200 120" style="width:100%; height:auto; display:block;">
                                                 <defs>
@@ -1078,23 +1078,23 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         <span id="mqDistRange" style="display:none;">range 0–500 cm</span>
                                         <!-- Sparkline: last ~30 sec of distance values -->
                                         <div style="margin-top:6px;">
-                                            <div style="display:flex; justify-content:space-between; font-size:9px; color:#93a8c4; font-family:'JetBrains Mono', monospace; margin-bottom:2px;">
+                                            <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary, #93a8c4); font-family:'JetBrains Mono', monospace; margin-bottom:2px;">
                                                 <span>📈 last 30 s</span>
                                                 <span id="mqDistSparkInfo">—</span>
                                             </div>
-                                            <svg viewBox="0 0 100 24" preserveAspectRatio="none" style="width:100%; height:24px; display:block; background:#0a1628; border-radius:4px;">
+                                            <svg viewBox="0 0 100 24" preserveAspectRatio="none" style="width:100%; height:24px; display:block; background:var(--card-bg-2, #0a1628); border-radius:4px;">
                                                 <path id="mqDistSpark" d="" fill="none" stroke="#4ade80" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
                                             </svg>
                                         </div>
                                     </div>
                                     <div style="display:flex; gap:6px; align-items:center;">
-                                        <button id="mqDistPing" style="flex:1; padding:8px; background:#0a1628; color:#4ade80; border:1px solid #4ade80; border-radius:6px; cursor:pointer; font-size:12px;">📏 Ping now</button>
-                                        <label style="font-size:11px; color:#93a8c4; display:flex; align-items:center; gap:4px;">
+                                        <button id="mqDistPing" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid #4ade80; border-radius:6px; cursor:pointer; font-size:12px;">📏 Ping now</button>
+                                        <label style="font-size:11px; color:var(--text-secondary, #93a8c4); display:flex; align-items:center; gap:4px;">
                                             <input type="checkbox" id="mqDistAuto" checked style="accent-color:#4ade80;"> auto
                                         </label>
                                         <span id="mqDistOrb" class="mq-status-orb mq-orb-on">polling</span>
                                     </div>
-                                    <div style="display:flex; gap:8px; align-items:center; margin-top:6px; font-size:10px; color:#93a8c4;">
+                                    <div style="display:flex; gap:8px; align-items:center; margin-top:6px; font-size:10px; color:var(--text-secondary, #93a8c4);">
                                         <span>rate</span>
                                         <input type="range" id="mqDistRate" min="200" max="2000" step="50" value="600" style="flex:1; accent-color:#4ade80;">
                                         <span id="mqDistRateRead" style="font-family:'JetBrains Mono', monospace; color:#4ade80; min-width:60px; text-align:right;">600 ms</span>
@@ -1106,23 +1106,23 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 <div data-mq-sub="lines" class="mq-sub-page" style="background:rgba(74,222,128,0.05); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:14px;">
                                     <div style="font-weight:700; color:#4ade80; margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                                         <span style="font-size:18px;">👀</span> Line sensors
-                                        <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:#93a8c4; background:#0a1628; padding:1px 6px; border-radius:4px;">P13·P14</span>
-                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Returns LINE:l,r where l/r = 0 (on black line) or 1 (on white floor).">LINE?</span>
+                                        <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:1px 6px; border-radius:4px;">P13·P14</span>
+                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Returns LINE:l,r where l/r = 0 (on black line) or 1 (on white floor).">LINE?</span>
                                     </div>
                                     <!-- Two glossy "eye" domes -->
-                                    <div style="display:flex; align-items:center; gap:18px; margin-bottom:8px; padding:14px; background:#061121; border:1px solid #1d3556; border-radius:10px;">
+                                    <div style="display:flex; align-items:center; gap:18px; margin-bottom:8px; padding:14px; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:10px;">
                                         <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                                            <div id="mqLineEyeL" class="mq-glossy-dome" style="--glow:#4ade80; width:60px; height:60px; background-color:#1d3556;"></div>
-                                            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#93a8c4;">L: <span id="mqLineLVal" style="color:#4ade80; font-weight:700;">—</span></div>
+                                            <div id="mqLineEyeL" class="mq-glossy-dome" style="--glow:#4ade80; width:60px; height:60px; background-color:var(--border, #1d3556);"></div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4);">L: <span id="mqLineLVal" style="color:#4ade80; font-weight:700;">—</span></div>
                                         </div>
                                         <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                                            <div id="mqLineEyeR" class="mq-glossy-dome" style="--glow:#4ade80; width:60px; height:60px; background-color:#1d3556;"></div>
-                                            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#93a8c4;">R: <span id="mqLineRVal" style="color:#4ade80; font-weight:700;">—</span></div>
+                                            <div id="mqLineEyeR" class="mq-glossy-dome" style="--glow:#4ade80; width:60px; height:60px; background-color:var(--border, #1d3556);"></div>
+                                            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4);">R: <span id="mqLineRVal" style="color:#4ade80; font-weight:700;">—</span></div>
                                         </div>
                                     </div>
                                     <!-- Sparkline: L (orange) + R (cyan) overlaid for last 30 sec -->
-                                    <div style="background:#0a1628; border:1px solid #1d3556; border-radius:6px; padding:6px; margin-bottom:8px;">
-                                        <div style="display:flex; justify-content:space-between; font-size:9px; color:#93a8c4; font-family:'JetBrains Mono', monospace; margin-bottom:2px;">
+                                    <div style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); border-radius:6px; padding:6px; margin-bottom:8px;">
+                                        <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary, #93a8c4); font-family:'JetBrains Mono', monospace; margin-bottom:2px;">
                                             <span>📈 L/R history</span>
                                             <span><span style="color:#fb923c;">━ L</span> · <span style="color:#00d4ff;">━ R</span></span>
                                         </div>
@@ -1131,62 +1131,62 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <path id="mqLineSparkR" d="" fill="none" stroke="#00d4ff" stroke-width="1" vector-effect="non-scaling-stroke"/>
                                         </svg>
                                     </div>
-                                    <div style="font-size:10px; color:#93a8c4; text-align:center; margin-bottom:10px;">
+                                    <div style="font-size:10px; color:var(--text-secondary, #93a8c4); text-align:center; margin-bottom:10px;">
                                         ● bright = on black line · ○ dim = on white floor
                                     </div>
                                     <div style="display:flex; gap:6px; align-items:center;">
-                                        <button id="mqLinePoll" style="flex:1; padding:8px; background:#0a1628; color:#4ade80; border:1px solid #4ade80; border-radius:6px; cursor:pointer; font-size:12px;">👁 Read now</button>
-                                        <label style="font-size:11px; color:#93a8c4; display:flex; align-items:center; gap:4px;">
+                                        <button id="mqLinePoll" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid #4ade80; border-radius:6px; cursor:pointer; font-size:12px;">👁 Read now</button>
+                                        <label style="font-size:11px; color:var(--text-secondary, #93a8c4); display:flex; align-items:center; gap:4px;">
                                             <input type="checkbox" id="mqLineAuto" checked style="accent-color:#4ade80;"> auto
                                         </label>
                                         <span id="mqLineOrb" class="mq-status-orb mq-orb-on">polling</span>
                                     </div>
-                                    <div style="display:flex; gap:8px; align-items:center; margin-top:6px; font-size:10px; color:#93a8c4;">
+                                    <div style="display:flex; gap:8px; align-items:center; margin-top:6px; font-size:10px; color:var(--text-secondary, #93a8c4);">
                                         <span>rate</span>
                                         <input type="range" id="mqLineRate" min="200" max="2000" step="50" value="600" style="flex:1; accent-color:#4ade80;">
                                         <span id="mqLineRateRead" style="font-family:'JetBrains Mono', monospace; color:#4ade80; min-width:60px; text-align:right;">600 ms</span>
                                     </div>
                                     <!-- Auto mode: line follower (uses these sensors as input) -->
                                     <div style="margin-top:10px; padding-top:10px; border-top:1px solid #1d3556;">
-                                        <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:#93a8c4; margin-bottom:6px;">
+                                        <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary, #93a8c4); margin-bottom:6px;">
                                             <span>🛣️ Auto mode</span>
                                             <span id="mqLineState" style="margin-left:auto; font-family:'JetBrains Mono', monospace; color:#4ade80;">L:— R:—</span>
                                         </div>
-                                        <button id="mqFollowBtn" style="width:100%; padding:8px; background:#0a1628; color:#4ade80; border:1px solid #4ade80; border-radius:6px; cursor:pointer; font-size:12px; font-weight:700;">🟢 Follow line</button>
-                                        <div style="display:flex; gap:8px; align-items:center; margin-top:6px; font-size:10px; color:#93a8c4;">
+                                        <button id="mqFollowBtn" style="width:100%; padding:8px; background:var(--card-bg-2, #0a1628); color:#4ade80; border:1px solid #4ade80; border-radius:6px; cursor:pointer; font-size:12px; font-weight:700;">🟢 Follow line</button>
+                                        <div style="display:flex; gap:8px; align-items:center; margin-top:6px; font-size:10px; color:var(--text-secondary, #93a8c4);">
                                             <span>tick</span>
                                             <input type="range" id="mqFollowRate" min="100" max="1000" step="50" value="200" style="flex:1; accent-color:#4ade80;">
                                             <span id="mqFollowRateRead" style="font-family:'JetBrains Mono', monospace; color:#4ade80; min-width:60px; text-align:right;">200 ms</span>
                                         </div>
-                                        <div style="font-size:10px; color:#93a8c4; margin-top:4px; text-align:center;">uses Drive speed slider · steers via these eyes</div>
+                                        <div style="font-size:10px; color:var(--text-secondary, #93a8c4); margin-top:4px; text-align:center;">uses Drive speed slider · steers via these eyes</div>
                                     </div>
                                 </div>
 
                                 <!-- IR REMOTE -->
                                 <div data-mq-sub="ir" class="mq-sub-page" style="background:rgba(192,132,252,0.05); border:1px solid rgba(192,132,252,0.3); border-radius:10px; padding:14px;">
-                                    <div style="font-weight:700; color:#c084fc; margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><span style="font-size:18px;">📺</span> IR remote <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:#93a8c4; background:#0a1628; padding:1px 6px; border-radius:4px;">NEC</span> <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Polls last received IR code. Codes also push live (IR:nnn) when remote is pressed.">IR?</span></div>
+                                    <div style="font-weight:700; color:#c084fc; margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><span style="font-size:18px;">📺</span> IR remote <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:1px 6px; border-radius:4px;">NEC</span> <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Polls last received IR code. Codes also push live (IR:nnn) when remote is pressed.">IR?</span></div>
                                     <!-- Last code + flash indicator -->
                                     <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-                                        <div id="mqIRPulse" class="mq-glossy-dome" style="--glow:#c084fc; width:56px; height:56px; background-color:#1d3556; flex-shrink:0;"></div>
+                                        <div id="mqIRPulse" class="mq-glossy-dome" style="--glow:#c084fc; width:56px; height:56px; background-color:var(--border, #1d3556); flex-shrink:0;"></div>
                                         <div style="flex:1;">
-                                            <div style="font-size:11px; color:#93a8c4;">last code received</div>
+                                            <div style="font-size:11px; color:var(--text-secondary, #93a8c4);">last code received</div>
                                             <div style="font-family:'JetBrains Mono', monospace; font-size:22px; font-weight:700; color:#c084fc; line-height:1.1;" id="mqIRBig">—</div>
-                                            <div style="font-size:11px; color:#93a8c4; margin-top:2px;" id="mqIRName">point a NEC remote at the robot</div>
+                                            <div style="font-size:11px; color:var(--text-secondary, #93a8c4); margin-top:2px;" id="mqIRName">point a NEC remote at the robot</div>
                                         </div>
                                     </div>
                                     <!-- Recent codes -->
-                                    <div style="font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; margin-bottom:10px; min-height:14px;">
+                                    <div style="font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); margin-bottom:10px; min-height:14px;">
                                         recent: <span id="mqIRHistory" style="color:#c084fc;">—</span>
                                     </div>
                                     <!-- Polling + name learning -->
                                     <div style="display:flex; gap:6px;">
-                                        <button id="mqIRPoll" style="flex:1; padding:8px; background:#0a1628; color:#c084fc; border:1px solid #c084fc; border-radius:6px; cursor:pointer; font-size:12px;">📡 Poll IR</button>
-                                        <button id="mqIRNameBtn" style="flex:1; padding:8px; background:#0a1628; color:#c084fc; border:1px solid #c084fc; border-radius:6px; cursor:pointer; font-size:12px;">🏷 Name last code</button>
+                                        <button id="mqIRPoll" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#c084fc; border:1px solid #c084fc; border-radius:6px; cursor:pointer; font-size:12px;">📡 Poll IR</button>
+                                        <button id="mqIRNameBtn" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#c084fc; border:1px solid #c084fc; border-radius:6px; cursor:pointer; font-size:12px;">🏷 Name last code</button>
                                     </div>
                                 </div>
 
                                 <!-- HELP -->
-                                <div data-mq-sub="help" class="mq-sub-page" style="background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.2); border-radius:10px; padding:14px; font-size:12px; color:#93a8c4; line-height:1.6;">
+                                <div data-mq-sub="help" class="mq-sub-page" style="background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.2); border-radius:10px; padding:14px; font-size:12px; color:var(--text-secondary, #93a8c4); line-height:1.6;">
                                     <div style="font-weight:700; color:#00d4ff; margin-bottom:8px;">ℹ️ Quick reference</div>
                                     <div>• Flash <code>firmware/v1-maqueen-lib.ts</code> first.</div>
                                     <div>• Click <strong>Connect</strong> top-right.</div>
@@ -2318,7 +2318,7 @@ serial.writeLine("GRAPH:Force:" + force)</code></pre>
         </div>
 
         <!-- ROW: Maqueen Lab footer link bar (full width, last row of .rows-container) -->
-        <div style="margin-top:8px; padding:14px 20px; background:linear-gradient(90deg, rgba(0,212,255,0.06), rgba(244,114,182,0.04)); border:1px solid rgba(0,212,255,0.2); border-radius:12px; display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; font-family:-apple-system, BlinkMacSystemFont, Inter, sans-serif; font-size:13.5px; color:#93a8c4; width:100%;">
+        <div style="margin-top:8px; padding:14px 20px; background:linear-gradient(90deg, rgba(0,212,255,0.06), rgba(244,114,182,0.04)); border:1px solid rgba(0,212,255,0.2); border-radius:12px; display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; font-family:-apple-system, BlinkMacSystemFont, Inter, sans-serif; font-size:13.5px; color:var(--text-secondary, #93a8c4); width:100%;">
             <span style="font-weight:700; color:#00d4ff; padding-right:6px;">🤖 Maqueen Lab</span>
             <a href="USER_GUIDE.html" style="color:#e6eef9; text-decoration:none; padding:4px 10px; border-radius:6px;">📖 User Guide</a>
             <a href="schematics-kids.html" style="color:#e6eef9; text-decoration:none; padding:4px 10px; border-radius:6px;">🤖 Meet your robot</a>
@@ -2327,7 +2327,7 @@ serial.writeLine("GRAPH:Force:" + force)</code></pre>
             <a href="lab.html" style="color:#e6eef9; text-decoration:none; padding:4px 10px; border-radius:6px;">🧪 Component Lab</a>
             <a href="plan.html" style="color:#e6eef9; text-decoration:none; padding:4px 10px; border-radius:6px;">📋 Build plan</a>
             <a href="https://github.com/abourdim/maqueen-app" target="_blank" rel="noopener" style="color:#e6eef9; text-decoration:none; padding:4px 10px; border-radius:6px;">⭐ GitHub</a>
-            <span style="margin-left:auto; font-size:11px; color:#93a8c4;">v0.1.0 · forked from <a href="https://github.com/abourdim/bit-playground" style="color:#00d4ff;">bit-playground</a></span>
+            <span style="margin-left:auto; font-size:11px; color:var(--text-secondary, #93a8c4);">v0.1.0 · forked from <a href="https://github.com/abourdim/bit-playground" style="color:#00d4ff;">bit-playground</a></span>
         </div>
 
     </div>
@@ -2337,10 +2337,10 @@ serial.writeLine("GRAPH:Force:" + force)</code></pre>
     <div class="overlay-card" style="max-width:800px; width:95vw;">
         <div class="overlay-title" data-i18n="fw_title">🤖 micro:bit Firmware</div>
         <!-- Build stamp pulled live from the embedded source -->
-        <div id="fwStampLine" style="margin-bottom:8px; padding:6px 12px; background:#0a1628; border:1px solid rgba(0,212,255,0.3); border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12px; color:#00d4ff; display:inline-block;">
-            <span style="color:#93a8c4;">version</span> <span id="fwStampVersion">—</span>
+        <div id="fwStampLine" style="margin-bottom:8px; padding:6px 12px; background:var(--card-bg-2, #0a1628); border:1px solid rgba(0,212,255,0.3); border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12px; color:#00d4ff; display:inline-block;">
+            <span style="color:var(--text-secondary, #93a8c4);">version</span> <span id="fwStampVersion">—</span>
             <span style="color:#1d3556; margin:0 6px;">·</span>
-            <span style="color:#93a8c4;">built</span> <span id="fwStampDate">—</span>
+            <span style="color:var(--text-secondary, #93a8c4);">built</span> <span id="fwStampDate">—</span>
         </div>
         <div style="margin-bottom:12px; font-size:0.85rem; opacity:0.8;" data-i18n="fw_intro">
             Flash this code to your micro:bit V2 using MakeCode:

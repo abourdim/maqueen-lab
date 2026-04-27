@@ -37,6 +37,9 @@
     --log-error: #ff5555;
     --log-success: #fbbf24;
     --log-warning: #fb923c;
+    /* Maqueen Lab — neutral surfaces inside cards */
+    --card-bg-2: #0a1628;
+    --bg-deep: #061121;
 }
 
 /* ===== THEMES ===== */
@@ -81,6 +84,8 @@
     --log-error: #ff3366;
     --log-success: #ffdd00;
     --log-warning: #ff8800;
+    --card-bg-2: #12122a;
+    --bg-deep: #060616;
 }
 
 /* ☁️ Arctic — Cool light theme */
@@ -123,6 +128,8 @@
     --log-error: #dc2626;
     --log-success: #ca8a04;
     --log-warning: #ea580c;
+    --card-bg-2: #f1f5f9;
+    --bg-deep: #e2e8f0;
 }
 
 /* 🔥 Blaze — Warm light theme */
@@ -165,6 +172,8 @@
     --log-error: #dc2626;
     --log-success: #ca8a04;
     --log-warning: #ea580c;
+    --card-bg-2: #fef3e9;
+    --bg-deep: #fce8d3;
 }
 
 * {
