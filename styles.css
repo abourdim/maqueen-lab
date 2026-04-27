@@ -4774,7 +4774,13 @@ body.log-pinned .log-card {
   max-height: 100vh;
   margin: 0;
   z-index: 950;
-  display: flex;
+  /* IMPORTANT: when pinned, force the card visible regardless of
+     .app.beginner-mode hiding. The user explicitly pinned the log
+     to the right rail, so they want to see it — overriding the
+     mode-based hiding here is the right call. Without this, the
+     padding-right on body.log-pinned reserves space for a card that
+     beginner-mode has display:none'd, leaving an empty blue strip. */
+  display: flex !important;
   flex-direction: column;
   /* Docked-against-edge: no rounding on the right side, strong left
      shadow so it reads as a permanent panel attached to the viewport. */
