@@ -4403,6 +4403,77 @@ html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
 }
 
 /* ===========================================================
+ * 🎯 Path challenges — selector + score badge in the path panel
+ * Sits under the panel header. Selector picks a target shape;
+ * the SVG draws a dashed outline; score updates live.
+ * =========================================================== */
+.mq-chal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  padding: 4px 6px;
+  background: var(--bg-deep, #061121);
+  border: 1px solid var(--border, #1d3556);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--text-secondary, #93a8c4);
+}
+.mq-chal-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.mq-chal-label select {
+  background: var(--card-bg-2, #0a1628);
+  color: #facc15;
+  border: 1px solid var(--border, #1d3556);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mq-chal-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.mq-chal-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.mq-chal-key {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  opacity: 0.7;
+}
+.mq-chal-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #facc15;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 6px rgba(250, 204, 21, 0.4);
+}
+/* New-best-score celebration: brief pulse when score climbs above old best */
+.mq-chal-val.mq-chal-new-best {
+  animation: mqChalBest 0.7s ease-out;
+}
+@keyframes mqChalBest {
+  0%   { color: #facc15; transform: scale(1); }
+  30%  { color: #4ade80; transform: scale(1.18); text-shadow: 0 0 12px #4ade80; }
+  100% { color: #facc15; transform: scale(1); }
+}
+
+/* ===========================================================
  * 🚦 Auto-wander button (Drive sub-tab) — toggles a closed-loop
  * drive-forward + obstacle-avoid demo. Pulses when active so the
  * user knows the robot is being driven by JS, not them.

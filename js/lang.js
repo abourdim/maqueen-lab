@@ -97,6 +97,13 @@
       mq_drive_wander_scan: "🔍 Scanning…",
       mq_drive_wander_turn: "↺ Turning…",
       mq_dist_audio:        "🔊 audio",
+      mq_chal_label:        "Challenge",
+      mq_chal_none:         "— none —",
+      mq_chal_square:       "□ Square 40 cm",
+      mq_chal_circle:       "○ Circle r=30 cm",
+      mq_chal_fig8:         "∞ Figure-8",
+      mq_chal_score:        "SCORE",
+      mq_chal_best:         "BEST",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -563,6 +570,13 @@
       mq_drive_wander_scan: "🔍 Sondage…",
       mq_drive_wander_turn: "↺ Virage…",
       mq_dist_audio:        "🔊 son",
+      mq_chal_label:        "Défi",
+      mq_chal_none:         "— aucun —",
+      mq_chal_square:       "□ Carré 40 cm",
+      mq_chal_circle:       "○ Cercle r=30 cm",
+      mq_chal_fig8:         "∞ Huit",
+      mq_chal_score:        "SCORE",
+      mq_chal_best:         "MEILLEUR",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -1029,6 +1043,13 @@
       mq_drive_wander_scan: "\ud83d\udd0d \u064a\u0633\u062a\u0643\u0634\u0641\u2026",
       mq_drive_wander_turn: "\u21ba \u064a\u0633\u062a\u062f\u064a\u0631\u2026",
       mq_dist_audio:        "\ud83d\udd0a \u0635\u0648\u062a",
+      mq_chal_label:        "\u062a\u062d\u062f\u064a",
+      mq_chal_none:         "\u2014 \u0644\u0627 \u0634\u064a\u0621 \u2014",
+      mq_chal_square:       "\u25a1 \u0645\u0631\u0628\u0639 40 \u0633\u0645",
+      mq_chal_circle:       "\u25cb \u062f\u0627\u0626\u0631\u0629 \u0646\u0642=30 \u0633\u0645",
+      mq_chal_fig8:         "\u221e \u0631\u0642\u0645 8",
+      mq_chal_score:        "\u0627\u0644\u0646\u062a\u064a\u062c\u0629",
+      mq_chal_best:         "\u0627\u0644\u0623\u0641\u0636\u0644",
 
       // Tabs
       tab_maqueen:        "Maqueen",

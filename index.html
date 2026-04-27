@@ -1262,6 +1262,25 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             </span>
                                             <button id="mqOdoReset" type="button" title="Erase trail + obstacle map and re-center the robot at origin">↺ <span data-i18n="mq_odo_reset">reset</span></button>
                                         </div>
+                                        <!-- 🎯 Challenge selector — pick a target shape (square / circle /
+                                             figure-8) and the path SVG draws a dashed outline. Live score
+                                             measures how closely the trail covers it. Best score per shape
+                                             persists across reloads. -->
+                                        <div class="mq-chal-bar">
+                                            <label class="mq-chal-label">
+                                                <span>🎯 <span data-i18n="mq_chal_label">Challenge</span></span>
+                                                <select id="mqOdoChallenge" title="Drive your robot along the dashed target shape. Score = how closely the trail covers each target point.">
+                                                    <option value=""        data-i18n="mq_chal_none">— none —</option>
+                                                    <option value="square"  data-i18n="mq_chal_square">□ Square 40 cm</option>
+                                                    <option value="circle"  data-i18n="mq_chal_circle">○ Circle r=30 cm</option>
+                                                    <option value="fig8"    data-i18n="mq_chal_fig8">∞ Figure-8</option>
+                                                </select>
+                                            </label>
+                                            <span class="mq-chal-stats" id="mqChalStats" style="display:none;">
+                                                <span class="mq-chal-stat"><span class="mq-chal-key" data-i18n="mq_chal_score">SCORE</span> <span class="mq-chal-val" id="mqChalScore">—</span></span>
+                                                <span class="mq-chal-stat"><span class="mq-chal-key" data-i18n="mq_chal_best">BEST</span> <span class="mq-chal-val" id="mqChalBest">—</span></span>
+                                            </span>
+                                        </div>
                                         <div class="mq-odo-body">
                                             <svg id="mqOdoSvg" viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid meet">
                                                 <defs>
@@ -1284,6 +1303,10 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                     <circle cx="0" cy="0" r="2" fill="none" stroke="#4ade80" stroke-width="0.6" stroke-dasharray="1 1"/>
                                                     <text x="3" y="-3" font-family="JetBrains Mono, monospace" font-size="5" fill="#4ade80" opacity="0.6">origin</text>
                                                 </g>
+                                                <!-- 🎯 Challenge target shape — dashed outline UNDER everything else
+                                                     so the trail visually covers it as the user drives. Empty unless
+                                                     a challenge is selected. -->
+                                                <polyline id="mqOdoTarget" points="" fill="none" stroke="#facc15" stroke-width="0.7" stroke-dasharray="2 2" opacity="0.55" pointer-events="none"/>
                                                 <!-- Obstacles projected from sonar — drawn UNDER the trail
                                                      so the robot's path stays on top, but ABOVE the grid. -->
                                                 <g id="mqOdoObstacles" pointer-events="none"></g>

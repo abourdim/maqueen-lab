@@ -269,6 +269,15 @@
     if (dashReset) dashReset.addEventListener('click', () => {
       try { mqDashboard.reset(); } catch {}
     });
+    // Challenge selector — restore last pick + wire change handler
+    const chalSel = document.getElementById('mqOdoChallenge');
+    if (chalSel) {
+      try { chalSel.value = mqChallenges.getName() || ''; } catch {}
+      try { mqChallenges.paintBadge(); } catch {}
+      chalSel.addEventListener('change', e => {
+        try { mqChallenges.setShape(e.target.value); } catch {}
+      });
+    }
     // BLE link warning — react to connect/disconnect transitions.
     if (window.bleScheduler && window.bleScheduler.on) {
       const setLink = () => {
@@ -1892,6 +1901,175 @@
     return { recordMotors, recordPose, recordDistance, recordLink, reset };
   })();
 
+  // -------- 🎯 PATH CHALLENGES ----------------------------
+  // Pick a target shape (square / circle / figure-8). The path SVG
+  // draws a dashed outline. Score = how closely the trail covers
+  // each TARGET point on average. Lower avg-distance = higher score.
+  //
+  // Why "target → trail" instead of "trail → target":
+  //   Per-target measurement rewards COVERAGE: if the user drives
+  //   only a corner of the square, target points far from that
+  //   corner will have a large nearest-trail distance, dragging
+  //   the average down. This catches the "I cheated by driving a
+  //   tiny circle" case that the inverse direction wouldn't.
+  //
+  // Live scoring is throttled to ~3 Hz — full O(n*m) at 60 Hz
+  // would be wasteful and visually flickery (each new trail point
+  // would barely move the score).
+  const mqChallenges = (function () {
+    const SCALE_DENOM = {
+      square: 12,    // avg distance ≥ 12 cm = 0%, ≤ 0 cm = 100%
+      circle: 12,
+      fig8:   14,
+    };
+
+    // Build target shapes. Each entry: { points: [{x,y}, ...] }.
+    // Coordinates in cm, world frame (same as mqOdometry).
+    function buildSquare(size) {
+      const pts = [];
+      const N = 24;                               // points per side
+      // Square centered on (size/2, size/2) so the user starts in
+      // a corner and drives counter-clockwise back to origin.
+      for (let i = 0; i <= N; i++) pts.push({ x: (i / N) * size, y: 0 });
+      for (let i = 1; i <= N; i++) pts.push({ x: size, y: (i / N) * size });
+      for (let i = 1; i <= N; i++) pts.push({ x: size - (i / N) * size, y: size });
+      for (let i = 1; i <= N; i++) pts.push({ x: 0, y: size - (i / N) * size });
+      return pts;
+    }
+    function buildCircle(r) {
+      const pts = [];
+      const N = 80;
+      // Circle centered at (0, r) so it's tangent to the origin.
+      for (let i = 0; i <= N; i++) {
+        const a = (i / N) * 2 * Math.PI;
+        pts.push({ x: r * Math.sin(a), y: r - r * Math.cos(a) });
+      }
+      return pts;
+    }
+    function buildFig8(r) {
+      const pts = [];
+      const N = 60;
+      // Lower lobe (origin-tangent), then upper lobe.
+      for (let i = 0; i <= N; i++) {
+        const a = (i / N) * 2 * Math.PI;
+        pts.push({ x: r * Math.sin(a), y: r - r * Math.cos(a) });
+      }
+      for (let i = 0; i <= N; i++) {
+        const a = (i / N) * 2 * Math.PI;
+        pts.push({ x: -r * Math.sin(a), y: r + r + r * Math.cos(a) });
+      }
+      return pts;
+    }
+
+    const SHAPES = {
+      square: { points: buildSquare(40) },
+      circle: { points: buildCircle(30) },
+      fig8:   { points: buildFig8(20)   },
+    };
+
+    let currentName = '';
+    let currentTarget = null;     // {points: [...]}
+    let lastScore = 0;
+    let bestByName = {};
+    let lastScoreT = 0;
+
+    try {
+      // Restore last-picked shape and best scores
+      currentName = localStorage.getItem('maqueen.challenge') || '';
+      const raw = localStorage.getItem('maqueen.challengeBest');
+      if (raw) bestByName = JSON.parse(raw);
+    } catch {}
+    if (currentName && SHAPES[currentName]) currentTarget = SHAPES[currentName];
+
+    function getTarget() { return currentTarget; }
+    function getName() { return currentName; }
+
+    function setShape(name) {
+      currentName = name || '';
+      currentTarget = SHAPES[currentName] || null;
+      try { localStorage.setItem('maqueen.challenge', currentName); } catch {}
+      // Reset live score; best stays put.
+      lastScore = 0;
+      paintBadge();
+    }
+
+    function paintBadge() {
+      const bar   = document.getElementById('mqChalStats');
+      const score = document.getElementById('mqChalScore');
+      const best  = document.getElementById('mqChalBest');
+      if (!bar) return;
+      if (!currentTarget) {
+        bar.style.display = 'none';
+        return;
+      }
+      bar.style.display = '';
+      if (score) score.textContent = lastScore > 0 ? lastScore + '%' : '—';
+      if (best)  best.textContent  = (bestByName[currentName] || 0) + '%';
+    }
+
+    // Compute score from the live trail. Throttled to ~3 Hz.
+    // trail: [{x, y}, ...]
+    function computeScore(trail) {
+      if (!currentTarget) return 0;
+      const target = currentTarget.points;
+      if (target.length === 0 || trail.length === 0) return 0;
+      // For each target point find nearest trail point. Avg the distances.
+      let sum = 0;
+      for (let i = 0; i < target.length; i++) {
+        const tx = target[i].x, ty = target[i].y;
+        let best = Infinity;
+        for (let j = 0; j < trail.length; j++) {
+          const dx = trail[j].x - tx, dy = trail[j].y - ty;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < best) best = d2;
+        }
+        sum += Math.sqrt(best);
+      }
+      const avg = sum / target.length;
+      // Map avg-distance → percentage. Smaller distance = better score.
+      const denom = SCALE_DENOM[currentName] || 12;
+      const pct = Math.max(0, Math.min(100, 100 - (avg / denom) * 100));
+      return Math.round(pct);
+    }
+
+    function maybeUpdateScore(trail) {
+      if (!currentTarget) return;
+      const now = performance.now();
+      if (now - lastScoreT < 333) return;       // throttle to ~3 Hz
+      lastScoreT = now;
+      const sc = computeScore(trail);
+      if (sc !== lastScore) {
+        lastScore = sc;
+        const oldBest = bestByName[currentName] || 0;
+        if (sc > oldBest) {
+          bestByName[currentName] = sc;
+          try { localStorage.setItem('maqueen.challengeBest', JSON.stringify(bestByName)); } catch {}
+          // New-best celebration animation
+          const bestEl = document.getElementById('mqChalBest');
+          if (bestEl) {
+            bestEl.classList.remove('mq-chal-new-best');
+            void bestEl.offsetWidth;
+            bestEl.classList.add('mq-chal-new-best');
+          }
+        }
+        paintBadge();
+      }
+    }
+
+    function reset() {
+      lastScore = 0;
+      paintBadge();
+    }
+
+    // Initial paint (DOM may not exist yet at module-load; safe no-op).
+    paintBadge();
+
+    return {
+      SHAPES, getTarget, getName, setShape,
+      maybeUpdateScore, reset, paintBadge,
+    };
+  })();
+
   // -------- 🧭 ODOMETRY ----------------------------------
   // Dead-reckoning navigator. Every time fireDrive() pushes new wheel
   // velocities (L, R), we update the integrator. An rAF tick integrates
@@ -1988,6 +2166,17 @@
         if (Math.abs(obstacles[i].x) > m) m = Math.abs(obstacles[i].x);
         if (Math.abs(obstacles[i].y) > m) m = Math.abs(obstacles[i].y);
       }
+      // Active challenge target also votes — otherwise a fresh-loaded
+      // square would auto-scale to just the (0,0) origin and be invisible.
+      try {
+        const target = mqChallenges.getTarget();
+        if (target && target.points) {
+          for (let i = 0; i < target.points.length; i++) {
+            if (Math.abs(target.points[i].x) > m) m = Math.abs(target.points[i].x);
+            if (Math.abs(target.points[i].y) > m) m = Math.abs(target.points[i].y);
+          }
+        }
+      } catch {}
       return 90 / m;
     }
 
@@ -2038,6 +2227,25 @@
           trailEl.setAttribute('points', pts);
         }
       }
+      // Challenge target shape (dashed). Drawn in same coord space; scale
+      // already factors in target points so it always fits the viewport.
+      const targetEl = document.getElementById('mqOdoTarget');
+      if (targetEl) {
+        try {
+          const target = mqChallenges.getTarget();
+          if (target && target.points && target.points.length > 1) {
+            let pts = '';
+            for (let i = 0; i < target.points.length; i++) {
+              pts += (target.points[i].x * scale).toFixed(1) + ',' + (-target.points[i].y * scale).toFixed(1) + ' ';
+            }
+            targetEl.setAttribute('points', pts);
+          } else {
+            targetEl.setAttribute('points', '');
+          }
+        } catch {}
+      }
+      // Score is throttled inside mqChallenges (~3 Hz). Cheap to call here.
+      try { mqChallenges.maybeUpdateScore(trail); } catch {}
       // Obstacles: drop fully-faded, render rest with opacity = 1-age/FADE_MS.
       const obstLayer = document.getElementById('mqOdoObstacles');
       if (obstLayer) {
