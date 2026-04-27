@@ -588,4 +588,21 @@
     createMainChart();
     restoreCheckboxState();
 
+    // Chart.js sizes the canvas at construction time, but our Graph tab is
+    // hidden (display:none) on page load, so the canvas reports 0x0 and
+    // Chart.js draws into a zero-size buffer. When the user opens the
+    // Graph tab, the canvas becomes visible but the chart doesn't auto-
+    // resize. Force a resize+update on tab activation, and again on next
+    // animation frame so the layout has settled.
+    document.querySelectorAll('.tab-btn[data-page="graph"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const nudge = () => {
+                if (!chart) return;
+                try { chart.resize(); chart.update('none'); } catch {}
+            };
+            setTimeout(nudge, 50);
+            requestAnimationFrame(nudge);
+        });
+    });
+
 })();
