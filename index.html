@@ -606,6 +606,8 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         <circle cx="160" cy="32" r="2.5" fill="#fbbf24"/>
                                         <title>Piezo buzzer (P0)</title>
                                     </g>
+                                    <!-- Mechanic kit attachment overlay (drawn at the front; populated by JS) -->
+                                    <g id="mqAnatomyKit"></g>
                                 </svg>
                                 <select id="mqKitPicker" style="background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid #00d4ff; border-radius:6px; padding:6px 12px; font-family:'JetBrains Mono', monospace; font-size:12px;">
                                     <option value="base">Base (no kit)</option>
@@ -707,6 +709,12 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 from { transform: translate(-50%,-50%) scale(0.2); opacity: 0.9; }
                                 to   { transform: translate(var(--dx), var(--dy)) scale(2); opacity: 0; }
                               }
+                              /* Mechanic-kit attachment animations on the anatomy mini-map.
+                                 Each one breathes so the kit looks ALIVE not glued on. */
+                              @keyframes mqKitLift   { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+                              @keyframes mqKitScoop  { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-22deg); } }
+                              @keyframes mqKitPinch  { 0%,100% { transform: scale(1, 1); } 50% { transform: scale(0.7, 1); } }
+                              @keyframes mqKitPush   { 0%,100% { transform: translate(0,0); } 50% { transform: translate(0, 3px); } }
                               .mq-pearl {
                                 width: 38px; height: 38px; border-radius: 50%;
                                 background: radial-gradient(circle at 30% 28%, rgba(255,255,255,0.55), rgba(255,255,255,0.05) 38%, var(--c,#000) 100%);

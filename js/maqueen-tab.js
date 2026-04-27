@@ -466,9 +466,46 @@
 
   let currentKit = 'base';
 
+  // Mechanic-kit attachments overlaid on the anatomy mini-map. Each kit
+  // is a tiny SVG snippet drawn at the front of the chassis, with a
+  // gentle CSS animation so the attachment LOOKS ALIVE (forks lift,
+  // bucket scoops, gripper pinches, blade pushes).
+  const KIT_OVERLAYS = {
+    base: '',
+    forklift:
+      '<g style="transform-origin:110px 124px; animation: mqKitLift 3s ease-in-out infinite;">' +
+        '<rect x="105" y="100" width="10" height="22" fill="#facc15" stroke="#92400e" stroke-width="0.6"/>' +
+        '<rect x="92"  y="118" width="14" height="3" fill="#facc15" stroke="#92400e" stroke-width="0.4"/>' +
+        '<rect x="114" y="118" width="14" height="3" fill="#facc15" stroke="#92400e" stroke-width="0.4"/>' +
+      '</g>',
+    loader:
+      '<g style="transform-origin:110px 100px; animation: mqKitScoop 3s ease-in-out infinite;">' +
+        '<path d="M 110 100 L 100 116 L 92 124" fill="none" stroke="#facc15" stroke-width="2.5" stroke-linecap="round"/>' +
+        '<path d="M 86 122 L 100 122 L 96 130 L 90 130 Z" fill="#facc15" stroke="#92400e" stroke-width="0.5"/>' +
+      '</g>',
+    beetle:
+      '<g style="transform-origin:110px 100px; animation: mqKitPinch 2.4s ease-in-out infinite;">' +
+        '<line x1="110" y1="100" x2="92" y2="125" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>' +
+        '<line x1="110" y1="100" x2="128" y2="125" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>' +
+        '<circle cx="92"  cy="125" r="2.5" fill="#16a34a"/>' +
+        '<circle cx="128" cy="125" r="2.5" fill="#16a34a"/>' +
+      '</g>',
+    push:
+      '<g style="transform-origin:110px 120px; animation: mqKitPush 2.6s ease-in-out infinite;">' +
+        '<rect x="80" y="116" width="60" height="8" rx="1" fill="#94a3b8" stroke="#475569" stroke-width="0.6"/>' +
+        '<rect x="86" y="108" width="3" height="10" fill="#475569"/>' +
+        '<rect x="131" y="108" width="3" height="10" fill="#475569"/>' +
+      '</g>',
+  };
+  function updateAnatomyKit(kitKey) {
+    const g = document.getElementById('mqAnatomyKit');
+    if (g) g.innerHTML = KIT_OVERLAYS[kitKey] || '';
+  }
+
   function applyKit(kitKey) {
     const kit = KITS[kitKey] || KITS.base;
     currentKit = kitKey;
+    updateAnatomyKit(kitKey);
     document.getElementById('mqServosKitName').textContent = `(${kit.name})`;
     document.getElementById('mqS1Label').textContent = kit.s1Label;
     document.getElementById('mqS2Label').textContent = kit.s2Label;
