@@ -601,6 +601,53 @@
     initLineFollow();
     initFollowRate();
     initLineCard();
+    initGamepadSteering();
+  }
+
+  // -------- GAMEPAD STEERING --------------------------------
+  // Wires the legacy GamePad tab's d-pad so it actually drives the wheels.
+  // Buttons keep their existing CMD: behavior (LED matrix arrow icons) AND
+  // also send M:L,R verbs. Press = drive, release = STOP — feels natural
+  // on touch & mouse. FIRE = brake (stops motion + a short buzzer pip).
+  function initGamepadSteering() {
+    const dirVerb = (cmd) => {
+      const s = speed;
+      const turn = Math.round(s * 0.5);
+      switch (cmd) {
+        case 'UP':    return `M:${s},${s}`;
+        case 'DOWN':  return `M:${-s},${-s}`;
+        case 'LEFT':  return `M:${-turn},${turn}`;
+        case 'RIGHT': return `M:${turn},${-turn}`;
+        default:      return null;
+      }
+    };
+    const driveBtns = document.querySelectorAll('[data-page="gamepad"] [data-cmd]');
+    driveBtns.forEach(btn => {
+      const cmd = btn.dataset.cmd;
+      if (cmd === 'FIRE') {
+        btn.addEventListener('click', () => {
+          send('STOP');
+          send('BUZZ:880,80');
+        });
+        return;
+      }
+      const verb = dirVerb(cmd);
+      if (!verb) return;
+      const start = (e) => {
+        e.preventDefault();
+        sendCoalesced(verb);
+      };
+      const stop = (e) => {
+        e.preventDefault();
+        send('STOP');
+      };
+      btn.addEventListener('mousedown', start);
+      btn.addEventListener('touchstart', start, { passive: false });
+      btn.addEventListener('mouseup', stop);
+      btn.addEventListener('mouseleave', stop);
+      btn.addEventListener('touchend', stop);
+      btn.addEventListener('touchcancel', stop);
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

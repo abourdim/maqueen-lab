@@ -107,6 +107,31 @@
     document.getElementById('mq-poll-dist').addEventListener('click', () => sendVerb('DIST?'));
     document.getElementById('mq-poll-ir').addEventListener('click',   () => sendVerb('IR?'));
 
+    // ---- streams toggle (ACC / TEMP / LIGHT / COMPASS / BTN) -------
+    // Off by default in firmware to keep BLE channel free for command verbs.
+    // Toggle on when the user wants the legacy Sensors / Graph / 3D tabs to
+    // show live data.
+    let streamsOn = false;
+    const streamsBtn = document.getElementById('mq-streams-toggle');
+    function paintStreamsBtn() {
+      if (!streamsBtn) return;
+      streamsBtn.textContent = 'streams: ' + (streamsOn ? 'ON' : 'OFF');
+      streamsBtn.style.color = streamsOn ? '#4ade80' : '#fbbf24';
+      streamsBtn.style.borderColor = streamsOn ? '#4ade80' : '#fbbf24';
+    }
+    if (streamsBtn) {
+      streamsBtn.addEventListener('click', () => {
+        if (!window.bleScheduler || !window.bleScheduler.isConnected()) {
+          alert('Connect to the robot first.');
+          return;
+        }
+        streamsOn = !streamsOn;
+        sendVerb(streamsOn ? 'STREAM:on' : 'STREAM:off');
+        paintStreamsBtn();
+      });
+      paintStreamsBtn();
+    }
+
     if (window.bleScheduler) {
       window.bleScheduler.on('reply', onReply);
       window.bleScheduler.on('stats', setBench);
