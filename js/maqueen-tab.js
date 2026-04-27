@@ -50,6 +50,27 @@
   // mascot/wheels share these; updated by every fireDrive() so the SVG
   // visualisation stays honest (== last command actually sent).
   let _lastSentL = 0, _lastSentR = 0;
+
+  // Drive STOP particle burst — 8 dust particles flying out, CSS-driven.
+  function spawnStopPuff() {
+    const mascot = document.getElementById('mqMascot');
+    if (!mascot) return;
+    const wrap = mascot.parentElement;
+    if (!wrap) return;
+    const puff = document.createElement('div');
+    puff.className = 'mq-stop-puff';
+    if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
+    for (let i = 0; i < 8; i++) {
+      const p = document.createElement('span');
+      const a = (i / 8) * Math.PI * 2;
+      const r = 32 + Math.random() * 18;
+      p.style.setProperty('--dx', `calc(-50% + ${Math.cos(a) * r}px)`);
+      p.style.setProperty('--dy', `calc(-50% + ${Math.sin(a) * r}px)`);
+      puff.appendChild(p);
+    }
+    wrap.appendChild(puff);
+    setTimeout(() => puff.remove(), 700);
+  }
   function fireDrive(dataL, dataR, opts) {
     opts = opts || {};
     if (dataL === 0 && dataR === 0) {
@@ -59,6 +80,8 @@
       _lastSentL = 0; _lastSentR = 0;
       setLastVerb('STOP');
       if (typeof updateMascot === 'function') updateMascot(0, 0);
+      // Dust puff burst: 8 particles flying outward from STOP point
+      try { spawnStopPuff(); } catch {}
       return;
     }
     const ref = 200;
@@ -1051,22 +1074,36 @@
     freqEl.addEventListener('input', updateWave);
     msEl.addEventListener('input', updateWave);
 
+    // Pulse the piezo sound-wave rings for the chosen duration
+    const wavesEl = document.getElementById('mqBuzzWaves');
+    function pulseWaves(durationMs) {
+      if (!wavesEl) return;
+      wavesEl.style.opacity = '1';
+      clearTimeout(pulseWaves._t);
+      pulseWaves._t = setTimeout(() => { wavesEl.style.opacity = '0'; }, durationMs);
+    }
     document.querySelectorAll('.mq-note').forEach(n => {
       n.addEventListener('click', () => {
         const f = +n.dataset.freq;
+        const ms = +msEl.value || 200;
         freqEl.value = f;
         updateWave();
-        // brief active flash on the key
         n.classList.add('mq-active');
         setTimeout(() => n.classList.remove('mq-active'), 180);
-        send(`BUZZ:${f},${msEl.value || 200}`);
+        pulseWaves(ms);
+        send(`BUZZ:${f},${ms}`);
       });
     });
     document.getElementById('mqBuzzPlay').addEventListener('click', () => {
+      const ms = +msEl.value || 200;
       updateWave();
-      send(`BUZZ:${freqEl.value || 440},${msEl.value || 200}`);
+      pulseWaves(ms);
+      send(`BUZZ:${freqEl.value || 440},${ms}`);
     });
-    document.getElementById('mqBuzzOff').addEventListener('click', () => send('BUZZ:0,0'));
+    document.getElementById('mqBuzzOff').addEventListener('click', () => {
+      if (wavesEl) wavesEl.style.opacity = '0';
+      send('BUZZ:0,0');
+    });
   }
 
   // -------- ULTRASONIC ------------------------------------
@@ -1482,13 +1519,16 @@
     let active;
     try { active = localStorage.getItem('maqueen.subTab') || 'drive'; }
     catch { active = 'drive'; }
+    const anatomyParts = document.querySelectorAll('#mqAnatomy .mq-anat-part');
     function show(target) {
       pages.forEach(p => p.classList.toggle('mq-sub-active', p.dataset.mqSub === target));
       buttons.forEach(b => b.classList.toggle('mq-active',     b.dataset.mqTarget === target));
+      anatomyParts.forEach(g => g.classList.toggle('mq-anat-active', g.dataset.mqTarget === target));
       try { localStorage.setItem('maqueen.subTab', target); } catch {}
     }
     buttons.forEach(b => b.addEventListener('click', () => show(b.dataset.mqTarget)));
-    // If saved target doesn't exist (e.g. card was removed), fall back to drive.
+    // Click a part on the anatomy mini-map → switch to that sub-tab
+    anatomyParts.forEach(g => g.addEventListener('click', () => show(g.dataset.mqTarget)));
     const valid = Array.from(pages).some(p => p.dataset.mqSub === active);
     show(valid ? active : 'drive');
   }

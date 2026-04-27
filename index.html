@@ -538,11 +538,75 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                     <!-- ============================================ -->
                     <div class="tab-page active" data-page="maqueen">
                         <div class="card">
-                            <div class="card-header">
-                                <div>
+                            <div class="card-header" style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                                <div style="flex:1;">
                                     <div class="card-title"><span class="icon">🤖</span> Maqueen Lite v4</div>
                                     <div class="card-subtitle expert-only">Native controls — uses the Maqueen firmware verbs (M:, SRV:, LED:, RGB:, BUZZ:)</div>
                                 </div>
+                                <!-- 🗺 Robot anatomy mini-map: top-down Maqueen, click any part to jump
+                                     to that sub-tab; the active sub-tab's part pulses. -->
+                                <svg id="mqAnatomy" viewBox="0 0 220 140" style="width:200px; height:auto; flex-shrink:0; cursor:default;" aria-label="Maqueen anatomy">
+                                    <defs>
+                                        <linearGradient id="mqAnatomyBody" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%"  stop-color="#3b82f6"/>
+                                            <stop offset="100%" stop-color="#1e3a8a"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Wheels (Drive) -->
+                                    <g class="mq-anat-part" data-mq-target="drive" style="cursor:pointer;">
+                                        <rect x="6" y="38" width="20" height="60" rx="4" fill="#1e293b" stroke="#fb923c" stroke-width="1.2"/>
+                                        <rect x="194" y="38" width="20" height="60" rx="4" fill="#1e293b" stroke="#fb923c" stroke-width="1.2"/>
+                                        <title>Drive (motors / wheels)</title>
+                                    </g>
+                                    <!-- Body -->
+                                    <rect x="32" y="22" width="156" height="92" rx="14" fill="url(#mqAnatomyBody)" stroke="#0f1e35" stroke-width="1"/>
+                                    <!-- Line sensors at front (bottom) -->
+                                    <g class="mq-anat-part" data-mq-target="lines" style="cursor:pointer;">
+                                        <circle cx="80"  cy="108" r="5" fill="#0a1628" stroke="#4ade80" stroke-width="1.2"/>
+                                        <circle cx="140" cy="108" r="5" fill="#0a1628" stroke="#4ade80" stroke-width="1.2"/>
+                                        <title>Line sensors (P13 / P14)</title>
+                                    </g>
+                                    <!-- Ultrasonic at front center -->
+                                    <g class="mq-anat-part" data-mq-target="ultrasonic" style="cursor:pointer;">
+                                        <rect x="98" y="100" width="24" height="14" rx="2" fill="#1e293b" stroke="#4ade80" stroke-width="1"/>
+                                        <circle cx="105" cy="107" r="3.5" fill="#0a1628" stroke="#4ade80" stroke-width="0.8"/>
+                                        <circle cx="115" cy="107" r="3.5" fill="#0a1628" stroke="#4ade80" stroke-width="0.8"/>
+                                        <title>Ultrasonic distance (P1 trig · P2 echo)</title>
+                                    </g>
+                                    <!-- micro:bit in middle -->
+                                    <rect x="80" y="48" width="60" height="40" rx="4" fill="#0a1628" stroke="#94a3b8" stroke-width="0.8"/>
+                                    <text x="110" y="72" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">micro:bit</text>
+                                    <!-- Onboard LEDs (sides of micro:bit) -->
+                                    <g class="mq-anat-part" data-mq-target="leds" style="cursor:pointer;">
+                                        <circle cx="58" cy="56" r="4" fill="#0a1628" stroke="#facc15" stroke-width="1.2"/>
+                                        <circle cx="162" cy="56" r="4" fill="#0a1628" stroke="#facc15" stroke-width="1.2"/>
+                                        <title>Simple LEDs (P8 / P12)</title>
+                                    </g>
+                                    <!-- 4 NeoPixels along front edge -->
+                                    <g class="mq-anat-part" data-mq-target="neopixels" style="cursor:pointer;">
+                                        <circle cx="60"  cy="92" r="3" fill="#ef4444"/>
+                                        <circle cx="80"  cy="92" r="3" fill="#22c55e"/>
+                                        <circle cx="140" cy="92" r="3" fill="#3b82f6"/>
+                                        <circle cx="160" cy="92" r="3" fill="#f472b6"/>
+                                        <title>NeoPixels x 4 (P15)</title>
+                                    </g>
+                                    <!-- Servo headers on sides -->
+                                    <g class="mq-anat-part" data-mq-target="servos" style="cursor:pointer;">
+                                        <rect x="34" y="38" width="6" height="10" rx="1" fill="#1e293b" stroke="#00d4ff" stroke-width="0.8"/>
+                                        <rect x="180" y="38" width="6" height="10" rx="1" fill="#1e293b" stroke="#4ade80" stroke-width="0.8"/>
+                                        <title>Servos S1 / S2</title>
+                                    </g>
+                                    <!-- IR receiver and buzzer on the back -->
+                                    <g class="mq-anat-part" data-mq-target="ir" style="cursor:pointer;">
+                                        <rect x="50" y="28" width="14" height="8" rx="1" fill="#1e293b" stroke="#c084fc" stroke-width="0.8"/>
+                                        <title>IR remote receiver</title>
+                                    </g>
+                                    <g class="mq-anat-part" data-mq-target="buzzer" style="cursor:pointer;">
+                                        <circle cx="160" cy="32" r="6" fill="#1e293b" stroke="#fbbf24" stroke-width="0.8"/>
+                                        <circle cx="160" cy="32" r="2.5" fill="#fbbf24"/>
+                                        <title>Piezo buzzer (P0)</title>
+                                    </g>
+                                </svg>
                                 <select id="mqKitPicker" style="background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid #00d4ff; border-radius:6px; padding:6px 12px; font-family:'JetBrains Mono', monospace; font-size:12px;">
                                     <option value="base">Base (no kit)</option>
                                     <option value="forklift">🍴 Forklift (ROB0156-F)</option>
@@ -603,6 +667,45 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                 0%   { transform: scale(0.15); opacity: 0; }
                                 15%  { opacity: 0.9; }
                                 100% { transform: scale(2.6); opacity: 0; }
+                              }
+                              /* Buzzer sound-wave rings — same envelope, faster cadence */
+                              @keyframes mqBuzzPing {
+                                0%   { transform: scale(0.2); opacity: 0; }
+                                15%  { opacity: 0.85; }
+                                100% { transform: scale(2.2); opacity: 0; }
+                              }
+                              /* Anatomy mini-map: pulse the active part */
+                              .mq-anat-part { transition: opacity 0.18s; }
+                              .mq-anat-part:hover { opacity: 0.7; }
+                              .mq-anat-part.mq-anat-active * {
+                                animation: mqAnatPulse 1.4s ease-in-out infinite;
+                                filter: drop-shadow(0 0 6px currentColor);
+                              }
+                              @keyframes mqAnatPulse {
+                                0%, 100% { opacity: 1; }
+                                50%      { opacity: 0.55; }
+                              }
+                              /* Sub-tab fade-in (small slide from below) */
+                              .mq-sub-page.mq-sub-active {
+                                animation: mqSubFade 0.28s ease-out;
+                              }
+                              @keyframes mqSubFade {
+                                from { opacity: 0; transform: translateY(6px); }
+                                to   { opacity: 1; transform: translateY(0); }
+                              }
+                              /* Drive STOP — small dust puff burst (CSS-only, no canvas) */
+                              .mq-stop-puff {
+                                position: absolute; inset: 0; pointer-events: none; overflow: visible;
+                              }
+                              .mq-stop-puff span {
+                                position: absolute; left: 50%; top: 50%;
+                                width: 8px; height: 8px; border-radius: 50%;
+                                background: radial-gradient(circle, rgba(248,113,113,0.6), transparent 70%);
+                                animation: mqPuff 0.6s ease-out forwards;
+                              }
+                              @keyframes mqPuff {
+                                from { transform: translate(-50%,-50%) scale(0.2); opacity: 0.9; }
+                                to   { transform: translate(var(--dx), var(--dy)) scale(2); opacity: 0; }
                               }
                               .mq-pearl {
                                 width: 38px; height: 38px; border-radius: 50%;
