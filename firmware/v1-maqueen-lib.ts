@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.52"
-const BUILD_DATE = "2026-04-27 07:33 UTC"
+const BUILD_VERSION = "0.1.53"
+const BUILD_DATE = "2026-04-27 07:42 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -431,8 +431,12 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () 
         // calibration request (e.g. CAL:COMPASS) — minimal ack
         send("CAL:" + verb.substr(4) + ":DONE")
     } else if (verb.substr(0, 6) == "OTHER:") {
-        // bit-playground "Others" tab commands — ack silently
-        send("OTHER:ACK:" + verb.substr(6))
+        // bit-playground "Others" tab — give the most-used ones visible
+        // feedback on the 5x5 LED matrix so the More tab is more than a
+        // silent ack. Everything still gets the OTHER:ACK:... reply.
+        let payload = verb.substr(6)
+        handleOther(payload)
+        send("OTHER:ACK:" + payload)
     } else if (verb.substr(0, 3) == "LM:") {
         // 5x5 LED matrix hex — 10 hex chars, 2 per row, bit `col` set = LED on.
         handleLM(verb.substr(3))
@@ -440,6 +444,58 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () 
         err(seq, "UNKNOWN_VERB")
     }
 })
+
+// ---------- OTHER:* — visible feedback for the More tab ----------
+// Maps the most common bit-playground "Others" verbs to micro:bit
+// screen actions so users see something happen. Anything we don't
+// recognise still gets the OTHER:ACK reply by the caller.
+function handleOther(payload: string) {
+    // KEY:n — show the digit on the 5x5 matrix
+    if (payload.substr(0, 4) == "KEY:") {
+        let s = payload.substr(4)
+        let n = parseInt(s)
+        if (!isNaN(n)) basic.showNumber(n)
+        else basic.showString(s)
+        return
+    }
+    // BTN:PRESS — show heart
+    if (payload == "BTN:PRESS") {
+        basic.showIcon(IconNames.Heart)
+        return
+    }
+    // SWITCH:on / SWITCH:off — check / x
+    if (payload == "SWITCH:on" || payload == "SWITCH:1") {
+        basic.showIcon(IconNames.Yes)
+        return
+    }
+    if (payload == "SWITCH:off" || payload == "SWITCH:0") {
+        basic.showIcon(IconNames.No)
+        return
+    }
+    // SLIDER:n — bar from 0..100
+    if (payload.substr(0, 7) == "SLIDER:") {
+        let v = parseInt(payload.substr(7))
+        if (isNaN(v)) v = 0
+        let bars = Math.floor(v / 20)         // 0..5
+        if (bars < 0) bars = 0
+        if (bars > 5) bars = 5
+        basic.clearScreen()
+        for (let c = 0; c < bars; c++) {
+            for (let r = 4; r >= 4 - c; r--) led.plot(c, r)
+        }
+        return
+    }
+    // TEXT:msg — scroll on the matrix
+    if (payload.substr(0, 5) == "TEXT:") {
+        basic.showString(payload.substr(5))
+        return
+    }
+    // JOY:UP/DOWN/LEFT/RIGHT — arrow icons
+    if (payload == "JOY:UP")    { basic.showArrow(ArrowNames.North); return }
+    if (payload == "JOY:DOWN")  { basic.showArrow(ArrowNames.South); return }
+    if (payload == "JOY:LEFT")  { basic.showArrow(ArrowNames.West);  return }
+    if (payload == "JOY:RIGHT") { basic.showArrow(ArrowNames.East);  return }
+}
 
 // ---------- LM: 5x5 LED matrix hex (bit-playground bridge) ----------
 // hex string is 10 chars: 5 rows, 2 hex chars (1 byte) each.
