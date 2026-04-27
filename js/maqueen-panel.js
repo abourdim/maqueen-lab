@@ -167,12 +167,28 @@
       });
     });
 
-    if (window.bleScheduler) {
-      window.bleScheduler.on('reply', onReply);
-      window.bleScheduler.on('stats', setBench);
-    } else {
-      console.warn('[maqueen-panel] bleScheduler not loaded');
-    }
+    // Retry until scheduler exists — load order isn't guaranteed if
+    // someone changes script async/defer attributes.
+    (function attachReplyListeners(retries) {
+      if (window.bleScheduler) {
+        window.bleScheduler.on('reply', onReply);
+        window.bleScheduler.on('stats', setBench);
+        // Clean up live readouts the moment the scheduler reports a
+        // disconnect — saves a tab-switch round trip.
+        window.bleScheduler.on('disconnected', () => {
+          clearStaleStreamReadouts();
+          clearStalePollReadouts();
+          streamsOn = false;
+          paintStreamsBtn();
+        });
+        return;
+      }
+      if (retries > 50) {
+        console.warn('[maqueen-panel] bleScheduler never loaded');
+        return;
+      }
+      setTimeout(() => attachReplyListeners(retries + 1), 100);
+    })(0);
   }
 
   if (document.readyState === 'loading') {

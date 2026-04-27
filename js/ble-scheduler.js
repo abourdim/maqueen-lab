@@ -117,11 +117,15 @@
   function send(verb, opts) {
     opts = opts || {};
     return new Promise((resolve, reject) => {
-      // Coalesce: if a same-prefix verb is already queued, replace it
+      // Coalesce: if a same-prefix verb is already queued, replace it.
+      // The OLD queued entry is rejected with 'coalesced'. Its scheduled
+      // flush timer is cleared so we don't stack zombies that fire and
+      // race the replacement.
       const prefix = verbPrefix(verb);
       if (opts.coalesce && coalesce.has(prefix)) {
         const old = coalesce.get(prefix);
-        old.reject(new Error('coalesced'));
+        if (old.flushTimer) clearTimeout(old.flushTimer);
+        try { old.reject(new Error('coalesced')); } catch {}
       }
 
       // Rate limit
@@ -133,8 +137,9 @@
           return;
         }
         // coalesce mode: queue for next slot
-        coalesce.set(prefix, { resolve, reject, verb });
-        scheduleCoalesceFlush(prefix, bucket);
+        const entry = { resolve, reject, verb, flushTimer: null };
+        coalesce.set(prefix, entry);
+        entry.flushTimer = scheduleCoalesceFlush(prefix, bucket);
         return;
       }
       dispatch(verb, resolve, reject);
@@ -144,11 +149,13 @@
 
   function scheduleCoalesceFlush(prefix, bucket) {
     const due = bucket.minIntervalMs - (performance.now() - bucket.last);
-    setTimeout(() => {
+    return setTimeout(() => {
       const queued = coalesce.get(prefix);
       if (!queued) return;
       coalesce.delete(prefix);
       bucket.last = performance.now();
+      // dispatch may itself reject (e.g. disconnected). The promise can
+      // only settle once, so a no-op double-reject is harmless.
       dispatch(queued.verb, queued.resolve, queued.reject);
     }, Math.max(0, due));
   }
@@ -199,9 +206,11 @@
     }
     // Single chokepoint: drop on the floor if not connected.
     // Auto-stops any running animation (rainbow, sweep) since they can't
-    // reach the robot anyway.
+    // reach the robot anyway. Also drains the coalesce queue so any
+    // promises waiting for a "next slot" don't await indefinitely.
     if (!isConnectedLive()) {
       stopAll();
+      flushPendingOnDisconnect();
       reject(new Error('not connected'));
       return;
     }
@@ -261,7 +270,28 @@
   }
 
   function stopAll() {
-    for (const id of animations.keys()) stop(id);
+    // Snapshot keys before iterating — stop() mutates `animations`.
+    const ids = Array.from(animations.keys());
+    for (const id of ids) stop(id);
+  }
+
+  // Reject everything that's mid-flight or queued so callers don't await
+  // indefinitely after a disconnect. Run on every disconnect transition.
+  function flushPendingOnDisconnect() {
+    // Pending sequence-numbered sends — each had a setTimeout for echo
+    // timeout; clear those too so they don't double-settle later.
+    for (const [seq, p] of pending.entries()) {
+      try { clearTimeout(p.timeoutId); } catch {}
+      try { p.reject(new Error('disconnected')); } catch {}
+    }
+    pending.clear();
+    // Coalesce queue — promises waiting for a next slot. Clear their
+    // flush timers too so they don't fire and dispatch into a closed link.
+    for (const [prefix, q] of coalesce.entries()) {
+      if (q.flushTimer) { try { clearTimeout(q.flushTimer); } catch {} }
+      try { q.reject(new Error('disconnected')); } catch {}
+    }
+    coalesce.clear();
   }
 
   // ---------------------------------------------------------------
@@ -320,17 +350,42 @@
   // causing the scheduler to think it was connected and dispatch verbs
   // that ble.js then rejected as "TX blocked".
   function isConnectedLive() {
-    // window.isConnected from core.js is let-scoped (not on window), so we
-    // can't read it cross-script. Use the DOM signal instead: core.js
-    // sets disconnectBtn.disabled = false on GATT connect, true on
-    // disconnect. This works whether or not the firmware ever replies.
-    // Fall back to _connected (set by any RX line via intercept) so the
-    // function still works if the disconnect button is missing.
+    // Single source of truth: the DOM signal from core.js. core.js sets
+    // disconnectBtn.disabled = false on GATT connect, true on disconnect.
+    // Falls back to _connected (set by any RX line via intercept) only if
+    // the disconnect button is missing.
     const disBtn = document.getElementById('disconnectBtn');
     const live = disBtn ? (disBtn.disabled === false) : _connected;
-    if (live && !_connected) { _connected = true; emit('connected', {}); }
-    if (!live && _connected) { _connected = false; emit('disconnected', {}); }
+    if (live && !_connected) {
+      _connected = true;
+      emit('connected', {});
+    }
+    if (!live && _connected) {
+      _connected = false;
+      flushPendingOnDisconnect();
+      emit('disconnected', {});
+    }
     return live;
+  }
+
+  // Drive connection-state transitions via MutationObserver on the
+  // disconnect button — so 'connected'/'disconnected' events fire even
+  // when nothing is actively polling isConnectedLive(). Subscribers
+  // (panel, tab) get notified the moment GATT state flips.
+  function installConnectionWatcher() {
+    const disBtn = document.getElementById('disconnectBtn');
+    if (!disBtn) {
+      setTimeout(installConnectionWatcher, 200);
+      return;
+    }
+    isConnectedLive();   // prime the flag
+    const obs = new MutationObserver(() => isConnectedLive());
+    obs.observe(disBtn, { attributes: true, attributeFilter: ['disabled'] });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', installConnectionWatcher);
+  } else {
+    installConnectionWatcher();
   }
 
   global.bleScheduler = {

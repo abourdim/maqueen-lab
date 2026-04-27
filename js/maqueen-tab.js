@@ -375,10 +375,19 @@
     }
   }
   let distRateMs = +(localStorage.getItem('maqueen.distRate') || 600);
+  function maqueenTabActive() {
+    const a = document.querySelector('.tab-btn.active');
+    return a && a.getAttribute('data-page') === 'maqueen';
+  }
   function restartDistAuto() {
     const auto = document.getElementById('mqDistAuto');
     if (distAutoTimer) { clearInterval(distAutoTimer); distAutoTimer = null; }
-    if (auto && auto.checked) distAutoTimer = setInterval(pollDist, distRateMs);
+    // Only re-arm if Maqueen tab is active AND we're connected. Otherwise
+    // initTabGate / the disconnected handler owns lifecycle.
+    if (auto && auto.checked && maqueenTabActive()
+        && window.bleScheduler && window.bleScheduler.isConnected()) {
+      distAutoTimer = setInterval(pollDist, distRateMs);
+    }
   }
   function initUltrasonic() {
     const ping = document.getElementById('mqDistPing');
@@ -504,7 +513,12 @@
   function restartLineAuto() {
     const auto = document.getElementById('mqLineAuto');
     if (lineAutoTimer) { clearInterval(lineAutoTimer); lineAutoTimer = null; }
-    if (auto && auto.checked) lineAutoTimer = setInterval(pollLine, lineRateMs);
+    // Same gate as restartDistAuto — don't poll from inactive tabs or
+    // when disconnected.
+    if (auto && auto.checked && maqueenTabActive()
+        && window.bleScheduler && window.bleScheduler.isConnected()) {
+      lineAutoTimer = setInterval(pollLine, lineRateMs);
+    }
   }
   function initLineCard() {
     const poll = document.getElementById('mqLinePoll');
@@ -628,6 +642,23 @@
         setIR(m[1]);
       } else if ((m = line.match(/^LINE:(\d+),(\d+)$/))) {
         setLineStateUI(m[1], m[2]);
+      }
+    });
+    // On disconnect: kill every timer this module owns. Avoids the
+    // "phantom poll" pattern where DIST?/LINE?/follow keep firing into
+    // the void and are silently rejected by the scheduler.
+    window.bleScheduler.on('disconnected', () => {
+      if (distAutoTimer) { clearInterval(distAutoTimer); distAutoTimer = null; }
+      if (lineAutoTimer) { clearInterval(lineAutoTimer); lineAutoTimer = null; }
+      if (followTimer)   { clearInterval(followTimer);   followTimer = null; }
+      if (following) {
+        following = false;
+        const btn = document.getElementById('mqFollowBtn');
+        if (btn) {
+          btn.textContent = '🟢 Follow line';
+          btn.style.color = '#4ade80';
+          btn.style.borderColor = '#4ade80';
+        }
       }
     });
   }

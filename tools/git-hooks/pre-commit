@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
-# pre-commit hook — auto-bumps firmware patch version + UTC build date,
-# then re-stages the touched files so the bump is part of THIS commit.
+# pre-commit hook — bumps firmware version ONLY when the firmware source
+# (firmware/v1-maqueen-lib.ts) actually changed in this commit, then
+# re-stages the touched files.
 #
-# Skips the bump if firmware/index.html aren't part of the staged change
-# AND no changes are staged at all (avoids bumping for empty/dummy commits).
+# Why the gate: previously this bumped on EVERY commit, which meant the
+# BUILD_VERSION label drifted from the actual binary code on the board
+# (a docs-only commit would push v0.1.50 even though the .hex on the
+# micro:bit was still v0.1.40). The label became a lie. Now: version
+# only bumps when the source genuinely changed, so the label is honest.
 #
-# To skip the bump for a specific commit (e.g. doc-only):
-#   SKIP_FW_BUMP=1 git commit -m "docs: ..."
+# Force-bump (rare — e.g. you want to mint a new version without touching
+# source):    FORCE_FW_BUMP=1 git commit -m "release: bump firmware"
+# Skip bump:  SKIP_FW_BUMP=1 git commit -m "docs: ..."
 
 set -e
 
-# Allow opt-out
 if [ "$SKIP_FW_BUMP" = "1" ]; then
   exit 0
 fi
 
-# Only run if there are staged changes at all
 if git diff --cached --quiet; then
   exit 0
 fi
@@ -28,11 +31,25 @@ if [ ! -f tools/bump-firmware.py ]; then
   exit 0
 fi
 
-echo "[pre-commit] auto-bumping firmware + build stamp..." >&2
-python tools/bump-firmware.py >&2 || {
-  echo "[pre-commit] bump failed, aborting commit" >&2
-  exit 1
-}
+# Did the firmware source actually change?
+FW_CHANGED=0
+if ! git diff --cached --quiet -- firmware/v1-maqueen-lib.ts; then
+  FW_CHANGED=1
+fi
+if [ "$FORCE_FW_BUMP" = "1" ]; then
+  FW_CHANGED=1
+fi
+
+if [ "$FW_CHANGED" = "1" ]; then
+  echo "[pre-commit] firmware source changed -> bumping version + refreshing embedded source..." >&2
+  python tools/bump-firmware.py >&2 || {
+    echo "[pre-commit] bump failed, aborting commit" >&2
+    exit 1
+  }
+  echo "[pre-commit] REMINDER: re-compile firmware/v1-maqueen-lib.ts in MakeCode and re-flash the .hex on the micro:bit before testing." >&2
+else
+  echo "[pre-commit] no firmware changes — version label stays put (honest)." >&2
+fi
 
 # Refresh build-info.json with current commit + UTC timestamp.
 # Use HEAD~ since this commit hasn't been created yet — but for a
@@ -60,6 +77,11 @@ print(f'[pre-commit] stamp -> v{ver}  commit={commit}  built={built}')
   exit 1
 }
 
-# Re-stage everything the hook touched
-git add firmware/v1-maqueen-lib.ts index.html build-info.json product.json
+# Re-stage everything the hook touched. Only stage firmware/index.html
+# if they were actually modified by the bump (avoids polluting docs-only
+# commits with whitespace-only firmware re-saves).
+if [ "$FW_CHANGED" = "1" ]; then
+  git add firmware/v1-maqueen-lib.ts index.html
+fi
+git add build-info.json product.json
 exit 0
