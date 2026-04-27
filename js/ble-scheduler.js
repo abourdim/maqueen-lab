@@ -320,11 +320,14 @@
   // causing the scheduler to think it was connected and dispatch verbs
   // that ble.js then rejected as "TX blocked".
   function isConnectedLive() {
-    const live = (typeof global.isConnected !== 'undefined')
-      ? !!global.isConnected
-      : _connected;
-    // Keep our internal flag in sync so emit('connected'/'disconnected')
-    // fire on the transition (other modules can subscribe).
+    // window.isConnected from core.js is let-scoped (not on window), so we
+    // can't read it cross-script. Use the DOM signal instead: core.js
+    // sets disconnectBtn.disabled = false on GATT connect, true on
+    // disconnect. This works whether or not the firmware ever replies.
+    // Fall back to _connected (set by any RX line via intercept) so the
+    // function still works if the disconnect button is missing.
+    const disBtn = document.getElementById('disconnectBtn');
+    const live = disBtn ? (disBtn.disabled === false) : _connected;
     if (live && !_connected) { _connected = true; emit('connected', {}); }
     if (!live && _connected) { _connected = false; emit('disconnected', {}); }
     return live;
