@@ -4274,3 +4274,105 @@ html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
   .mq-drive-triad > div:nth-child(2) { grid-area: mascot; }
   .mq-drive-triad > div:nth-child(3) { grid-area: joystick; }
 }
+
+/* ===========================================================
+ * 🧭 Odometry panel (Drive sub-tab) — dead-reckoning navigator
+ * Two-column body: SVG map (left) + stats list (right). On
+ * narrow viewports, stats fall under the map.
+ * =========================================================== */
+.mq-odo-panel {
+  background: var(--card-bg-2, #0a1628);
+  border: 1px solid var(--border, #1d3556);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+.mq-odo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #4ade80;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.mq-odo-header button {
+  background: var(--card-bg, #0f1e35);
+  color: var(--text-secondary, #93a8c4);
+  border: 1px solid var(--border, #1d3556);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s ease-out;
+}
+.mq-odo-header button:hover {
+  color: #fb923c;
+  border-color: #fb923c;
+}
+.mq-odo-body {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(120px, auto);
+  gap: 10px;
+  align-items: stretch;
+}
+#mqOdoSvg {
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  background: var(--bg-deep, #061121);
+  border: 1px solid var(--border, #1d3556);
+  border-radius: 6px;
+}
+.mq-odo-stats {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+.mq-odo-stat {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-deep, #061121);
+  border: 1px solid var(--border, #1d3556);
+  border-left: 3px solid #4ade80;
+  border-radius: 4px;
+  padding: 4px 8px;
+  line-height: 1.25;
+}
+.mq-odo-stat:nth-child(2) { border-left-color: #fb923c; }
+.mq-odo-stat:nth-child(3) { border-left-color: #00d4ff; }
+.mq-odo-stat:nth-child(4) { border-left-color: #facc15; }
+.mq-odo-label {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-secondary, #93a8c4);
+  opacity: 0.75;
+}
+.mq-odo-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text, #b8c8e0);
+  font-variant-numeric: tabular-nums;
+}
+.mq-odo-foot {
+  margin-top: 6px;
+  font-size: 9px;
+  font-family: inherit;
+  color: var(--text-secondary, #93a8c4);
+  opacity: 0.7;
+  text-align: center;
+  font-style: italic;
+}
+@media (max-width: 700px) {
+  .mq-odo-body {
+    grid-template-columns: 1fr;
+  }
+  .mq-odo-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .mq-odo-stat { flex: 1 1 45%; }
+}

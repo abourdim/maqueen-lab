@@ -68,6 +68,14 @@
       mq_hold_to_drive:   "hold to drive (release = stop)",
       mq_radar_sweep_title: "Radar Display",
       mq_radar_sweep_hint:  "💡 Tip — enable S1 Sweep on the Servos tab for the full sweeping effect.",
+      mq_odo_title:         "Path",
+      mq_odo_sub:           "dead-reckoning · wheel-speed integral",
+      mq_odo_reset:         "reset",
+      mq_odo_heading:       "heading",
+      mq_odo_distance:      "distance",
+      mq_odo_position:      "position",
+      mq_odo_speed:         "speed",
+      mq_odo_foot:          "⚠ Estimate only — no encoders. Drift grows with battery droop & wheel slip; that's the lesson.",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -505,6 +513,14 @@
       mq_hold_to_drive:   "tenir pour rouler (relâcher = stop)",
       mq_radar_sweep_title: "Affichage Radar",
       mq_radar_sweep_hint:  "💡 Astuce — active le balayage S1 dans l'onglet Servos pour l'effet complet.",
+      mq_odo_title:         "Trajet",
+      mq_odo_sub:           "estime à vue · intégrale des vitesses roues",
+      mq_odo_reset:         "réinitialiser",
+      mq_odo_heading:       "cap",
+      mq_odo_distance:      "distance",
+      mq_odo_position:      "position",
+      mq_odo_speed:         "vitesse",
+      mq_odo_foot:          "⚠ Estimation seulement — pas d'encodeurs. La dérive grandit avec la batterie et le glissement ; c'est ça la leçon.",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -942,6 +958,14 @@
       mq_hold_to_drive:   "\u0627\u0636\u063a\u0637 \u0648\u0623\u0645\u0633\u0643 \u0644\u0644\u0642\u064a\u0627\u062f\u0629 (\u0623\u0641\u0644\u0627\u062a = \u0625\u064a\u0642\u0627\u0641)",
       mq_radar_sweep_title: "\u0634\u0627\u0634\u0629 \u0627\u0644\u0631\u0627\u062f\u0627\u0631",
       mq_radar_sweep_hint:  "\ud83d\udca1 \u062a\u0644\u0645\u064a\u062d \u2014 \u0641\u0639\u0651\u0644 \u0645\u0633\u062d S1 \u0641\u064a \u062a\u0628\u0648\u064a\u0628 \u0627\u0644\u0633\u064a\u0631\u0641\u0648 \u0644\u0631\u0624\u064a\u0629 \u0627\u0644\u062a\u0623\u062b\u064a\u0631 \u0627\u0644\u0643\u0627\u0645\u0644.",
+      mq_odo_title:         "\u0627\u0644\u0645\u0633\u0627\u0631",
+      mq_odo_sub:           "\u062d\u0633\u0627\u0628 \u0627\u0644\u0645\u0648\u0636\u0639 \u00b7 \u062a\u0643\u0627\u0645\u0644 \u0633\u0631\u0639\u0627\u062a \u0627\u0644\u0639\u062c\u0644\u0627\u062a",
+      mq_odo_reset:         "\u0625\u0639\u0627\u062f\u0629",
+      mq_odo_heading:       "\u0627\u0644\u0627\u062a\u062c\u0627\u0647",
+      mq_odo_distance:      "\u0627\u0644\u0645\u0633\u0627\u0641\u0629",
+      mq_odo_position:      "\u0627\u0644\u0645\u0648\u0636\u0639",
+      mq_odo_speed:         "\u0627\u0644\u0633\u0631\u0639\u0629",
+      mq_odo_foot:          "\u26a0 \u062a\u0642\u062f\u064a\u0631\u064a \u0641\u0642\u0637 \u2014 \u0644\u0627 \u062a\u0648\u062c\u062f \u0623\u062c\u0647\u0632\u0629 \u0642\u064a\u0627\u0633. \u0627\u0644\u0627\u0646\u062d\u0631\u0627\u0641 \u064a\u0632\u062f\u0627\u062f \u0645\u0639 \u062a\u0631\u0627\u062c\u0639 \u0627\u0644\u0628\u0637\u0627\u0631\u064a\u0629 \u0648\u0627\u0646\u0632\u0644\u0627\u0642 \u0627\u0644\u0639\u062c\u0644\u0627\u062a\u061b \u0647\u0630\u0627 \u0647\u0648 \u0627\u0644\u062f\u0631\u0633.",
 
       // Tabs
       tab_maqueen:        "Maqueen",

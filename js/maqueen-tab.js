@@ -151,6 +151,8 @@
       // Dust puff burst + stop the anatomy wheel-spin
       try { spawnStopPuff(); } catch {}
       try { mqAnat.motors(0, 0); } catch {}
+      // Odometry — robot stopped, so wheel velocities are zero.
+      try { mqOdometry.update(0, 0); } catch {}
       return;
     }
     const ref = 200;
@@ -166,6 +168,10 @@
     setLastVerb(`M:${L},${R}`);
     if (typeof updateMascot === 'function') updateMascot(L, R);
     try { mqAnat.motors(L, R); } catch {}
+    // Odometry — feed scaled wheel velocities so the trail integrates
+    // what the ROBOT actually got (post speed-slider scaling), not the
+    // raw button intent.
+    try { mqOdometry.update(L, R); } catch {}
   }
   // Stub overridden in initDriveJuice() once the SVG is on screen.
   let updateMascot = null;
@@ -173,6 +179,15 @@
     const slider = document.getElementById('mqSpeedSlider');
     const readout = document.getElementById('mqSpeedReadout');
     if (!slider) return;
+    // Odometry — start the integrator and wire its reset button.
+    // It runs continuously (cheap when wheels are stopped — vL=vR=0
+    // means the integral contributes nothing) so the trail persists
+    // even when the user is idle.
+    try { mqOdometry.start(); } catch {}
+    const odoReset = document.getElementById('mqOdoReset');
+    if (odoReset) odoReset.addEventListener('click', () => {
+      try { mqOdometry.reset(); } catch {}
+    });
     slider.addEventListener('input', e => {
       speed = +e.target.value;
       readout.textContent = speed;
@@ -1270,6 +1285,154 @@
       send('BUZZ:0,0');
     });
   }
+
+  // -------- 🧭 ODOMETRY ----------------------------------
+  // Dead-reckoning navigator. Every time fireDrive() pushes new wheel
+  // velocities (L, R), we update the integrator. An rAF tick integrates
+  // the LAST known velocities over the elapsed dt to advance (x, y, θ).
+  //
+  // Differential drive kinematics (textbook):
+  //   v = (vL + vR) / 2                forward velocity
+  //   ω = (vL - vR) / wheelbase        angular velocity, CW positive
+  //   ẋ = v · sin(θ)                   (θ = 0 means north / +y)
+  //   ẏ = v · cos(θ)
+  //   θ̇ = ω
+  //
+  // VEL_SCALE is approximate (BLE units 0..255 → cm/s). The drift is
+  // genuine — battery droop, wheel slip, and lack of encoders all
+  // contribute. That IS the lesson: this is why real robots add an
+  // IMU + encoders + Kalman filter on top of dead-reckoning.
+  const mqOdometry = (function () {
+    const WHEELBASE = 9;            // cm — Maqueen Lite v4 between-wheel distance
+    const VEL_SCALE = 25 / 200;     // cm/s per BLE unit (rough; speed=200 ≈ 25 cm/s)
+    const MAX_TRAIL = 600;          // cap so old samples don't bloat SVG
+    const TRAIL_MIN_DIST = 0.6;     // cm — only push a new trail point if we moved this much
+
+    let x = 0, y = 0, theta = 0;    // pose, world frame (cm, cm, rad)
+    let vL = 0, vR = 0;             // last-seen wheel velocities (BLE units)
+    let lastT = 0;                  // last integration timestamp (ms)
+    let totalDist = 0;              // cumulative |v| · dt (cm)
+    const trail = [];               // [{x, y}, ...]
+    let raf = null;
+    let started = false;
+
+    function tick(now) {
+      if (!started) return;
+      if (lastT === 0) lastT = now;
+      const dt = (now - lastT) / 1000;
+      lastT = now;
+      // Skip pathological dt (tab was hidden, or first frame after wake)
+      if (dt > 0 && dt < 0.5) {
+        const v = (vL + vR) / 2 * VEL_SCALE;
+        const omega = (vL - vR) * VEL_SCALE / WHEELBASE;
+        // Integrate (Euler is fine at 60 Hz — error is tiny)
+        theta += omega * dt;
+        x += v * Math.sin(theta) * dt;
+        y += v * Math.cos(theta) * dt;
+        // Normalize theta to [-π, π]
+        while (theta >  Math.PI) theta -= 2 * Math.PI;
+        while (theta < -Math.PI) theta += 2 * Math.PI;
+        totalDist += Math.abs(v) * dt;
+        // Throttle trail growth — only push when we've actually moved
+        if (Math.abs(v) > 0.3) {
+          if (trail.length === 0) {
+            trail.push({ x, y });
+          } else {
+            const last = trail[trail.length - 1];
+            if (Math.hypot(x - last.x, y - last.y) > TRAIL_MIN_DIST) {
+              trail.push({ x, y });
+              if (trail.length > MAX_TRAIL) trail.shift();
+            }
+          }
+        }
+      }
+      render();
+      raf = requestAnimationFrame(tick);
+    }
+
+    // Auto-scale so the trail fits the viewport. We pick the largest
+    // |coordinate| of (current pose ∪ trail) and fit it to 90 SVG units.
+    function computeScale() {
+      let m = 30;   // floor: never zoom further in than 30 cm visible
+      if (Math.abs(x) > m) m = Math.abs(x);
+      if (Math.abs(y) > m) m = Math.abs(y);
+      for (let i = 0; i < trail.length; i++) {
+        if (Math.abs(trail[i].x) > m) m = Math.abs(trail[i].x);
+        if (Math.abs(trail[i].y) > m) m = Math.abs(trail[i].y);
+      }
+      return 90 / m;
+    }
+
+    function render() {
+      const scale = computeScale();
+      // Trail polyline: world (x, y) → SVG (x*scale, -y*scale)  (SVG y is down)
+      const trailEl = document.getElementById('mqOdoTrail');
+      if (trailEl) {
+        if (trail.length < 2) {
+          trailEl.setAttribute('points', '');
+        } else {
+          let pts = '';
+          for (let i = 0; i < trail.length; i++) {
+            pts += (trail[i].x * scale).toFixed(1) + ',' + (-trail[i].y * scale).toFixed(1) + ' ';
+          }
+          trailEl.setAttribute('points', pts);
+        }
+      }
+      // Robot dot — at (x, y), rotated by θ (clockwise = positive in SVG-y-inverted frame)
+      const robot = document.getElementById('mqOdoRobot');
+      if (robot) {
+        const sx = (x * scale).toFixed(1);
+        const sy = (-y * scale).toFixed(1);
+        const deg = (theta * 180 / Math.PI).toFixed(1);
+        robot.setAttribute('transform', `translate(${sx} ${sy}) rotate(${deg})`);
+      }
+      // Compass needle — points to world-NORTH from the robot's frame.
+      // World-north is θ=0; if robot has turned right by θ, the needle
+      // (relative to robot) rotates LEFT by θ to keep pointing north.
+      const compass = document.getElementById('mqOdoCompass');
+      if (compass) {
+        compass.setAttribute('transform', `rotate(${(-theta * 180 / Math.PI).toFixed(1)})`);
+      }
+      // HUD numbers
+      const hudH = document.getElementById('mqOdoHeading');
+      const hudD = document.getElementById('mqOdoDistance');
+      const hudP = document.getElementById('mqOdoPosition');
+      const hudS = document.getElementById('mqOdoSpeed');
+      const scaleEl = document.getElementById('mqOdoScale');
+      if (hudH) {
+        const deg = ((theta * 180 / Math.PI) % 360 + 360) % 360;
+        hudH.textContent = deg.toFixed(0) + '°';
+      }
+      if (hudD) hudD.textContent = (totalDist / 100).toFixed(2) + ' m';
+      if (hudP) hudP.textContent = x.toFixed(0) + ', ' + y.toFixed(0) + ' cm';
+      if (hudS) {
+        const v = Math.abs((vL + vR) / 2 * VEL_SCALE);
+        hudS.textContent = v.toFixed(1) + ' cm/s';
+      }
+      if (scaleEl) {
+        // Show the per-ring distance (the inner ring is at radius 25 SVG units)
+        const ringCm = (25 / scale).toFixed(0);
+        scaleEl.textContent = 'grid · ' + ringCm + ' cm';
+      }
+    }
+
+    function update(L, R) { vL = +L; vR = +R; }
+
+    function reset() {
+      x = 0; y = 0; theta = 0; totalDist = 0;
+      trail.length = 0;
+      render();
+    }
+
+    function start() {
+      if (started) return;
+      started = true;
+      lastT = 0;
+      raf = requestAnimationFrame(tick);
+    }
+
+    return { update, reset, start };
+  })();
 
   // -------- 📡 SWEEP RADAR --------------------------------
   // The iconic Arduino + Processing sweep radar. Beam is anchored to the
