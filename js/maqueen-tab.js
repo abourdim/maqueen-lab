@@ -519,6 +519,31 @@
       codeStatus.style.color = color || '#93a8c4';
     }
 
+    // PWM scope: 0..400 px viewBox = 0..20 ms. Pulse goes from 1.0 ms (=20px)
+    // at 0° to 2.0 ms (=40px) at 180°. Below the pulse the line stays LOW.
+    function updateServoScope(angle) {
+      const trace = document.getElementById('mqServoScopeTrace');
+      const anno  = document.getElementById('mqServoScopePwAnno');
+      const lbl   = document.getElementById('mqServoScopePwLabel');
+      const info  = document.getElementById('mqServoScopeInfo');
+      if (!trace) return;
+      const pwMs = 1.0 + (angle / 180);            // 1.0 .. 2.0 ms
+      const pwPx = (pwMs / 20) * 400;              // map ms -> px
+      // Trace: stay LOW (y=60), then jump HIGH (y=14) for pwPx duration, then LOW again
+      // Pulse starts at x=10 to leave a tiny low porch
+      const x0 = 10, x1 = x0 + pwPx;
+      trace.setAttribute('d', `M 0 60 L ${x0} 60 L ${x0} 14 L ${x1.toFixed(1)} 14 L ${x1.toFixed(1)} 60 L 400 60`);
+      if (anno) {
+        anno.setAttribute('x1', x0);
+        anno.setAttribute('x2', x1.toFixed(1));
+      }
+      if (lbl) {
+        lbl.setAttribute('x', ((x0 + x1) / 2).toFixed(1));
+        lbl.textContent = pwMs.toFixed(2) + ' ms';
+      }
+      if (info) info.textContent = pwMs.toFixed(2) + ' ms HIGH every 20 ms';
+    }
+
     function setAngle(port, angle, opts) {
       angle = Math.max(0, Math.min(180, +angle));
       lastShown = { port, angle };
@@ -529,6 +554,7 @@
       const readout = port === 1 ? r1 : r2;
       if (slider && +slider.value !== angle) slider.value = angle;
       if (readout) readout.textContent = angle + '°';
+      updateServoScope(angle);
       renderCode();
       // BLE — coalesced so dragging the slider doesn't drown the channel
       if (window.bleScheduler) {
@@ -579,6 +605,7 @@
           if (slider) slider.value = a;
           if (readout) readout.textContent = a + '°';
           lastShown = { port, angle: a };
+          updateServoScope(a);
           renderCode();
           return `SRV:${port},${a}`;
         }, 10);
@@ -672,6 +699,22 @@
     if (!btns.length) return;
     const stateLabel = (idx) => document.getElementById(idx === '0' ? 'mqLedDomeLState' : 'mqLedDomeRState');
     const tape = document.getElementById('mqLedLastVerb');
+    // Track each LED's current state for the scope trace
+    const ledOn = { '0': false, '1': false };
+    function updateLedScope() {
+      const pL = document.getElementById('mqLedScopeL');
+      const pR = document.getElementById('mqLedScopeR');
+      // Each side spans half the 200px viewport. y=10 = HIGH, y=30 = LOW.
+      // Draw an edge transition in the middle of each half.
+      if (pL) {
+        if (ledOn['0']) pL.setAttribute('d', 'M 0 30 L 10 30 L 10 10 L 100 10');
+        else            pL.setAttribute('d', 'M 0 30 L 100 30');
+      }
+      if (pR) {
+        if (ledOn['1']) pR.setAttribute('d', 'M 100 30 L 110 30 L 110 10 L 200 10');
+        else            pR.setAttribute('d', 'M 100 30 L 200 30');
+      }
+    }
     function updateLed(idx, on) {
       const dome = idx === '0' ? domeL : domeR;
       const lbl = stateLabel(idx);
@@ -679,8 +722,11 @@
       if (lbl) lbl.textContent = on ? 'ON' : 'OFF';
       const verb = `LED:${idx},${on ? 1 : 0}`;
       if (tape) tape.textContent = verb;
+      ledOn[idx] = on;
+      updateLedScope();
       send(verb);
     }
+    updateLedScope();
     btns.forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = btn.dataset.led;
@@ -691,12 +737,12 @@
     });
 
     document.getElementById('mqLedAllOff').addEventListener('click', async () => {
-      // Update visuals first (so the off feels immediate), then send
       btns.forEach(b => { b.dataset.state = '0'; });
       setDomeOn(domeL, '#facc15', false); setDomeOn(domeR, '#facc15', false);
       const lblL = stateLabel('0'); const lblR = stateLabel('1');
       if (lblL) lblL.textContent = 'OFF';
       if (lblR) lblR.textContent = 'OFF';
+      ledOn['0'] = false; ledOn['1'] = false; updateLedScope();
       if (tape) tape.textContent = 'LED:*,0';
       await send('LED:0,0');
       await send('LED:1,0');
@@ -733,6 +779,33 @@
   function setPearlRGB(i, r, g, b) {
     const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
     setPearl(i, hex);
+    if (+i === 0) updateNeoFrame(g, r, b);   // pixel 0 drives the WS2812 scope
+  }
+  // WS2812 frame visualization for pixel 0 (24 bits, GRB order).
+  // Render the bit cells inside the SVG path.
+  function updateNeoFrame(g, r, b) {
+    const trace = document.getElementById('mqNeoFrameTrace');
+    const lbl = document.getElementById('mqNeoFrameLabel');
+    if (!trace) return;
+    const bits = [];
+    [g, r, b].forEach(byte => {
+      for (let i = 7; i >= 0; i--) bits.push((byte >> i) & 1);
+    });
+    // Place 24 bit cells in the area x=160..395, y=15..45
+    const xStart = 160, xEnd = 395, top = 15, bot = 45;
+    const bitW = (xEnd - xStart) / 24;
+    let d = `M ${xStart} ${bot}`;
+    bits.forEach((bit, i) => {
+      const x0 = xStart + i * bitW;
+      // "0" = short HIGH (~30% of cell), "1" = long HIGH (~65%)
+      const hiW = bit ? bitW * 0.65 : bitW * 0.30;
+      d += ` L ${x0.toFixed(1)} ${top} L ${(x0 + hiW).toFixed(1)} ${top} L ${(x0 + hiW).toFixed(1)} ${bot} L ${(x0 + bitW).toFixed(1)} ${bot}`;
+    });
+    trace.setAttribute('d', d);
+    if (lbl) {
+      const hex = v => v.toString(16).padStart(2, '0').toUpperCase();
+      lbl.textContent = `G:${hex(g)} R:${hex(r)} B:${hex(b)}`;
+    }
   }
   function initRGB() {
     const pickers = document.querySelectorAll('.mq-rgb-picker');
@@ -846,6 +919,11 @@
     const num = document.getElementById('mqDistGaugeNum');
     const emoji = document.getElementById('mqDistEmoji');
     const sparkInfo = document.getElementById('mqDistSparkInfo');
+    // Bat sonar elements
+    const batBlip   = document.getElementById('mqBatBlip');
+    const batNum    = document.getElementById('mqDistRadarNum');
+    const batStatus = document.getElementById('mqDistRadarStatus');
+    const batTof    = document.getElementById('mqDistTofMs');
     if (noSensor) {
       if (big) big.textContent = '— cm';
       if (num) { num.textContent = '— cm'; num.setAttribute('fill', '#93a8c4'); }
@@ -854,6 +932,10 @@
       if (range) range.textContent = 'no sensor / no echo';
       if (bar) bar.style.width = '0%';
       if (sparkInfo) sparkInfo.textContent = 'no echo';
+      if (batBlip) batBlip.setAttribute('opacity', '0');
+      if (batNum) batNum.textContent = '— cm';
+      if (batStatus) { batStatus.textContent = 'listening...'; batStatus.style.color = '#93a8c4'; }
+      if (batTof) batTof.textContent = '— ms';
       return;
     }
     const color = cm < 10 ? '#f87171' : cm < 30 ? '#fbbf24' : '#4ade80';
@@ -871,6 +953,22 @@
     const sp = ensureDistSpark();
     if (sp) sp.push(Math.min(200, cm));
     if (sparkInfo) sparkInfo.textContent = cm + ' cm';
+    // Bat blip — position along the bat's central axis (x=100), y interpolates
+    // 120 (at the bat) → 30 (at top edge) as cm grows 0..200
+    if (batBlip) {
+      const yPos = 120 - Math.min(1, cm / 200) * 90;
+      batBlip.querySelectorAll('circle').forEach(c => c.setAttribute('cy', yPos.toFixed(1)));
+      batBlip.setAttribute('opacity', '1');
+    }
+    if (batNum) { batNum.textContent = cm + ' cm'; batNum.style.color = color; }
+    if (batStatus) {
+      const msg = cm < 10 ? 'OBSTACLE!' : cm < 30 ? 'close...' : cm < 100 ? 'tracked' : 'far';
+      batStatus.textContent = msg;
+      batStatus.style.color = color;
+    }
+    // Time of flight: t = 2 * d / 340 m/s.  d in cm → t in ms
+    // = 2 * (cm/100) / 340 * 1000  =  cm / 17  ms
+    if (batTof) batTof.textContent = (cm / 17).toFixed(2) + ' ms';
   }
   function pollDist() {
     if (window.bleScheduler && window.bleScheduler.isConnected()) {

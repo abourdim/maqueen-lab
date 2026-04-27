@@ -597,6 +597,11 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                               .mq-status-orb.mq-orb-warn::before { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
                               .mq-status-orb.mq-orb-err::before { background: #f87171; box-shadow: 0 0 8px #f87171; }
                               @keyframes mqOrbBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+                              @keyframes mqBatPing {
+                                0%   { transform: scale(0.15); opacity: 0; }
+                                15%  { opacity: 0.9; }
+                                100% { transform: scale(2.6); opacity: 0; }
+                              }
                               .mq-pearl {
                                 width: 38px; height: 38px; border-radius: 50%;
                                 background: radial-gradient(circle at 30% 28%, rgba(255,255,255,0.55), rgba(255,255,255,0.05) 38%, var(--c,#000) 100%);
@@ -906,7 +911,38 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <!-- Kit presets (apply both servos at once) -->
                                     <div id="mqServoPresets" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;"></div>
 
-                                    <!-- Code preview — what the firmware does when you move the slider -->
+                                    <!-- 📟 PWM oscilloscope — pulse width SETS the angle.
+                                         1.0 ms = 0°, 1.5 ms = 90°, 2.0 ms = 180°. Refresh every 20 ms (50 Hz). -->
+                                    <div style="margin-top:12px; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:8px; padding:10px;">
+                                        <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:10px; color:var(--text-secondary, #93a8c4);">
+                                            <span>📟 PWM signal · pulse width sets the angle</span>
+                                            <span id="mqServoScopeInfo" style="margin-left:auto; font-family:'JetBrains Mono', monospace; color:#facc15;">1.50 ms HIGH every 20 ms</span>
+                                        </div>
+                                        <svg viewBox="0 0 400 80" preserveAspectRatio="none" style="width:100%; height:80px; display:block; background:#0a1628; border-radius:4px;">
+                                            <g stroke="var(--border, #1d3556)" stroke-width="0.5">
+                                                <line x1="0" y1="20" x2="400" y2="20"/>
+                                                <line x1="0" y1="40" x2="400" y2="40"/>
+                                                <line x1="0" y1="60" x2="400" y2="60"/>
+                                                <line x1="100" y1="0" x2="100" y2="80"/>
+                                                <line x1="200" y1="0" x2="200" y2="80"/>
+                                                <line x1="300" y1="0" x2="300" y2="80"/>
+                                            </g>
+                                            <text x="2" y="14" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">3.3 V</text>
+                                            <text x="2" y="76" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">0 V</text>
+                                            <text x="396" y="76" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end">20 ms</text>
+                                            <text x="98" y="76" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end">5 ms</text>
+                                            <path id="mqServoScopeTrace" d="M 0 60 L 30 60 L 30 14 L 30 60 L 400 60" fill="none" stroke="#facc15" stroke-width="1.8" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/>
+                                            <line id="mqServoScopePwAnno" x1="0" y1="14" x2="30" y2="14" stroke="#4ade80" stroke-width="1" stroke-dasharray="2 2"/>
+                                            <text id="mqServoScopePwLabel" x="15" y="11" fill="#4ade80" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">1.50 ms</text>
+                                        </svg>
+                                        <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary, #93a8c4); font-family:'JetBrains Mono', monospace; margin-top:4px;">
+                                            <span>0 ms</span>
+                                            <span><span style="color:#facc15;">━ signal</span> · <span style="color:#4ade80;">┄ pulse width</span></span>
+                                            <span>20 ms (50 Hz)</span>
+                                        </div>
+                                    </div>
+
+                                                                        <!-- Code preview — what the firmware does when you move the slider -->
                                     <div style="margin-top:12px;">
                                         <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
                                             <span style="font-size:10px; color:var(--text-secondary, #93a8c4);">🧱 Code that runs on the micro:bit</span>
@@ -943,6 +979,26 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <div style="margin-top:10px; padding:8px 10px; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4); text-align:center;">
                                         last sent: <span id="mqLedLastVerb" style="color:#facc15; font-weight:700;">—</span>
                                     </div>
+                                    <!-- Digital high/low scope: each LED is a GPIO HIGH/LOW signal -->
+                                    <div style="margin-top:10px; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:6px; padding:8px;">
+                                        <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:10px; color:var(--text-secondary, #93a8c4);">
+                                            <span>📟 GPIO digital output</span>
+                                            <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; color:#facc15;">3.3 V CMOS</span>
+                                        </div>
+                                        <svg viewBox="0 0 200 40" preserveAspectRatio="none" style="width:100%; height:40px; display:block; background:#0a1628; border-radius:4px;">
+                                            <g stroke="var(--border, #1d3556)" stroke-width="0.4">
+                                                <line x1="0" y1="10" x2="200" y2="10"/>
+                                                <line x1="0" y1="30" x2="200" y2="30"/>
+                                                <line x1="100" y1="0" x2="100" y2="40"/>
+                                            </g>
+                                            <text x="2" y="9" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">3.3V</text>
+                                            <text x="2" y="38" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">0V</text>
+                                            <text x="20" y="9" fill="#facc15" font-family="JetBrains Mono, monospace" font-size="6">L (P8)</text>
+                                            <text x="120" y="9" fill="#facc15" font-family="JetBrains Mono, monospace" font-size="6">R (P12)</text>
+                                            <path id="mqLedScopeL" d="M 0 30 L 100 30" fill="none" stroke="#facc15" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+                                            <path id="mqLedScopeR" d="M 100 30 L 200 30" fill="none" stroke="#fb923c" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+                                        </svg>
+                                    </div>
                                 </div>
 
                                 <!-- 4× RGB NEOPIXELS -->
@@ -970,7 +1026,37 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <div style="font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--text-secondary, #93a8c4);">3</div>
                                         </div>
                                     </div>
-                                    <!-- Color pickers -->
+                                    <!-- WS2812 protocol timing — each pixel is 24 bits at ~800 kHz.
+                                         T0H = 0.4 us HIGH, T0L = 0.85 us LOW (encodes a '0').
+                                         T1H = 0.8 us HIGH, T1L = 0.45 us LOW (encodes a '1'). -->
+                                    <div style="background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:8px; padding:10px; margin-bottom:10px;">
+                                        <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:10px; color:var(--text-secondary, #93a8c4);">
+                                            <span>🎼 WS2812 bit timing · self-clocked single-wire serial</span>
+                                            <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; color:#f472b6;">~800 kHz</span>
+                                        </div>
+                                        <svg viewBox="0 0 400 60" preserveAspectRatio="none" style="width:100%; height:60px; display:block; background:#0a1628; border-radius:4px;">
+                                            <g stroke="var(--border, #1d3556)" stroke-width="0.5">
+                                                <line x1="0" y1="15" x2="400" y2="15"/>
+                                                <line x1="0" y1="45" x2="400" y2="45"/>
+                                            </g>
+                                            <text x="2" y="13" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">5 V</text>
+                                            <text x="2" y="56" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">0 V</text>
+                                            <path d="M 0 45 L 0 15 L 20 15 L 20 45 L 62 45" fill="none" stroke="#f472b6" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                                            <text x="31" y="58" fill="#f472b6" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">"0"</text>
+                                            <path d="M 78 45 L 78 15 L 122 15 L 122 45 L 140 45" fill="none" stroke="#f472b6" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                                            <text x="109" y="58" fill="#f472b6" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">"1"</text>
+                                            <text x="10" y="11" fill="#4ade80" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">0.4us</text>
+                                            <text x="100" y="11" fill="#4ade80" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">0.8us</text>
+                                            <text x="160" y="13" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">pixel 0 frame (24-bit GRB):</text>
+                                            <path id="mqNeoFrameTrace" d="" fill="none" stroke="#f472b6" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
+                                        </svg>
+                                        <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary, #93a8c4); font-family:'JetBrains Mono', monospace; margin-top:4px;">
+                                            <span><span style="color:#f472b6;">━</span> bit cells</span>
+                                            <span id="mqNeoFrameLabel" style="color:#f472b6;">G:00 R:00 B:00</span>
+                                        </div>
+                                    </div>
+
+                                                                        <!-- Color pickers -->
                                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
                                         <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary, #93a8c4);">
                                             <span style="min-width:48px; font-family:'JetBrains Mono', monospace;">RGB 0</span>
@@ -1007,8 +1093,19 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     </div>
                                     <!-- Live waveform of the chosen frequency -->
                                     <div style="background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:8px; padding:10px; margin-bottom:10px;">
-                                        <svg id="mqBuzzWave" viewBox="0 0 200 40" preserveAspectRatio="none" style="width:100%; height:40px; display:block;">
-                                            <path id="mqBuzzWavePath" d="M 0 20 L 200 20" stroke="#fbbf24" stroke-width="1.5" fill="none"/>
+                                        <svg id="mqBuzzWave" viewBox="0 0 200 50" preserveAspectRatio="none" style="width:100%; height:50px; display:block; background:#0a1628; border-radius:4px;">
+                                            <g stroke="var(--border, #1d3556)" stroke-width="0.4">
+                                                <line x1="0" y1="12" x2="200" y2="12"/>
+                                                <line x1="0" y1="25" x2="200" y2="25"/>
+                                                <line x1="0" y1="38" x2="200" y2="38"/>
+                                                <line x1="50" y1="0" x2="50" y2="50"/>
+                                                <line x1="100" y1="0" x2="100" y2="50"/>
+                                                <line x1="150" y1="0" x2="150" y2="50"/>
+                                            </g>
+                                            <line x1="0" y1="25" x2="200" y2="25" stroke="#fbbf24" stroke-width="0.4" stroke-opacity="0.4"/>
+                                            <text x="2" y="11" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">+V</text>
+                                            <text x="2" y="48" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">-V</text>
+                                            <path id="mqBuzzWavePath" d="M 0 25 L 200 25" stroke="#fbbf24" stroke-width="1.6" fill="none" vector-effect="non-scaling-stroke"/>
                                         </svg>
                                         <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--text-secondary, #93a8c4); margin-top:2px;">
                                             <span><span id="mqBuzzFreqDisplay" style="color:#fbbf24;">440</span> Hz</span>
@@ -1048,42 +1145,87 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         <span style="font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:400; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:1px 6px; border-radius:4px;">P1·P2</span>
                                         <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Sends DIST? to the robot, gets DIST:cm back. 'DIST:-' = no echo / out of range.">DIST?</span>
                                     </div>
-                                    <!-- Glossy half-circle gauge -->
-                                    <div style="background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:10px; padding:14px 8px 6px; margin-bottom:10px;">
-                                        <div style="position:relative; max-width:300px; margin:0 auto;">
-                                            <svg viewBox="0 0 200 120" style="width:100%; height:auto; display:block;">
+                                    <!-- BAT ECHOLOCATION SCOPE — same physics as HC-SR04: emit chirp,
+                                         time the echo, divide by 2, multiply by speed of sound. -->
+                                    <div style="background:linear-gradient(180deg,#0b1426 0%,#020a14 100%); border:1px solid var(--border, #1d3556); border-radius:10px; padding:12px 8px 8px; margin-bottom:10px;">
+                                        <div style="position:relative; max-width:340px; margin:0 auto;">
+                                            <svg viewBox="0 0 200 140" style="width:100%; height:auto; display:block;">
                                                 <defs>
-                                                    <linearGradient id="mqDistGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                        <stop offset="0%" stop-color="#f87171"/>
-                                                        <stop offset="30%" stop-color="#fbbf24"/>
-                                                        <stop offset="60%" stop-color="#4ade80"/>
-                                                    </linearGradient>
+                                                    <radialGradient id="mqBatGlow" cx="50%" cy="100%" r="60%">
+                                                        <stop offset="0%" stop-color="#c084fc" stop-opacity="0.6"/>
+                                                        <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
+                                                    </radialGradient>
                                                 </defs>
-                                                <!-- gauge background arc -->
-                                                <path d="M 18 100 A 82 82 0 0 1 182 100" fill="none" stroke="#1d3556" stroke-width="14" stroke-linecap="round"/>
-                                                <!-- gauge fill arc (length set by JS via stroke-dasharray) -->
-                                                <path id="mqDistGaugeArc" d="M 18 100 A 82 82 0 0 1 182 100" fill="none" stroke="url(#mqDistGaugeGrad)" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100" style="transition:stroke-dasharray 0.25s;"/>
-                                                <!-- tick marks -->
-                                                <text x="14" y="118" fill="#93a8c4" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">0</text>
-                                                <text x="100" y="22" fill="#93a8c4" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">200</text>
-                                                <text x="186" y="118" fill="#93a8c4" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">400+</text>
-                                                <!-- emoji + numeric center -->
-                                                <text id="mqDistEmoji" x="100" y="64" font-size="22" text-anchor="middle">📡</text>
-                                                <text id="mqDistGaugeNum" x="100" y="90" fill="#4ade80" font-size="22" font-weight="700" text-anchor="middle" font-family="JetBrains Mono, monospace">— cm</text>
+                                                <!-- Stars -->
+                                                <g fill="#c084fc" opacity="0.5">
+                                                    <circle cx="22" cy="18" r="0.7"/>
+                                                    <circle cx="60" cy="30" r="0.5"/>
+                                                    <circle cx="148" cy="22" r="0.6"/>
+                                                    <circle cx="178" cy="42" r="0.5"/>
+                                                    <circle cx="40" cy="55" r="0.4"/>
+                                                    <circle cx="170" cy="70" r="0.5"/>
+                                                </g>
+                                                <!-- Range arcs -->
+                                                <g fill="none" stroke="#c084fc" stroke-width="0.5" stroke-opacity="0.25" stroke-dasharray="2 2">
+                                                    <path d="M 80 120 A 20 20 0 0 1 120 120"/>
+                                                    <path d="M 60 120 A 40 40 0 0 1 140 120"/>
+                                                    <path d="M 35 120 A 65 65 0 0 1 165 120"/>
+                                                    <path d="M 18 120 A 82 82 0 0 1 182 120"/>
+                                                </g>
+                                                <text x="122" y="103" fill="#c084fc" font-size="6" font-family="JetBrains Mono, monospace" opacity="0.6">10cm</text>
+                                                <text x="142" y="83" fill="#c084fc" font-size="6" font-family="JetBrains Mono, monospace" opacity="0.6">30cm</text>
+                                                <text x="167" y="58" fill="#c084fc" font-size="6" font-family="JetBrains Mono, monospace" opacity="0.6">1m</text>
+                                                <text x="183" y="33" fill="#c084fc" font-size="6" font-family="JetBrains Mono, monospace" opacity="0.6">2m+</text>
+                                                <!-- Outgoing chirps — 3 expanding arcs -->
+                                                <g fill="none" stroke="#c084fc" stroke-width="1.2" opacity="0" style="transform-origin:100px 120px; animation: mqBatPing 1.6s linear infinite;">
+                                                    <path d="M 60 120 A 40 40 0 0 1 140 120"/>
+                                                </g>
+                                                <g fill="none" stroke="#c084fc" stroke-width="1" opacity="0" style="transform-origin:100px 120px; animation: mqBatPing 1.6s linear infinite; animation-delay:0.4s;">
+                                                    <path d="M 60 120 A 40 40 0 0 1 140 120"/>
+                                                </g>
+                                                <g fill="none" stroke="#c084fc" stroke-width="0.8" opacity="0" style="transform-origin:100px 120px; animation: mqBatPing 1.6s linear infinite; animation-delay:0.8s;">
+                                                    <path d="M 60 120 A 40 40 0 0 1 140 120"/>
+                                                </g>
+                                                <!-- Detected blip (JS sets cy from current distance) -->
+                                                <g id="mqBatBlip" opacity="0">
+                                                    <circle cx="100" cy="60" r="7" fill="#c084fc" opacity="0.25"/>
+                                                    <circle cx="100" cy="60" r="4" fill="#c084fc"/>
+                                                </g>
+                                                <!-- The bat -->
+                                                <g id="mqBat">
+                                                    <circle cx="100" cy="120" r="22" fill="url(#mqBatGlow)"/>
+                                                    <path d="M 100 120 C 86 120, 78 116, 70 110 L 60 113 L 70 105 L 78 108 L 84 102 L 90 110 L 100 112 Z" fill="#1d3556" stroke="#c084fc" stroke-width="0.7"/>
+                                                    <path d="M 100 120 C 114 120, 122 116, 130 110 L 140 113 L 130 105 L 122 108 L 116 102 L 110 110 L 100 112 Z" fill="#1d3556" stroke="#c084fc" stroke-width="0.7"/>
+                                                    <ellipse cx="100" cy="114" rx="5" ry="7" fill="#0a1628" stroke="#c084fc" stroke-width="0.7"/>
+                                                    <path d="M 96 109 L 94 104 L 99 108 Z" fill="#c084fc"/>
+                                                    <path d="M 104 109 L 106 104 L 101 108 Z" fill="#c084fc"/>
+                                                    <circle cx="98" cy="112" r="0.8" fill="#fbbf24"/>
+                                                    <circle cx="102" cy="112" r="0.8" fill="#fbbf24"/>
+                                                </g>
+                                                <text x="100" y="137" fill="#93a8c4" font-size="6" font-family="JetBrains Mono, monospace" text-anchor="middle">echolocation · HC-SR04 (P1 trig · P2 echo)</text>
+                                                <!-- Hidden compat shims -->
+                                                <text id="mqDistEmoji" x="0" y="0" opacity="0" font-size="1">🦇</text>
+                                                <text id="mqDistGaugeNum" x="0" y="0" opacity="0" font-size="1">— cm</text>
+                                                <path id="mqDistGaugeArc" d="" stroke-dasharray="0 100"/>
                                             </svg>
+                                            <div style="text-align:center; margin-top:4px; font-family:'JetBrains Mono', monospace;">
+                                                <span id="mqDistRadarNum" style="font-size:24px; font-weight:700; color:#c084fc;">— cm</span>
+                                                <span id="mqDistRadarStatus" style="margin-left:10px; font-size:11px; color:var(--text-secondary, #93a8c4);">listening...</span>
+                                            </div>
+                                            <div style="text-align:center; margin-top:4px; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4);">
+                                                d = (<span id="mqDistTofMs" style="color:#facc15;">— ms</span> &times; 340 m/s) / 2
+                                            </div>
                                         </div>
-                                        <!-- Hidden compatibility shims for legacy JS -->
                                         <span id="mqDistBig" style="display:none;">— cm</span>
                                         <span id="mqDistBar" style="display:none;"></span>
                                         <span id="mqDistRange" style="display:none;">range 0–500 cm</span>
-                                        <!-- Sparkline: last ~30 sec of distance values -->
-                                        <div style="margin-top:6px;">
+                                        <div style="margin-top:8px;">
                                             <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary, #93a8c4); font-family:'JetBrains Mono', monospace; margin-bottom:2px;">
-                                                <span>📈 last 30 s</span>
+                                                <span>📈 last 30 pings</span>
                                                 <span id="mqDistSparkInfo">—</span>
                                             </div>
-                                            <svg viewBox="0 0 100 24" preserveAspectRatio="none" style="width:100%; height:24px; display:block; background:var(--card-bg-2, #0a1628); border-radius:4px;">
-                                                <path id="mqDistSpark" d="" fill="none" stroke="#4ade80" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
+                                            <svg viewBox="0 0 100 24" preserveAspectRatio="none" style="width:100%; height:24px; display:block; background:#0a1628; border-radius:4px;">
+                                                <path id="mqDistSpark" d="" fill="none" stroke="#c084fc" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
                                             </svg>
                                         </div>
                                     </div>
@@ -1168,6 +1310,21 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <!-- Last code + flash indicator -->
                                     <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
                                         <div id="mqIRPulse" class="mq-glossy-dome" style="--glow:#c084fc; width:56px; height:56px; background-color:var(--border, #1d3556); flex-shrink:0;"></div>
+                                        <div id="mqNECFrameWrap" style="flex:1; min-width:160px;">
+                                            <div style="font-size:9px; color:var(--text-secondary, #93a8c4); font-family:'JetBrains Mono', monospace; margin-bottom:2px; display:flex; align-items:center; gap:6px;">
+                                                <span>📺 NEC frame · last received</span>
+                                                <span style="margin-left:auto; color:#c084fc;">38 kHz carrier</span>
+                                            </div>
+                                            <svg viewBox="0 0 200 36" preserveAspectRatio="none" style="width:100%; height:36px; display:block; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:4px;">
+                                                <line x1="0" y1="28" x2="200" y2="28" stroke="var(--border, #1d3556)" stroke-width="0.5"/>
+                                                <path id="mqNECTrace" d="M 0 28" fill="none" stroke="#c084fc" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
+                                                <text x="3" y="34" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">preamble</text>
+                                                <text x="44" y="34" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">addr</text>
+                                                <text x="76" y="34" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">~addr</text>
+                                                <text x="112" y="34" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">cmd</text>
+                                                <text x="148" y="34" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="6">~cmd</text>
+                                            </svg>
+                                        </div>
                                         <div style="flex:1;">
                                             <div style="font-size:11px; color:var(--text-secondary, #93a8c4);">last code received</div>
                                             <div style="font-family:'JetBrains Mono', monospace; font-size:22px; font-weight:700; color:#c084fc; line-height:1.1;" id="mqIRBig">—</div>
