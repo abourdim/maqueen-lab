@@ -119,12 +119,24 @@
       streamsBtn.style.color = streamsOn ? '#4ade80' : '#fbbf24';
       streamsBtn.style.borderColor = streamsOn ? '#4ade80' : '#fbbf24';
     }
+    function clearStaleStreamReadouts() {
+      if (elAcc)   elAcc.textContent = '—, —, —';
+      if (elIR)    elIR.textContent  = '—';
+    }
+    function clearStalePollReadouts() {
+      // Called when leaving Maqueen tab — line/dist polls are paused so
+      // their last values are stale.
+      if (elDist)  { elDist.textContent = '— cm'; elDist.style.color = '#93a8c4'; }
+      if (elLineL) { elLineL.style.background = '#1d3556'; elLineL.style.boxShadow = 'none'; }
+      if (elLineR) { elLineR.style.background = '#1d3556'; elLineR.style.boxShadow = 'none'; }
+    }
     function setStreams(on) {
       if (streamsOn === on) return;
       if (!window.bleScheduler || !window.bleScheduler.isConnected()) return;
       streamsOn = on;
       sendVerb(on ? 'STREAM:on' : 'STREAM:off');
       paintStreamsBtn();
+      if (!on) clearStaleStreamReadouts();
     }
     if (streamsBtn) {
       streamsBtn.addEventListener('click', () => {
@@ -145,7 +157,13 @@
       btn.addEventListener('click', () => {
         const page = btn.getAttribute('data-page');
         // small delay so .active class flip / TAB: send happen first
-        setTimeout(() => setStreams(STREAM_TABS.indexOf(page) !== -1), 30);
+        setTimeout(() => {
+          setStreams(STREAM_TABS.indexOf(page) !== -1);
+          // Leaving Maqueen tab pauses the LINE/DIST pollers — clear
+          // their last-shown values so the strip doesn't lie about
+          // currently-flowing data.
+          if (page !== 'maqueen') clearStalePollReadouts();
+        }, 30);
       });
     });
 
