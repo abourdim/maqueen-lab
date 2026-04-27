@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.51"
-const BUILD_DATE = "2026-04-27 06:00 UTC"
+const BUILD_VERSION = "0.1.52"
+const BUILD_DATE = "2026-04-27 07:33 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -511,25 +511,30 @@ basic.forever(function () {
     basic.pause(1000)
 })
 
-// ---------- light + sound streaming (~3 Hz, on change) ----------
-// ---------- light streaming only (V1+V2) ----------
+// ---------- light streaming (~3 Hz, on change) ----------
+// CRITICAL: do NOT call input.compassHeading() in any auto-loop.
+// In CODAL / pxt-microbit, the FIRST call to compassHeading() on an
+// uncalibrated compass auto-triggers the tilt-game calibration, which
+// BLOCKS the calling fiber for ~30 seconds. Since this loop runs in
+// the same fiber context as the BLE handler resources, that block
+// looks identical to a dead firmware: connect succeeds, but every
+// command times out without an echo.
+//
 // soundLevel + onLogoEvent are V2-only — they sometimes trigger
 // MakeCode's '!!proc || !bin.finalPass' assertion when target version
-// resolution drifts. Removed for stability. Compass also wrapped in
-// the same forever loop for fewer concurrent fibers.
+// resolution drifts. Also removed for stability.
+//
+// To get a compass reading, use the CAL:COMPASS verb (which can opt
+// the user into calibration on demand) or expose a COMPASS? query
+// that calls compassHeading() only after a user gesture confirms
+// they're ready to do the tilt-game.
 let lastLight = -1
-let lastCompass = -1
 basic.forever(function () {
     if (btConnected && streamsEnabled) {
         let l = input.lightLevel()
         if (Math.abs(l - lastLight) > 4) {
             lastLight = l
             send("LIGHT:" + l)
-        }
-        let h = input.compassHeading()
-        if (h >= 0 && Math.abs(h - lastCompass) > 2) {
-            lastCompass = h
-            send("COMPASS:" + h)
         }
     }
     basic.pause(300)
