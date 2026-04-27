@@ -144,50 +144,164 @@
 }
 
 /* ====================================================================
-   THEME 4: NIGHT — restrained deep navy with white text (low-light only)
+   THEME 4: NIGHT — refined deep navy. Cards LIFT off the page (lighter
+   than the bg, not darker), borders catch a soft cyan rim-light, text
+   is bright enough to read on every surface.
    ==================================================================== */
 [data-theme="night"] {
-    --bg-color: #0e1726;
-    --panel-bg: #15233a;
-    --card-bg: #15233a;
-    --card-border: rgba(125, 211, 252, 0.18);
+    /* Hierarchy (darkest → lightest): bg-color < bg-deep < card-bg < card-bg-2
+       Cards should feel like glowing slabs floating on the dark page. */
+    --bg-color:  #0a1322;   /* page   — darkest */
+    --bg-deep:   #122036;   /* scope/inset bg — slightly lifted */
+    --card-bg:   #1b2c47;   /* main card surface — clearly above page */
+    --card-bg-2: #213655;   /* nested surface — even brighter */
+    --panel-bg:  #1b2c47;
+    --card-border: rgba(125, 211, 252, 0.32);   /* visible cyan rim */
+    --border:      rgba(125, 211, 252, 0.22);
+    /* Accents */
     --accent: #7dd3fc;
-    --accent-soft: rgba(125, 211, 252, 0.12);
-    --accent-strong: rgba(125, 211, 252, 0.7);
+    --accent-soft: rgba(125, 211, 252, 0.18);
+    --accent-strong: rgba(125, 211, 252, 0.75);
     --accent2: #60a5fa;
-    --danger: #f87171;
-    --muted: #94a3b8;
-    --text: #f1f5f9;
-    --text-secondary: #cbd5e1;
-    --border: #2c3a55;
-    --pill-bg: #1a293f;
-    --pill-border: rgba(125, 211, 252, 0.3);
-    --input-bg: #1a293f;
-    --glow1: rgba(125, 211, 252, 0.10);
-    --glow2: rgba(96, 165, 250, 0.08);
-    --body-glow1: rgba(125, 211, 252, 0.12);
-    --body-glow2: rgba(96, 165, 250, 0.10);
+    --danger: #fca5a5;
+    --muted: #b8c5d9;
+    /* Text — bright + high-contrast. Secondary now near-white, not gray. */
+    --text: #ffffff;
+    --text-secondary: #e2e8f0;
+    --pill-bg: #213655;
+    --pill-border: rgba(125, 211, 252, 0.4);
+    --input-bg: #122036;
+    --glow1: rgba(125, 211, 252, 0.18);
+    --glow2: rgba(96, 165, 250, 0.12);
+    --body-glow1: rgba(125, 211, 252, 0.18);
+    --body-glow2: rgba(96, 165, 250, 0.14);
     --btn-primary-bg: linear-gradient(135deg, #7dd3fc, #38bdf8);
-    --btn-primary-text: #0e1726;
-    --btn-primary-border: rgba(125, 211, 252, 0.7);
-    --connected-bg: rgba(34, 197, 94, 0.20);
+    --btn-primary-text: #0a1322;
+    --btn-primary-border: rgba(125, 211, 252, 0.8);
+    --connected-bg: rgba(34, 197, 94, 0.25);
+    --connected-border: rgba(34, 197, 94, 0.8);
+    --connected-text: #bbf7d0;
+    --connected-dot: #22c55e;
+    --disconnected-bg: rgba(239, 68, 68, 0.18);
+    --disconnected-border: rgba(239, 68, 68, 0.6);
+    --disconnected-dot: #fca5a5;
+    --shadow-color: rgba(0, 0, 0, 0.55);
+    --log-info: #cbd5e1;
+    --log-tx: #6ee7b7;
+    --log-rx: #93c5fd;
+    --log-error: #fca5a5;
+    --log-success: #fde047;
+    --log-warning: #fdba74;
+    /* Cards: subtle top-light gradient + rim glow + drop shadow.
+       Gives every card a 'glowing slab' feel against the dark page. */
+    --card-grad: linear-gradient(180deg, #213655 0%, #1b2c47 70%, #182846 100%);
+    --card-shadow:
+        0 1px 0 rgba(255,255,255,0.10) inset,
+        0 0 0 1px rgba(125,211,252,0.10) inset,
+        0 8px 24px rgba(0,0,0,0.5),
+        0 2px 6px rgba(0,0,0,0.35);
+}
+
+/* ====================================================================
+   THEME 5: COSMOS — magical galaxy purple, slightly darker, kid-friendly
+   ==================================================================== */
+[data-theme="cosmos"] {
+    --bg-color:  #1f1538;       /* deep nebula purple */
+    --bg-deep:   #281b46;
+    --card-bg:   #2e2152;       /* cards lift off the nebula */
+    --card-bg-2: #382862;
+    --panel-bg:  #2e2152;
+    --card-border: rgba(196, 132, 252, 0.30);
+    --border:      rgba(196, 132, 252, 0.20);
+    --accent: #c084fc;          /* lavender */
+    --accent-soft: rgba(196, 132, 252, 0.16);
+    --accent-strong: rgba(196, 132, 252, 0.7);
+    --accent2: #f0abfc;
+    --danger: #fca5a5;
+    --muted: #c4b5d4;
+    --text: #ffffff;
+    --text-secondary: #e9d5ff;
+    --pill-bg: #382862;
+    --pill-border: rgba(196, 132, 252, 0.36);
+    --input-bg: #281b46;
+    --glow1: rgba(196, 132, 252, 0.18);
+    --glow2: rgba(240, 171, 252, 0.12);
+    --body-glow1: rgba(196, 132, 252, 0.20);
+    --body-glow2: rgba(240, 171, 252, 0.14);
+    --btn-primary-bg: linear-gradient(135deg, #c084fc, #a855f7);
+    --btn-primary-text: #fff;
+    --btn-primary-border: rgba(196, 132, 252, 0.8);
+    --connected-bg: rgba(34, 197, 94, 0.22);
     --connected-border: rgba(34, 197, 94, 0.7);
     --connected-text: #bbf7d0;
     --connected-dot: #22c55e;
-    --disconnected-bg: rgba(239, 68, 68, 0.15);
-    --disconnected-border: rgba(239, 68, 68, 0.5);
-    --disconnected-dot: #f87171;
-    --shadow-color: rgba(0, 0, 0, 0.45);
-    --log-info: #94a3b8;
-    --log-tx: #4ade80;
-    --log-rx: #7dd3fc;
-    --log-error: #f87171;
-    --log-success: #fbbf24;
-    --log-warning: #fb923c;
-    --card-bg-2: #1a293f;
-    --bg-deep:   #0a1424;
-    --card-grad: linear-gradient(180deg, #1a293f 0%, #15233a 100%);
-    --card-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 8px 20px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
+    --disconnected-bg: rgba(252, 165, 165, 0.18);
+    --disconnected-border: rgba(252, 165, 165, 0.5);
+    --disconnected-dot: #fca5a5;
+    --shadow-color: rgba(31, 21, 56, 0.55);
+    --log-info: #c4b5d4;
+    --log-tx: #86efac;
+    --log-rx: #c084fc;
+    --log-error: #fca5a5;
+    --log-success: #fde047;
+    --log-warning: #fdba74;
+    --card-grad: linear-gradient(180deg, #382862 0%, #2e2152 70%, #281b46 100%);
+    --card-shadow:
+        0 1px 0 rgba(255,255,255,0.10) inset,
+        0 0 0 1px rgba(196,132,252,0.12) inset,
+        0 8px 24px rgba(31,21,56,0.5),
+        0 2px 6px rgba(0,0,0,0.30);
+}
+
+/* ====================================================================
+   THEME 6: FOREST — deep treehouse green, slightly darker, kid-friendly
+   ==================================================================== */
+[data-theme="forest"] {
+    --bg-color:  #0f2415;
+    --bg-deep:   #173324;
+    --card-bg:   #1d4030;       /* cards = lit clearing */
+    --card-bg-2: #234d3a;
+    --panel-bg:  #1d4030;
+    --card-border: rgba(134, 239, 172, 0.30);
+    --border:      rgba(134, 239, 172, 0.20);
+    --accent: #86efac;          /* fresh-leaf green */
+    --accent-soft: rgba(134, 239, 172, 0.16);
+    --accent-strong: rgba(134, 239, 172, 0.7);
+    --accent2: #fbbf24;         /* sunlight through canopy */
+    --danger: #fca5a5;
+    --muted: #b1c8b8;
+    --text: #f0fdf4;
+    --text-secondary: #d1fae5;
+    --pill-bg: #234d3a;
+    --pill-border: rgba(134, 239, 172, 0.36);
+    --input-bg: #173324;
+    --glow1: rgba(134, 239, 172, 0.16);
+    --glow2: rgba(251, 191, 36, 0.10);
+    --body-glow1: rgba(134, 239, 172, 0.18);
+    --body-glow2: rgba(251, 191, 36, 0.12);
+    --btn-primary-bg: linear-gradient(135deg, #86efac, #4ade80);
+    --btn-primary-text: #0f2415;
+    --btn-primary-border: rgba(134, 239, 172, 0.8);
+    --connected-bg: rgba(34, 197, 94, 0.28);
+    --connected-border: rgba(34, 197, 94, 0.8);
+    --connected-text: #bbf7d0;
+    --connected-dot: #22c55e;
+    --disconnected-bg: rgba(252, 165, 165, 0.16);
+    --disconnected-border: rgba(252, 165, 165, 0.5);
+    --disconnected-dot: #fca5a5;
+    --shadow-color: rgba(15, 36, 21, 0.55);
+    --log-info: #b1c8b8;
+    --log-tx: #86efac;
+    --log-rx: #fbbf24;
+    --log-error: #fca5a5;
+    --log-success: #fde047;
+    --log-warning: #fdba74;
+    --card-grad: linear-gradient(180deg, #234d3a 0%, #1d4030 70%, #173324 100%);
+    --card-shadow:
+        0 1px 0 rgba(255,255,255,0.08) inset,
+        0 0 0 1px rgba(134,239,172,0.10) inset,
+        0 8px 24px rgba(15,36,21,0.5),
+        0 2px 6px rgba(0,0,0,0.28);
 }
 
 * {
@@ -2891,11 +3005,12 @@ input[type="text"]::placeholder {
     color: var(--text) !important;
 }
 
-/* Log area, activity feed, bench response */
-[data-theme] .log-output,
-[data-theme] .log-area,
-[data-theme] .activity-feed,
-[data-theme] #benchResponse {
+/* Log area, activity feed, bench response — apply on EVERY theme
+   (the [data-theme] qualifier was missing the no-attribute default). */
+.log-output,
+.log-area,
+.activity-feed,
+#benchResponse {
     background: var(--input-bg) !important;
     border-color: var(--card-border) !important;
     color: var(--text-secondary) !important;
