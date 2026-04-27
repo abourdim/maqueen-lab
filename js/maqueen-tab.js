@@ -456,12 +456,13 @@
       b.textContent = p.label;
       b.style.cssText = 'flex:1; min-width:80px; padding:8px 6px; background:#0a1628; color:#00d4ff; border:1px solid #00d4ff; border-radius:6px; cursor:pointer; font-size:11px;';
       b.addEventListener('click', () => {
-        document.getElementById('mqS1Slider').value = p.s1;
-        document.getElementById('mqS2Slider').value = p.s2;
-        document.getElementById('mqS1Readout').textContent = p.s1 + '°';
-        document.getElementById('mqS2Readout').textContent = p.s2 + '°';
-        send(`SRV:1,${p.s1}`);
-        send(`SRV:2,${p.s2}`);
+        // Route through the slider 'input' event so initServos's setAngle
+        // path runs — dials, big readouts, code preview, echo status all
+        // update consistently. (Direct send() bypassed the visual chain.)
+        const s1El = document.getElementById('mqS1Slider');
+        const s2El = document.getElementById('mqS2Slider');
+        if (s1El) { s1El.value = p.s1; s1El.dispatchEvent(new Event('input', { bubbles: true })); }
+        if (s2El) { s2El.value = p.s2; s2El.dispatchEvent(new Event('input', { bubbles: true })); }
       });
       presetEl.appendChild(b);
     });
@@ -472,16 +473,137 @@
     const s1 = document.getElementById('mqS1Slider');
     const s2 = document.getElementById('mqS2Slider');
     if (!s1) return;
-    const r1 = document.getElementById('mqS1Readout');
-    const r2 = document.getElementById('mqS2Readout');
-    s1.addEventListener('input', e => {
-      r1.textContent = e.target.value + '°';
-      sendCoalesced(`SRV:1,${e.target.value}`);
+    const r1     = document.getElementById('mqS1Readout');
+    const r2     = document.getElementById('mqS2Readout');
+    const big1   = document.getElementById('mqS1BigReadout');
+    const big2   = document.getElementById('mqS2BigReadout');
+    const dial1  = document.getElementById('mqServoDialS1');
+    const dial2  = document.getElementById('mqServoDialS2');
+    const codeView   = document.getElementById('mqServoCodeView');
+    const codeStatus = document.getElementById('mqServoCodeStatus');
+    let codeTab = 'lib';                 // 'lib' or 'raw'
+    let lastShown = { port: 1, angle: 90 };
+
+    // Inspired by the Servo Explorer pilot: rotate horn, show live code,
+    // confirm with echo latency. All sends already go through the
+    // scheduler in coalesce mode — BLE behavior unchanged.
+    function rotateDial(port, angle) {
+      const d = port === 1 ? dial1 : dial2;
+      if (d) d.setAttribute('transform', `rotate(${angle - 90} 100 100)`);
+    }
+    function setBigReadout(port, angle) {
+      const el = port === 1 ? big1 : big2;
+      if (el) el.textContent = angle + '°';
+    }
+    function renderCode() {
+      if (!codeView) return;
+      const a = lastShown.angle;
+      const port = lastShown.port;
+      const hi = (s) => `<span style="color:#facc15; background:#fbbf2433; padding:0 4px; border-radius:3px;">${s}</span>`;
+      if (codeTab === 'lib') {
+        codeView.innerHTML =
+          `maqueen.servoRun(maqueen.Servos.S${port}, ${hi(a)})`;
+      } else {
+        // raw I²C: motor driver register 0x14 = S1, 0x15 = S2; addr 0x10
+        const reg = port === 1 ? '0x14' : '0x15';
+        codeView.innerHTML =
+          `let buf = pins.createBuffer(2)\n` +
+          `buf[0] = ${reg}      // ${port === 1 ? 'S1' : 'S2'} register\n` +
+          `buf[1] = ${hi(a)}\n` +
+          `pins.i2cWriteBuffer(0x10, buf)`;
+      }
+    }
+    function flashStatus(text, color) {
+      if (!codeStatus) return;
+      codeStatus.textContent = text;
+      codeStatus.style.color = color || '#93a8c4';
+    }
+
+    function setAngle(port, angle, opts) {
+      angle = Math.max(0, Math.min(180, +angle));
+      lastShown = { port, angle };
+      // visual
+      rotateDial(port, angle);
+      setBigReadout(port, angle);
+      const slider = port === 1 ? s1 : s2;
+      const readout = port === 1 ? r1 : r2;
+      if (slider && +slider.value !== angle) slider.value = angle;
+      if (readout) readout.textContent = angle + '°';
+      renderCode();
+      // BLE — coalesced so dragging the slider doesn't drown the channel
+      if (window.bleScheduler) {
+        flashStatus('… sending', '#fbbf24');
+        window.bleScheduler.send(`SRV:${port},${angle}`, { coalesce: true })
+          .then(({ latency } = {}) => {
+            flashStatus(`✓ ${Math.round(latency || 0)} ms`, '#4ade80');
+          })
+          .catch(err => {
+            flashStatus(`✗ ${err && err.message || 'err'}`, '#f87171');
+          });
+      }
+    }
+
+    s1.addEventListener('input', e => setAngle(1, +e.target.value));
+    s2.addEventListener('input', e => setAngle(2, +e.target.value));
+
+    // Quick angle preset buttons (per-servo)
+    document.querySelectorAll('.mq-servo-quick').forEach(b => {
+      b.addEventListener('click', () => {
+        setAngle(+b.dataset.port, +b.dataset.angle);
+      });
     });
-    s2.addEventListener('input', e => {
-      r2.textContent = e.target.value + '°';
-      sendCoalesced(`SRV:2,${e.target.value}`);
+
+    // Sweep — uses scheduler.animate so it's properly rate-limited.
+    const sweeping = { 1: false, 2: false };
+    document.querySelectorAll('.mq-servo-sweep').forEach(b => {
+      const port = +b.dataset.port;
+      b.addEventListener('click', () => {
+        if (!window.bleScheduler) return;
+        if (sweeping[port]) {
+          sweeping[port] = false;
+          window.bleScheduler.stop(`servo-sweep-${port}`);
+          b.textContent = '▶ Sweep';
+          return;
+        }
+        sweeping[port] = true;
+        b.textContent = '⏸ Stop';
+        const start = performance.now();
+        window.bleScheduler.animate(`servo-sweep-${port}`, t => {
+          const phase = ((t % 2000) / 2000) * 2 * Math.PI;
+          const a = Math.round(90 + Math.sin(phase) * 90);
+          // Update visuals every frame
+          rotateDial(port, a);
+          setBigReadout(port, a);
+          const slider = port === 1 ? s1 : s2;
+          const readout = port === 1 ? r1 : r2;
+          if (slider) slider.value = a;
+          if (readout) readout.textContent = a + '°';
+          lastShown = { port, angle: a };
+          renderCode();
+          return `SRV:${port},${a}`;
+        }, 10);
+      });
     });
+
+    // Code-view tab toggle
+    document.querySelectorAll('.mq-servo-codetab').forEach(b => {
+      b.addEventListener('click', () => {
+        codeTab = b.dataset.tab;
+        document.querySelectorAll('.mq-servo-codetab').forEach(x => {
+          const active = x === b;
+          x.classList.toggle('mq-servo-codetab-active', active);
+          x.style.background = active ? '#1d3556' : '#0a1628';
+          x.style.color = active ? '#00d4ff' : '#93a8c4';
+          x.style.borderColor = active ? '#00d4ff' : '#1d3556';
+        });
+        renderCode();
+      });
+    });
+
+    // Initial render
+    rotateDial(1, 90);
+    rotateDial(2, 90);
+    renderCode();
     document.getElementById('mqKitPicker').addEventListener('change', e => applyKit(e.target.value));
 
     // Restore saved kit

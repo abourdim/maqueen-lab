@@ -785,18 +785,91 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 
                                 <!-- SERVOS -->
                                 <div data-mq-sub="servos" class="mq-sub-page" id="mqServosCard" style="background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.3); border-radius:10px; padding:14px;">
-                                    <div style="font-weight:700; color:#00d4ff; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span style="font-size:18px;">🦾</span> Servos <span id="mqServosKitName" style="color:#93a8c4; font-size:11px; font-weight:400;">(generic)</span></div>
-                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px;">
-                                        <span id="mqS1Label" style="font-family:monospace; color:#93a8c4; min-width:40px;">S1</span>
-                                        <input type="range" id="mqS1Slider" min="0" max="180" value="90" style="flex:1; accent-color:#00d4ff;"/>
-                                        <span id="mqS1Readout" style="font-family:monospace; color:#00d4ff; min-width:38px; text-align:right;">90°</span>
+                                    <div style="font-weight:700; color:#00d4ff; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                                        <span style="font-size:18px;">🦾</span> Servos
+                                        <span id="mqServosKitName" style="color:#93a8c4; font-size:11px; font-weight:400;">(generic)</span>
+                                        <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; background:#0a1628; padding:2px 8px; border-radius:4px;" title="Servos use the 'SRV:port,angle' BLE verb. port=1|2, angle=0..180.">SRV:i,a</span>
                                     </div>
-                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:18px;">
-                                        <span id="mqS2Label" style="font-family:monospace; color:#93a8c4; min-width:40px;">S2</span>
-                                        <input type="range" id="mqS2Slider" min="0" max="180" value="90" style="flex:1; accent-color:#00d4ff;"/>
-                                        <span id="mqS2Readout" style="font-family:monospace; color:#00d4ff; min-width:38px; text-align:right;">90°</span>
+
+                                    <!-- Twin horn dials -->
+                                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+                                        <!-- S1 -->
+                                        <div style="background:#0a1628; border:1px solid #1d3556; border-radius:10px; padding:12px;">
+                                            <div style="position:relative; width:100%; max-width:220px; margin:0 auto;">
+                                                <svg viewBox="0 0 200 130" style="width:100%; height:auto;">
+                                                    <!-- arc track -->
+                                                    <path d="M 15 100 A 85 85 0 0 1 185 100" fill="none" stroke="#1d3556" stroke-width="6"/>
+                                                    <!-- tick marks -->
+                                                    <text x="14" y="120" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">0°</text>
+                                                    <text x="100" y="20" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">90°</text>
+                                                    <text x="186" y="120" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">180°</text>
+                                                    <!-- horn -->
+                                                    <g id="mqServoDialS1" transform="rotate(0 100 100)" style="transition: transform 0.18s ease-out;">
+                                                        <line x1="100" y1="100" x2="100" y2="22" stroke="#00d4ff" stroke-width="4" stroke-linecap="round"/>
+                                                        <circle cx="100" cy="100" r="10" fill="#00d4ff"/>
+                                                        <circle cx="100" cy="100" r="5" fill="#0a1628"/>
+                                                    </g>
+                                                    <!-- big readout -->
+                                                    <text x="180" y="40" fill="#00d4ff" font-size="22" font-weight="700" text-anchor="end" font-family="JetBrains Mono, monospace" id="mqS1BigReadout">90°</text>
+                                                </svg>
+                                            </div>
+                                            <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                                                <span id="mqS1Label" style="font-family:monospace; color:#93a8c4; min-width:40px; font-size:12px;">S1</span>
+                                                <input type="range" id="mqS1Slider" min="0" max="180" value="90" style="flex:1; accent-color:#00d4ff;"/>
+                                                <span id="mqS1Readout" style="font-family:monospace; color:#00d4ff; min-width:38px; text-align:right; font-size:11px;">90°</span>
+                                            </div>
+                                            <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
+                                                <button class="mq-servo-quick" data-port="1" data-angle="0"   style="flex:1; padding:5px; background:#0a1628; color:#00d4ff; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">0°</button>
+                                                <button class="mq-servo-quick" data-port="1" data-angle="90"  style="flex:1; padding:5px; background:#0a1628; color:#00d4ff; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">90°</button>
+                                                <button class="mq-servo-quick" data-port="1" data-angle="180" style="flex:1; padding:5px; background:#0a1628; color:#00d4ff; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">180°</button>
+                                                <button class="mq-servo-sweep" data-port="1" style="flex:1; padding:5px; background:#0a1628; color:#facc15; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">▶ Sweep</button>
+                                            </div>
+                                        </div>
+                                        <!-- S2 -->
+                                        <div style="background:#0a1628; border:1px solid #1d3556; border-radius:10px; padding:12px;">
+                                            <div style="position:relative; width:100%; max-width:220px; margin:0 auto;">
+                                                <svg viewBox="0 0 200 130" style="width:100%; height:auto;">
+                                                    <path d="M 15 100 A 85 85 0 0 1 185 100" fill="none" stroke="#1d3556" stroke-width="6"/>
+                                                    <text x="14" y="120" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">0°</text>
+                                                    <text x="100" y="20" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">90°</text>
+                                                    <text x="186" y="120" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">180°</text>
+                                                    <g id="mqServoDialS2" transform="rotate(0 100 100)" style="transition: transform 0.18s ease-out;">
+                                                        <line x1="100" y1="100" x2="100" y2="22" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>
+                                                        <circle cx="100" cy="100" r="10" fill="#4ade80"/>
+                                                        <circle cx="100" cy="100" r="5" fill="#0a1628"/>
+                                                    </g>
+                                                    <text x="180" y="40" fill="#4ade80" font-size="22" font-weight="700" text-anchor="end" font-family="JetBrains Mono, monospace" id="mqS2BigReadout">90°</text>
+                                                </svg>
+                                            </div>
+                                            <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                                                <span id="mqS2Label" style="font-family:monospace; color:#93a8c4; min-width:40px; font-size:12px;">S2</span>
+                                                <input type="range" id="mqS2Slider" min="0" max="180" value="90" style="flex:1; accent-color:#4ade80;"/>
+                                                <span id="mqS2Readout" style="font-family:monospace; color:#4ade80; min-width:38px; text-align:right; font-size:11px;">90°</span>
+                                            </div>
+                                            <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">
+                                                <button class="mq-servo-quick" data-port="2" data-angle="0"   style="flex:1; padding:5px; background:#0a1628; color:#4ade80; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">0°</button>
+                                                <button class="mq-servo-quick" data-port="2" data-angle="90"  style="flex:1; padding:5px; background:#0a1628; color:#4ade80; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">90°</button>
+                                                <button class="mq-servo-quick" data-port="2" data-angle="180" style="flex:1; padding:5px; background:#0a1628; color:#4ade80; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">180°</button>
+                                                <button class="mq-servo-sweep" data-port="2" style="flex:1; padding:5px; background:#0a1628; color:#facc15; border:1px solid #1d3556; border-radius:5px; cursor:pointer; font-size:10px;">▶ Sweep</button>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <!-- Kit presets (apply both servos at once) -->
                                     <div id="mqServoPresets" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;"></div>
+
+                                    <!-- Code preview — what the firmware does when you move the slider -->
+                                    <div style="margin-top:12px;">
+                                        <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                                            <span style="font-size:10px; color:#93a8c4;">🧱 Code that runs on the micro:bit</span>
+                                            <span style="margin-left:auto; display:flex; gap:0;">
+                                                <button class="mq-servo-codetab mq-servo-codetab-active" data-tab="lib" style="padding:3px 9px; background:#1d3556; color:#00d4ff; border:1px solid #00d4ff; border-radius:5px 0 0 5px; cursor:pointer; font-size:10px; font-family:'JetBrains Mono', monospace;">maqueen.* (lib)</button>
+                                                <button class="mq-servo-codetab" data-tab="raw" style="padding:3px 9px; background:#0a1628; color:#93a8c4; border:1px solid #1d3556; border-left:none; border-radius:0 5px 5px 0; cursor:pointer; font-size:10px; font-family:'JetBrains Mono', monospace;">pins.* (raw I²C)</button>
+                                            </span>
+                                            <span id="mqServoCodeStatus" style="font-family:'JetBrains Mono', monospace; font-size:10px; color:#93a8c4; min-width:80px; text-align:right;">— move slider to send —</span>
+                                        </div>
+                                        <pre id="mqServoCodeView" style="margin:0; padding:10px 12px; background:#061121; border:1px solid #1d3556; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#b8c8e0; line-height:1.6; min-height:50px; white-space:pre-wrap;">maqueen.servoRun(maqueen.Servos.S1, <span style="color:#facc15; background:#fbbf2433; padding:0 4px; border-radius:3px;">90</span>)</pre>
+                                    </div>
                                 </div>
 
                                 <!-- SIMPLE LEDS -->
