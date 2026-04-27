@@ -879,48 +879,76 @@
       }
       return 0;                                              // dwell at 0° (wraps to start)
     }
-    document.querySelectorAll('.mq-servo-sweep').forEach(b => {
+    // Helpers exposed so setMode() can stop a sweep BEFORE it tears down
+    // the quick-buttons innerHTML — otherwise the BLE animate keeps firing
+    // on a stale id while the user's click on the new (re-rendered) button
+    // does nothing because the old per-button listener is gone with the DOM.
+    function startSweep(port) {
+      if (!window.bleScheduler) return;
+      if (sweeping[port]) return;
+      sweeping[port] = true;
+      // Update rate: ~12 Hz for slow sweeps, ~25 Hz for very fast ones.
+      // Higher cap (was 20) keeps physical servo motion smooth — at 25 Hz
+      // the servo gets a target every 40 ms, which is faster than its own
+      // ~150 ms slewing time for big moves. So commands BLEND into smooth
+      // physical motion instead of stepping the gearbox.
+      const hz = Math.min(25, Math.max(12, Math.round(25000 / sweepPeriodMs)));
+      window.bleScheduler.animate(`servo-sweep-${port}`, t => {
+        // Read sweepPeriodMs LIVE so slider adjusts speed mid-sweep.
+        const cycleT = (t % sweepPeriodMs) / sweepPeriodMs;
+        const a = Math.round(sweepAngle(cycleT));
+        rotateDial(port, a);
+        setBigReadout(port, a);
+        const slider = port === 1 ? s1 : s2;
+        const readout = port === 1 ? r1 : r2;
+        if (slider) slider.value = a;
+        if (readout) readout.textContent = a + '°';
+        lastShown = { port, angle: a };
+        updateServoScope(a);
+        renderCode();
+        // Feed the visualizers too — sweep mode bypasses setAngle()
+        // which is where mqSweepRadar / mqOdometry / mqMascot usually
+        // pick up the angle. Keep them in sync so the radar beam, the
+        // SLAM-lite projection, and the mascot's sonar antenna all
+        // track during sweep.
+        try { if (port === 1) mqSweepRadar.recordAngle(a); } catch {}
+        try { if (port === 1) mqOdometry.recordAngle(a); } catch {}
+        try { if (port === 1) mqMascot.sonarServo(a); } catch {}
+        return `SRV:${port},${a}`;
+      }, hz);
+      paintSweepButton(port);
+    }
+    function stopSweep(port) {
+      if (!sweeping[port]) {
+        // Even if our state says "stopped", make sure the scheduler doesn't
+        // have a stale animation running (defensive — shouldn't happen).
+        if (window.bleScheduler) window.bleScheduler.stop(`servo-sweep-${port}`);
+        paintSweepButton(port);
+        return;
+      }
+      sweeping[port] = false;
+      if (window.bleScheduler) window.bleScheduler.stop(`servo-sweep-${port}`);
+      paintSweepButton(port);
+    }
+    // Repaint the current sweep button's text from the canonical state.
+    // Always queries the DOM live so it works after innerHTML rewrites.
+    function paintSweepButton(port) {
+      const b = document.querySelector(`.mq-servo-sweep[data-port="${port}"]`);
+      if (!b) return;
+      b.textContent = sweeping[port] ? '⏸ Stop' : '▶ Sweep';
+    }
+    // Document-level event delegation — single listener that survives any
+    // number of setMode() innerHTML rewrites of the quick-buttons container.
+    // Previous implementation bound to each button at init; setMode then
+    // destroyed those bindings by replacing the parent's innerHTML, so the
+    // sweep button silently stopped responding (incl. clicks meant to STOP
+    // an in-flight sweep). Delegation reads .mq-servo-sweep at click time.
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('.mq-servo-sweep');
+      if (!b) return;
       const port = +b.dataset.port;
-      b.addEventListener('click', () => {
-        if (!window.bleScheduler) return;
-        if (sweeping[port]) {
-          sweeping[port] = false;
-          window.bleScheduler.stop(`servo-sweep-${port}`);
-          b.textContent = '▶ Sweep';
-          return;
-        }
-        sweeping[port] = true;
-        b.textContent = '⏸ Stop';
-        // Update rate: ~12 Hz for slow sweeps, ~25 Hz for very fast ones.
-        // Higher cap (was 20) keeps physical servo motion smooth — at 25 Hz
-        // the servo gets a target every 40 ms, which is faster than its own
-        // ~150 ms slewing time for big moves. So commands BLEND into smooth
-        // physical motion instead of stepping the gearbox.
-        const hz = Math.min(25, Math.max(12, Math.round(25000 / sweepPeriodMs)));
-        window.bleScheduler.animate(`servo-sweep-${port}`, t => {
-          // Read sweepPeriodMs LIVE so slider adjusts speed mid-sweep.
-          const cycleT = (t % sweepPeriodMs) / sweepPeriodMs;
-          const a = Math.round(sweepAngle(cycleT));
-          rotateDial(port, a);
-          setBigReadout(port, a);
-          const slider = port === 1 ? s1 : s2;
-          const readout = port === 1 ? r1 : r2;
-          if (slider) slider.value = a;
-          if (readout) readout.textContent = a + '°';
-          lastShown = { port, angle: a };
-          updateServoScope(a);
-          renderCode();
-          // Feed the visualizers too — sweep mode bypasses setAngle()
-          // which is where mqSweepRadar / mqOdometry / mqMascot usually
-          // pick up the angle. Keep them in sync so the radar beam, the
-          // SLAM-lite projection, and the mascot's sonar antenna all
-          // track during sweep.
-          try { if (port === 1) mqSweepRadar.recordAngle(a); } catch {}
-          try { if (port === 1) mqOdometry.recordAngle(a); } catch {}
-          try { if (port === 1) mqMascot.sonarServo(a); } catch {}
-          return `SRV:${port},${a}`;
-        }, hz);
-      });
+      if (sweeping[port]) stopSweep(port);
+      else                 startSweep(port);
     });
 
     // ---- 360° (continuous-rotation) servo mode ----
@@ -951,6 +979,13 @@
       });
       // Stop any continuous spin animation when switching modes
       if (spinTimers[port]) { cancelAnimationFrame(spinTimers[port]); spinTimers[port] = null; }
+      // CRITICAL: stop any running sweep BEFORE we rewrite the buttons.
+      // Otherwise the BLE animate keeps firing on the stale id while the
+      // user's click on the new (re-rendered) button can't see/cancel it.
+      if (sweeping[port]) {
+        sweeping[port] = false;
+        if (window.bleScheduler) window.bleScheduler.stop(`servo-sweep-${port}`);
+      }
       if (m === '360') {
         // Rebuild slider as bipolar -100..+100, default 0 (stop)
         slider.min = '-100'; slider.max = '100'; slider.value = '0';
