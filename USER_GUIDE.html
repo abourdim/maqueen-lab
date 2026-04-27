@@ -379,6 +379,73 @@
   </div>
 </div>
 
+<!-- ============== FIRMWARE BUILD ============== -->
+<h2>🔧 Building the firmware <code>.hex</code></h2>
+<p class="section-sub">The robot needs a <code>.hex</code> file flashed to its micro:bit. Three ways to produce one — pick the simplest that fits your situation.</p>
+
+<details>
+  <summary>🌐 1. Web editor (recommended — zero install, ~2 min)</summary>
+  <div class="body">
+    <ol>
+      <li>Open <a href="https://makecode.microbit.org" target="_blank">makecode.microbit.org</a> → <strong>New Project</strong>.</li>
+      <li>Switch to <strong>JavaScript</strong> view (top-right toggle).</li>
+      <li>Paste the contents of <code>firmware/v1-maqueen-lib.ts</code>.</li>
+      <li><strong>Extensions</strong> → search <code>pxt-maqueen</code> (or paste <code>https://github.com/DFRobot/pxt-maqueen</code>) and accept the conflict prompts.</li>
+      <li>Click <strong>Download ⬇</strong> — saves <code>microbit-Maqueen-Lab.hex</code>.</li>
+      <li>Drag the <code>.hex</code> onto the micro:bit's USB drive.</li>
+    </ol>
+    <p>This is what the project ships with today. Best for occasional rebuilds.</p>
+  </div>
+</details>
+
+<details>
+  <summary>💻 2. Local CLI — <code>pxt-cli</code> (one-time setup, ~30 s per build)</summary>
+  <div class="body">
+    <pre>npm install -g pxt-cli
+mkdir maqueen-fw &amp;&amp; cd maqueen-fw
+pxt target microbit
+# drop v1-maqueen-lib.ts here, add a pxt.json (see below)
+pxt install
+pxt build      # → built/binary.hex</pre>
+    <p>The CLI reads <code>pxt.json</code> from the current directory — that's the project manifest (like <code>package.json</code> for npm). Minimal version:</p>
+    <pre>{
+  "name": "maqueen-lab-fw",
+  "version": "0.1.0",
+  "files": ["v1-maqueen-lib.ts"],
+  "dependencies": {
+    "core": "*",
+    "bluetooth": "*",
+    "microbit-bluetooth": "*",
+    "maqueen": "github:DFRobot/pxt-maqueen#v1.7.16"
+  },
+  "supportedTargets": ["microbit"]
+}</pre>
+    <p><strong>Caveat:</strong> <code>pxt-cli</code> is finicky on Node ≥ 18. Use Node 16 via <code>nvm</code> if installs fail.</p>
+  </div>
+</details>
+
+<details>
+  <summary>🤖 3. GitHub Actions CI (zero local install, ~2 min per push)</summary>
+  <div class="body">
+    <p>Add a workflow at <code>.github/workflows/firmware.yml</code> that on push (or tag) spins up Ubuntu, installs Node 16 + <code>pxt-cli</code>, runs <code>pxt build</code>, and commits the <code>.hex</code> back to the repo (or attaches it to a Release).</p>
+    <p>Hands-off after setup; right call once the firmware stabilizes.</p>
+  </div>
+</details>
+
+<details>
+  <summary>💡 Why ship a <code>.hex</code> instead of source?</summary>
+  <div class="body">
+    <ul>
+      <li><strong>One-click flash</strong> — drag the <code>.hex</code> onto the micro:bit. No MakeCode account, no extension install, ~10 s end-to-end.</li>
+      <li><strong>Version lock</strong> — pins firmware + extension versions (this project pins <code>pxt-maqueen v1.7.16</code> after hitting an IR-namespace breaking change in <code>v1.7.17</code>).</li>
+      <li><strong>Skips the extension dance</strong> — beginners don't have to find and add <code>pxt-maqueen</code>.</li>
+      <li><strong>Reproducibility</strong> — "flash <code>v0.1.38</code>, then tell me the bench numbers" is deterministic.</li>
+      <li><strong>Offline classrooms</strong> — works where MakeCode is blocked.</li>
+      <li><strong>Outdated-firmware detection</strong> — the app reads <code>HELLO:&lt;ver&gt;</code> from the running .hex and warns when stale.</li>
+    </ul>
+  </div>
+</details>
+
 <!-- ============== RESOURCES ============== -->
 <h2>🗺️ Sister pages</h2>
 <p class="section-sub">Same project, different lenses.</p>
