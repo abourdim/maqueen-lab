@@ -51,6 +51,74 @@
   // visualisation stays honest (== last command actually sent).
   let _lastSentL = 0, _lastSentR = 0;
 
+  // -------- LIVE ANATOMY MIRROR ---------------------------
+  // The anatomy mini-map in the card header is a live mirror of the
+  // robot. Every action / sensor update echoes there so the user
+  // builds a spatial map: 'this control = THAT part of the robot'.
+  // Each helper is best-effort: if the SVG element is missing
+  // (older HTML), the call is a no-op.
+  function pulse(id, color, ms) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.color = color;   // sets currentColor for drop-shadow
+    el.classList.remove('mq-anat-pulse');
+    void el.offsetWidth;
+    el.classList.add('mq-anat-pulse');
+    if (ms) setTimeout(() => el.classList.remove('mq-anat-pulse'), ms);
+  }
+  const mqAnat = {
+    led(idx, on) {
+      const el = document.getElementById(idx === 0 || idx === '0' ? 'mqAnatLedL' : 'mqAnatLedR');
+      if (!el) return;
+      el.setAttribute('fill', on ? '#facc15' : '#0a1628');
+      el.style.filter = on ? 'drop-shadow(0 0 6px #facc15)' : '';
+    },
+    line(l, r) {
+      const eL = document.getElementById('mqAnatLineL');
+      const eR = document.getElementById('mqAnatLineR');
+      if (eL) {
+        eL.setAttribute('fill', +l === 0 ? '#facc15' : '#0a1628');
+        eL.style.filter = +l === 0 ? 'drop-shadow(0 0 5px #facc15)' : '';
+      }
+      if (eR) {
+        eR.setAttribute('fill', +r === 0 ? '#facc15' : '#0a1628');
+        eR.style.filter = +r === 0 ? 'drop-shadow(0 0 5px #facc15)' : '';
+      }
+    },
+    sonar() { pulse('mqAnatSonar', '#4ade80', 600); },
+    ir()    { pulse('mqAnatIR',    '#c084fc', 600); },
+    servo(port) {
+      pulse(port === 1 ? 'mqAnatServoS1' : 'mqAnatServoS2', port === 1 ? '#00d4ff' : '#4ade80', 400);
+    },
+    buzzer(durationMs) {
+      const el = document.getElementById('mqAnatBuzzer');
+      if (!el) return;
+      el.style.filter = 'drop-shadow(0 0 8px #fbbf24)';
+      clearTimeout(mqAnat._buzzT);
+      mqAnat._buzzT = setTimeout(() => { el.style.filter = ''; }, durationMs);
+    },
+    neo(i, hex) {
+      const el = document.getElementById('mqAnatNeo' + i);
+      if (el) el.setAttribute('fill', hex);
+    },
+    motors(L, R) {
+      const sL = document.getElementById('mqAnatSpokeL');
+      const sR = document.getElementById('mqAnatSpokeR');
+      function applySpoke(el, val) {
+        if (!el) return;
+        const mag = Math.abs(val) / 255;
+        if (mag < 0.05) { el.style.opacity = '0'; el.style.animation = 'none'; return; }
+        el.style.opacity = '0.95';
+        // Faster duration → faster spin. 0.15 s = full speed.
+        const dur = (1.0 - mag * 0.85).toFixed(2);
+        const dir = val < 0 ? 'reverse' : 'normal';
+        el.style.animation = `mqAnatWheelSpin ${dur}s linear infinite ${dir}`;
+      }
+      applySpoke(sL, L);
+      applySpoke(sR, R);
+    },
+  };
+
   // Drive STOP particle burst — 8 dust particles flying out, CSS-driven.
   function spawnStopPuff() {
     const mascot = document.getElementById('mqMascot');
@@ -80,8 +148,9 @@
       _lastSentL = 0; _lastSentR = 0;
       setLastVerb('STOP');
       if (typeof updateMascot === 'function') updateMascot(0, 0);
-      // Dust puff burst: 8 particles flying outward from STOP point
+      // Dust puff burst + stop the anatomy wheel-spin
       try { spawnStopPuff(); } catch {}
+      try { mqAnat.motors(0, 0); } catch {}
       return;
     }
     const ref = 200;
@@ -96,6 +165,7 @@
     _lastSentL = L; _lastSentR = R;
     setLastVerb(`M:${L},${R}`);
     if (typeof updateMascot === 'function') updateMascot(L, R);
+    try { mqAnat.motors(L, R); } catch {}
   }
   // Stub overridden in initDriveJuice() once the SVG is on screen.
   let updateMascot = null;
@@ -625,6 +695,7 @@
       if (readout) readout.textContent = angle + '°';
       updateServoScope(angle);
       renderCode();
+      try { mqAnat.servo(port); } catch {}
       // BLE — coalesced so dragging the slider doesn't drown the channel
       if (window.bleScheduler) {
         flashStatus('… sending', '#fbbf24');
@@ -956,6 +1027,7 @@
       if (tape) tape.textContent = verb;
       ledOn[idx] = on;
       updateLedScope();
+      try { mqAnat.led(+idx, on); } catch {}
       send(verb);
     }
     updateLedScope();
@@ -1007,6 +1079,7 @@
   function setPearl(i, hex) {
     const p = document.getElementById('mqPearl' + i);
     if (p) p.style.setProperty('--c', hex);
+    try { mqAnat.neo(i, hex); } catch {}
   }
   function setPearlRGB(i, r, g, b) {
     const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
@@ -1118,6 +1191,7 @@
       wavesEl.style.opacity = '1';
       clearTimeout(pulseWaves._t);
       pulseWaves._t = setTimeout(() => { wavesEl.style.opacity = '0'; }, durationMs);
+      try { mqAnat.buzzer(durationMs); } catch {}
     }
     document.querySelectorAll('.mq-note').forEach(n => {
       n.addEventListener('click', () => {
@@ -1206,6 +1280,7 @@
       batBlip.querySelectorAll('circle').forEach(c => c.setAttribute('cy', yPos.toFixed(1)));
       batBlip.setAttribute('opacity', '1');
     }
+    try { mqAnat.sonar(); } catch {}
     // Sonar blip — same Y mapping as bat
     const sonarBlip = document.getElementById('mqSonarBlip');
     if (sonarBlip) {
@@ -1359,6 +1434,7 @@
       setDomeOn(pulse, '#c084fc', true);
       setTimeout(() => setDomeOn(pulse, '#c084fc', false), 600);
     }
+    try { mqAnat.ir(); } catch {}
     if (irHistory[irHistory.length - 1] !== code) {
       irHistory.push(code);
       if (irHistory.length > 5) irHistory.shift();
@@ -1422,6 +1498,7 @@
     setDomeOn(eyeR, '#fbbf24', r == 0);
     if (valL) valL.textContent = l;
     if (valR) valR.textContent = r;
+    try { mqAnat.line(l, r); } catch {}
     // Sparkline: invert so the line goes UP when on black (more interesting)
     ensureLineSparks();
     if (lineSparkL) lineSparkL.push(l == 0 ? 1 : 0);

@@ -552,23 +552,26 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <stop offset="100%" stop-color="#1e3a8a"/>
                                         </linearGradient>
                                     </defs>
-                                    <!-- Wheels (Drive) -->
+                                    <!-- Wheels (Drive) — animation rate driven by JS via --rl/--rr CSS vars -->
                                     <g class="mq-anat-part" data-mq-target="drive" style="cursor:pointer;">
                                         <rect x="6" y="38" width="20" height="60" rx="4" fill="#1e293b" stroke="#fb923c" stroke-width="1.2"/>
                                         <rect x="194" y="38" width="20" height="60" rx="4" fill="#1e293b" stroke="#fb923c" stroke-width="1.2"/>
+                                        <!-- Spoke marker — invisible at rest, spins when motor active -->
+                                        <line id="mqAnatSpokeL" x1="16" y1="50" x2="16" y2="86" stroke="#fb923c" stroke-width="1.6" stroke-linecap="round" style="transform-origin:16px 68px; opacity:0;"/>
+                                        <line id="mqAnatSpokeR" x1="204" y1="50" x2="204" y2="86" stroke="#fb923c" stroke-width="1.6" stroke-linecap="round" style="transform-origin:204px 68px; opacity:0;"/>
                                         <title>Drive (motors / wheels)</title>
                                     </g>
                                     <!-- Body -->
                                     <rect x="32" y="22" width="156" height="92" rx="14" fill="url(#mqAnatomyBody)" stroke="#0f1e35" stroke-width="1"/>
-                                    <!-- Line sensors at front (bottom) -->
+                                    <!-- Line sensors at front — fill flips yellow when sensor over black line -->
                                     <g class="mq-anat-part" data-mq-target="lines" style="cursor:pointer;">
-                                        <circle cx="80"  cy="108" r="5" fill="#0a1628" stroke="#4ade80" stroke-width="1.2"/>
-                                        <circle cx="140" cy="108" r="5" fill="#0a1628" stroke="#4ade80" stroke-width="1.2"/>
+                                        <circle id="mqAnatLineL" cx="80"  cy="108" r="5" fill="#0a1628" stroke="#4ade80" stroke-width="1.2" style="transition:fill 0.15s, filter 0.15s;"/>
+                                        <circle id="mqAnatLineR" cx="140" cy="108" r="5" fill="#0a1628" stroke="#4ade80" stroke-width="1.2" style="transition:fill 0.15s, filter 0.15s;"/>
                                         <title>Line sensors (P13 / P14)</title>
                                     </g>
-                                    <!-- Ultrasonic at front center -->
+                                    <!-- Ultrasonic — pulses on each ping -->
                                     <g class="mq-anat-part" data-mq-target="ultrasonic" style="cursor:pointer;">
-                                        <rect x="98" y="100" width="24" height="14" rx="2" fill="#1e293b" stroke="#4ade80" stroke-width="1"/>
+                                        <rect id="mqAnatSonar" x="98" y="100" width="24" height="14" rx="2" fill="#1e293b" stroke="#4ade80" stroke-width="1" style="transition:filter 0.2s;"/>
                                         <circle cx="105" cy="107" r="3.5" fill="#0a1628" stroke="#4ade80" stroke-width="0.8"/>
                                         <circle cx="115" cy="107" r="3.5" fill="#0a1628" stroke="#4ade80" stroke-width="0.8"/>
                                         <title>Ultrasonic distance (P1 trig · P2 echo)</title>
@@ -576,34 +579,35 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <!-- micro:bit in middle -->
                                     <rect x="80" y="48" width="60" height="40" rx="4" fill="#0a1628" stroke="#94a3b8" stroke-width="0.8"/>
                                     <text x="110" y="72" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">micro:bit</text>
-                                    <!-- Onboard LEDs (sides of micro:bit) -->
+                                    <!-- Onboard LEDs — fill flips yellow when ON -->
                                     <g class="mq-anat-part" data-mq-target="leds" style="cursor:pointer;">
-                                        <circle cx="58" cy="56" r="4" fill="#0a1628" stroke="#facc15" stroke-width="1.2"/>
-                                        <circle cx="162" cy="56" r="4" fill="#0a1628" stroke="#facc15" stroke-width="1.2"/>
+                                        <circle id="mqAnatLedL" cx="58"  cy="56" r="4" fill="#0a1628" stroke="#facc15" stroke-width="1.2" style="transition:fill 0.15s, filter 0.15s;"/>
+                                        <circle id="mqAnatLedR" cx="162" cy="56" r="4" fill="#0a1628" stroke="#facc15" stroke-width="1.2" style="transition:fill 0.15s, filter 0.15s;"/>
                                         <title>Simple LEDs (P8 / P12)</title>
                                     </g>
-                                    <!-- 4 NeoPixels along front edge -->
+                                    <!-- 4 NeoPixels — colors update live as user picks them -->
                                     <g class="mq-anat-part" data-mq-target="neopixels" style="cursor:pointer;">
-                                        <circle cx="60"  cy="92" r="3" fill="#ef4444"/>
-                                        <circle cx="80"  cy="92" r="3" fill="#22c55e"/>
-                                        <circle cx="140" cy="92" r="3" fill="#3b82f6"/>
-                                        <circle cx="160" cy="92" r="3" fill="#f472b6"/>
+                                        <circle id="mqAnatNeo0" cx="60"  cy="92" r="3" fill="#ef4444"/>
+                                        <circle id="mqAnatNeo1" cx="80"  cy="92" r="3" fill="#22c55e"/>
+                                        <circle id="mqAnatNeo2" cx="140" cy="92" r="3" fill="#3b82f6"/>
+                                        <circle id="mqAnatNeo3" cx="160" cy="92" r="3" fill="#f472b6"/>
                                         <title>NeoPixels x 4 (P15)</title>
                                     </g>
-                                    <!-- Servo headers on sides -->
+                                    <!-- Servo headers — pulse when their servo moves -->
                                     <g class="mq-anat-part" data-mq-target="servos" style="cursor:pointer;">
-                                        <rect x="34" y="38" width="6" height="10" rx="1" fill="#1e293b" stroke="#00d4ff" stroke-width="0.8"/>
-                                        <rect x="180" y="38" width="6" height="10" rx="1" fill="#1e293b" stroke="#4ade80" stroke-width="0.8"/>
+                                        <rect id="mqAnatServoS1" x="34"  y="38" width="6" height="10" rx="1" fill="#1e293b" stroke="#00d4ff" stroke-width="0.8" style="transition:filter 0.18s;"/>
+                                        <rect id="mqAnatServoS2" x="180" y="38" width="6" height="10" rx="1" fill="#1e293b" stroke="#4ade80" stroke-width="0.8" style="transition:filter 0.18s;"/>
                                         <title>Servos S1 / S2</title>
                                     </g>
-                                    <!-- IR receiver and buzzer on the back -->
+                                    <!-- IR receiver — pulses on every code received -->
                                     <g class="mq-anat-part" data-mq-target="ir" style="cursor:pointer;">
-                                        <rect x="50" y="28" width="14" height="8" rx="1" fill="#1e293b" stroke="#c084fc" stroke-width="0.8"/>
+                                        <rect id="mqAnatIR" x="50" y="28" width="14" height="8" rx="1" fill="#1e293b" stroke="#c084fc" stroke-width="0.8" style="transition:filter 0.2s;"/>
                                         <title>IR remote receiver</title>
                                     </g>
+                                    <!-- Buzzer — concentric ring pulse while playing -->
                                     <g class="mq-anat-part" data-mq-target="buzzer" style="cursor:pointer;">
                                         <circle cx="160" cy="32" r="6" fill="#1e293b" stroke="#fbbf24" stroke-width="0.8"/>
-                                        <circle cx="160" cy="32" r="2.5" fill="#fbbf24"/>
+                                        <circle id="mqAnatBuzzer" cx="160" cy="32" r="2.5" fill="#fbbf24" style="transition:filter 0.18s;"/>
                                         <title>Piezo buzzer (P0)</title>
                                     </g>
                                     <!-- Mechanic kit attachment overlay (drawn at the front; populated by JS) -->
@@ -723,6 +727,16 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                               .mq-radar-pick.mq-radar-pick-active {
                                 background: var(--accent-soft, rgba(56,189,248,0.15)) !important;
                                 box-shadow: 0 0 8px var(--accent-soft, rgba(56,189,248,0.3));
+                              }
+                              /* Anatomy live mirror — wheel spokes spin when motors move */
+                              @keyframes mqAnatWheelSpin {
+                                from { transform: rotate(0deg); } to { transform: rotate(360deg); }
+                              }
+                              /* Pulse halos used by the live anatomy mirror */
+                              .mq-anat-pulse { animation: mqAnatPulse2 0.6s ease-out; }
+                              @keyframes mqAnatPulse2 {
+                                from { filter: drop-shadow(0 0 8px currentColor); }
+                                to   { filter: drop-shadow(0 0 0 transparent); }
                               }
                               /* === Geeky subtle animations === */
                               /* Anatomy idle breathing — full SVG slow-pulses when nothing happening */
