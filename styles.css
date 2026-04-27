@@ -4401,3 +4401,108 @@ html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
   }
   .mq-odo-stat { flex: 1 1 45%; }
 }
+
+/* ===========================================================
+ * 📌 Log rail — pin MESSAGE LOG to the right side of viewport
+ * Toggled by body.log-pinned. Width is a CSS custom property
+ * (--log-rail-w) updated by js/log-rail.js on drag. The card
+ * itself becomes position:fixed so it ignores all parent
+ * containers and stays glued to the right edge regardless of
+ * page scroll.
+ * =========================================================== */
+:root { --log-rail-w: 380px; }
+
+body.log-pinned {
+  /* Push main content left so the rail doesn't cover it.
+     Transition is short enough to feel snappy, long enough
+     to read as a deliberate UI action. */
+  padding-right: var(--log-rail-w);
+  transition: padding-right 0.18s ease-out;
+}
+
+body.log-pinned .log-card {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  width: var(--log-rail-w);
+  /* Subtract the 12px insets (top/bottom) for the height calc */
+  max-height: calc(100vh - 24px);
+  margin: 0;
+  z-index: 950;
+  display: flex;
+  flex-direction: column;
+  /* Layered shadow + 1 px border ring to lift it off the page */
+  box-shadow:
+    -10px 0 28px rgba(0, 0, 0, 0.4),
+    0 0 0 1px var(--border, #1d3556);
+  /* Slightly stronger backdrop on glassy themes so the log stays legible */
+  background: var(--card-bg, #0f1e35);
+}
+/* Make the inner log scroll to fill remaining height — without this
+   the log just sits short and the bottom of the rail is empty. */
+body.log-pinned .log-card #log {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Drag handle on the LEFT edge of the pinned card. Wide enough to
+   be hittable (8 px), but transparent until hover/drag — we don't
+   want a visible bar competing with the card's border. */
+.log-rail-handle {
+  position: absolute;
+  left: -4px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+  background: transparent;
+  z-index: 951;
+  /* Hidden when not pinned so it can't catch clicks in inline mode */
+  display: none;
+  touch-action: none;
+}
+body.log-pinned .log-rail-handle {
+  display: block;
+}
+.log-rail-handle:hover,
+.log-rail-handle.dragging {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--accent, #38bdf8) 45%,
+    var(--accent, #38bdf8) 55%,
+    transparent 100%
+  );
+}
+.log-rail-handle.dragging {
+  /* Subtle expansion so user knows they grabbed it */
+  width: 10px;
+  left: -5px;
+}
+
+/* The pin button — same look as Clear/Export but with an accent
+   when pinned (so it reads as "active state"). */
+#logPinBtn { display: inline-flex; align-items: center; gap: 4px; }
+body.log-pinned #logPinBtn {
+  border-color: var(--accent, #38bdf8);
+  color: var(--accent, #38bdf8);
+}
+
+/* Auto-collapse on narrow viewports — the JS strips the body class
+   too, but this is a belt-and-suspenders safety net in case JS fails
+   to load: never let the rail cover the whole screen. */
+@media (max-width: 1100px) {
+  body.log-pinned {
+    padding-right: 0;
+  }
+  body.log-pinned .log-card {
+    position: static;
+    width: auto;
+    max-height: none;
+    box-shadow: none;
+  }
+  body.log-pinned .log-rail-handle {
+    display: none;
+  }
+}

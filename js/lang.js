@@ -78,6 +78,8 @@
       mq_odo_leg_trail:     "trail",
       mq_odo_leg_obst:      "obstacles",
       mq_odo_foot:          "⚠ Estimate only — no encoders. Drift grows with battery droop & wheel slip; that's the lesson.",
+      mq_log_pin:           "Pin",
+      mq_log_unpin:         "Unpin",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -525,6 +527,8 @@
       mq_odo_leg_trail:     "trajet",
       mq_odo_leg_obst:      "obstacles",
       mq_odo_foot:          "⚠ Estimation seulement — pas d'encodeurs. La dérive grandit avec la batterie et le glissement ; c'est ça la leçon.",
+      mq_log_pin:           "Épingler",
+      mq_log_unpin:         "Détacher",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -972,6 +976,8 @@
       mq_odo_leg_trail:     "\u0627\u0644\u0645\u0633\u0627\u0631",
       mq_odo_leg_obst:      "\u0627\u0644\u0639\u0648\u0627\u0626\u0642",
       mq_odo_foot:          "\u26a0 \u062a\u0642\u062f\u064a\u0631\u064a \u0641\u0642\u0637 \u2014 \u0644\u0627 \u062a\u0648\u062c\u062f \u0623\u062c\u0647\u0632\u0629 \u0642\u064a\u0627\u0633. \u0627\u0644\u0627\u0646\u062d\u0631\u0627\u0641 \u064a\u0632\u062f\u0627\u062f \u0645\u0639 \u062a\u0631\u0627\u062c\u0639 \u0627\u0644\u0628\u0637\u0627\u0631\u064a\u0629 \u0648\u0627\u0646\u0632\u0644\u0627\u0642 \u0627\u0644\u0639\u062c\u0644\u0627\u062a\u061b \u0647\u0630\u0627 \u0647\u0648 \u0627\u0644\u062f\u0631\u0633.",
+      mq_log_pin:           "\u062a\u062b\u0628\u064a\u062a",
+      mq_log_unpin:         "\u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u062a\u062b\u0628\u064a\u062a",
 
       // Tabs
       tab_maqueen:        "Maqueen",

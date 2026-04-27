@@ -38,6 +38,7 @@
     <script src="js/maqueen-panel.js" defer></script>
     <script src="js/maqueen-tab.js" defer></script>
     <script src="js/stack-flow.js" defer></script>
+    <script src="js/log-rail.js" defer></script>
 <style>
 .lang-picker { display: flex; gap: 2px; }
 .lang-picker .lang-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; background: transparent; color: inherit; opacity: 0.5; }
@@ -367,6 +368,10 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                             </div>
                         </div>
                         <div class="log-controls">
+                            <button id="logPinBtn" class="secondary small" aria-label="Pin log to side" title="Pin log to right side — always visible while you scroll. Drag the left edge to resize.">
+                                <span class="btn-icon" id="logPinIcon">📌</span>
+                                <span id="logPinLabel" data-i18n="mq_log_pin">Pin</span>
+                            </button>
                             <button id="clearLogBtn" class="secondary small" aria-label="Clear log" data-i18n="clear">Clear</button>
                             <button id="exportLogBtn" class="small" aria-label="Export log">
                                 <span class="btn-icon">⬇</span>
