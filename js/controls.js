@@ -337,8 +337,11 @@ window.addEventListener('DOMContentLoaded', () => {
     // Theme picker
     const themeBtns = document.querySelectorAll('.theme-btn');
     function setTheme(name) {
-        if (name === 'stealth') {
+        // Workshop is the new default (lives in :root) — apply no attribute.
+        // 'stealth' kept as alias for backward compat with saved prefs.
+        if (name === 'workshop' || name === 'stealth') {
             document.documentElement.removeAttribute('data-theme');
+            name = 'workshop';
         } else {
             document.documentElement.setAttribute('data-theme', name);
         }

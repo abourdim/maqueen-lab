@@ -1,179 +1,193 @@
+/* ====================================================================
+   THEME 1 (DEFAULT): WORKSHOP — warm beige maker bench, brown/orange
+   ==================================================================== */
 :root {
-    --bg-color: #020617;
-    --panel-bg: #020617;
-    --card-bg: rgba(15, 23, 42, 0.96);
-    --card-border: rgba(148, 163, 184, 0.3);
-    --accent: #22c55e;
-    --accent-soft: rgba(34, 197, 94, 0.15);
-    --accent-strong: rgba(34, 197, 94, 0.7);
-    --accent2: #3b82f6;
-    --danger: #f97373;
-    --muted: #9ca3af;
-    --text: #f9fafb;
-    --text-secondary: #e5e7eb;
-    --border: #1f2937;
-    --pill-bg: rgba(15, 23, 42, 0.9);
-    --pill-border: rgba(148, 163, 184, 0.6);
-    --input-bg: rgba(15, 23, 42, 0.6);
-    --glow1: rgba(34, 197, 94, 0.18);
-    --glow2: rgba(59, 130, 246, 0.2);
-    --body-glow1: rgba(34, 197, 94, 0.18);
-    --body-glow2: rgba(59, 130, 246, 0.2);
-    --btn-primary-bg: linear-gradient(135deg, #22c55e, #16a34a);
+    --bg-color: #f5ecd8;
+    --panel-bg: #fffbf2;
+    --card-bg: #fffbf2;
+    --card-border: rgba(120, 70, 30, 0.18);
+    --accent: #c2410c;
+    --accent-soft: rgba(194, 65, 12, 0.10);
+    --accent-strong: rgba(194, 65, 12, 0.7);
+    --accent2: #b45309;
+    --danger: #b91c1c;
+    --muted: #78603e;
+    --text: #2a1a08;
+    --text-secondary: #5a4327;
+    --border: #d8c5a3;
+    --pill-bg: #fffbf2;
+    --pill-border: rgba(120, 70, 30, 0.25);
+    --input-bg: #fef9eb;
+    --glow1: rgba(194, 65, 12, 0.08);
+    --glow2: rgba(180, 83, 9, 0.06);
+    --body-glow1: rgba(194, 65, 12, 0.10);
+    --body-glow2: rgba(250, 204, 21, 0.10);
+    --btn-primary-bg: linear-gradient(135deg, #d97706, #b45309);
     --btn-primary-text: #fff;
-    --btn-primary-border: rgba(34, 197, 94, 0.8);
-    --connected-bg: rgba(34, 197, 94, 0.25);
-    --connected-border: rgba(34, 197, 94, 0.9);
-    --connected-text: #bbf7d0;
-    --connected-dot: #22c55e;
-    --disconnected-bg: rgba(239, 68, 68, 0.15);
-    --disconnected-border: rgba(239, 68, 68, 0.6);
-    --disconnected-dot: #f97373;
-    --shadow-color: rgba(15, 23, 42, 0.85);
-    /* Log colors */
-    --log-info: #9ca3af;
-    --log-tx: #4ade80;
-    --log-rx: #60a5fa;
-    --log-error: #ff5555;
-    --log-success: #fbbf24;
-    --log-warning: #fb923c;
-    /* Maqueen Lab — neutral surfaces inside cards */
-    --card-bg-2: #0a1628;
-    --bg-deep: #061121;
+    --btn-primary-border: rgba(217, 119, 6, 0.7);
+    --connected-bg: rgba(22, 163, 74, 0.12);
+    --connected-border: rgba(22, 163, 74, 0.6);
+    --connected-text: #15803d;
+    --connected-dot: #16a34a;
+    --disconnected-bg: rgba(185, 28, 28, 0.10);
+    --disconnected-border: rgba(185, 28, 28, 0.5);
+    --disconnected-dot: #b91c1c;
+    --shadow-color: rgba(80, 50, 20, 0.18);
+    --log-info: #78603e;
+    --log-tx: #16a34a;
+    --log-rx: #2563eb;
+    --log-error: #b91c1c;
+    --log-success: #ca8a04;
+    --log-warning: #c2410c;
+    /* Maqueen card surfaces — light cream layered for depth */
+    --card-bg-2: #fef6e4;
+    --bg-deep:   #fdf0d4;
+    /* 3D card depth (used by every card) */
+    --card-grad: linear-gradient(180deg, #fffdf6 0%, #fbf3df 100%);
+    --card-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 6px 16px rgba(80,50,20,0.10), 0 1px 3px rgba(80,50,20,0.06);
 }
 
 /* ===== THEMES ===== */
 
-/* ⚡ Neon — Cyberpunk / gaming */
-[data-theme="neon"] {
-    --bg-color: #0a0a1a;
-    --panel-bg: #0a0a1a;
-    --card-bg: rgba(18, 18, 42, 0.96);
-    --card-border: rgba(100, 100, 255, 0.25);
-    --accent: #00d4ff;
-    --accent-soft: rgba(0, 212, 255, 0.15);
-    --accent-strong: rgba(0, 212, 255, 0.7);
-    --accent2: #0ea5e9;
-    --danger: #ff3366;
-    --muted: #8888bb;
-    --text: #eeeeff;
-    --text-secondary: #ccccee;
-    --border: #1a1a3a;
-    --pill-bg: rgba(18, 18, 42, 0.9);
-    --pill-border: rgba(100, 100, 255, 0.4);
-    --input-bg: rgba(18, 18, 42, 0.6);
-    --glow1: rgba(0, 212, 255, 0.2);
-    --glow2: rgba(14, 165, 233, 0.15);
-    --body-glow1: rgba(0, 212, 255, 0.2);
-    --body-glow2: rgba(14, 165, 233, 0.15);
-    --btn-primary-bg: linear-gradient(135deg, #00d4ff, #0088ff);
-    --btn-primary-text: #fff;
-    --btn-primary-border: rgba(0, 212, 255, 0.8);
-    --connected-bg: rgba(0, 212, 255, 0.2);
-    --connected-border: rgba(0, 212, 255, 0.9);
-    --connected-text: #99eeff;
-    --connected-dot: #00d4ff;
-    --disconnected-bg: rgba(255, 51, 102, 0.15);
-    --disconnected-border: rgba(255, 51, 102, 0.6);
-    --disconnected-dot: #ff3366;
-    --shadow-color: rgba(10, 10, 26, 0.9);
-    /* Log colors for dark bg */
-    --log-info: #8888bb;
-    --log-tx: #00ff88;
-    --log-rx: #00d4ff;
-    --log-error: #ff3366;
-    --log-success: #ffdd00;
-    --log-warning: #ff8800;
-    --card-bg-2: #12122a;
-    --bg-deep: #060616;
-}
-
-/* ☁️ Arctic — Cool light theme */
-[data-theme="arctic"] {
-    --bg-color: #e8eef4;
-    --panel-bg: #f0f4f8;
-    --card-bg: rgba(255, 255, 255, 0.95);
-    --card-border: rgba(100, 130, 170, 0.25);
+/* ====================================================================
+   THEME 2: SKY — calm classroom blue, light, focused
+   ==================================================================== */
+[data-theme="sky"] {
+    --bg-color: #eaf3fb;
+    --panel-bg: #ffffff;
+    --card-bg: #ffffff;
+    --card-border: rgba(37, 99, 235, 0.15);
     --accent: #2563eb;
-    --accent-soft: rgba(37, 99, 235, 0.12);
+    --accent-soft: rgba(37, 99, 235, 0.08);
     --accent-strong: rgba(37, 99, 235, 0.6);
-    --accent2: #06b6d4;
+    --accent2: #0891b2;
     --danger: #dc2626;
     --muted: #64748b;
-    --text: #1e293b;
-    --text-secondary: #475569;
-    --border: #cbd5e1;
-    --pill-bg: rgba(255, 255, 255, 0.9);
-    --pill-border: rgba(100, 130, 170, 0.3);
-    --input-bg: rgba(241, 245, 249, 0.9);
+    --text: #0f1f3a;
+    --text-secondary: #3a5170;
+    --border: #c7daee;
+    --pill-bg: #ffffff;
+    --pill-border: rgba(37, 99, 235, 0.22);
+    --input-bg: #f3f8fd;
     --glow1: rgba(37, 99, 235, 0.08);
-    --glow2: rgba(6, 182, 212, 0.06);
-    --body-glow1: rgba(37, 99, 235, 0.1);
-    --body-glow2: rgba(6, 182, 212, 0.08);
-    --btn-primary-bg: linear-gradient(135deg, #2563eb, #3b82f6);
+    --glow2: rgba(8, 145, 178, 0.06);
+    --body-glow1: rgba(37, 99, 235, 0.10);
+    --body-glow2: rgba(125, 211, 252, 0.10);
+    --btn-primary-bg: linear-gradient(135deg, #2563eb, #1e40af);
     --btn-primary-text: #fff;
     --btn-primary-border: rgba(37, 99, 235, 0.7);
-    --connected-bg: rgba(22, 163, 74, 0.12);
-    --connected-border: rgba(22, 163, 74, 0.6);
+    --connected-bg: rgba(22, 163, 74, 0.10);
+    --connected-border: rgba(22, 163, 74, 0.5);
     --connected-text: #15803d;
-    --connected-dot: #22c55e;
+    --connected-dot: #16a34a;
     --disconnected-bg: rgba(220, 38, 38, 0.08);
     --disconnected-border: rgba(220, 38, 38, 0.4);
     --disconnected-dot: #dc2626;
-    --shadow-color: rgba(100, 116, 139, 0.15);
-    /* Log colors for light bg */
+    --shadow-color: rgba(37, 99, 235, 0.12);
     --log-info: #64748b;
     --log-tx: #16a34a;
     --log-rx: #2563eb;
     --log-error: #dc2626;
     --log-success: #ca8a04;
     --log-warning: #ea580c;
-    --card-bg-2: #f1f5f9;
-    --bg-deep: #e2e8f0;
+    --card-bg-2: #f5f9fd;
+    --bg-deep:   #e8f1fa;
+    --card-grad: linear-gradient(180deg, #ffffff 0%, #f0f6fc 100%);
+    --card-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 6px 16px rgba(37,99,235,0.10), 0 1px 3px rgba(37,99,235,0.06);
 }
 
-/* 🔥 Blaze — Warm light theme */
-[data-theme="blaze"] {
-    --bg-color: #fdf2e9;
-    --panel-bg: #fef7f0;
-    --card-bg: rgba(255, 255, 255, 0.95);
-    --card-border: rgba(194, 120, 60, 0.2);
-    --accent: #ea580c;
-    --accent-soft: rgba(234, 88, 12, 0.1);
-    --accent-strong: rgba(234, 88, 12, 0.6);
-    --accent2: #dc2626;
+/* ====================================================================
+   THEME 3: MINT — soft sage green, gentle learning playground
+   ==================================================================== */
+[data-theme="mint"] {
+    --bg-color: #ecf6ec;
+    --panel-bg: #ffffff;
+    --card-bg: #ffffff;
+    --card-border: rgba(22, 163, 74, 0.18);
+    --accent: #16a34a;
+    --accent-soft: rgba(22, 163, 74, 0.10);
+    --accent-strong: rgba(22, 163, 74, 0.7);
+    --accent2: #0d9488;
     --danger: #dc2626;
-    --muted: #78716c;
-    --text: #292524;
-    --text-secondary: #57534e;
-    --border: #e7e5e4;
-    --pill-bg: rgba(255, 255, 255, 0.9);
-    --pill-border: rgba(194, 120, 60, 0.25);
-    --input-bg: rgba(254, 243, 230, 0.9);
-    --glow1: rgba(234, 88, 12, 0.06);
-    --glow2: rgba(220, 38, 38, 0.04);
-    --body-glow1: rgba(234, 88, 12, 0.1);
-    --body-glow2: rgba(250, 204, 21, 0.08);
-    --btn-primary-bg: linear-gradient(135deg, #ea580c, #f97316);
+    --muted: #4d6b53;
+    --text: #112317;
+    --text-secondary: #2d4a37;
+    --border: #c4dfca;
+    --pill-bg: #ffffff;
+    --pill-border: rgba(22, 163, 74, 0.22);
+    --input-bg: #f4faf5;
+    --glow1: rgba(22, 163, 74, 0.08);
+    --glow2: rgba(13, 148, 136, 0.06);
+    --body-glow1: rgba(22, 163, 74, 0.10);
+    --body-glow2: rgba(134, 239, 172, 0.10);
+    --btn-primary-bg: linear-gradient(135deg, #16a34a, #15803d);
     --btn-primary-text: #fff;
-    --btn-primary-border: rgba(234, 88, 12, 0.7);
-    --connected-bg: rgba(22, 163, 74, 0.1);
-    --connected-border: rgba(22, 163, 74, 0.5);
-    --connected-text: #15803d;
-    --connected-dot: #22c55e;
-    --disconnected-bg: rgba(220, 38, 38, 0.08);
-    --disconnected-border: rgba(220, 38, 38, 0.4);
+    --btn-primary-border: rgba(22, 163, 74, 0.7);
+    --connected-bg: rgba(22, 163, 74, 0.18);
+    --connected-border: rgba(22, 163, 74, 0.6);
+    --connected-text: #14532d;
+    --connected-dot: #16a34a;
+    --disconnected-bg: rgba(220, 38, 38, 0.10);
+    --disconnected-border: rgba(220, 38, 38, 0.5);
     --disconnected-dot: #dc2626;
-    --shadow-color: rgba(120, 113, 108, 0.12);
-    /* Log colors for light bg */
-    --log-info: #78716c;
+    --shadow-color: rgba(22, 163, 74, 0.14);
+    --log-info: #4d6b53;
     --log-tx: #16a34a;
-    --log-rx: #9333ea;
+    --log-rx: #0891b2;
     --log-error: #dc2626;
     --log-success: #ca8a04;
     --log-warning: #ea580c;
-    --card-bg-2: #fef3e9;
-    --bg-deep: #fce8d3;
+    --card-bg-2: #f3faf4;
+    --bg-deep:   #e6f3e8;
+    --card-grad: linear-gradient(180deg, #ffffff 0%, #f1f8f2 100%);
+    --card-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 6px 16px rgba(22,163,74,0.10), 0 1px 3px rgba(22,163,74,0.06);
+}
+
+/* ====================================================================
+   THEME 4: NIGHT — restrained deep navy with white text (low-light only)
+   ==================================================================== */
+[data-theme="night"] {
+    --bg-color: #0e1726;
+    --panel-bg: #15233a;
+    --card-bg: #15233a;
+    --card-border: rgba(125, 211, 252, 0.18);
+    --accent: #7dd3fc;
+    --accent-soft: rgba(125, 211, 252, 0.12);
+    --accent-strong: rgba(125, 211, 252, 0.7);
+    --accent2: #60a5fa;
+    --danger: #f87171;
+    --muted: #94a3b8;
+    --text: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --border: #2c3a55;
+    --pill-bg: #1a293f;
+    --pill-border: rgba(125, 211, 252, 0.3);
+    --input-bg: #1a293f;
+    --glow1: rgba(125, 211, 252, 0.10);
+    --glow2: rgba(96, 165, 250, 0.08);
+    --body-glow1: rgba(125, 211, 252, 0.12);
+    --body-glow2: rgba(96, 165, 250, 0.10);
+    --btn-primary-bg: linear-gradient(135deg, #7dd3fc, #38bdf8);
+    --btn-primary-text: #0e1726;
+    --btn-primary-border: rgba(125, 211, 252, 0.7);
+    --connected-bg: rgba(34, 197, 94, 0.20);
+    --connected-border: rgba(34, 197, 94, 0.7);
+    --connected-text: #bbf7d0;
+    --connected-dot: #22c55e;
+    --disconnected-bg: rgba(239, 68, 68, 0.15);
+    --disconnected-border: rgba(239, 68, 68, 0.5);
+    --disconnected-dot: #f87171;
+    --shadow-color: rgba(0, 0, 0, 0.45);
+    --log-info: #94a3b8;
+    --log-tx: #4ade80;
+    --log-rx: #7dd3fc;
+    --log-error: #f87171;
+    --log-success: #fbbf24;
+    --log-warning: #fb923c;
+    --card-bg-2: #1a293f;
+    --bg-deep:   #0a1424;
+    --card-grad: linear-gradient(180deg, #1a293f 0%, #15233a 100%);
+    --card-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 8px 20px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
 }
 
 * {
@@ -319,7 +333,8 @@ body {
 .card {
     border-radius: 12px;
     border: 1px solid var(--card-border);
-    background: var(--card-bg);
+    background: var(--card-grad, var(--card-bg));
+    box-shadow: var(--card-shadow, 0 4px 12px rgba(0,0,0,0.10));
     padding: 10px 12px 11px 12px;
     margin-bottom: 10px;
     position: relative;
