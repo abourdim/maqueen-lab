@@ -5,7 +5,8 @@
   "type": "module",
   "description": "Web-based BLE component lab for the DFRobot Maqueen Lite v4 + Mechanic Kits",
   "scripts": {
-    "serve": "npx serve ."
+    "serve": "npx serve .",
+    "serve:py": "python tools/serve.py"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0"

@@ -49,6 +49,29 @@ Full pinout, conflict warnings, and protocol spec live in [docs/USER_GUIDE.md](d
 
 ---
 
+## Run locally
+
+**TL;DR — don't double-click `index.html`.** Chromium's CORS rules block
+`fetch()` of `manifest.json` / `product.json` / `build-info.json` from the
+`file://` protocol. The app degrades gracefully (no functional impact) but
+the DevTools console fills with red errors, the PWA install prompt won't
+appear, and the Service Worker can't register.
+
+Pick whichever launcher you have handy — they all serve `http://localhost:8000`:
+
+| Platform | Command | Notes |
+|---|---|---|
+| **Windows** | double-click `serve.bat` | tries Python, falls back to `npx serve` |
+| **macOS / Linux** | `./serve.sh` | tries Python, falls back to `npx serve` |
+| **Any with Python 3.7+** | `python tools/serve.py` | stdlib only, no install |
+| **Any with Node** | `npm run serve` | uses `npx serve` (CDN one-shot) |
+| **Any with Python via npm** | `npm run serve:py` | runs `tools/serve.py` |
+
+The Python launcher accepts a custom port (`python tools/serve.py 8765`)
+and auto-opens your default browser unless `MAQUEEN_NO_BROWSER=1` is set.
+
+---
+
 ## Architecture
 
 - **Web app**: vanilla JS + SVG + CSS. No framework. PWA-installable.
