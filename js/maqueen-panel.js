@@ -119,18 +119,35 @@
       streamsBtn.style.color = streamsOn ? '#4ade80' : '#fbbf24';
       streamsBtn.style.borderColor = streamsOn ? '#4ade80' : '#fbbf24';
     }
+    function setStreams(on) {
+      if (streamsOn === on) return;
+      if (!window.bleScheduler || !window.bleScheduler.isConnected()) return;
+      streamsOn = on;
+      sendVerb(on ? 'STREAM:on' : 'STREAM:off');
+      paintStreamsBtn();
+    }
     if (streamsBtn) {
       streamsBtn.addEventListener('click', () => {
         if (!window.bleScheduler || !window.bleScheduler.isConnected()) {
           alert('Connect to the robot first.');
           return;
         }
-        streamsOn = !streamsOn;
-        sendVerb(streamsOn ? 'STREAM:on' : 'STREAM:off');
-        paintStreamsBtn();
+        setStreams(!streamsOn);
       });
       paintStreamsBtn();
     }
+
+    // Auto-enable streams when the user enters a stream-dependent tab,
+    // auto-disable when they leave it. Keeps the BLE channel free during
+    // command-heavy work on the Maqueen tab without forcing a manual click.
+    const STREAM_TABS = ['senses', 'graph', 'board3d'];
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const page = btn.getAttribute('data-page');
+        // small delay so .active class flip / TAB: send happen first
+        setTimeout(() => setStreams(STREAM_TABS.indexOf(page) !== -1), 30);
+      });
+    });
 
     if (window.bleScheduler) {
       window.bleScheduler.on('reply', onReply);

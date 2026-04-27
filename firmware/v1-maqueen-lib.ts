@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.35"
-const BUILD_DATE = "2026-04-27 03:10 UTC"
+const BUILD_VERSION = "0.1.36"
+const BUILD_DATE = "2026-04-27 03:12 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -434,12 +434,29 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () 
         // bit-playground "Others" tab commands — ack silently
         send("OTHER:ACK:" + verb.substr(6))
     } else if (verb.substr(0, 3) == "LM:") {
-        // 5x5 LED matrix hex — bit-playground specific, not implemented yet
-        execlog("LM (not impl): " + verb.substr(3))
+        // 5x5 LED matrix hex — 10 hex chars, 2 per row, bit `col` set = LED on.
+        handleLM(verb.substr(3))
     } else {
         err(seq, "UNKNOWN_VERB")
     }
 })
+
+// ---------- LM: 5x5 LED matrix hex (bit-playground bridge) ----------
+// hex string is 10 chars: 5 rows, 2 hex chars (1 byte) each.
+// In each row byte, bit `col` set = LED at (row, col) is on.
+function handleLM(hex: string) {
+    if (hex.length < 10) return
+    basic.clearScreen()
+    for (let r = 0; r < 5; r++) {
+        let byteHex = hex.substr(r * 2, 2)
+        let val = parseInt(byteHex, 16)
+        if (isNaN(val)) val = 0
+        for (let c = 0; c < 5; c++) {
+            if ((val & (1 << c)) != 0) led.plot(c, r)
+        }
+    }
+    execlog("LM " + hex)
+}
 
 // ---------- icon dispatch (bit-playground CMD: bridge) ----------
 function handleIcon(name: string) {
