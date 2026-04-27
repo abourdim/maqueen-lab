@@ -652,7 +652,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                     <line x1="-9" y1="0" x2="9" y2="0" stroke="#93a8c4" stroke-width="1"/>
                                                     <rect id="mqPowerLBar" x="-5" y="0" width="10" height="0" fill="#fb923c"/>
                                                     <text x="0" y="-58" text-anchor="middle" fill="#fb923c" font-size="9" font-family="JetBrains Mono, monospace" font-weight="700">L</text>
-                                                    <text id="mqPowerLVal" x="0" y="65" text-anchor="middle" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace">0</text>
+                                                    <text id="mqPowerLVal" x="0" y="65" text-anchor="middle" fill="var(--text, #93a8c4)" font-size="9" font-family="JetBrains Mono, monospace">0</text>
                                                 </g>
                                                 <!-- RIGHT motor power bar -->
                                                 <g id="mqPowerR" transform="translate(265 110)">
@@ -660,7 +660,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                     <line x1="-9" y1="0" x2="9" y2="0" stroke="#93a8c4" stroke-width="1"/>
                                                     <rect id="mqPowerRBar" x="-5" y="0" width="10" height="0" fill="#00d4ff"/>
                                                     <text x="0" y="-58" text-anchor="middle" fill="#00d4ff" font-size="9" font-family="JetBrains Mono, monospace" font-weight="700">R</text>
-                                                    <text id="mqPowerRVal" x="0" y="65" text-anchor="middle" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace">0</text>
+                                                    <text id="mqPowerRVal" x="0" y="65" text-anchor="middle" fill="var(--text, #93a8c4)" font-size="9" font-family="JetBrains Mono, monospace">0</text>
                                                 </g>
 
                                                 <!-- Body (centered, rounded) — colored borders show wheel-side identity -->
@@ -710,7 +710,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 </g>
 
                                                 <!-- Pin / driver hint -->
-                                                <text x="140" y="208" text-anchor="middle" fill="#93a8c4" font-size="8" font-family="JetBrains Mono, monospace">I²C 0x10 → motor driver TB6612FNG</text>
+                                                <text x="140" y="208" text-anchor="middle" fill="var(--text, #93a8c4)" font-size="8" font-family="JetBrains Mono, monospace">I²C 0x10 → motor driver TB6612FNG</text>
                                             </svg>
                                         </div>
                                         <!-- Analog joystick -->
@@ -848,22 +848,49 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
                                         <!-- S1 -->
                                         <div style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); border-radius:10px; padding:12px;">
+                                            <!-- Big readout ABOVE the dial (no overlap with the horn) -->
+                                            <div style="text-align:center; font-family:'JetBrains Mono', monospace; font-size:24px; font-weight:700; color:#00d4ff; line-height:1; margin-bottom:4px;" id="mqS1BigReadout">90°</div>
                                             <div style="position:relative; width:100%; max-width:220px; margin:0 auto;">
-                                                <svg viewBox="0 0 200 130" style="width:100%; height:auto;">
-                                                    <!-- arc track -->
-                                                    <path d="M 15 100 A 85 85 0 0 1 185 100" fill="none" stroke="#1d3556" stroke-width="6"/>
-                                                    <!-- tick marks -->
-                                                    <text x="14" y="120" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">0°</text>
-                                                    <text x="100" y="20" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">90°</text>
-                                                    <text x="186" y="120" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">180°</text>
-                                                    <!-- horn -->
-                                                    <g id="mqServoDialS1" transform="rotate(0 100 100)" style="transition: transform 0.18s ease-out;">
-                                                        <line x1="100" y1="100" x2="100" y2="22" stroke="#00d4ff" stroke-width="4" stroke-linecap="round"/>
-                                                        <circle cx="100" cy="100" r="10" fill="#00d4ff"/>
-                                                        <circle cx="100" cy="100" r="5" fill="#0a1628"/>
+                                                <!-- Top-down servo body view: case + 4 mounting screws + horn -->
+                                                <svg viewBox="0 0 200 200" style="width:100%; height:auto;">
+                                                    <defs>
+                                                        <radialGradient id="mqServoBodyG1" cx="50%" cy="40%" r="60%">
+                                                            <stop offset="0%" stop-color="var(--card-bg, #0f1e35)"/>
+                                                            <stop offset="100%" stop-color="var(--bg-deep, #061121)"/>
+                                                        </radialGradient>
+                                                    </defs>
+                                                    <!-- Outer servo case -->
+                                                    <rect x="20" y="40" width="160" height="120" rx="10" fill="url(#mqServoBodyG1)" stroke="#00d4ff" stroke-width="1.5"/>
+                                                    <!-- 4 mounting screw holes (corners) -->
+                                                    <circle cx="32" cy="52" r="3.5" fill="var(--bg-deep, #061121)" stroke="#00d4ff" stroke-width="0.8"/>
+                                                    <circle cx="168" cy="52" r="3.5" fill="var(--bg-deep, #061121)" stroke="#00d4ff" stroke-width="0.8"/>
+                                                    <circle cx="32" cy="148" r="3.5" fill="var(--bg-deep, #061121)" stroke="#00d4ff" stroke-width="0.8"/>
+                                                    <circle cx="168" cy="148" r="3.5" fill="var(--bg-deep, #061121)" stroke="#00d4ff" stroke-width="0.8"/>
+                                                    <!-- Horn travel arc (0° = left, 180° = right, ticks every 45°) -->
+                                                    <path d="M 35 100 A 65 65 0 0 1 165 100" fill="none" stroke="#00d4ff" stroke-width="0.8" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+                                                    <!-- Tick labels -->
+                                                    <text x="32" y="115" fill="var(--text, #93a8c4)" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">0°</text>
+                                                    <text x="100" y="32" fill="var(--text, #93a8c4)" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">90°</text>
+                                                    <text x="168" y="115" fill="var(--text, #93a8c4)" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">180°</text>
+                                                    <!-- Output shaft well -->
+                                                    <circle cx="100" cy="100" r="20" fill="var(--bg-deep, #061121)" stroke="#00d4ff" stroke-width="1"/>
+                                                    <!-- ROTATING HORN — single arm + spline center, rotates by JS -->
+                                                    <g id="mqServoDialS1" transform="rotate(0 100 100)" style="transition: transform 0.18s ease-out; transform-origin:100px 100px;">
+                                                        <rect x="98" y="38" width="4" height="62" rx="2" fill="#00d4ff"/>
+                                                        <circle cx="100" cy="38" r="4" fill="#00d4ff"/>
+                                                        <circle cx="100" cy="100" r="14" fill="#00d4ff"/>
+                                                        <circle cx="100" cy="100" r="9" fill="var(--card-bg-2, #0a1628)"/>
+                                                        <!-- spline teeth -->
+                                                        <g stroke="#00d4ff" stroke-width="1">
+                                                            <line x1="100" y1="91" x2="100" y2="93"/>
+                                                            <line x1="100" y1="107" x2="100" y2="109"/>
+                                                            <line x1="91" y1="100" x2="93" y2="100"/>
+                                                            <line x1="107" y1="100" x2="109" y2="100"/>
+                                                        </g>
                                                     </g>
-                                                    <!-- big readout -->
-                                                    <text x="180" y="40" fill="#00d4ff" font-size="22" font-weight="700" text-anchor="end" font-family="JetBrains Mono, monospace" id="mqS1BigReadout">90°</text>
+                                                    <!-- Cable nub at the back -->
+                                                    <rect x="92" y="160" width="16" height="6" rx="2" fill="var(--card-bg, #1d3556)" stroke="#00d4ff" stroke-width="0.6"/>
+                                                    <text x="100" y="180" fill="var(--text-secondary, #93a8c4)" font-size="6.5" font-family="JetBrains Mono, monospace" text-anchor="middle">SG90 · top view</text>
                                                 </svg>
                                             </div>
                                             <!-- Mode toggle: 180 deg position vs 360 deg continuous rotation -->
@@ -885,18 +912,39 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         </div>
                                         <!-- S2 -->
                                         <div style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); border-radius:10px; padding:12px;">
+                                            <div style="text-align:center; font-family:'JetBrains Mono', monospace; font-size:24px; font-weight:700; color:#4ade80; line-height:1; margin-bottom:4px;" id="mqS2BigReadout">90°</div>
                                             <div style="position:relative; width:100%; max-width:220px; margin:0 auto;">
-                                                <svg viewBox="0 0 200 130" style="width:100%; height:auto;">
-                                                    <path d="M 15 100 A 85 85 0 0 1 185 100" fill="none" stroke="#1d3556" stroke-width="6"/>
-                                                    <text x="14" y="120" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">0°</text>
-                                                    <text x="100" y="20" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">90°</text>
-                                                    <text x="186" y="120" fill="#93a8c4" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">180°</text>
-                                                    <g id="mqServoDialS2" transform="rotate(0 100 100)" style="transition: transform 0.18s ease-out;">
-                                                        <line x1="100" y1="100" x2="100" y2="22" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>
-                                                        <circle cx="100" cy="100" r="10" fill="#4ade80"/>
-                                                        <circle cx="100" cy="100" r="5" fill="#0a1628"/>
+                                                <svg viewBox="0 0 200 200" style="width:100%; height:auto;">
+                                                    <defs>
+                                                        <radialGradient id="mqServoBodyG2" cx="50%" cy="40%" r="60%">
+                                                            <stop offset="0%" stop-color="var(--card-bg, #0f1e35)"/>
+                                                            <stop offset="100%" stop-color="var(--bg-deep, #061121)"/>
+                                                        </radialGradient>
+                                                    </defs>
+                                                    <rect x="20" y="40" width="160" height="120" rx="10" fill="url(#mqServoBodyG2)" stroke="#4ade80" stroke-width="1.5"/>
+                                                    <circle cx="32" cy="52" r="3.5" fill="var(--bg-deep, #061121)" stroke="#4ade80" stroke-width="0.8"/>
+                                                    <circle cx="168" cy="52" r="3.5" fill="var(--bg-deep, #061121)" stroke="#4ade80" stroke-width="0.8"/>
+                                                    <circle cx="32" cy="148" r="3.5" fill="var(--bg-deep, #061121)" stroke="#4ade80" stroke-width="0.8"/>
+                                                    <circle cx="168" cy="148" r="3.5" fill="var(--bg-deep, #061121)" stroke="#4ade80" stroke-width="0.8"/>
+                                                    <path d="M 35 100 A 65 65 0 0 1 165 100" fill="none" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35" stroke-dasharray="2 2"/>
+                                                    <text x="32" y="115" fill="var(--text, #93a8c4)" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">0°</text>
+                                                    <text x="100" y="32" fill="var(--text, #93a8c4)" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">90°</text>
+                                                    <text x="168" y="115" fill="var(--text, #93a8c4)" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">180°</text>
+                                                    <circle cx="100" cy="100" r="20" fill="var(--bg-deep, #061121)" stroke="#4ade80" stroke-width="1"/>
+                                                    <g id="mqServoDialS2" transform="rotate(0 100 100)" style="transition: transform 0.18s ease-out; transform-origin:100px 100px;">
+                                                        <rect x="98" y="38" width="4" height="62" rx="2" fill="#4ade80"/>
+                                                        <circle cx="100" cy="38" r="4" fill="#4ade80"/>
+                                                        <circle cx="100" cy="100" r="14" fill="#4ade80"/>
+                                                        <circle cx="100" cy="100" r="9" fill="var(--card-bg-2, #0a1628)"/>
+                                                        <g stroke="#4ade80" stroke-width="1">
+                                                            <line x1="100" y1="91" x2="100" y2="93"/>
+                                                            <line x1="100" y1="107" x2="100" y2="109"/>
+                                                            <line x1="91" y1="100" x2="93" y2="100"/>
+                                                            <line x1="107" y1="100" x2="109" y2="100"/>
+                                                        </g>
                                                     </g>
-                                                    <text x="180" y="40" fill="#4ade80" font-size="22" font-weight="700" text-anchor="end" font-family="JetBrains Mono, monospace" id="mqS2BigReadout">90°</text>
+                                                    <rect x="92" y="160" width="16" height="6" rx="2" fill="var(--card-bg, #1d3556)" stroke="#4ade80" stroke-width="0.6"/>
+                                                    <text x="100" y="180" fill="var(--text-secondary, #93a8c4)" font-size="6.5" font-family="JetBrains Mono, monospace" text-anchor="middle">SG90 · top view</text>
                                                 </svg>
                                             </div>
                                             <!-- Mode toggle for S2 -->
@@ -928,27 +976,36 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <span>📟 PWM signal · pulse width sets the angle</span>
                                             <span id="mqServoScopeInfo" style="margin-left:auto; font-family:'JetBrains Mono', monospace; color:#facc15;">1.50 ms HIGH every 20 ms</span>
                                         </div>
-                                        <svg viewBox="0 0 400 80" preserveAspectRatio="none" style="width:100%; height:80px; display:block; background:#0a1628; border-radius:4px;">
+                                        <!-- Scope canvas: 600 px = 60 ms = 3 PWM periods (so the repeat is visible).
+                                             Background uses the deep theme var so it's not a black hole on light themes. -->
+                                        <svg viewBox="0 0 600 80" preserveAspectRatio="none" style="width:100%; height:80px; display:block; background:var(--bg-deep, #061121); border-radius:4px;">
                                             <g stroke="var(--border, #1d3556)" stroke-width="0.5">
-                                                <line x1="0" y1="20" x2="400" y2="20"/>
-                                                <line x1="0" y1="40" x2="400" y2="40"/>
-                                                <line x1="0" y1="60" x2="400" y2="60"/>
+                                                <line x1="0" y1="20" x2="600" y2="20"/>
+                                                <line x1="0" y1="40" x2="600" y2="40"/>
+                                                <line x1="0" y1="60" x2="600" y2="60"/>
                                                 <line x1="100" y1="0" x2="100" y2="80"/>
                                                 <line x1="200" y1="0" x2="200" y2="80"/>
                                                 <line x1="300" y1="0" x2="300" y2="80"/>
+                                                <line x1="400" y1="0" x2="400" y2="80"/>
+                                                <line x1="500" y1="0" x2="500" y2="80"/>
                                             </g>
-                                            <text x="2" y="14" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">3.3 V</text>
-                                            <text x="2" y="76" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">0 V</text>
-                                            <text x="396" y="76" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end">20 ms</text>
-                                            <text x="98" y="76" fill="var(--text-secondary, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end">5 ms</text>
-                                            <path id="mqServoScopeTrace" d="M 0 60 L 30 60 L 30 14 L 30 60 L 400 60" fill="none" stroke="#facc15" stroke-width="1.8" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/>
-                                            <line id="mqServoScopePwAnno" x1="0" y1="14" x2="30" y2="14" stroke="#4ade80" stroke-width="1" stroke-dasharray="2 2"/>
-                                            <text id="mqServoScopePwLabel" x="15" y="11" fill="#4ade80" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">1.50 ms</text>
+                                            <!-- Period markers (every 20 ms = every 200 px) — bolder so the repeat reads -->
+                                            <g stroke="#facc15" stroke-width="0.6" stroke-opacity="0.4" stroke-dasharray="3 3">
+                                                <line x1="200" y1="0" x2="200" y2="80"/>
+                                                <line x1="400" y1="0" x2="400" y2="80"/>
+                                            </g>
+                                            <text x="4" y="14" fill="var(--text, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">3.3 V</text>
+                                            <text x="4" y="76" fill="var(--text, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8">0 V</text>
+                                            <text x="200" y="78" fill="var(--text, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">20 ms</text>
+                                            <text x="400" y="78" fill="var(--text, #93a8c4)" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">40 ms</text>
+                                            <path id="mqServoScopeTrace" d="M 0 60 L 600 60" fill="none" stroke="#facc15" stroke-width="1.8" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/>
+                                            <line id="mqServoScopePwAnno" x1="10" y1="14" x2="40" y2="14" stroke="#4ade80" stroke-width="1" stroke-dasharray="2 2"/>
+                                            <text id="mqServoScopePwLabel" x="25" y="11" fill="#4ade80" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">1.50 ms</text>
                                         </svg>
-                                        <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary, #93a8c4); font-family:'JetBrains Mono', monospace; margin-top:4px;">
+                                        <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text, #93a8c4); font-family:'JetBrains Mono', monospace; margin-top:4px;">
                                             <span>0 ms</span>
-                                            <span><span style="color:#facc15;">━ signal</span> · <span style="color:#4ade80;">┄ pulse width</span></span>
-                                            <span>20 ms (50 Hz)</span>
+                                            <span><span style="color:#facc15;">━ signal</span> · <span style="color:#4ade80;">┄ pulse width</span> · period repeats every 20 ms</span>
+                                            <span>60 ms (50 Hz × 3)</span>
                                         </div>
                                     </div>
 
@@ -995,7 +1052,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <span>📟 GPIO digital output</span>
                                             <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; color:#facc15;">3.3 V CMOS</span>
                                         </div>
-                                        <svg viewBox="0 0 200 40" preserveAspectRatio="none" style="width:100%; height:40px; display:block; background:#0a1628; border-radius:4px;">
+                                        <svg viewBox="0 0 200 40" preserveAspectRatio="none" style="width:100%; height:40px; display:block; background:var(--bg-deep, #0a1628); border-radius:4px;">
                                             <g stroke="var(--border, #1d3556)" stroke-width="0.4">
                                                 <line x1="0" y1="10" x2="200" y2="10"/>
                                                 <line x1="0" y1="30" x2="200" y2="30"/>
@@ -1044,7 +1101,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <span>🎼 WS2812 bit timing · self-clocked single-wire serial</span>
                                             <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; color:#f472b6;">~800 kHz</span>
                                         </div>
-                                        <svg viewBox="0 0 400 60" preserveAspectRatio="none" style="width:100%; height:60px; display:block; background:#0a1628; border-radius:4px;">
+                                        <svg viewBox="0 0 400 60" preserveAspectRatio="none" style="width:100%; height:60px; display:block; background:var(--bg-deep, #0a1628); border-radius:4px;">
                                             <g stroke="var(--border, #1d3556)" stroke-width="0.5">
                                                 <line x1="0" y1="15" x2="400" y2="15"/>
                                                 <line x1="0" y1="45" x2="400" y2="45"/>
@@ -1103,7 +1160,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     </div>
                                     <!-- Live waveform of the chosen frequency -->
                                     <div style="background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:8px; padding:10px; margin-bottom:10px;">
-                                        <svg id="mqBuzzWave" viewBox="0 0 200 50" preserveAspectRatio="none" style="width:100%; height:50px; display:block; background:#0a1628; border-radius:4px;">
+                                        <svg id="mqBuzzWave" viewBox="0 0 200 50" preserveAspectRatio="none" style="width:100%; height:50px; display:block; background:var(--bg-deep, #0a1628); border-radius:4px;">
                                             <g stroke="var(--border, #1d3556)" stroke-width="0.4">
                                                 <line x1="0" y1="12" x2="200" y2="12"/>
                                                 <line x1="0" y1="25" x2="200" y2="25"/>
@@ -1212,7 +1269,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                     <circle cx="98" cy="112" r="0.8" fill="#fbbf24"/>
                                                     <circle cx="102" cy="112" r="0.8" fill="#fbbf24"/>
                                                 </g>
-                                                <text x="100" y="137" fill="#93a8c4" font-size="6" font-family="JetBrains Mono, monospace" text-anchor="middle">echolocation · HC-SR04 (P1 trig · P2 echo)</text>
+                                                <text x="100" y="137" fill="var(--text, #93a8c4)" font-size="6" font-family="JetBrains Mono, monospace" text-anchor="middle">echolocation · HC-SR04 (P1 trig · P2 echo)</text>
                                                 <!-- Hidden compat shims -->
                                                 <text id="mqDistEmoji" x="0" y="0" opacity="0" font-size="1">🦇</text>
                                                 <text id="mqDistGaugeNum" x="0" y="0" opacity="0" font-size="1">— cm</text>
@@ -1234,7 +1291,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 <span>📈 last 30 pings</span>
                                                 <span id="mqDistSparkInfo">—</span>
                                             </div>
-                                            <svg viewBox="0 0 100 24" preserveAspectRatio="none" style="width:100%; height:24px; display:block; background:#0a1628; border-radius:4px;">
+                                            <svg viewBox="0 0 100 24" preserveAspectRatio="none" style="width:100%; height:24px; display:block; background:var(--bg-deep, #0a1628); border-radius:4px;">
                                                 <path id="mqDistSpark" d="" fill="none" stroke="#c084fc" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
                                             </svg>
                                         </div>

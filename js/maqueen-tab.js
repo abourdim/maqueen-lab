@@ -519,26 +519,35 @@
       codeStatus.style.color = color || '#93a8c4';
     }
 
-    // PWM scope: 0..400 px viewBox = 0..20 ms. Pulse goes from 1.0 ms (=20px)
-    // at 0° to 2.0 ms (=40px) at 180°. Below the pulse the line stays LOW.
+    // PWM scope: 600 px viewBox = 60 ms = THREE 20-ms periods (so the
+    // repetition is visible). Pulse width 1.0..2.0 ms maps to 10..20 px
+    // within each 200 px period.
     function updateServoScope(angle) {
       const trace = document.getElementById('mqServoScopeTrace');
       const anno  = document.getElementById('mqServoScopePwAnno');
       const lbl   = document.getElementById('mqServoScopePwLabel');
       const info  = document.getElementById('mqServoScopeInfo');
       if (!trace) return;
-      const pwMs = 1.0 + (angle / 180);            // 1.0 .. 2.0 ms
-      const pwPx = (pwMs / 20) * 400;              // map ms -> px
-      // Trace: stay LOW (y=60), then jump HIGH (y=14) for pwPx duration, then LOW again
-      // Pulse starts at x=10 to leave a tiny low porch
-      const x0 = 10, x1 = x0 + pwPx;
-      trace.setAttribute('d', `M 0 60 L ${x0} 60 L ${x0} 14 L ${x1.toFixed(1)} 14 L ${x1.toFixed(1)} 60 L 400 60`);
+      const pwMs    = 1.0 + (angle / 180);     // 1.0 .. 2.0 ms
+      const periodPx = 200;                    // 20 ms per period
+      const pwPx    = (pwMs / 20) * periodPx;  // pulse width in px
+      // 3 periods, each 200 px wide. Build a single path that pulses up at
+      // the start of every period.
+      let d = 'M 0 60';
+      for (let p = 0; p < 3; p++) {
+        const x0 = p * periodPx;
+        const x1 = x0 + pwPx;
+        const xEnd = (p + 1) * periodPx;
+        d += ` L ${x0} 60 L ${x0} 14 L ${x1.toFixed(1)} 14 L ${x1.toFixed(1)} 60 L ${xEnd} 60`;
+      }
+      trace.setAttribute('d', d);
       if (anno) {
-        anno.setAttribute('x1', x0);
-        anno.setAttribute('x2', x1.toFixed(1));
+        // Annotate the FIRST period's pulse-width
+        anno.setAttribute('x1', '0');
+        anno.setAttribute('x2', pwPx.toFixed(1));
       }
       if (lbl) {
-        lbl.setAttribute('x', ((x0 + x1) / 2).toFixed(1));
+        lbl.setAttribute('x', (pwPx / 2).toFixed(1));
         lbl.textContent = pwMs.toFixed(2) + ' ms';
       }
       if (info) info.textContent = pwMs.toFixed(2) + ' ms HIGH every 20 ms';
