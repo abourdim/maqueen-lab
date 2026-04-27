@@ -66,6 +66,8 @@
       mq_no_link:         "no link",
       mq_drive_diff:      "differential drive",
       mq_hold_to_drive:   "hold to drive (release = stop)",
+      mq_radar_sweep_title: "Radar Display",
+      mq_radar_sweep_hint:  "💡 Tip — enable S1 Sweep on the Servos tab for the full sweeping effect.",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -501,6 +503,8 @@
       mq_no_link:         "pas de lien",
       mq_drive_diff:      "entraînement différentiel",
       mq_hold_to_drive:   "tenir pour rouler (relâcher = stop)",
+      mq_radar_sweep_title: "Affichage Radar",
+      mq_radar_sweep_hint:  "💡 Astuce — active le balayage S1 dans l'onglet Servos pour l'effet complet.",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -936,6 +940,8 @@
       mq_no_link:         "\u0644\u0627 \u0627\u062a\u0635\u0627\u0644",
       mq_drive_diff:      "\u062f\u0641\u0639 \u062a\u0641\u0627\u0636\u0644\u064a",
       mq_hold_to_drive:   "\u0627\u0636\u063a\u0637 \u0648\u0623\u0645\u0633\u0643 \u0644\u0644\u0642\u064a\u0627\u062f\u0629 (\u0623\u0641\u0644\u0627\u062a = \u0625\u064a\u0642\u0627\u0641)",
+      mq_radar_sweep_title: "\u0634\u0627\u0634\u0629 \u0627\u0644\u0631\u0627\u062f\u0627\u0631",
+      mq_radar_sweep_hint:  "\ud83d\udca1 \u062a\u0644\u0645\u064a\u062d \u2014 \u0641\u0639\u0651\u0644 \u0645\u0633\u062d S1 \u0641\u064a \u062a\u0628\u0648\u064a\u0628 \u0627\u0644\u0633\u064a\u0631\u0641\u0648 \u0644\u0631\u0624\u064a\u0629 \u0627\u0644\u062a\u0623\u062b\u064a\u0631 \u0627\u0644\u0643\u0627\u0645\u0644.",
 
       // Tabs
       tab_maqueen:        "Maqueen",

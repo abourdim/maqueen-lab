@@ -696,6 +696,8 @@
       updateServoScope(angle);
       renderCode();
       try { mqAnat.servo(port); } catch {}
+      // Sweep radar tracks S1 only (that's the port the sonar is mounted on).
+      try { if (port === 1) mqSweepRadar.recordAngle(angle); } catch {}
       // BLE — coalesced so dragging the slider doesn't drown the channel
       if (window.bleScheduler) {
         flashStatus('… sending', '#fbbf24');
@@ -1239,6 +1241,114 @@
     });
   }
 
+  // -------- 📡 SWEEP RADAR --------------------------------
+  // The iconic Arduino + Processing sweep radar. Beam is anchored to the
+  // LIVE S1 servo angle; red blips are REAL (servo angle, sonar distance)
+  // pairs that persist and fade over 5 s. Pair with S1 Sweep mode for the
+  // full effect — the beam tracks the actual servo, blips appear at the
+  // actual ultrasonic readings, no fakery.
+  const mqSweepRadar = (function () {
+    let active = false;
+    let raf = null;
+    let lastAngle = 90;
+    let lastAngleAt = 0;        // timestamp of last servo-angle update
+    let lastCm = null;
+    const blips = [];           // FIFO of {angle, cm, t}
+    const MAX_BLIPS = 220;
+    const FADE_MS = 5000;
+
+    // Distance → SVG radius. Piecewise so close objects get more visual
+    // space (closer = action zone). Matches the arc rings at 10/30/100 cm
+    // → radii 40/80/160 in the SVG (origin 200,200; viewBox 400x220).
+    function distToRadius(cm) {
+      if (cm <= 0) return 0;
+      if (cm < 10)  return (cm / 10) * 40;
+      if (cm < 30)  return 40 + ((cm - 10) / 20) * 40;
+      if (cm < 100) return 80 + ((cm - 30) / 70) * 80;
+      return 160;
+    }
+    // Angle (deg, 0..180) → SVG (x, y). 0° = right, 90° = up, 180° = left.
+    function polar(deg, r) {
+      const rad = deg * Math.PI / 180;
+      return { x: 200 + r * Math.cos(rad), y: 200 - r * Math.sin(rad) };
+    }
+
+    function recordAngle(angle) {
+      lastAngle = angle;
+      lastAngleAt = performance.now();
+      const hint = document.getElementById('mqSweepHint');
+      if (hint) hint.style.opacity = '0.35';
+    }
+    function recordDistance(cm) {
+      lastCm = (cm > 0 && cm < 500) ? Math.round(+cm) : null;
+      if (lastCm == null) return;
+      // Only push a blip if the angle reading is fresh — otherwise the
+      // (angle, dist) pair isn't meaningful. 500 ms window covers BLE RTT.
+      if (performance.now() - lastAngleAt > 500) return;
+      blips.push({ angle: lastAngle, cm: lastCm, t: performance.now() });
+      if (blips.length > MAX_BLIPS) blips.shift();
+    }
+
+    function render() {
+      if (!active) return;
+      const now = performance.now();
+      // Beam — SVG rotate is CW-positive; negate so 90° → straight up.
+      const beam = document.getElementById('mqSweepBeamG');
+      if (beam) beam.setAttribute('transform', `rotate(${-lastAngle} 200 200)`);
+      // HUD
+      const hudA = document.getElementById('mqSweepHudA');
+      const hudD = document.getElementById('mqSweepHudD');
+      if (hudA) hudA.textContent = Math.round(lastAngle) + ' deg';
+      if (hudD) hudD.textContent = (lastCm == null ? '— cm' : lastCm + ' cm');
+      // Blips — drop fully-faded, render rest with opacity = 1 - age/FADE_MS
+      const layer = document.getElementById('mqSweepBlips');
+      if (layer) {
+        while (blips.length && (now - blips[0].t) > FADE_MS) blips.shift();
+        let svg = '';
+        for (let i = 0; i < blips.length; i++) {
+          const b = blips[i];
+          const op = Math.max(0, 1 - (now - b.t) / FADE_MS);
+          const r = distToRadius(b.cm);
+          const p = polar(b.angle, r);
+          const color = b.cm < 10 ? '#ef4444' : b.cm < 30 ? '#fbbf24' : '#86efac';
+          const radius = b.cm < 10 ? 2.4 : 2.0;
+          svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" fill="${color}" opacity="${op.toFixed(2)}"/>`;
+        }
+        layer.innerHTML = svg;
+      }
+      // LOCK indicator — last 6 blips clustered near current (angle, dist)
+      const lock = document.getElementById('mqSweepHudLock');
+      if (lock) {
+        let recent = 0;
+        const tail = Math.min(blips.length, 6);
+        if (tail >= 3 && lastCm != null) {
+          for (let i = blips.length - tail; i < blips.length; i++) {
+            const b = blips[i];
+            if (Math.abs(b.angle - lastAngle) < 8 && Math.abs(b.cm - lastCm) < 3) recent++;
+          }
+        }
+        if (recent >= 3) {
+          lock.textContent = 'LOCK · ' + lastCm + ' cm';
+          lock.style.opacity = '1';
+        } else {
+          lock.style.opacity = '0';
+        }
+      }
+      raf = requestAnimationFrame(render);
+    }
+
+    function start() {
+      if (active) return;
+      active = true;
+      raf = requestAnimationFrame(render);
+    }
+    function stop() {
+      active = false;
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    }
+    return { recordAngle, recordDistance, start, stop, isActive: () => active };
+  })();
+
   // -------- ULTRASONIC ------------------------------------
   let distAutoTimer = null;
   // Distance sparkline (last ~30 samples = ~30 sec at 1 Hz default)
@@ -1253,6 +1363,8 @@
   function setDist(cm) {
     cm = Math.round(+cm);
     const noSensor = (cm <= 0 || cm >= 500);
+    // Sweep radar — feed every reading (incl. no-sensor → "— cm" in HUD).
+    try { mqSweepRadar.recordDistance(cm); } catch {}
     // Glossy gauge — compatibility shims for the old IDs are still in DOM
     const big = document.getElementById('mqDistBig');
     const bar = document.getElementById('mqDistBar');
@@ -1399,6 +1511,12 @@
         p.classList.toggle('mq-radar-pick-active', on);
       });
       try { localStorage.setItem('maqueen.radarStyle', name); } catch {}
+      // Mount/unmount the sweep-radar rAF loop only when its style is on
+      // — saves frames and keeps blip array idle for the other 4 styles.
+      try {
+        if (name === 'sweep') mqSweepRadar.start();
+        else mqSweepRadar.stop();
+      } catch {}
     }
     picks.forEach(p => p.addEventListener('click', () => show(p.dataset.style)));
     show(active);
