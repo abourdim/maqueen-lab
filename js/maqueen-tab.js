@@ -783,7 +783,36 @@
     // Reads sweepPeriodMs LIVE on each tick so the slider can adjust speed
     // mid-sweep without restarting. Update rate scales inversely too —
     // faster sweep → more frames per second so motion stays smooth.
+    //
+    // Motion profile: NOT a sine wave. We use a triangle "progress" through
+    // each half-cycle, fed through a quintic smoothstep (6t⁵ − 15t⁴ + 10t³).
+    // The quintic has TWO zero-derivatives at the endpoints (velocity AND
+    // acceleration), so the reversal feels gentle — the SG90 doesn't get
+    // "slammed" at 0° / 180°, the radar beam doesn't whip around. Plus a
+    // configurable dwell at each endpoint so the servo gets a beat to settle
+    // before reversing — same trick real survey radars use ("look around"
+    // pause). Compare to the old code:
+    //   old: const a = 90 + 90 * sin(phase)    // sin has zero v but max a at endpoints
+    //   new: smooth(triangle(t)) * 180         // both v and a are zero at endpoints
     const sweeping = { 1: false, 2: false };
+    const SWEEP_DWELL_FRAC = 0.08;          // 8% of cycle held at each endpoint
+    function sweepAngle(cycleT) {
+      // cycleT ∈ [0, 1) — one full back-and-forth.
+      // Layout:  [dwell-low]  ↗ rise ↗  [dwell-high]  ↘ fall ↘
+      //          [0,    D]   [D, 0.5-D]  [0.5-D, 0.5+D] [0.5+D, 1-D] [1-D, 1)
+      const D = SWEEP_DWELL_FRAC;
+      if (cycleT < D) return 0;                              // dwell at 0°
+      if (cycleT < 0.5 - D) {
+        const u = (cycleT - D) / (0.5 - 2 * D);              // 0..1
+        return (u * u * u * (u * (u * 6 - 15) + 10)) * 180;  // quintic smoothstep × 180
+      }
+      if (cycleT < 0.5 + D) return 180;                      // dwell at 180°
+      if (cycleT < 1 - D) {
+        const u = (cycleT - (0.5 + D)) / (0.5 - 2 * D);
+        return 180 - (u * u * u * (u * (u * 6 - 15) + 10)) * 180;
+      }
+      return 0;                                              // dwell at 0° (wraps to start)
+    }
     document.querySelectorAll('.mq-servo-sweep').forEach(b => {
       const port = +b.dataset.port;
       b.addEventListener('click', () => {
@@ -796,12 +825,16 @@
         }
         sweeping[port] = true;
         b.textContent = '⏸ Stop';
-        // Update rate: ~10 Hz for slow sweeps, ~20 Hz for very fast ones,
-        // capped so the BLE scheduler doesn't drown.
-        const hz = Math.min(20, Math.max(8, Math.round(20000 / sweepPeriodMs)));
+        // Update rate: ~12 Hz for slow sweeps, ~25 Hz for very fast ones.
+        // Higher cap (was 20) keeps physical servo motion smooth — at 25 Hz
+        // the servo gets a target every 40 ms, which is faster than its own
+        // ~150 ms slewing time for big moves. So commands BLEND into smooth
+        // physical motion instead of stepping the gearbox.
+        const hz = Math.min(25, Math.max(12, Math.round(25000 / sweepPeriodMs)));
         window.bleScheduler.animate(`servo-sweep-${port}`, t => {
-          const phase = ((t % sweepPeriodMs) / sweepPeriodMs) * 2 * Math.PI;
-          const a = Math.round(90 + Math.sin(phase) * 90);
+          // Read sweepPeriodMs LIVE so slider adjusts speed mid-sweep.
+          const cycleT = (t % sweepPeriodMs) / sweepPeriodMs;
+          const a = Math.round(sweepAngle(cycleT));
           rotateDial(port, a);
           setBigReadout(port, a);
           const slider = port === 1 ? s1 : s2;
@@ -811,6 +844,11 @@
           lastShown = { port, angle: a };
           updateServoScope(a);
           renderCode();
+          // Feed the visualizers too — sweep mode bypasses setAngle()
+          // which is where mqSweepRadar / mqOdometry usually pick up the
+          // angle. Keep them in sync so the radar beam tracks during sweep.
+          try { if (port === 1) mqSweepRadar.recordAngle(a); } catch {}
+          try { if (port === 1) mqOdometry.recordAngle(a); } catch {}
           return `SRV:${port},${a}`;
         }, hz);
       });
