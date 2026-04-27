@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.53"
-const BUILD_DATE = "2026-04-27 07:42 UTC"
+const BUILD_VERSION = "0.1.54"
+const BUILD_DATE = "2026-04-27 07:46 UTC"
 
 // ---------- state ----------
 let btConnected = false
@@ -567,6 +567,31 @@ basic.forever(function () {
     basic.pause(1000)
 })
 
+// ---------- sound streaming (V2 only) ----------
+// V2 micro:bits expose input.soundLevel(). On V1, this call doesn't
+// exist and MakeCode used to assert at compile time when the target
+// version resolution drifted — but for the v0.1.x line we're locked
+// to V2 (Maqueen Lite v4 ships with V2 boards), so this compiles.
+// Heartbeat pattern matches ACC: send if delta > deadband OR every 750 ms.
+let lastSound = 0
+let lastSoundSentAt = 0
+const SOUND_DEADBAND = 4
+const SOUND_HEARTBEAT_MS = 750
+basic.forever(function () {
+    if (btConnected && streamsEnabled) {
+        let s = input.soundLevel()
+        let now = input.runningTime()
+        let moved = Math.abs(s - lastSound) > SOUND_DEADBAND
+        let stale = (now - lastSoundSentAt) >= SOUND_HEARTBEAT_MS
+        if (moved || stale) {
+            lastSound = s
+            lastSoundSentAt = now
+            send("SOUND:" + s)
+        }
+    }
+    basic.pause(150)
+})
+
 // ---------- light streaming (~3 Hz, on change) ----------
 // CRITICAL: do NOT call input.compassHeading() in any auto-loop.
 // In CODAL / pxt-microbit, the FIRST call to compassHeading() on an
@@ -585,11 +610,18 @@ basic.forever(function () {
 // that calls compassHeading() only after a user gesture confirms
 // they're ready to do the tilt-game.
 let lastLight = -1
+let lastLightSentAt = 0
+const LIGHT_DEADBAND = 4
+const LIGHT_HEARTBEAT_MS = 1000
 basic.forever(function () {
     if (btConnected && streamsEnabled) {
         let l = input.lightLevel()
-        if (Math.abs(l - lastLight) > 4) {
+        let now = input.runningTime()
+        let moved = Math.abs(l - lastLight) > LIGHT_DEADBAND
+        let stale = (now - lastLightSentAt) >= LIGHT_HEARTBEAT_MS
+        if (moved || stale) {
             lastLight = l
+            lastLightSentAt = now
             send("LIGHT:" + l)
         }
     }
