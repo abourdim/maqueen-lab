@@ -451,6 +451,31 @@
       const t = a.tagName;
       return t === 'INPUT' || t === 'TEXTAREA' || a.isContentEditable;
     }
+    // Visual echo: when a key fires, briefly highlight the matching keypad
+    // button so keyboard users see WHICH on-screen button they triggered —
+    // makes the equivalence between keyboard / tap / drag obvious.
+    // Arrow keys map onto the same WASD buttons (no separate buttons exist).
+    const KEYPAD_ECHO_MAP = {
+      'w': 'w', 'arrowup': 'w',
+      's': 's', 'arrowdown': 's',
+      'a': 'a', 'arrowleft': 'a',
+      'd': 'd', 'arrowright': 'd',
+      ' ': ' ',
+    };
+    function flashKeypad(k) {
+      const dataKey = KEYPAD_ECHO_MAP[k];
+      if (!dataKey) return;
+      const btn = document.querySelector(`.mq-keypad-btn[data-key="${dataKey === ' ' ? ' ' : dataKey}"]`);
+      if (!btn) return;
+      btn.classList.add('mq-keypad-flash');
+    }
+    function unflashKeypad(k) {
+      const dataKey = KEYPAD_ECHO_MAP[k];
+      if (!dataKey) return;
+      const btn = document.querySelector(`.mq-keypad-btn[data-key="${dataKey === ' ' ? ' ' : dataKey}"]`);
+      if (!btn) return;
+      btn.classList.remove('mq-keypad-flash');
+    }
     document.addEventListener('keydown', (e) => {
       if (!driveSubtabActive() || isTyping()) return;
       const k = e.key.toLowerCase();
@@ -458,6 +483,9 @@
         e.preventDefault();
         held.clear();
         fireDrive(0, 0);
+        flashKeypad(' ');
+        // Space is a tap-style action — auto-clear flash after 150 ms.
+        setTimeout(() => unflashKeypad(' '), 150);
         return;
       }
       const v = KEY[k];
@@ -465,6 +493,7 @@
       e.preventDefault();
       if (held.has(k)) return;   // ignore key auto-repeat
       held.add(k);
+      flashKeypad(k);
       fireDrive(v[0], v[1], { coalesce: true });
     });
     document.addEventListener('keyup', (e) => {
@@ -472,6 +501,7 @@
       const k = e.key.toLowerCase();
       if (!KEY[k]) return;
       held.delete(k);
+      unflashKeypad(k);
       // No more direction keys held → stop. (If user is still holding
       // another, fire that one instead.)
       if (held.size === 0) {

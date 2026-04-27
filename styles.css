@@ -4163,3 +4163,114 @@ html[dir="rtl"] .bench-response { direction: rtl; text-align: right; }
 html[dir="rtl"] .graph-toggle { direction: rtl; }
 html[dir="rtl"] .graph-toggle label { flex-direction: row-reverse; }
 html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
+
+/* ===========================================================
+ * Drive sub-tab — KEYPAD ◀ MASCOT ▶ JOYSTICK triad
+ * Three input methods flank the live mascot. Mascot stays the
+ * subject; inputs come at it from both sides. <900px collapses
+ * to single column with mascot first.
+ * =========================================================== */
+.mq-drive-triad {
+  display: grid;
+  grid-template-columns: minmax(170px, 1fr) minmax(220px, 2fr) minmax(150px, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+.mq-keypad-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+.mq-keypad-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.mq-keypad-btn {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  background: var(--card-bg-2, #0a1628);
+  color: #fb923c;
+  border: 1px solid #fb923c;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.08s ease-out, box-shadow 0.12s ease-out, background 0.12s ease-out;
+}
+.mq-keypad-btn .mq-keypad-glyph {
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 700;
+}
+.mq-keypad-btn .mq-keypad-cap {
+  font-size: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  opacity: 0.65;
+  letter-spacing: 0.5px;
+}
+.mq-keypad-btn:hover {
+  background: rgba(251, 146, 60, 0.12);
+}
+.mq-keypad-btn:active,
+.mq-keypad-btn.mq-keypad-flash {
+  background: rgba(251, 146, 60, 0.28);
+  box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.45), 0 0 14px rgba(251, 146, 60, 0.45);
+  transform: translateY(1px);
+}
+.mq-keypad-btn.mq-keypad-stop {
+  color: #f87171;
+  border-color: #f87171;
+}
+.mq-keypad-btn.mq-keypad-stop .mq-keypad-glyph {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+.mq-keypad-btn.mq-keypad-stop:hover {
+  background: rgba(248, 113, 113, 0.12);
+}
+.mq-keypad-btn.mq-keypad-stop:active,
+.mq-keypad-btn.mq-keypad-stop.mq-keypad-flash {
+  background: rgba(248, 113, 113, 0.28);
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.45), 0 0 14px rgba(248, 113, 113, 0.45);
+}
+.mq-keypad-hint {
+  margin-top: 4px;
+  font-size: 9px;
+  color: var(--text-secondary, #93a8c4);
+  text-align: center;
+  opacity: 0.85;
+  line-height: 1.4;
+}
+.mq-keypad-hint kbd {
+  background: var(--card-bg-2, #0a1628);
+  border: 1px solid var(--border, #1d3556);
+  padding: 0 4px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  color: var(--text, #b8c8e0);
+}
+
+/* Narrow viewports — stack so mascot leads, then inputs */
+@media (max-width: 900px) {
+  .mq-drive-triad {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "mascot"
+      "keypad"
+      "joystick";
+    gap: 12px;
+  }
+  .mq-drive-triad > .mq-keypad-panel { grid-area: keypad; }
+  /* The mascot wrapper is the second child (between keypad and joystick).
+     Use :nth-child to target it without adding more class hooks. */
+  .mq-drive-triad > div:nth-child(2) { grid-area: mascot; }
+  .mq-drive-triad > div:nth-child(3) { grid-area: joystick; }
+}

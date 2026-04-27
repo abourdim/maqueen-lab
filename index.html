@@ -873,9 +873,44 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         <span style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-secondary, #93a8c4); background:var(--card-bg-2, #0a1628); padding:2px 8px; border-radius:4px;" title="Drive uses the Maqueen 'M:L,R' BLE verb. L,R range -255..+255.">M:L,R</span>
                                     </div>
 
-                                    <!-- Top row: mascot + joystick -->
-                                    <div style="display:grid; grid-template-columns: minmax(220px, 1fr) auto; gap:14px; align-items:center; margin-bottom:12px;">
-                                        <!-- SVG Maqueen mascot, top-down -->
+                                    <!-- Top row: KEYPAD ◀ MASCOT ▶ JOYSTICK
+                                         Three input methods flanking the live mascot. The mascot is the
+                                         "subject" — inputs come at it from both sides. All three call the
+                                         same fireDrive() so they're physically equivalent (keyboard, tap,
+                                         drag — same BLE verb out the wire). On <900px we collapse to
+                                         single column (mascot first, then keypad, then joystick). -->
+                                    <div class="mq-drive-triad" style="margin-bottom:12px;">
+                                        <!-- LEFT: D-pad keypad with WASD/Space key-caps -->
+                                        <div class="mq-keypad-panel">
+                                            <div class="mq-keypad-row">
+                                                <button class="mq-drive-btn mq-keypad-btn" data-key="w" data-l="200" data-r="200" title="Forward (W or ↑)">
+                                                    <span class="mq-keypad-glyph">↑</span>
+                                                    <span class="mq-keypad-cap">W</span>
+                                                </button>
+                                            </div>
+                                            <div class="mq-keypad-row">
+                                                <button class="mq-drive-btn mq-keypad-btn" data-key="a" data-l="-150" data-r="150" title="Spin left (A or ←)">
+                                                    <span class="mq-keypad-glyph">↺</span>
+                                                    <span class="mq-keypad-cap">A</span>
+                                                </button>
+                                                <button class="mq-drive-btn mq-keypad-btn mq-keypad-stop" data-key=" " data-l="0" data-r="0" data-stop="1" title="Stop (Space)">
+                                                    <span class="mq-keypad-glyph">STOP</span>
+                                                    <span class="mq-keypad-cap">␣</span>
+                                                </button>
+                                                <button class="mq-drive-btn mq-keypad-btn" data-key="d" data-l="150" data-r="-150" title="Spin right (D or →)">
+                                                    <span class="mq-keypad-glyph">↻</span>
+                                                    <span class="mq-keypad-cap">D</span>
+                                                </button>
+                                            </div>
+                                            <div class="mq-keypad-row">
+                                                <button class="mq-drive-btn mq-keypad-btn" data-key="s" data-l="-200" data-r="-200" title="Backward (S or ↓)">
+                                                    <span class="mq-keypad-glyph">↓</span>
+                                                    <span class="mq-keypad-cap">S</span>
+                                                </button>
+                                            </div>
+                                            <div class="mq-keypad-hint">tap or press <kbd>W A S D</kbd> · <kbd>Space</kbd> = stop</div>
+                                        </div>
+                                        <!-- CENTER: SVG Maqueen mascot, top-down -->
                                         <div style="display:flex; justify-content:center;">
                                             <svg id="mqMascot" viewBox="0 0 280 220" style="width:100%; max-width:280px; height:auto;">
                                                 <defs>
@@ -965,11 +1000,15 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         </div>
                                     </div>
 
-                                    <!-- Speed -->
-                                    <div style="display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-secondary, #93a8c4);">
+                                    <!-- Speed + hold-to-drive (promoted out of the old "Buttons + keyboard" details) -->
+                                    <div style="display:flex; align-items:center; gap:10px; font-size:11px; color:var(--text-secondary, #93a8c4); flex-wrap:wrap;">
                                         <span>Speed</span>
-                                        <input type="range" id="mqSpeedSlider" min="50" max="255" value="200" style="flex:1; accent-color:#fb923c;"/>
+                                        <input type="range" id="mqSpeedSlider" min="50" max="255" value="200" style="flex:1; min-width:120px; accent-color:#fb923c;"/>
                                         <span id="mqSpeedReadout" style="font-family:monospace; color:#fb923c; min-width:30px; text-align:right;">200</span>
+                                        <label style="display:flex; align-items:center; gap:5px; padding-left:10px; border-left:1px solid var(--border, #1d3556); cursor:pointer;" title="Hold a key/button to drive, release to stop. Off = click to set, click STOP to brake.">
+                                            <input type="checkbox" id="mqHoldToDrive" style="accent-color:#fb923c;">
+                                            hold to drive
+                                        </label>
                                     </div>
 
                                     <!-- Live BLE verb tape (geek catnip — shows what the app actually sends) -->
@@ -1049,30 +1088,6 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         </div>
                                     </details>
 
-                                    <!-- Classic arrow controls (kept as fallback / accessible mode) -->
-                                    <details style="margin-top:8px;">
-                                        <summary style="font-size:11px; color:var(--text-secondary, #93a8c4); cursor:pointer;">⌨️ Buttons + keyboard</summary>
-                                        <div style="margin-top:8px;">
-                                            <div style="display:flex; gap:6px; justify-content:center; margin-bottom:6px;">
-                                                <button class="mq-drive-btn" data-l="200" data-r="200" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↑</button>
-                                            </div>
-                                            <div style="display:flex; gap:6px; justify-content:center; margin-bottom:6px;">
-                                                <button class="mq-drive-btn" data-l="-150" data-r="150" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↺</button>
-                                                <button class="mq-drive-btn" data-l="0" data-r="0" data-stop="1" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#f87171; border:1px solid #f87171; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">STOP</button>
-                                                <button class="mq-drive-btn" data-l="150" data-r="-150" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↻</button>
-                                            </div>
-                                            <div style="display:flex; gap:6px; justify-content:center;">
-                                                <button class="mq-drive-btn" data-l="-200" data-r="-200" style="width:54px; height:42px; background:var(--card-bg-2, #0a1628); color:#fb923c; border:1px solid #fb923c; border-radius:8px; font-size:16px; cursor:pointer;">↓</button>
-                                            </div>
-                                            <div style="margin-top:8px; font-size:10px; color:var(--text-secondary, #93a8c4); text-align:center;">
-                                                ⌨️ <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">W</kbd> <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">A</kbd> <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">S</kbd> <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">D</kbd> drive · <kbd style="background:var(--card-bg-2, #0a1628); border:1px solid var(--border, #1d3556); padding:1px 6px; border-radius:3px;">Space</kbd> stop
-                                            </div>
-                                            <label style="display:flex; align-items:center; gap:6px; margin-top:8px; font-size:11px; color:var(--text-secondary, #93a8c4); cursor:pointer;" title="Hold an arrow to drive, release to stop. Off = click to set, click STOP to brake.">
-                                                <input type="checkbox" id="mqHoldToDrive" style="accent-color:#fb923c;">
-                                                hold to drive (release = stop)
-                                            </label>
-                                        </div>
-                                    </details>
                                 </div>
 
                                 <!-- SERVOS -->
