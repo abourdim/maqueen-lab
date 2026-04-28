@@ -1227,11 +1227,16 @@
   //     <svg> with a [id^="mqLedLens"] inside it.
   function setDomeOn(el, color, on) {
     if (!el) return;
-    // SVG-based LED?
-    const lens = el.querySelector && el.querySelector('[id^="mqLedLens"]');
-    const halo = el.querySelector && el.querySelector('[id^="mqLedHalo"]');
+    // SVG-based LED? Use EXACT id matches (mqLedLensL / mqLedLensR /
+    // mqLedHaloL / mqLedHaloR) — earlier we used a prefix selector
+    // [id^="mqLedLens"] which silently matched the GRADIENT defs
+    // (mqLedLensOff_L, mqLedLensOn_L) FIRST in document order, so
+    // we were setting fill on a <radialGradient> element (no visible
+    // effect) and the lens circle never updated.
+    const side = el.id && el.id.endsWith('L') ? 'L' : 'R';
+    const lens = el.querySelector && el.querySelector('#mqLedLens' + side);
+    const halo = el.querySelector && el.querySelector('#mqLedHalo' + side);
     if (lens) {
-      const side = el.id.endsWith('L') ? 'L' : 'R';
       lens.setAttribute('fill', on ? `url(#mqLedLensOn_${side})` : `url(#mqLedLensOff_${side})`);
       if (halo) halo.setAttribute('opacity', on ? '1' : '0');
       return;
