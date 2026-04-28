@@ -323,6 +323,19 @@
         else                      mqWander.start();
       });
     }
+    // Auto-wander obstacle-distance slider — restore from persisted
+    // value, wire 'input' to live-set + persist + repaint readout.
+    const obstSlider = document.getElementById('mqWanderObstacle');
+    const obstRead   = document.getElementById('mqWanderObstacleRead');
+    if (obstSlider) {
+      try { obstSlider.value = mqWander.getObstacleCm(); } catch {}
+      if (obstRead) obstRead.textContent = obstSlider.value + ' cm';
+      obstSlider.addEventListener('input', e => {
+        const v = +e.target.value;
+        try { mqWander.setObstacleCm(v); } catch {}
+        if (obstRead) obstRead.textContent = v + ' cm';
+      });
+    }
     // Macro record / replay buttons.
     const macroRec = document.getElementById('mqMacroRec');
     if (macroRec) macroRec.addEventListener('click', () => mqMacro.toggleRec());
@@ -1600,7 +1613,25 @@
   //     wander — fireDrive() detects non-wander calls and stops it.
   //   - Stops on disconnect; re-centers servo on stop.
   const mqWander = (function () {
-    const OBSTACLE_CM      = 25;     // distance that triggers a scan
+    // OBSTACLE_CM is now USER-TUNABLE via the slider next to the
+    // wander button. Stored in localStorage so the user's choice
+    // survives reload. Read live in onDistance() so the change
+    // takes effect mid-wander.
+    const OBSTACLE_KEY     = 'maqueen.wanderObstacle';
+    const OBSTACLE_DEFAULT = 25;
+    const OBSTACLE_MIN     = 10;
+    const OBSTACLE_MAX     = 80;
+    let obstacleCm = OBSTACLE_DEFAULT;
+    try {
+      const v = +localStorage.getItem(OBSTACLE_KEY);
+      if (v >= OBSTACLE_MIN && v <= OBSTACLE_MAX) obstacleCm = v;
+    } catch {}
+    function getObstacleCm() { return obstacleCm; }
+    function setObstacleCm(v) {
+      v = Math.max(OBSTACLE_MIN, Math.min(OBSTACLE_MAX, +v || OBSTACLE_DEFAULT));
+      obstacleCm = v;
+      try { localStorage.setItem(OBSTACLE_KEY, String(v)); } catch {}
+    }
     const TURN_BASE        = 150;    // in-place spin wheel speed
     const FORWARD_BASE_PCT = 0.70;   // fraction of speed slider
     const SCAN_ANGLES      = [30, 90, 150];   // S1 angles to sample
@@ -1764,13 +1795,19 @@
       // Trigger a scan only from FORWARD phase. Ignore obstacle reads
       // during scanning/turning — those are part of the decision loop.
       if (phase !== 'forward') return;
-      if (cm > 0 && cm < OBSTACLE_CM) {
+      // Read obstacleCm LIVE so user-tuned threshold applies mid-wander.
+      if (cm > 0 && cm < obstacleCm) {
         enterScanning();
       }
     }
     function isOurCall()  { return _ourCallFlag; }
     function isOurServo() { return _ourServoFlag; }
-    return { start, stop, cancel, onDistance, isActive: () => active, isOurCall, isOurServo };
+    return {
+      start, stop, cancel, onDistance,
+      isActive: () => active, isOurCall, isOurServo,
+      getObstacleCm, setObstacleCm,
+      OBSTACLE_MIN, OBSTACLE_MAX, OBSTACLE_DEFAULT,
+    };
   })();
 
   // -------- 🎬 MACRO RECORD / REPLAY ----------------------
@@ -3052,9 +3089,16 @@
     }
     restartDistAuto();
     refreshDistOrb();
-    // Re-evaluate orb on connect/disconnect transitions
+    // Re-evaluate on connect/disconnect transitions. Critical: also call
+    // restartDistAuto() on 'connected' — the orb-only handler used to
+    // paint 'polling 2000ms' without actually starting the interval, so
+    // at startup no DIST? was ever sent (and the audio ping had nothing
+    // to play because no setDist() ever fired).
     if (window.bleScheduler && window.bleScheduler.on) {
-      window.bleScheduler.on('connected',    refreshDistOrb);
+      window.bleScheduler.on('connected', () => {
+        restartDistAuto();
+        refreshDistOrb();
+      });
       window.bleScheduler.on('disconnected', refreshDistOrb);
     }
     // Audio-ping toggle. Restore persisted state, wire change handler.
@@ -3212,8 +3256,14 @@
     }
     restartLineAuto();
     refreshLineOrb();
+    // Same fix as the Distance polling — actually restart the interval
+    // on 'connected' (was only repainting the orb, leaving polling
+    // off until the user toggled the auto checkbox manually).
     if (window.bleScheduler && window.bleScheduler.on) {
-      window.bleScheduler.on('connected',    refreshLineOrb);
+      window.bleScheduler.on('connected', () => {
+        restartLineAuto();
+        refreshLineOrb();
+      });
       window.bleScheduler.on('disconnected', refreshLineOrb);
     }
   }

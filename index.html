@@ -1044,6 +1044,11 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             hold to drive
                                         </label>
                                         <button id="mqDriveAutoWander" type="button" class="mq-wander-btn" title="Hands-off demo — robot drives forward, watches the sonar, and turns on its own when it sees an obstacle. Touch any drive control to take back over." data-i18n="mq_drive_wander">🚦 Auto wander</button>
+                                        <label style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary, #93a8c4);" title="When auto-wander sees something closer than this, it stops, scans with the sonar, and turns toward open space.">
+                                            <span data-i18n="mq_wander_obstacle">obstacle ≤</span>
+                                            <input type="range" id="mqWanderObstacle" min="10" max="80" step="1" value="25" style="width:90px; accent-color:#4ade80;"/>
+                                            <span id="mqWanderObstacleRead" style="font-family:'JetBrains Mono', monospace; color:#4ade80; font-weight:700; min-width:40px; text-align:right;">25 cm</span>
+                                        </label>
                                     </div>
 
                                     <!-- 🎬 MACRO record + replay — capture up to 60 s of drive commands
