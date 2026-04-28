@@ -113,12 +113,17 @@
         if (fwBtn) fwBtn.style.flex = '1 1 auto';
         // Strip the streams button's full set of inline styles — they
         // were designed for the wide sensor panel and don't match the
-        // .secondary .small look of the Firmware button next to it.
-        // Adopt the same class system so they paint identically; the
+        // .secondary look of the Firmware button next to it. Adopt the
+        // same .secondary class so paint inherits identically; the
         // yellow accent is re-applied via .mq-streams-in-connect CSS.
+        // NOTE: no .small here — user wanted footer buttons matched
+        // in SIZE with Connect/Disconnect above.
         streamsBtn.removeAttribute('style');
-        streamsBtn.classList.add('secondary', 'small', 'mq-streams-in-connect');
-        streamsBtn.style.flex = '0 0 auto';
+        streamsBtn.classList.add('secondary', 'mq-streams-in-connect');
+        // Equal-width pair: both buttons flex:1 from a zero base so
+        // they split the footer 50/50 regardless of label length.
+        streamsBtn.style.flex = '1 1 0';
+        if (fwBtn) fwBtn.style.flex = '1 1 0';
         fwFooter.appendChild(streamsBtn);
       }
     }

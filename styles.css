@@ -4882,13 +4882,14 @@ aside.log-rail > .connection-card #appBuildInfo #fwVersionLine {
   padding-top: 0 !important;
   margin-top: 0 !important;
 }
-/* Footer pair (Firmware + Streams) — DISCRETE utility buttons.
-   Visual hierarchy in the CONNECT card:
-     1. Connect (primary, cyan filled)        ← main action
-     2. Disconnect (secondary, outlined)      ← opposite of Connect
-     3. Firmware + Streams (footer, faint)    ← settings, recede
-   So the eye lands on Connect first; Firmware/Streams are there
-   when you need them, but don't compete for attention. */
+/* Footer pair (Firmware + Streams) — same SIZE as Connect/Disconnect
+   so all 4 buttons in the CONNECT card share one visual family.
+   Visual hierarchy is conveyed by COLOR/FILL, not size:
+     1. Connect       — full cyan fill (loud, primary action)
+     2. Disconnect    — outlined cyan (medium, opposite)
+     3. Firmware      — outlined dim grey (discrete utility)
+     4. Streams: ON   — outlined dim yellow (discrete + status tint)
+   Same pill shape, same height, same font-weight — only paint differs. */
 aside.log-rail > .connection-card .connection-footer {
   margin-top: 8px;
   display: flex;
@@ -4896,31 +4897,28 @@ aside.log-rail > .connection-card .connection-footer {
   align-items: stretch;
 }
 aside.log-rail > .connection-card .connection-footer button {
-  font-size: 10px !important;
-  padding: 4px 12px !important;
+  /* Inherit base button sizing (8px 14px / 0.78rem / weight 600 /
+     999px radius). Override ONLY the discrete paint scheme. */
   background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: var(--text-secondary, #93a8c4) !important;
-  font-weight: 400 !important;
-  /* Match the base button pill shape (Connect/Disconnect use 999px) so
-     all 4 buttons in the CONNECT card share the same family silhouette. */
-  border-radius: 999px !important;
   transition: all 0.15s ease-out;
 }
 aside.log-rail > .connection-card .connection-footer button:hover {
-  border-color: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
   color: var(--text, #e2e8f0) !important;
   background: rgba(255, 255, 255, 0.04) !important;
 }
-/* Streams keeps a subtle yellow tint on the TEXT only — meaningful
-   status cue (yellow = changes BLE traffic), without a loud border. */
+/* Streams keeps a subtle yellow tint on text+border — meaningful
+   status cue (yellow = changes BLE traffic), still discrete. */
 .mq-streams-in-connect {
-  color: rgba(251, 191, 36, 0.7) !important;
+  color: rgba(251, 191, 36, 0.75) !important;
+  border-color: rgba(251, 191, 36, 0.25) !important;
 }
 .mq-streams-in-connect:hover {
   color: #fbbf24 !important;
   background: rgba(251, 191, 36, 0.06) !important;
-  border-color: rgba(251, 191, 36, 0.3) !important;
+  border-color: rgba(251, 191, 36, 0.5) !important;
 }
 /* maqueen-panel (live sensor strip) — sits between CONNECT and LOG
    in the rail. The panel was designed for full-page-width with
