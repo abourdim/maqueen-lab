@@ -2952,6 +2952,10 @@
     return { update, recordAngle, recordDistance, reset, start,
              getTrail, getObstacles, getPose, getTotalDist };
   })();
+  // Expose for cross-module read-only access (autopilot, slam-game,
+  // math-distance, ar-overlay, mini-games / Echo Hunt). The IIFE's
+  // const is otherwise unreachable; consumers only need accessors.
+  window.mqOdometry = mqOdometry;
 
   // -------- 📡 SWEEP RADAR --------------------------------
   // The iconic Arduino + Processing sweep radar. Beam is anchored to the

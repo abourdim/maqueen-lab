@@ -27,16 +27,19 @@
       const el = document.getElementById(id);
       return el ? (el.textContent || '').trim() : null;
     };
+    // Real dashboard IDs (verified by grep): the gauges put their
+    // numeric readouts in mqGaugeVal* divs, and the LCD trip-computer
+    // cells use mqDash{ODO,TRIP,PEAK,AVG,Time}.
     return {
-      speed_cms:    get('mqDashSpeed'),
-      power_pct:    get('mqDashPower'),
-      heading_deg:  get('mqDashHeading'),
-      sonar_cm:     get('mqDashSonar'),
-      odo_cm:       get('mqStatOdo'),
-      trip_cm:      get('mqStatTrip'),
-      peak_cms:     get('mqStatPeak'),
-      avg_cms:      get('mqStatAvg'),
-      drive_time:   get('mqStatTime'),
+      speed_cms:    get('mqGaugeValSpeed'),
+      power_pct:    get('mqGaugeValPower'),
+      heading_deg:  get('mqGaugeValHead'),
+      sonar_cm:     get('mqGaugeValSonar'),
+      odo:          get('mqDashODO'),
+      trip:         get('mqDashTRIP'),
+      peak_cms:     get('mqDashPEAK'),
+      avg_cms:      get('mqDashAVG'),
+      drive_time:   get('mqDashTime'),
     };
   }
 

@@ -162,12 +162,23 @@
     if (omega < -1) omega = -1;
     let v = Math.max(0, V_BASE * Math.cos(err));
     // BLE M:L,R units. Differential mix.
+    //
+    // Sign convention (cross-checked against mqOdometry integration):
+    //   theta integration: x += v·sin(theta)·dt, y += v·cos(theta)·dt
+    //   omega from wheels:  omega = (vL − vR) / WHEELBASE
+    //   → vL > vR means omega > 0 means theta grows means robot turns
+    //     toward +x (i.e., right when looking from above with +y forward).
+    //
+    // So to turn right (target with +dx), we need vL > vR. With err > 0
+    // (target right), our K_HEAD makes omega > 0, and we want L = base+turn,
+    // R = base-turn. This is the OPPOSITE of the keypad data-l/data-r
+    // labels — those are robot-frame motor outputs, not "left wheel power".
     const slider = document.getElementById('mqSpeedSlider');
     const speed = slider ? +slider.value : 200;
     const base  = v * speed;
     const turn  = omega * speed * 0.5;
-    const L = Math.round(base - turn);
-    const R = Math.round(base + turn);
+    const L = Math.round(base + turn);   // err > 0 (target right) → L faster
+    const R = Math.round(base - turn);   //                          R slower
     try { window.bleScheduler.send(`M:${L},${R}`, { coalesce: true }).catch(() => {}); } catch {}
   }
 
