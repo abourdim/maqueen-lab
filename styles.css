@@ -4886,17 +4886,22 @@ aside.log-rail > .connection-card .connection-footer button {
   font-size: 11px;
 }
 /* maqueen-panel (live sensor strip) — sits between CONNECT and LOG
-   in the rail. The panel was designed for full-page-width; in the
-   narrow rail it needs compaction: smaller font + button sizes,
-   tighter gaps. The existing flex-wrap takes care of layout —
-   items will rewrap onto multiple rows automatically. */
+   in the rail. The panel was designed for full-page-width with
+   inline styles (padding 10/16, margin 0/0/12, font 13 px) baked
+   into the HTML; in the narrow rail those inline values overflow.
+   Need !important to override the inline values from JS. */
 aside.log-rail > #maqueen-panel.in-rail {
-  flex: 0 0 auto;
-  margin: 8px 8px 0;
-  padding: 6px 10px;
-  font-size: 11px;
-  gap: 8px 12px;
-  border-radius: 10px;
+  flex: 0 0 auto !important;
+  margin: 8px 8px 0 !important;
+  padding: 6px 10px !important;
+  font-size: 11px !important;
+  gap: 6px 10px !important;
+  border-radius: 10px !important;
+  /* Make sure box-sizing is border-box so padding doesn't push
+     the panel beyond the rail's available width. */
+  box-sizing: border-box !important;
+  /* Cap to the parent's content width — never overflow the rail. */
+  max-width: calc(100% - 16px);
 }
 aside.log-rail > #maqueen-panel.in-rail > div {
   font-size: 11px;
@@ -4910,23 +4915,26 @@ aside.log-rail > #maqueen-panel.in-rail button {
   font-size: 9px !important;
   padding: 3px 7px !important;
 }
-/* The 'Maqueen Lite v4' title is redundant inside the rail (CONNECT
-   above already says we're connected). Hide it so the panel's first
-   wrap row gets sensor data instead of a label. */
+/* Hide the redundant 'Maqueen Lite v4' title (CONNECT above already
+   says we're linked). Frees the first wrap row for sensor data. */
 aside.log-rail > #maqueen-panel.in-rail > div:first-child {
-  display: none;
+  display: none !important;
 }
 /* BLE stats was floated to the right via margin-left:auto — that
    doesn't read well when wrapped. Remove the auto-margin in the rail
    so it flows naturally with the other items. */
 aside.log-rail > #maqueen-panel.in-rail > div[title="BLE round-trip stats"] {
-  margin-left: 0;
-  border-left: none;
-  padding-left: 0;
+  margin-left: 0 !important;
+  border-left: none !important;
+  padding-left: 0 !important;
 }
 /* Compact ACC: 3 numbers in 120 px is too wide for the rail. Let it
    shrink naturally — the readout will line-wrap if needed. */
 aside.log-rail > #maqueen-panel.in-rail #mq-acc {
+  min-width: 0 !important;
+}
+/* Make sure all direct children can shrink to fit the column */
+aside.log-rail > #maqueen-panel.in-rail > div {
   min-width: 0;
 }
 
