@@ -89,17 +89,53 @@
       shell.appendChild(aside);
     }
 
-    // 🤖 Robot anatomy goes FIRST — identity header for the rail.
-    // Wrapped in a div for styling (centering, padding, divider).
+    // 🤖 Robot identity card: TITLE + SUBTITLE + ANATOMY + KIT PICKER,
+    // all consolidated. The rail's robot card now describes the
+    // robot completely — name, what it is, what it looks like
+    // (with kit attachment via the existing #mqAnatomyKit overlay),
+    // and which kit is active. The main-page header collapses.
     if (robot) {
       const robotWrap = document.createElement('div');
       robotWrap.className = 'rail-robot';
-      // Strip the inline width:200px from the SVG — let CSS govern
-      // the rail-context size so we can shrink it for the narrower
-      // column without fighting inline styles.
+      // Strip inline width on the SVG so CSS governs rail sizing.
       robot.style.width = '';
       robot.style.maxWidth = '';
+
+      // Find the main-page Maqueen tab's title/subtitle block (it's
+      // the parent of .card-title inside the Maqueen tab's .card-header).
+      const mqPage    = document.querySelector('.tab-page[data-page="maqueen"]');
+      const titleEl   = mqPage && mqPage.querySelector('.card .card-header .card-title');
+      const titleBlk  = titleEl ? titleEl.parentElement : null;
+      const picker    = document.getElementById('mqKitPicker');
+      const miniRobot = document.getElementById('mqKitPreview');
+
+      // Stack order: title block → anatomy SVG → kit picker.
+      if (titleBlk) robotWrap.appendChild(titleBlk);
       robotWrap.appendChild(robot);
+      if (picker) {
+        // Wrap the picker so we can label it cleanly in the rail.
+        const pickerWrap = document.createElement('div');
+        pickerWrap.className = 'rail-robot-kit';
+        const pickerLbl = document.createElement('span');
+        pickerLbl.className = 'rail-robot-kit-lbl';
+        pickerLbl.textContent = 'kit:';
+        pickerLbl.setAttribute('data-i18n', 'mq_rail_kit');
+        pickerWrap.appendChild(pickerLbl);
+        pickerWrap.appendChild(picker);
+        robotWrap.appendChild(pickerWrap);
+      }
+
+      // The mini-robot preview (#mqKitPreview) is now pure duplication
+      // — the rail anatomy SVG already shows the kit attachment via
+      // mqAnatomyKit overlay (set by updateAnatomyKit). Drop it.
+      if (miniRobot) miniRobot.remove();
+
+      // Hide the main-page Maqueen header entirely. Sub-tab bar rises
+      // to the top of the card. (The tab buttons at the top still say
+      // 'Maqueen' so the user knows which page they're on.)
+      const mqHeader = mqPage && mqPage.querySelector('.card > .card-header');
+      if (mqHeader) mqHeader.style.display = 'none';
+
       aside.appendChild(robotWrap);
     }
 
