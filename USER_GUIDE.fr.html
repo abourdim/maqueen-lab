@@ -109,17 +109,64 @@
   .res-text strong { display: block; font-size: 14px; color: var(--accent); }
   .res-text span { font-size: 12px; color: var(--text-dim); }
   section[id] { scroll-margin-top: 14px; }
+  .site-header { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 16px; padding: 10px 18px; background: rgba(10,15,26,0.78); backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); border-bottom: 1px solid rgba(56,189,248,0.18); margin: -24px -24px 0; flex-wrap: wrap; }
+  .site-header__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+  .site-header__brand:hover { text-decoration: none; }
+  .site-header__logo { width: 40px; height: 40px; background: #fff; border-radius: 8px; padding: 4px; box-shadow: 0 2px 10px rgba(56,189,248,0.25); transition: transform 0.18s; }
+  .site-header__brand:hover .site-header__logo { transform: rotate(-4deg) scale(1.05); }
+  .site-header__title { font-size: 18px; font-weight: 900; background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .site-header__sub { font-size: 11px; color: var(--text-dim); font-family: var(--mono); letter-spacing: 0.15em; text-transform: uppercase; }
+  .site-header__nav { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .site-header__nav .lang-pill { padding: 5px 11px; background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.2); border-radius: 999px; color: var(--text-dim); text-decoration: none; font-size: 12px; }
+  .site-header__nav .lang-pill.active { background: rgba(56,189,248,0.22); border-color: var(--accent); color: #fff; font-weight: 700; }
+  .site-header__nav .gh-link { margin-left: 8px; padding: 5px 11px; background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.3); border-radius: 999px; color: var(--accent2); text-decoration: none; font-size: 12px; font-weight: 700; }
+  @media (max-width: 700px) { .site-header__sub { display: none; } .site-header__nav { width: 100%; justify-content: center; } }
+  .stats-ribbon { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 8px 0 24px; }
+  .stat { background: linear-gradient(135deg, rgba(56,189,248,0.05), rgba(251,191,36,0.04)); border: 1px solid var(--border); border-radius: 14px; padding: 18px 14px; text-align: center; }
+  .stat__num { font-size: 36px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: var(--mono); }
+  .stat__label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 6px; }
+  .site-footer { margin: 80px -24px -80px; padding: 40px 32px 32px; background: radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.08) 0%, transparent 60%), #060912; border-top: 1px solid rgba(56,189,248,0.2); }
+  .site-footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; max-width: 1080px; margin: 0 auto; }
+  @media (max-width: 720px) { .site-footer__grid { grid-template-columns: 1fr 1fr; gap: 22px; } }
+  @media (max-width: 460px) { .site-footer__grid { grid-template-columns: 1fr; } }
+  .site-footer__brand { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .site-footer__brand img { width: 44px; height: 44px; background: #fff; border-radius: 8px; padding: 5px; }
+  .site-footer__brand-name { font-size: 18px; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .site-footer__brand-tag { font-size: 11px; color: var(--text-dim); font-family: var(--mono); letter-spacing: 0.15em; text-transform: uppercase; }
+  .site-footer__about { color: var(--text-dim); font-size: 13.5px; line-height: 1.6; }
+  .site-footer h5 { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; margin: 0 0 12px; font-weight: 800; }
+  .site-footer ul { list-style: none; padding: 0; margin: 0; }
+  .site-footer ul li { margin-bottom: 8px; font-size: 13px; }
+  .site-footer ul li a { color: var(--text-dim); text-decoration: none; }
+  .site-footer ul li a:hover { color: var(--accent); }
+  .site-footer__bottom { max-width: 1080px; margin: 32px auto 0; padding-top: 20px; border-top: 1px solid rgba(56,189,248,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: var(--text-dim); font-size: 12px; }
+  .site-footer__bottom a { color: var(--accent); text-decoration: none; }
+  .site-footer__chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .site-footer__chips span { padding: 3px 10px; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2); border-radius: 999px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+  @keyframes roll { 0%,10%{transform:translateX(0)} 50%{transform:translateX(160px)} 90%,100%{transform:translateX(0)} }
+  .roll-robot { animation: roll 4s ease-in-out infinite; }
+  .divider-fun { text-align: center; margin: 48px 0; color: var(--text-dim); font-size: 16px; letter-spacing: 0.5em; opacity: 0.5; }
   .back-top { position: fixed; right: 16px; bottom: 16px; background: var(--accent); color: #0a1628; border-radius: 999px; padding: 10px 14px; font-weight: 700; text-decoration: none; box-shadow: 0 6px 16px rgba(0,0,0,0.5); }
   .back-top:hover { text-decoration: none; }
 </style>
 </head>
 <body>
 
-<nav class="lang-switch" style="display:flex; justify-content:center; gap:8px; padding:12px 0 0; font-size:13px;">
-  <a href="USER_GUIDE.html"    style="padding:6px 14px; background:rgba(56,189,248,0.08); border:1px solid #1f2a44; border-radius:999px; color:#b8c0e8; text-decoration:none;">🇬🇧 English</a>
-  <a href="USER_GUIDE.fr.html" style="padding:6px 14px; background:rgba(56,189,248,0.18); border:1px solid #38bdf8; border-radius:999px; color:#fff; text-decoration:none; font-weight:700;">🇫🇷 Français</a>
-  <a href="USER_GUIDE.ar.html" style="padding:6px 14px; background:rgba(56,189,248,0.08); border:1px solid #1f2a44; border-radius:999px; color:#b8c0e8; text-decoration:none;">🇩🇿 العربية</a>
-</nav>
+<header class="site-header">
+  <a href="index.html" class="site-header__brand" aria-label="Maqueen Lab home">
+    <img src="assets/workshop-diy-logo.svg" alt="Workshop DIY logo" class="site-header__logo"/>
+    <div>
+      <div class="site-header__title">MAQUEEN LAB</div>
+      <div class="site-header__sub">Manuel du pilote</div>
+    </div>
+  </a>
+  <nav class="site-header__nav" aria-label="Sélecteur de langue">
+    <a href="USER_GUIDE.html"    class="lang-pill">🇬🇧 EN</a>
+    <a href="USER_GUIDE.fr.html" class="lang-pill active">🇫🇷 FR</a>
+    <a href="USER_GUIDE.ar.html" class="lang-pill">🇩🇿 AR</a>
+    <a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener" class="gh-link">⭐ GitHub</a>
+  </nav>
+</header>
 
 <section class="hero">
   <span class="hero-bot" aria-hidden="true">
@@ -147,6 +194,13 @@
     <a class="btn ghost" href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener">⭐ Code source GitHub</a>
   </div>
 </section>
+
+<div class="stats-ribbon">
+  <div class="stat"><div class="stat__num">20</div><div class="stat__label">fonctionnalités</div></div>
+  <div class="stat"><div class="stat__num">10</div><div class="stat__label">jeux éducatifs</div></div>
+  <div class="stat"><div class="stat__num">8</div><div class="stat__label">capteurs embarqués</div></div>
+  <div class="stat"><div class="stat__num">3</div><div class="stat__label">langues</div></div>
+</div>
 
 <nav class="toc" aria-label="Table des matières">
   <h3>📖 Sommaire</h3>
@@ -778,16 +832,69 @@
   </div>
 </section>
 
-<footer>
-  <p>
-    Maqueen Lab est créé par <a href="https://github.com/abourdim" target="_blank" rel="noopener">@abourdim</a>.
-    Open source, licence MIT.
-    <br/>
-    Bug ? Idée ? <a href="https://github.com/abourdim/maqueen-lab/issues" target="_blank" rel="noopener">Ouvre une issue sur GitHub →</a>
-  </p>
-  <p style="margin-top:14px; opacity:0.6;">
-    Maintenant va construire quelque chose. Le futur ne se programme pas tout seul. 🚀
-  </p>
+<footer class="site-footer">
+  <div class="site-footer__grid">
+    <div>
+      <div class="site-footer__brand">
+        <img src="assets/workshop-diy-logo.svg" alt="Workshop DIY logo"/>
+        <div>
+          <div class="site-footer__brand-name">Maqueen Lab</div>
+          <div class="site-footer__brand-tag">Workshop DIY · MIT</div>
+        </div>
+      </div>
+      <p class="site-footer__about">
+        Une cabine de pilotage live pour le robot DFRobot Maqueen Lite v4.
+        Pour les enfants, par les makers. Pas de cloud. Pas d'abonnement.
+        Juste des octets, des roues, et un gros bouton STOP ambré.
+      </p>
+      <div class="site-footer__chips" style="margin-top:14px;">
+        <span>Web Bluetooth</span><span>BLE GATT</span><span>micro:bit v2</span>
+        <span>WebRTC P2P</span><span>WebAudio</span><span>WebSpeech</span>
+      </div>
+    </div>
+    <div>
+      <h5>📖 Apprendre</h5>
+      <ul>
+        <li><a href="#quickstart">Démarrage rapide</a></li>
+        <li><a href="#hardware">Le matériel</a></li>
+        <li><a href="#games">Les 10 jeux</a></li>
+        <li><a href="#troubleshoot">Dépannage</a></li>
+        <li><a href="#glossary">Glossaire geek</a></li>
+        <li><a href="#parents">Pédagogie</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>🚀 Utiliser</h5>
+      <ul>
+        <li><a href="index.html">▶ Ouvrir l'app</a></li>
+        <li><a href="schematics-kids.html">🤖 Mon robot</a></li>
+        <li><a href="schematics.html">📐 Schéma ingé</a></li>
+        <li><a href="pinout.html">📌 Pinout</a></li>
+        <li><a href="lab.html">🧪 Component Lab</a></li>
+        <li><a href="todo.md">✅ Roadmap</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>🌐 Contact</h5>
+      <ul>
+        <li><a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener">⭐ Repo GitHub</a></li>
+        <li><a href="https://github.com/abourdim/maqueen-lab/issues" target="_blank" rel="noopener">🐞 Signaler un bug</a></li>
+        <li><a href="https://www.dfrobot.com/product-2230.html" target="_blank" rel="noopener">🛒 Acheter Maqueen</a></li>
+        <li><a href="https://makecode.microbit.org/" target="_blank" rel="noopener">🧱 MakeCode</a></li>
+        <li><a href="USER_GUIDE.html">🇬🇧 EN guide</a></li>
+        <li><a href="USER_GUIDE.ar.html">🇩🇿 AR الدليل</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <div>
+      Fait avec 🛠️ &amp; 🤖 par <a href="https://github.com/abourdim" target="_blank" rel="noopener">@abourdim</a>.
+      Maintenant va construire — <span style="color:var(--accent);">le futur ne se programme pas tout seul.</span> 🚀
+    </div>
+    <div style="opacity:0.6; font-family:var(--mono); font-size:11px;">
+      v0.1.54 · 2026
+    </div>
+  </div>
 </footer>
 
 <a href="#" class="back-top" aria-label="Haut de page">↑ haut</a>
