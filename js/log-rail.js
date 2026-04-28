@@ -105,13 +105,19 @@
       const streamsBtn = panel.querySelector('#mq-streams-toggle');
       const fwFooter   = connect && connect.querySelector('.connection-footer');
       if (streamsBtn && fwFooter && !fwFooter.contains(streamsBtn)) {
-        // Re-flow the footer as a horizontal pair, preserve original colors.
+        // Re-flow the footer as a horizontal pair.
         fwFooter.style.display = 'flex';
         fwFooter.style.gap = '6px';
         fwFooter.style.alignItems = 'stretch';
         const fwBtn = fwFooter.querySelector('button');
         if (fwBtn) fwBtn.style.flex = '1 1 auto';
-        streamsBtn.classList.add('mq-streams-in-connect');
+        // Strip the streams button's full set of inline styles — they
+        // were designed for the wide sensor panel and don't match the
+        // .secondary .small look of the Firmware button next to it.
+        // Adopt the same class system so they paint identically; the
+        // yellow accent is re-applied via .mq-streams-in-connect CSS.
+        streamsBtn.removeAttribute('style');
+        streamsBtn.classList.add('secondary', 'small', 'mq-streams-in-connect');
         streamsBtn.style.flex = '0 0 auto';
         fwFooter.appendChild(streamsBtn);
       }

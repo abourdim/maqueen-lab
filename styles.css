@@ -4886,15 +4886,19 @@ aside.log-rail > .connection-card .connection-footer button {
   font-size: 11px;
 }
 /* Streams toggle moved INTO the connect-footer alongside the Firmware
-   button. Keep its yellow accent (it's a meaningful toggle: streams
-   on/off changes BLE traffic dramatically), match the firmware button
-   sizing for a tidy paired row. */
-aside.log-rail > .connection-card .connection-footer .mq-streams-in-connect {
-  font-size: 11px !important;
-  padding: 5px 10px !important;
-  border-radius: 4px;
-  /* The original inline border is yellow #fbbf24 — keep it for at-a-
-     glance status (yellow = something to be aware of, the streams). */
+   button. The button now wears .secondary .small classes (same as
+   Firmware) for identical chrome — radius, padding, font, hover state.
+   We then layer a yellow accent on top so the meaningful 'streams =
+   live broadcasts' status stays at-a-glance recognizable. */
+.mq-streams-in-connect {
+  /* Inherit .secondary look, just paint the yellow accent. */
+  color: #fbbf24 !important;
+  border-color: rgba(251, 191, 36, 0.6) !important;
+}
+.mq-streams-in-connect:hover {
+  color: #fde68a !important;
+  border-color: #fbbf24 !important;
+  background: rgba(251, 191, 36, 0.08) !important;
 }
 /* maqueen-panel (live sensor strip) — sits between CONNECT and LOG
    in the rail. The panel was designed for full-page-width with
