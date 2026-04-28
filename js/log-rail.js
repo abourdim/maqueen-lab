@@ -239,12 +239,59 @@
     if (btn) btn.style.display = 'none';
   }
 
+  // ---- COLLAPSE / EXPAND --------------------------------------
+  // A small floating button on the rail's left edge that toggles
+  // the rail's visibility. Collapsed → rail width 0, main app
+  // gains the full viewport width. Button stays visible at the
+  // viewport edge so the user can re-expand. Persisted.
+  const COLLAPSE_KEY = 'maqueen.railCollapsed';
+  function isCollapsedPref() {
+    try { return localStorage.getItem(COLLAPSE_KEY) === '1'; } catch { return false; }
+  }
+  function setCollapsedPref(v) {
+    try { localStorage.setItem(COLLAPSE_KEY, v ? '1' : '0'); } catch {}
+  }
+  function initCollapse() {
+    let btn = document.getElementById('logRailCollapseBtn');
+    if (btn) return;
+    btn = document.createElement('button');
+    btn.id = 'logRailCollapseBtn';
+    btn.className = 'log-rail-collapse-btn';
+    btn.type = 'button';
+    document.body.appendChild(btn);
+
+    function paint() {
+      const collapsed = document.body.classList.contains('rail-collapsed');
+      // ‹ when expanded (click to collapse → arrow points right-to-left)
+      // › when collapsed (click to expand → arrow points left-to-right)
+      btn.textContent = collapsed ? '‹' : '›';
+      btn.title = collapsed
+        ? 'Expand the right rail (CONNECT, sensors, log)'
+        : 'Collapse the right rail to free up width for the main app';
+    }
+
+    function toggle() {
+      const collapsed = !document.body.classList.contains('rail-collapsed');
+      document.body.classList.toggle('rail-collapsed', collapsed);
+      setCollapsedPref(collapsed);
+      paint();
+    }
+    btn.addEventListener('click', toggle);
+
+    // Restore persisted state on load.
+    if (isCollapsedPref()) {
+      document.body.classList.add('rail-collapsed');
+    }
+    paint();
+  }
+
   function init() {
     const aside = relocateCard();
     if (!aside) return;
     applyWidth(getStoredWidth());
     initDrag(aside);
     hidePinButton();
+    initCollapse();
   }
 
   if (document.readyState === 'loading') {
