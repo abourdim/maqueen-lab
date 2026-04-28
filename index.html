@@ -73,6 +73,10 @@
     <script src="js/timelapse.js" defer></script>
     <script src="js/autopilot.js" defer></script>
     <script src="js/mini-games.js" defer></script>
+    <script src="js/ar-overlay.js" defer></script>
+    <script src="js/session-recap.js" defer></script>
+    <script src="js/battery.js" defer></script>
+    <script src="js/pair-robots.js" defer></script>
 <style>
 .lang-picker { display: flex; gap: 2px; }
 .lang-picker .lang-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; background: transparent; color: inherit; opacity: 0.5; }
@@ -164,6 +168,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
         <a href="pinout.html" title="Pinout reference" style="text-decoration:none; font-size:1rem; opacity:0.6; padding:2px 4px;">📌</a>
         <a href="USER_GUIDE.html" title="User Guide" style="text-decoration:none; font-size:1rem; opacity:0.6; padding:2px 4px;">📖</a>
         <button id="qrShareBtn" type="button" title="Scan to open Maqueen Lab on a phone" style="border:none; background:none; cursor:pointer; font-size:1rem; opacity:0.6; padding:2px 4px;">📱</button>
+        <button id="mqPairBtn"  type="button" title="Pair with a second Maqueen Lab tab — your driving mirrors to theirs over WebRTC (no server)." style="border:none; background:none; cursor:pointer; font-size:1rem; opacity:0.6; padding:2px 4px;">🤝</button>
         <button id="clearCacheBtn" title="Reset" style="border:none; background:none; cursor:pointer; font-size:1rem; opacity:0.5; padding:2px 4px;">🗑️</button>
     </div>
     <div style="width:1px; height:24px; background:var(--card-border, rgba(148,163,184,0.3)); margin:0 4px;"></div>
@@ -200,6 +205,15 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
       <div title="Accelerometer x, y, z (mg)" style="display:flex; align-items:center; gap:6px;">
         <span style="color:var(--text-secondary, #93a8c4); font-size:11px;">ACC</span>
         <span id="mq-acc" style="color:#fbbf24; font-weight:700; min-width:120px; text-align:right;">—, —, —</span>
+      </div>
+
+      <!-- Battery — populated by 'BAT?' verb when the firmware
+           supports it (see firmware/v1-maqueen-lib.ts). Gracefully
+           shows '—' if the verb isn't implemented yet. -->
+      <div id="mqBatBlock" title="Battery voltage (firmware BAT? verb)" style="display:flex; align-items:center; gap:6px;">
+        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;">BAT</span>
+        <span id="mq-bat-icon" style="font-size:14px;">🔋</span>
+        <span id="mq-bat" style="color:#4ade80; font-weight:700; min-width:40px; text-align:right;">—</span>
       </div>
 
       <!-- BLE scheduler bench (sent / echoed / lost / latency) -->
@@ -1401,6 +1415,8 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <button id="mqOdoSnap" type="button" title="Save the current path map + dashboard stats as a PNG. Great for classroom show-and-tell or sharing your run." style="margin-right:4px;">📸 <span data-i18n="mq_odo_snap">snap</span></button>
                                             <button id="mqTimelapseBtn" type="button" title="Export a 10× speed time-lapse of your trail + SLAM map evolving — saves as WebM video for sharing." style="margin-right:4px;">🎬 <span data-i18n="mq_odo_timelapse">timelapse</span></button>
                                             <button id="mqAutopilotBtn" type="button" title="Drag-to-trace: draw a path on the map with your finger or mouse, robot follows it autonomously using PID over odometry." style="margin-right:4px;">🖍 <span data-i18n="mq_odo_autopilot">draw &amp; go</span></button>
+                                            <button id="mqArBtn" type="button" title="AR overlay — phone camera shows the room, sonar / line-sensor hits overlay on the live feed. The robot's perception, made visible." style="margin-right:4px;">📷 <span data-i18n="mq_odo_ar">AR</span></button>
+                                            <button id="mqRecapBtn" type="button" title="Session recap — paragraph summary of your run (drove X meters, spotted Y obstacles, top speed Z cm/s)." style="margin-right:4px;">🍩 <span data-i18n="mq_odo_recap">recap</span></button>
                                             <button id="mqOdoReset" type="button" title="Erase trail + obstacle map and re-center the robot at origin">↺ <span data-i18n="mq_odo_reset">reset</span></button>
                                         </div>
                                         <!-- 🎯 Challenge selector — pick a target shape (square / circle /
@@ -4108,6 +4124,68 @@ if ('serviceWorker' in navigator) {
     <div style="margin-top:10px; font-size:11px; color:var(--text-secondary, #93a8c4); text-align:center;">
       Scan with your phone camera — Chrome / Edge required for BLE.
     </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     AR webcam overlay — fullscreen video + overlay canvas.
+     Activated by 📷 AR button on the path card.
+     ============================================================ -->
+<div id="mqArModal" role="dialog" aria-modal="true"
+     style="display:none; position:fixed; inset:0; z-index:9998; background:#000; align-items:center; justify-content:center;">
+  <video    id="mqArVideo"   autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
+  <canvas   id="mqArOverlay" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></canvas>
+  <div id="mqArHud" style="position:absolute; left:14px; top:14px; padding:10px 14px; background:rgba(0,0,0,0.55); color:#4ade80; font-family:'JetBrains Mono', monospace; font-size:13px; border-radius:8px; line-height:1.6; pointer-events:none;">
+    <div>📡 <span id="mqArDist">—</span> cm</div>
+    <div>👀 line: <span id="mqArLine">—</span></div>
+    <div>🧭 <span id="mqArHeading">—</span>°</div>
+  </div>
+  <button id="mqArClose" type="button" style="position:absolute; right:14px; top:14px; padding:8px 14px; background:rgba(0,0,0,0.55); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:8px; cursor:pointer;">✕ close</button>
+  <div id="mqArHint" style="position:absolute; bottom:18px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.7); font-size:12px; padding:6px 12px; background:rgba(0,0,0,0.55); border-radius:8px;">
+    crosshair = robot's heading · ring = sonar reading
+  </div>
+</div>
+
+<!-- ============================================================
+     Session recap modal — Spotify-Wrapped-style paragraph.
+     ============================================================ -->
+<div id="mqRecapModal" role="dialog" aria-modal="true"
+     style="display:none; position:fixed; inset:0; z-index:9998; background:rgba(6,17,33,0.78); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px;">
+  <div style="background:var(--card-bg, #0f1f3d); border:1px solid var(--card-border, rgba(148,163,184,0.25)); border-radius:16px; max-width:420px; width:100%; padding:22px; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+      <span style="font-size:1.4rem;">🍩</span>
+      <h2 style="margin:0; font-size:1.05rem; font-family:'JetBrains Mono', monospace; color:var(--text-primary, #e6eef9);">Session Recap</h2>
+      <button id="mqRecapClose" type="button" aria-label="Close" style="margin-left:auto; background:none; border:none; color:var(--text-secondary, #93a8c4); font-size:1.5rem; line-height:1; cursor:pointer; padding:0 4px;">×</button>
+    </div>
+    <div id="mqRecapBody" style="font-size:13px; line-height:1.7; color:var(--text, #b8c8e0);">…</div>
+    <div style="display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;">
+      <button id="mqRecapCopy" type="button" style="padding:6px 12px; background:var(--accent, #38bdf8); color:var(--bg-deep, #061121); border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">📋 Copy</button>
+      <button id="mqRecapAi"   type="button" title="Optional: rewrite this recap with the Claude API. Needs a Claude API key in localStorage.maqueen.claudeKey." style="padding:6px 12px; background:transparent; color:#c084fc; border:1px solid rgba(192,132,252,0.4); border-radius:8px; cursor:pointer; font-size:12px;">✨ AI polish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     2-ROBOT PAIRING modal — WebRTC peer-to-peer, manual SDP exchange.
+     ============================================================ -->
+<div id="mqPairModal" role="dialog" aria-modal="true"
+     style="display:none; position:fixed; inset:0; z-index:9998; background:rgba(6,17,33,0.78); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px;">
+  <div style="background:var(--card-bg, #0f1f3d); border:1px solid var(--card-border, rgba(148,163,184,0.25)); border-radius:16px; max-width:560px; width:100%; padding:22px; box-shadow:0 20px 60px rgba(0,0,0,0.6); max-height:90vh; overflow-y:auto;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+      <span style="font-size:1.4rem;">🤝</span>
+      <h2 style="margin:0; font-size:1.05rem; font-family:'JetBrains Mono', monospace; color:var(--text-primary, #e6eef9);">Pair two robots</h2>
+      <button id="mqPairClose" type="button" aria-label="Close" style="margin-left:auto; background:none; border:none; color:var(--text-secondary, #93a8c4); font-size:1.5rem; line-height:1; cursor:pointer; padding:0 4px;">×</button>
+    </div>
+    <div style="font-size:12px; color:var(--text-secondary, #93a8c4); line-height:1.6; margin-bottom:12px;">
+      Two Maqueens, two browser tabs. Your drive commands mirror to the other tab over WebRTC — no server needed. Manual handshake: Tab A creates an offer, Tab B pastes it &amp; answers, Tab A pastes the answer.
+    </div>
+    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+      <button id="mqPairOffer"  type="button" style="padding:6px 12px; background:#38bdf8; color:#01202b; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">A · create offer</button>
+      <button id="mqPairAnswer" type="button" style="padding:6px 12px; background:#c084fc; color:#1a0e2a; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">B · paste offer &amp; answer</button>
+      <button id="mqPairAccept" type="button" style="padding:6px 12px; background:#4ade80; color:#01202b; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">A · paste answer</button>
+    </div>
+    <textarea id="mqPairBox" rows="8" placeholder="SDP appears here…" style="width:100%; box-sizing:border-box; padding:8px; background:var(--bg-deep, #061121); color:var(--text, #b8c8e0); border:1px solid var(--border, #1d3556); border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:11px;"></textarea>
+    <div id="mqPairStatus" style="margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4);">— idle —</div>
   </div>
 </div>
 

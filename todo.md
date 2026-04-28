@@ -24,14 +24,14 @@ hard ordering — pick whichever fits the next session.
 ### Checklist
 - [x] 1. Voice commands
 - [x] 2. Tilt-to-drive
-- [ ] 3. AI session summary
+- [x] 3. AI session summary (local recap + optional Claude polish)
 - [x] 4. Time-lapse export
 - [x] 5. Drag-to-trace autopilot
-- [ ] 6. AR webcam overlay
+- [x] 6. AR webcam overlay
 - [x] 7. Robot personalities
-- [ ] 8. Battery indicator
+- [x] 8. Battery indicator (UI + polling; needs firmware `BAT?` verb)
 - [x] 9. Telemetry export
-- [ ] 10. 2-robot pairing
+- [x] 10. 2-robot pairing
 
 ---
 
