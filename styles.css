@@ -4813,10 +4813,15 @@ aside.log-rail {
   /* Internal scroll if both CONNECT + LOG don't fit in viewport */
   overflow: hidden;
 }
-/* CONNECT card on top — auto height (sized to its own content) */
+/* CONNECT card on top — auto height (sized to its own content).
+   Heavy compaction for the narrow rail: we strip non-essential
+   metadata (subtitle, Name row, dim version/build/commit lines)
+   and tighten paddings + button sizes. The full build-info is
+   still available in the Firmware popup. */
 aside.log-rail > .connection-card {
   flex: 0 0 auto;
   margin: 0;
+  padding: 8px 12px 10px;
   border: none;
   border-radius: 0;
   border-bottom: 1px solid var(--border, #1d3556);
@@ -4824,6 +4829,58 @@ aside.log-rail > .connection-card {
   background: transparent;
   /* Override any beginner-mode hiding so CONNECT always shows in the rail */
   display: block !important;
+}
+/* Hide the redundant subtitle (the card-title already says "Connect") */
+aside.log-rail > .connection-card .card-subtitle {
+  display: none;
+}
+/* Tighten the header gap */
+aside.log-rail > .connection-card .card-header {
+  margin-bottom: 4px;
+  padding: 0;
+}
+/* Compact buttons */
+aside.log-rail > .connection-card .button-row {
+  gap: 4px;
+  margin: 4px 0 6px;
+}
+aside.log-rail > .connection-card .button-row button {
+  padding: 5px 9px;
+  font-size: 11px;
+  min-width: 0;
+}
+aside.log-rail > .connection-card .button-row .btn-icon {
+  font-size: 12px;
+}
+/* Hide the device-row ("Name: None") — uninformative when disconnected,
+   and the status pill already says CONNECTED when it matters */
+aside.log-rail > .connection-card .device-row {
+  display: none;
+}
+/* The build-info block (Maqueen Lab / version / built / commit /
+   firmware) — keep ONLY the firmware line, hide everything else.
+   The full version info still lives one click away in the Firmware
+   popup, so nothing's lost. */
+aside.log-rail > .connection-card #appBuildInfo > div:not(#fwVersionLine) {
+  display: none;
+}
+aside.log-rail > .connection-card #appBuildInfo {
+  margin-top: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.4 !important;
+}
+aside.log-rail > .connection-card #appBuildInfo #fwVersionLine {
+  border-top: none !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+/* Compact firmware footer button */
+aside.log-rail > .connection-card .connection-footer {
+  margin-top: 6px;
+}
+aside.log-rail > .connection-card .connection-footer button {
+  padding: 5px 10px;
+  font-size: 11px;
 }
 /* The log card fills the REMAINING vertical space below CONNECT */
 aside.log-rail > .log-card {
