@@ -64,6 +64,10 @@
     <script src="js/voice-commands.js" defer></script>
     <script src="js/pwm-lab.js" defer></script>
     <script src="js/morse-decoder.js" defer></script>
+    <script src="js/tilt-to-drive.js" defer></script>
+    <script src="js/simon-says.js" defer></script>
+    <script src="js/math-distance.js" defer></script>
+    <script src="js/buzz-tune.js" defer></script>
 <style>
 .lang-picker { display: flex; gap: 2px; }
 .lang-picker .lang-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; background: transparent; color: inherit; opacity: 0.5; }
@@ -1115,6 +1119,33 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         <span class="mq-macro-status" id="mqMacroStatus" data-i18n="mq_macro_idle">— no recording —</span>
                                     </div>
 
+                                    <!-- ============================================================
+                                         📏 MATH THE DISTANCE — game: predict v×t.
+                                         Random speed/time challenge, kid types the cm prediction,
+                                         optionally hits RUN to physically drive it (BLE) and see
+                                         the odometer measurement. Score = accuracy. Best persists.
+                                         Teaches d = v × t with a friendly real-world feedback loop.
+                                         ============================================================ -->
+                                    <div id="mqMathGame" style="margin-top:10px; padding:12px; background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.3); border-radius:10px;">
+                                      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+                                        <span style="font-size:18px;">📏</span>
+                                        <span style="font-weight:700; color:#4ade80;" data-i18n="mq_math_title">Math the Distance</span>
+                                        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;" data-i18n="mq_math_sub">— predict how far the robot will roll</span>
+                                        <span style="margin-left:auto; font-family:monospace; font-size:11px; color:var(--text-secondary, #93a8c4);">
+                                          <span data-i18n="mq_math_best">best:</span>
+                                          <span id="mqMathBest" style="color:#fbbf24; font-weight:700;">—</span>
+                                        </span>
+                                      </div>
+                                      <div id="mqMathProblem" style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--text, #b8c8e0); margin-bottom:8px;">…</div>
+                                      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                        <input id="mqMathGuess" type="number" min="0" max="500" step="0.1" placeholder="cm?" style="width:100px; padding:6px 10px; background:var(--bg-deep, #061121); color:#4ade80; border:1px solid var(--border, #1d3556); border-radius:8px; font-family:'JetBrains Mono', monospace;"/>
+                                        <button id="mqMathCheck" type="button" style="padding:6px 14px; background:#4ade80; color:#01202b; border:none; border-radius:8px; font-weight:700; cursor:pointer;" data-i18n="mq_math_check">Check</button>
+                                        <button id="mqMathRun"   type="button" title="Actually drive it — only works when connected. Reads cm from odometry." style="padding:6px 12px; background:transparent; color:#4ade80; border:1px solid #4ade80; border-radius:8px; cursor:pointer;" data-i18n="mq_math_run">🚦 Run it</button>
+                                        <button id="mqMathNew"   type="button" style="padding:6px 10px; background:transparent; color:#4ade80; border:1px solid rgba(74,222,128,0.3); border-radius:8px; cursor:pointer; font-size:11px;" data-i18n="mq_math_new">🎲 New</button>
+                                      </div>
+                                      <div id="mqMathFeedback" style="margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:12px; min-height:18px; color:var(--text-secondary, #93a8c4);"></div>
+                                    </div>
+
                                     <!-- 🏁 TABLEAU DE BORD — automotive-style cockpit dashboard.
                                          Four analog gauges (270° sweep, classic Mercedes/Porsche
                                          aesthetic) + LCD trip computer + warning cluster. All values
@@ -2012,6 +2043,36 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                         ⚠️ Standard <code>neopixel</code> conflicts with <code>bluetooth</code> on micro:bit.
                                         The pearls above show your <em>intent</em> — actual on-bot lighting requires a BLE-safe NeoPixel fork.
                                     </div>
+
+                                    <!-- ============================================================
+                                         🌈 SIMON SAYS — game: 4 colored pads light up in a sequence,
+                                         kid taps them back in order. Sequence grows by one each
+                                         round. Wrong tap = game over, score = sequence length reached.
+                                         Falls back to local color flashes when BLE isn't connected.
+                                         ============================================================ -->
+                                    <div id="mqSimonGame" style="margin-top:14px; padding:12px; background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.3); border-radius:10px;">
+                                      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+                                        <span style="font-size:18px;">🌈</span>
+                                        <span style="font-weight:700; color:#38bdf8;" data-i18n="mq_simon_title">Simon Says</span>
+                                        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;" data-i18n="mq_simon_sub">— remember and repeat the color sequence</span>
+                                        <span style="margin-left:auto; font-family:monospace; font-size:11px; color:var(--text-secondary, #93a8c4);">
+                                          <span data-i18n="mq_simon_round">round:</span>
+                                          <span id="mqSimonRound" style="color:#38bdf8; font-weight:700;">—</span>
+                                          <span style="margin-left:10px;" data-i18n="mq_simon_best">best:</span>
+                                          <span id="mqSimonBest" style="color:#fbbf24; font-weight:700;">—</span>
+                                        </span>
+                                      </div>
+                                      <div style="display:flex; gap:10px; justify-content:center; padding:14px; background:var(--bg-deep, #061121); border-radius:10px; margin-bottom:10px;">
+                                        <button class="mq-simon-pad" data-pad="0" style="width:64px; height:64px; border-radius:50%; border:3px solid #be123c; background:radial-gradient(circle at 30% 30%, #ef4444, #7f1d1d); cursor:pointer;"></button>
+                                        <button class="mq-simon-pad" data-pad="1" style="width:64px; height:64px; border-radius:50%; border:3px solid #15803d; background:radial-gradient(circle at 30% 30%, #4ade80, #14532d); cursor:pointer;"></button>
+                                        <button class="mq-simon-pad" data-pad="2" style="width:64px; height:64px; border-radius:50%; border:3px solid #1e40af; background:radial-gradient(circle at 30% 30%, #38bdf8, #0c4a6e); cursor:pointer;"></button>
+                                        <button class="mq-simon-pad" data-pad="3" style="width:64px; height:64px; border-radius:50%; border:3px solid #b45309; background:radial-gradient(circle at 30% 30%, #fbbf24, #78350f); cursor:pointer;"></button>
+                                      </div>
+                                      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                                        <button id="mqSimonStart" type="button" style="padding:8px 14px; background:#38bdf8; color:#01202b; border:none; border-radius:8px; font-weight:700; cursor:pointer;" data-i18n="mq_simon_start">▶ Start</button>
+                                      </div>
+                                      <div id="mqSimonFeedback" style="margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:12px; min-height:18px; text-align:center; color:var(--text-secondary, #93a8c4);"></div>
+                                    </div>
                                 </div>
 
                                 <!-- BUZZER -->
@@ -2110,6 +2171,23 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <div style="display:flex; gap:6px;">
                                         <button id="mqBuzzPlay" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; cursor:pointer; font-size:12px;">▶ Play</button>
                                         <button id="mqBuzzOff" style="flex:1; padding:8px; background:var(--card-bg-2, #0a1628); color:#f87171; border:1px solid #f87171; border-radius:6px; cursor:pointer; font-size:12px;">⏹ Off</button>
+                                    </div>
+
+                                    <!-- ============================================================
+                                         🎵 BUZZ THE TUNE — kid taps a piano-strip, robot plays
+                                         the note via the buzzer. 8 keys covering one octave.
+                                         A "🎼 demo" button plays Twinkle Twinkle to show the
+                                         concept. Teaches frequency = pitch + duration = rhythm.
+                                         ============================================================ -->
+                                    <div id="mqTuneGame" style="margin-top:14px; padding:12px; background:rgba(192,132,252,0.06); border:1px solid rgba(192,132,252,0.3); border-radius:10px;">
+                                      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+                                        <span style="font-size:18px;">🎵</span>
+                                        <span style="font-weight:700; color:#c084fc;" data-i18n="mq_tune_title">Buzz the Tune</span>
+                                        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;" data-i18n="mq_tune_sub">— tap the keys, robot plays the song</span>
+                                        <button id="mqTuneDemo" type="button" style="margin-left:auto; padding:6px 10px; background:transparent; color:#c084fc; border:1px solid rgba(192,132,252,0.4); border-radius:8px; cursor:pointer; font-size:11px;" data-i18n="mq_tune_demo">🎼 Twinkle demo</button>
+                                      </div>
+                                      <div id="mqTuneKeys" style="display:flex; gap:4px; justify-content:center;"></div>
+                                      <div id="mqTuneFeedback" style="margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:12px; min-height:18px; text-align:center; color:var(--text-secondary, #93a8c4);"></div>
                                     </div>
 
                                     <!-- ============================================================

@@ -5304,6 +5304,19 @@ body.rail-collapsed .log-rail-collapse-btn {
   right: 0;
 }
 
+/* Tilt-to-drive toggle — golden, pulses to signal 'sensor active'. */
+.mq-tilt-btn { color: #fbbf24; border-color: rgba(251,191,36,0.4); }
+.mq-tilt-btn.mq-tilt-on {
+  color: #1a0e2a;
+  background: #fbbf24;
+  border-color: #fbbf24;
+  animation: mqTiltPulse 1.4s ease-in-out infinite;
+}
+@keyframes mqTiltPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251,191,36,0.7); }
+  50%      { box-shadow: 0 0 0 6px rgba(251,191,36,0); }
+}
+
 /* Voice command toggle in the macro bar — pulses red when actively
    listening so the user can never miss that the mic is hot. */
 .mq-voice-btn { color: #c084fc; border-color: rgba(192,132,252,0.4); }

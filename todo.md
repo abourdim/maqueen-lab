@@ -23,7 +23,7 @@ hard ordering — pick whichever fits the next session.
 
 ### Checklist
 - [x] 1. Voice commands
-- [ ] 2. Tilt-to-drive
+- [x] 2. Tilt-to-drive
 - [ ] 3. AI session summary
 - [ ] 4. Time-lapse export
 - [ ] 5. Drag-to-trace autopilot
@@ -54,9 +54,9 @@ hard ordering — pick whichever fits the next session.
 - [ ] 1. SLAM the Room
 - [ ] 2. Echo Hunt
 - [ ] 3. Maze Runner
-- [ ] 4. Buzz the Tune
-- [ ] 5. Simon Says — NeoPixel
-- [ ] 6. Math the Distance
+- [x] 4. Buzz the Tune
+- [x] 5. Simon Says — NeoPixel
+- [x] 6. Math the Distance
 - [ ] 7. Robot Soccer
 - [ ] 8. Line Follower Race
 - [x] 9. PWM Lab
