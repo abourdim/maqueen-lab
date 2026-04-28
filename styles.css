@@ -4904,7 +4904,7 @@ aside.log-rail {
 aside.log-rail > .rail-robot {
   flex: 0 0 auto;
   margin: 8px 8px 0;
-  padding: 10px 12px;
+  padding: 8px 6px;
   background: var(--bg-deep, #061121);
   border: 1px solid var(--border, #1d3556);
   border-radius: 10px;
@@ -4933,11 +4933,11 @@ aside.log-rail > .rail-robot > div .card-subtitle {
 }
 aside.log-rail > .rail-robot > svg {
   width: 100% !important;
-  /* Fill the rail card with breathing room — was 220 px, now uses
-     most of the available width inside the card (rail width minus
-     card margins + padding). Caps at 320 px so it doesn't get
-     ridiculous when the user drags the rail extra wide. */
-  max-width: 320px !important;
+  /* Fill the rail card edge-to-edge. No max-width cap — let the
+     SVG scale with the rail width (user can resize via drag handle
+     to control overall size). Card padding shrunk to 8/6 so the
+     robot has minimal margin around it. */
+  max-width: none !important;
   height: auto !important;
   display: block;
   align-self: center;
