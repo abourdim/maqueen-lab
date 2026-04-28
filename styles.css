@@ -376,14 +376,14 @@ body {
 /* Header */
 
 .header {
-    padding: 12px 18px 12px;
+    padding: 12px 18px 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* Visual separation from the content below — the hairline border
-       + bevel highlight does the heavy lifting; only a small margin
-       to keep the tab row close to the header. */
-    margin-bottom: 8px;
+    /* Hairline border + bevel highlight provide the visual separation
+       on their own — no margin-bottom needed. The 6 px padding-top on
+       .mode-selector-container is the only breathing space. */
+    margin-bottom: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
     gap: 10px;
@@ -838,7 +838,7 @@ button:disabled {
 /* Mode selector (tabs) */
 
 .mode-selector-container {
-    padding: 12px 18px 0;
+    padding: 6px 18px 0;
 }
 .mode-selector {
     display: flex;
