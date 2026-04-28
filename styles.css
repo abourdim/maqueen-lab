@@ -4892,12 +4892,14 @@ aside.log-rail > .connection-card .connection-footer {
 }
 aside.log-rail > .connection-card .connection-footer button {
   font-size: 10px !important;
-  padding: 4px 9px !important;
+  padding: 4px 12px !important;
   background: transparent !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: var(--text-secondary, #93a8c4) !important;
   font-weight: 400 !important;
-  border-radius: 5px !important;
+  /* Match the base button pill shape (Connect/Disconnect use 999px) so
+     all 4 buttons in the CONNECT card share the same family silhouette. */
+  border-radius: 999px !important;
   transition: all 0.15s ease-out;
 }
 aside.log-rail > .connection-card .connection-footer button:hover {
