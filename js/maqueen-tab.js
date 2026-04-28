@@ -770,10 +770,41 @@
     if (g) g.innerHTML = KIT_OVERLAYS[kitKey] || '';
   }
 
+  // Kit-preview attachment overlays for the mini robot in the page header
+  // (live next to the kit picker). Same idea as KIT_OVERLAYS but drawn at
+  // the smaller 0..120 viewBox of #mqKitPreview, with the front edge at
+  // y=22 (top of body). Each entry returns SVG markup for the attachment.
+  const KIT_PREVIEW_ATTACH = {
+    base: '',
+    // 🍴 Forklift — two vertical forks at the front.
+    forklift:
+      '<rect x="36" y="2" width="6" height="22" rx="1" fill="#94a3b8" stroke="#475569" stroke-width="0.6"/>' +
+      '<rect x="78" y="2" width="6" height="22" rx="1" fill="#94a3b8" stroke="#475569" stroke-width="0.6"/>',
+    // 🚜 Loader — trapezoidal scoop at the front, raised slightly off the body.
+    loader:
+      '<path d="M 22 22 L 22 8 Q 60 0 98 8 L 98 22 Z" fill="#fbbf24" stroke="#a16207" stroke-width="0.6"/>' +
+      '<line x1="22" y1="14" x2="98" y2="14" stroke="#a16207" stroke-width="0.4"/>',
+    // 🪲 Beetle gripper — two arched claws curving inward.
+    beetle:
+      '<path d="M 28 22 Q 24 6 38 2" fill="none" stroke="#84cc16" stroke-width="2.6" stroke-linecap="round"/>' +
+      '<path d="M 92 22 Q 96 6 82 2" fill="none" stroke="#84cc16" stroke-width="2.6" stroke-linecap="round"/>',
+    // 🛻 Push / bulldozer — wide blade across the front.
+    push:
+      '<rect x="14" y="6" width="92" height="14" rx="2" fill="#ef4444" stroke="#7f1d1d" stroke-width="0.8"/>' +
+      '<line x1="14" y1="13" x2="106" y2="13" stroke="#7f1d1d" stroke-width="0.4"/>' +
+      '<rect x="34" y="20" width="3" height="3" fill="#475569"/>' +
+      '<rect x="83" y="20" width="3" height="3" fill="#475569"/>',
+  };
+  function updateKitPreview(kitKey) {
+    const g = document.getElementById('mqKitPreviewAttach');
+    if (g) g.innerHTML = KIT_PREVIEW_ATTACH[kitKey] || '';
+  }
+
   function applyKit(kitKey) {
     const kit = KITS[kitKey] || KITS.base;
     currentKit = kitKey;
     updateAnatomyKit(kitKey);
+    updateKitPreview(kitKey);
     document.getElementById('mqServosKitName').textContent = `(${kit.name})`;
     document.getElementById('mqS1Label').textContent = kit.s1Label;
     document.getElementById('mqS2Label').textContent = kit.s2Label;

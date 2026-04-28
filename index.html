@@ -679,13 +679,42 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <!-- Mechanic kit attachment overlay (drawn at the front; populated by JS) -->
                                     <g id="mqAnatomyKit"></g>
                                 </svg>
-                                <select id="mqKitPicker" style="background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid #00d4ff; border-radius:6px; padding:6px 12px; font-family:'JetBrains Mono', monospace; font-size:12px;">
-                                    <option value="base">Base (no kit)</option>
-                                    <option value="forklift">🍴 Forklift (ROB0156-F)</option>
-                                    <option value="loader">🚜 Loader (ROB0156-L)</option>
-                                    <option value="beetle">🪲 Beetle gripper (ROB0156-B)</option>
-                                    <option value="push">🛻 Push / bulldozer (ROB0156-P)</option>
-                                </select>
+                                <!-- Kit picker paired with a mini robot preview that LIVE-shows the
+                                     selected attachment. Picker on the right, robot on the left of it.
+                                     User SEES which kit they have, not just reads its name. -->
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <svg id="mqKitPreview" viewBox="0 0 120 110" style="width:88px; height:auto; flex-shrink:0;" aria-label="Selected kit attachment">
+                                        <defs>
+                                            <linearGradient id="mqKitBodyG" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                <stop offset="0%"  stop-color="#3b82f6"/>
+                                                <stop offset="100%" stop-color="#1e3a8a"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <!-- Wheels (always visible) -->
+                                        <rect x="2"   y="36" width="12" height="40" rx="3" fill="#1e293b" stroke="#fb923c" stroke-width="1"/>
+                                        <rect x="106" y="36" width="12" height="40" rx="3" fill="#1e293b" stroke="#fb923c" stroke-width="1"/>
+                                        <!-- Body -->
+                                        <rect x="18" y="22" width="84" height="78" rx="8" fill="url(#mqKitBodyG)" stroke="#1e3a8a" stroke-width="1"/>
+                                        <!-- micro:bit screen -->
+                                        <rect x="36" y="42" width="48" height="32" rx="3" fill="#0a1628" stroke="#94a3b8" stroke-width="0.5"/>
+                                        <text x="60" y="62" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="6" text-anchor="middle">micro:bit</text>
+                                        <!-- Front sensors (line + ultrasonic) -->
+                                        <circle cx="34" cy="92" r="2.5" fill="#0a1628" stroke="#4ade80" stroke-width="0.6"/>
+                                        <circle cx="86" cy="92" r="2.5" fill="#0a1628" stroke="#4ade80" stroke-width="0.6"/>
+                                        <rect x="50" y="86" width="20" height="10" rx="1.5" fill="#0a1628" stroke="#4ade80" stroke-width="0.5"/>
+                                        <circle cx="56" cy="91" r="1.8" fill="#0a1628" stroke="#4ade80" stroke-width="0.4"/>
+                                        <circle cx="64" cy="91" r="1.8" fill="#0a1628" stroke="#4ade80" stroke-width="0.4"/>
+                                        <!-- ATTACHMENT — populated by JS based on selected kit -->
+                                        <g id="mqKitPreviewAttach"></g>
+                                    </svg>
+                                    <select id="mqKitPicker" style="background:var(--card-bg-2, #0a1628); color:#00d4ff; border:1px solid #00d4ff; border-radius:6px; padding:6px 12px; font-family:'JetBrains Mono', monospace; font-size:12px;">
+                                        <option value="base">Base (no kit)</option>
+                                        <option value="forklift">🍴 Forklift (ROB0156-F)</option>
+                                        <option value="loader">🚜 Loader (ROB0156-L)</option>
+                                        <option value="beetle">🪲 Beetle gripper (ROB0156-B)</option>
+                                        <option value="push">🛻 Push / bulldozer (ROB0156-P)</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <!-- Maqueen sub-tab strip — show one element at a time -->
