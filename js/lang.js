@@ -123,6 +123,11 @@
       mq_servo_sweep_range: "Sweep range",
       mq_servo_sweep_from:  "from",
       mq_servo_sweep_to:    "to",
+      mq_sweep_preset_full: "Full",
+      mq_sweep_preset_front:"Front",
+      mq_sweep_preset_left: "Left",
+      mq_sweep_preset_right:"Right",
+      mq_sweep_preset_wide: "Wide",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -615,6 +620,11 @@
       mq_servo_sweep_range: "Plage balayage",
       mq_servo_sweep_from:  "de",
       mq_servo_sweep_to:    "à",
+      mq_sweep_preset_full: "Total",
+      mq_sweep_preset_front:"Avant",
+      mq_sweep_preset_left: "Gauche",
+      mq_sweep_preset_right:"Droite",
+      mq_sweep_preset_wide: "Large",
 
       // Tabs
       tab_maqueen:        "Maqueen",
@@ -1107,6 +1117,11 @@
       mq_servo_sweep_range: "\u0646\u0637\u0627\u0642 \u0627\u0644\u0645\u0633\u062d",
       mq_servo_sweep_from:  "\u0645\u0646",
       mq_servo_sweep_to:    "\u0625\u0644\u0649",
+      mq_sweep_preset_full: "\u0643\u0627\u0645\u0644",
+      mq_sweep_preset_front:"\u0623\u0645\u0627\u0645",
+      mq_sweep_preset_left: "\u064a\u0633\u0627\u0631",
+      mq_sweep_preset_right:"\u064a\u0645\u064a\u0646",
+      mq_sweep_preset_wide: "\u0648\u0627\u0633\u0639",
 
       // Tabs
       tab_maqueen:        "Maqueen",

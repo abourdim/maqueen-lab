@@ -982,12 +982,25 @@
     }
     const sweepFromInput = document.getElementById('mqServoSweepFrom');
     const sweepToInput   = document.getElementById('mqServoSweepTo');
+    const sweepFromRead  = document.getElementById('mqServoSweepFromRead');
+    const sweepToRead    = document.getElementById('mqServoSweepToRead');
+    function paintSweepRangeReadouts() {
+      if (sweepFromRead) sweepFromRead.textContent = sweepFromDeg + '°';
+      if (sweepToRead)   sweepToRead.textContent   = sweepToDeg + '°';
+      // Highlight any preset that exactly matches the current range.
+      document.querySelectorAll('.mq-sweep-preset').forEach(b => {
+        const f = +b.dataset.from, t = +b.dataset.to;
+        b.classList.toggle('mq-sweep-preset-active',
+          f === sweepFromDeg && t === sweepToDeg);
+      });
+    }
     if (sweepFromInput) {
       sweepFromInput.value = sweepFromDeg;
       sweepFromInput.addEventListener('input', e => {
         sweepFromDeg = +e.target.value || 0;
         clampSweepRange();
         try { localStorage.setItem('maqueen.sweepFrom', String(sweepFromDeg)); } catch {}
+        paintSweepRangeReadouts();
       });
     }
     if (sweepToInput) {
@@ -996,8 +1009,27 @@
         sweepToDeg = +e.target.value || 180;
         clampSweepRange();
         try { localStorage.setItem('maqueen.sweepTo', String(sweepToDeg)); } catch {}
+        paintSweepRangeReadouts();
       });
     }
+    // Preset chips — one tap sets BOTH sliders + persists + repaints.
+    // The matching preset (if any) gets highlighted via .mq-sweep-preset-active.
+    document.querySelectorAll('.mq-sweep-preset').forEach(b => {
+      b.addEventListener('click', () => {
+        sweepFromDeg = +b.dataset.from;
+        sweepToDeg   = +b.dataset.to;
+        clampSweepRange();
+        if (sweepFromInput) sweepFromInput.value = sweepFromDeg;
+        if (sweepToInput)   sweepToInput.value   = sweepToDeg;
+        try {
+          localStorage.setItem('maqueen.sweepFrom', String(sweepFromDeg));
+          localStorage.setItem('maqueen.sweepTo',   String(sweepToDeg));
+        } catch {}
+        paintSweepRangeReadouts();
+      });
+    });
+    // Initial paint (matches whatever was loaded from localStorage).
+    paintSweepRangeReadouts();
 
     // Sweep — uses scheduler.animate so it's properly rate-limited.
     // Reads sweepPeriodMs LIVE on each tick so the slider can adjust speed

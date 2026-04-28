@@ -4408,6 +4408,38 @@ html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
 }
 
 /* ===========================================================
+ * Sweep range preset chips — kid-friendly one-tap range presets
+ * (Full / Front / Left / Right / Wide). Sit above the from/to
+ * sliders. Click a chip → both sliders jump to that range.
+ * =========================================================== */
+.mq-sweep-preset {
+  background: rgba(250, 204, 21, 0.08);
+  color: #facc15;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.12s ease-out;
+}
+.mq-sweep-preset:hover {
+  background: rgba(250, 204, 21, 0.18);
+  border-color: rgba(250, 204, 21, 0.7);
+  transform: translateY(-1px);
+}
+.mq-sweep-preset:active {
+  transform: translateY(0);
+}
+.mq-sweep-preset.mq-sweep-preset-active {
+  background: rgba(250, 204, 21, 0.25);
+  color: #fef3c7;
+  border-color: #facc15;
+  box-shadow: 0 0 6px rgba(250, 204, 21, 0.4);
+}
+
+/* ===========================================================
  * 🎯 Sweep marker style chips — pick how detected obstacles are
  * rendered on the Sweep radar (dots / sectors / rays). Lives at
  * the top of the sweep-style radar panel.
