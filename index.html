@@ -81,6 +81,9 @@
     <script src="js/ble-sniffer.js" defer></script>
     <script src="js/copilot.js" defer></script>
     <script src="js/synesthesia.js" defer></script>
+    <script src="js/youtuber-mode.js" defer></script>
+    <script src="js/gesture-control.js" defer></script>
+    <script src="js/fuzzing.js" defer></script>
 <style>
 .lang-picker { display: flex; gap: 2px; }
 .lang-picker .lang-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; background: transparent; color: inherit; opacity: 0.5; }
@@ -4213,7 +4216,8 @@ if ('serviceWorker' in navigator) {
     <div id="mqRecapBody" style="font-size:13px; line-height:1.7; color:var(--text, #b8c8e0);">…</div>
     <div style="display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;">
       <button id="mqRecapCopy" type="button" style="padding:6px 12px; background:var(--accent, #38bdf8); color:var(--bg-deep, #061121); border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:12px;">📋 Copy</button>
-      <button id="mqRecapAi"   type="button" title="Optional: rewrite this recap with the Claude API. Needs a Claude API key in localStorage.maqueen.claudeKey." style="padding:6px 12px; background:transparent; color:#c084fc; border:1px solid rgba(192,132,252,0.4); border-radius:8px; cursor:pointer; font-size:12px;">✨ AI polish</button>
+      <button id="mqRecapAi"   type="button" title="Optional: rewrite this recap with the Claude API. Needs a Claude API key in localStorage.maqueen.claudeKey." style="padding:6px 12px; background:transparent; color:#38bdf8; border:1px solid rgba(56,189,248,0.4); border-radius:8px; cursor:pointer; font-size:12px;">✨ AI polish</button>
+      <button id="mqRecapTts"  type="button" title="Read aloud — robot-voice TTS narrates the diary entry. The robot's pitch is unique to its serial." style="padding:6px 12px; background:transparent; color:#fbbf24; border:1px solid rgba(251,191,36,0.4); border-radius:8px; cursor:pointer; font-size:12px;">🔊 Read aloud</button>
     </div>
   </div>
 </div>

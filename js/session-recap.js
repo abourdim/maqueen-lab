@@ -124,6 +124,48 @@
     }
   }
 
+  // 🔊 Robot-voice TTS read-aloud. Each robot has a unique pitch
+  // hashed from its BLE device name (or session) so kids notice that
+  // "this is MY robot's voice". Pauses before each new sentence for
+  // dramatic effect — the parents-cry-now factor.
+  function readAloud() {
+    if (!window.speechSynthesis) {
+      alert('Speech synthesis not available in this browser.');
+      return;
+    }
+    const text = document.getElementById('mqRecapBody')?.textContent || '';
+    if (!text.trim()) return;
+    window.speechSynthesis.cancel();
+    // Hash the live URL or device hint to pick a stable pitch in [0.85, 1.25]
+    let h = 0;
+    const seed = (window.location.search || '') + (navigator.userAgent || '');
+    for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) & 0xffff;
+    const pitch = 0.85 + (h % 100) / 250;       // 0.85..1.25
+    const rate  = 0.92;                          // calm
+    // Split into sentences — speak each with a brief gap.
+    const sentences = text.split(/(?<=[.!?])\s+/).filter(Boolean);
+    sentences.forEach((s, i) => {
+      const u = new SpeechSynthesisUtterance(s);
+      u.pitch = pitch;
+      u.rate  = rate;
+      // Pick a voice matching the document language if possible.
+      try {
+        const lang = (document.documentElement.lang || 'en').toLowerCase();
+        const voices = window.speechSynthesis.getVoices();
+        const target = ({ en: 'en-', fr: 'fr-', ar: 'ar-' })[lang] || 'en-';
+        const v = voices.find(x => x.lang.startsWith(target));
+        if (v) u.voice = v;
+      } catch {}
+      // Stagger gaps after punctuation
+      if (i > 0) {
+        const pause = new SpeechSynthesisUtterance(' ');
+        pause.rate = 0.5;
+        window.speechSynthesis.speak(pause);
+      }
+      window.speechSynthesis.speak(u);
+    });
+  }
+
   function open() {
     paint(buildText());
     const m = document.getElementById('mqRecapModal');
@@ -146,6 +188,8 @@
     });
     const ai = document.getElementById('mqRecapAi');
     if (ai) ai.addEventListener('click', aiPolish);
+    const tts = document.getElementById('mqRecapTts');
+    if (tts) tts.addEventListener('click', readAloud);
     const m = document.getElementById('mqRecapModal');
     if (m) m.addEventListener('click', e => { if (e.target === m) close(); });
     document.addEventListener('keydown', e => {

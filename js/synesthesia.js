@@ -1,7 +1,7 @@
 // ============================================================
 // synesthesia.js — Each BLE byte plays a musical note.
 //
-// Toggle 🌈 in the Drive macro bar. When ON, every line that
+// Toggle 🎼 in the Drive macro bar. When ON, every line that
 // goes out via bleScheduler.send is also "played" through Web
 // Audio: the verb prefix selects an instrument (waveform), and
 // the numeric arguments map to a pentatonic scale so the result
@@ -99,7 +99,7 @@
     const btn = document.getElementById('mqSynBtn');
     if (!btn) return;
     btn.classList.toggle('mq-syn-on', on);
-    btn.textContent = on ? '🌈 ON' : '🌈 syn';
+    btn.textContent = on ? '🎼 ON' : '🎼 syn';
     btn.title = on
       ? 'Synesthesia ON — every BLE command plays a musical note. Drive = compose.'
       : 'Synesthesia Mode — turn drive into music.';

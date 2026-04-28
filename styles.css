@@ -5304,17 +5304,27 @@ body.rail-collapsed .log-rail-collapse-btn {
   right: 0;
 }
 
-.mq-copilot-btn { color: #f472b6; border-color: rgba(244,114,182,0.4); }
+.mq-copilot-btn { color: #38bdf8; border-color: rgba(56,189,248,0.4); }
 .mq-copilot-btn.mq-copilot-on {
-  background: #f472b6; color: #1a0e2a; border-color: #f472b6;
-  box-shadow: 0 0 10px rgba(244,114,182,0.5);
+  background: #38bdf8; color: #01202b; border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56,189,248,0.5);
+}
+.mq-gesture-btn { color: #22d3ee; border-color: rgba(34,211,238,0.4); }
+.mq-gesture-btn.mq-gesture-on {
+  background: #22d3ee; color: #01202b; border-color: #22d3ee;
+  box-shadow: 0 0 10px rgba(34,211,238,0.5);
+}
+.mq-fuzz-btn { color: #ef4444; border-color: rgba(239,68,68,0.5); }
+.mq-fuzz-btn:hover {
+  background: rgba(239,68,68,0.15); border-color: #ef4444;
 }
 .mq-syn-btn { color: #22d3ee; border-color: rgba(34,211,238,0.4); }
 .mq-syn-btn.mq-syn-on {
-  background: linear-gradient(90deg, #ef4444, #fbbf24, #4ade80, #38bdf8, #c084fc);
-  color: #1a0e2a;
-  border-color: #fff;
+  background: #22d3ee;
+  color: #01202b;
+  border-color: #22d3ee;
   font-weight: 700;
+  box-shadow: 0 0 10px rgba(34,211,238,0.5);
 }
 .mq-sniffer-btn.mq-sniffer-on {
   background: #38bdf8 !important;
