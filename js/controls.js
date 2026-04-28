@@ -366,7 +366,11 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    let initialTab = 'controls';
+    // First-run default lands on Maqueen → Drive (the headline feature).
+    // Playground ('controls') was the legacy default inherited from
+    // bit-playground; Maqueen Lab is robot-first now. The sub-tab under
+    // Maqueen already defaults to 'drive' in maqueen-tab.js.
+    let initialTab = 'maqueen';
     try {
         const stored = localStorage.getItem('mb_active_tab');
         if (stored) initialTab = stored;
