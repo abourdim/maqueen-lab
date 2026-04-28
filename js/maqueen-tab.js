@@ -2843,7 +2843,11 @@
           const op = Math.max(0, 1 - (now - b.t) / FADE_MS);
           const r = distToRadius(b.cm);
           const p = polar(b.angle, r);
-          const color = b.cm < 10 ? '#ef4444' : b.cm < 30 ? '#fbbf24' : '#86efac';
+          // Sweep blips on the green phosphor grid — the 'safe' tier
+          // used pale green (#86efac) which BLENDED with the grid. Bump
+          // to white so detected objects always pop, regardless of
+          // distance band.
+          const color = b.cm < 10 ? '#ef4444' : b.cm < 30 ? '#fbbf24' : '#ffffff';
           const radius = b.cm < 10 ? 2.4 : 2.0;
           svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${radius}" fill="${color}" opacity="${op.toFixed(2)}"/>`;
         }
@@ -2967,12 +2971,21 @@
     const sp = ensureDistSpark();
     if (sp) sp.push(Math.min(200, cm));
     if (sparkInfo) sparkInfo.textContent = cm + ' cm';
+    // ALL radar blips now adopt the THRESHOLD color (red/amber/green)
+    // instead of the radar's theme color. Reinforces the legend +
+    // makes detected objects stand out from the radar's base palette
+    // (e.g. a green blip on the green sonar background was invisible).
+    function paintBlip(group) {
+      if (!group) return;
+      group.querySelectorAll('circle').forEach(c => c.setAttribute('fill', color));
+    }
     // Bat blip — position along the bat's central axis (x=100), y interpolates
     // 120 (at the bat) → 30 (at top edge) as cm grows 0..200
     if (batBlip) {
       const yPos = 120 - Math.min(1, cm / 200) * 90;
       batBlip.querySelectorAll('circle').forEach(c => c.setAttribute('cy', yPos.toFixed(1)));
       batBlip.setAttribute('opacity', '1');
+      paintBlip(batBlip);
     }
     try { mqAnat.sonar(); } catch {}
     // Sonar blip — same Y mapping as bat
@@ -2981,6 +2994,7 @@
       const yPos = 120 - Math.min(1, cm / 200) * 90;
       sonarBlip.querySelectorAll('circle').forEach(c => c.setAttribute('cy', yPos.toFixed(1)));
       sonarBlip.setAttribute('opacity', '1');
+      paintBlip(sonarBlip);
     }
     // LiDAR blip cluster — same Y mapping
     const lidarBlip = document.getElementById('mqLidarBlip');
@@ -2994,6 +3008,7 @@
         c.setAttribute('cy', (parseFloat(c.dataset.baseCy) + dy).toFixed(1));
       });
       lidarBlip.setAttribute('opacity', '1');
+      paintBlip(lidarBlip);
     }
     // Heatmap marker — log-ish position so 10/30/100/200 land near tick marks
     const heatMarker = document.getElementById('mqHeatMarker');
