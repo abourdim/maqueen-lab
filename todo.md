@@ -25,7 +25,7 @@ hard ordering — pick whichever fits the next session.
 - [x] 1. Voice commands
 - [x] 2. Tilt-to-drive
 - [ ] 3. AI session summary
-- [ ] 4. Time-lapse export
+- [x] 4. Time-lapse export
 - [ ] 5. Drag-to-trace autopilot
 - [ ] 6. AR webcam overlay
 - [x] 7. Robot personalities
@@ -51,13 +51,13 @@ hard ordering — pick whichever fits the next session.
 | 10 | 📡 **Morse Decoder** | Buzzer plays a Morse-code message ( . . .  -  -  -  . . . = SOS). Kid decodes letter by letter. Teaches digital encoding + binary thinking. |
 
 ### Checklist
-- [ ] 1. SLAM the Room
+- [x] 1. SLAM the Room
 - [ ] 2. Echo Hunt
 - [ ] 3. Maze Runner
 - [x] 4. Buzz the Tune
 - [x] 5. Simon Says — NeoPixel
 - [x] 6. Math the Distance
 - [ ] 7. Robot Soccer
-- [ ] 8. Line Follower Race
+- [x] 8. Line Follower Race
 - [x] 9. PWM Lab
 - [x] 10. Morse Decoder

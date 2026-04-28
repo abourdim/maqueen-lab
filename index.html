@@ -68,6 +68,9 @@
     <script src="js/simon-says.js" defer></script>
     <script src="js/math-distance.js" defer></script>
     <script src="js/buzz-tune.js" defer></script>
+    <script src="js/slam-game.js" defer></script>
+    <script src="js/line-race.js" defer></script>
+    <script src="js/timelapse.js" defer></script>
 <style>
 .lang-picker { display: flex; gap: 2px; }
 .lang-picker .lang-btn { border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; background: transparent; color: inherit; opacity: 0.5; }
@@ -1362,6 +1365,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 <span class="mq-odo-legend-item"><span class="mq-odo-swatch" style="background:#fbbf24;"></span><span data-i18n="mq_odo_leg_obst">obstacles</span></span>
                                             </span>
                                             <button id="mqOdoSnap" type="button" title="Save the current path map + dashboard stats as a PNG. Great for classroom show-and-tell or sharing your run." style="margin-right:4px;">📸 <span data-i18n="mq_odo_snap">snap</span></button>
+                                            <button id="mqTimelapseBtn" type="button" title="Export a 10× speed time-lapse of your trail + SLAM map evolving — saves as WebM video for sharing." style="margin-right:4px;">🎬 <span data-i18n="mq_odo_timelapse">timelapse</span></button>
                                             <button id="mqOdoReset" type="button" title="Erase trail + obstacle map and re-center the robot at origin">↺ <span data-i18n="mq_odo_reset">reset</span></button>
                                         </div>
                                         <!-- 🎯 Challenge selector — pick a target shape (square / circle /
@@ -1382,6 +1386,18 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 <span class="mq-chal-stat"><span class="mq-chal-key" data-i18n="mq_chal_score">SCORE</span> <span class="mq-chal-val" id="mqChalScore">—</span></span>
                                                 <span class="mq-chal-stat"><span class="mq-chal-key" data-i18n="mq_chal_best">BEST</span> <span class="mq-chal-val" id="mqChalBest">—</span></span>
                                             </span>
+                                        </div>
+                                        <!-- 🛰️ SLAM the Room — game: how much area can you map in 60 s?
+                                             Score counts unique 10×10 cm cells the trail visits.
+                                             Live cell counter is always shown; pressing Start kicks off
+                                             a 60-second run timer with a final score and best-of. -->
+                                        <div id="mqSlamBar" style="display:flex; gap:10px; align-items:center; padding:6px 10px; margin:4px 0; font-size:11px; color:var(--text-secondary, #93a8c4); background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.2); border-radius:8px; flex-wrap:wrap;">
+                                            <span style="font-weight:700; color:#00d4ff;">🛰️ <span data-i18n="mq_slam_label">SLAM the Room</span></span>
+                                            <span><span data-i18n="mq_slam_cells">cells:</span> <b id="mqSlamCells" style="color:#00d4ff; font-family:monospace;">0</b></span>
+                                            <span><span data-i18n="mq_slam_area">area:</span> <b id="mqSlamArea" style="color:#00d4ff; font-family:monospace;">0 m²</b></span>
+                                            <button id="mqSlamStart" type="button" title="Start a 60-second timed SLAM run. Drive around — score counts every unique 10×10 cm cell your trail visits." style="padding:4px 10px; background:#00d4ff; color:#01202b; border:none; border-radius:6px; font-weight:700; cursor:pointer; font-size:11px;" data-i18n="mq_slam_start">▶ 60 s run</button>
+                                            <span id="mqSlamTimer" style="font-family:monospace; color:#fbbf24; min-width:50px;"></span>
+                                            <span style="margin-left:auto;"><span data-i18n="mq_slam_best">best:</span> <b id="mqSlamBest" style="color:#fbbf24; font-family:monospace;">—</b></span>
                                         </div>
                                         <div class="mq-odo-body">
                                             <svg id="mqOdoSvg" viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid meet">
@@ -2659,6 +2675,31 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <span id="mqFollowRateRead" style="font-family:'JetBrains Mono', monospace; color:#4ade80; min-width:60px; text-align:right;">200 ms</span>
                                         </div>
                                         <div style="font-size:10px; color:var(--text-secondary, #93a8c4); margin-top:4px; text-align:center;">uses Drive speed slider · steers via these eyes</div>
+                                    </div>
+
+                                    <!-- ============================================================
+                                         🏁 LINE FOLLOWER RACE — stopwatch game.
+                                         Print a line track on paper, click Start when the robot
+                                         crosses the start line, click Lap when it finishes.
+                                         Best lap persists. Pure timer; no robot-side support needed.
+                                         ============================================================ -->
+                                    <div id="mqLineRace" style="margin-top:14px; padding:12px; background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.3); border-radius:10px;">
+                                      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+                                        <span style="font-size:18px;">🏁</span>
+                                        <span style="font-weight:700; color:#4ade80;" data-i18n="mq_race_title">Line Follower Race</span>
+                                        <span style="color:var(--text-secondary, #93a8c4); font-size:11px;" data-i18n="mq_race_sub">— time the lap on a printed track</span>
+                                        <span style="margin-left:auto; font-family:monospace; font-size:11px; color:var(--text-secondary, #93a8c4);">
+                                          <span data-i18n="mq_race_best">best:</span>
+                                          <span id="mqRaceBest" style="color:#fbbf24; font-weight:700;">—</span>
+                                        </span>
+                                      </div>
+                                      <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                                        <button id="mqRaceStart" type="button" style="padding:10px 18px; background:#4ade80; color:#01202b; border:none; border-radius:8px; font-weight:700; cursor:pointer; min-width:100px;" data-i18n="mq_race_start">▶ Start</button>
+                                        <button id="mqRaceLap"   type="button" style="padding:10px 18px; background:#fbbf24; color:#01202b; border:none; border-radius:8px; font-weight:700; cursor:pointer; min-width:100px;" data-i18n="mq_race_lap">🏁 Lap</button>
+                                        <button id="mqRaceReset" type="button" style="padding:8px 12px; background:transparent; color:#4ade80; border:1px solid rgba(74,222,128,0.3); border-radius:8px; cursor:pointer;" data-i18n="mq_race_reset">↺</button>
+                                        <span id="mqRaceClock" style="margin-left:auto; font-family:'JetBrains Mono', monospace; font-size:28px; font-weight:700; color:#4ade80; min-width:120px; text-align:right;">0.00 s</span>
+                                      </div>
+                                      <div id="mqRaceLaps" style="margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary, #93a8c4); line-height:1.6;"></div>
                                     </div>
                                 </div>
 
