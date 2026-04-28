@@ -1557,29 +1557,104 @@
       if (ac.state === 'suspended') ac.resume().catch(() => {});
       return ac;
     }
+    // Each radar style has its OWN audio voice — the user wanted
+    // 'sonar audio too. funny'. Voices read the active radar style
+    // from localStorage at every ping (so switching styles instantly
+    // changes the sound, no re-wiring needed).
+    function getStyle() {
+      try { return localStorage.getItem('maqueen.radarStyle') || 'bat'; }
+      catch { return 'bat'; }
+    }
     function ping(cm) {
       if (!enabled) return;
       if (!(cm > 0 && cm < 500)) return;     // no echo / out of range
       const ac = ensureRunning();
       if (!ac || ac.state !== 'running') return;
-      // cm → tone mapping. Clamp at 100 cm; closer is louder + higher.
-      const t = Math.max(0, Math.min(1, cm / 100));
-      const freq = 1500 - t * 1000;          // 0 cm: 1500 Hz, 100+ cm: 500 Hz
-      const vol  = 0.04 + (1 - t) * 0.10;    // 0 cm: 0.14, 100+ cm: 0.04
+      const style = getStyle();
+      const t = Math.max(0, Math.min(1, cm / 100));   // 0=close, 1=far
       const now = ac.currentTime;
+      switch (style) {
+        case 'sonar': return voiceSonar(ac, now, t);
+        case 'lidar': return voiceLidar(ac, now, t);
+        case 'heat':  return voiceHeat(ac, now, t);
+        case 'sweep': return voiceSweep(ac, now, t);
+        default:      return voiceBat(ac, now, t);
+      }
+    }
+
+    // Helper: build a one-shot oscillator + envelope and auto-stop.
+    function tone(ac, now, opts) {
       const osc = ac.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
+      osc.type = opts.wave || 'sine';
+      if (opts.freqStart != null && opts.freqEnd != null) {
+        osc.frequency.setValueAtTime(opts.freqStart, now);
+        osc.frequency.exponentialRampToValueAtTime(opts.freqEnd, now + (opts.sweepMs || opts.decayMs) / 1000);
+      } else {
+        osc.frequency.value = opts.freq;
+      }
       const gain = ac.createGain();
-      // Sharp attack (3 ms) + exponential-ish decay (60 ms) = a clean
-      // pip without the harsh DC-step click of a raw on/off envelope.
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(vol, now + 0.003);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+      gain.gain.linearRampToValueAtTime(opts.vol, now + (opts.attackMs || 3) / 1000);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + opts.decayMs / 1000);
       osc.connect(gain);
       gain.connect(ac.destination);
       osc.start(now);
-      osc.stop(now + 0.08);
+      osc.stop(now + opts.decayMs / 1000 + 0.02);
+    }
+
+    // 🦇 BAT — sharp ultrasonic chirp with a quick downward sweep
+    // (mimics real bat echolocation). Higher pitch when close.
+    function voiceBat(ac, now, t) {
+      const start = 2200 - t * 1200;   // close 2200, far 1000
+      tone(ac, now, {
+        wave: 'sine',
+        freqStart: start, freqEnd: start * 0.55,
+        attackMs: 2, decayMs: 50, sweepMs: 50,
+        vol: 0.05 + (1 - t) * 0.10,
+      });
+    }
+    // 🟢 SONAR — classic submarine ping: deep tone, long exponential
+    // decay, slight downward pitch slide. The "BWWWooop" you hear in
+    // every WW2 movie. Loudest of the bunch — it's the dramatic one.
+    function voiceSonar(ac, now, t) {
+      const start = 700 - t * 200;     // close 700, far 500 Hz
+      tone(ac, now, {
+        wave: 'sine',
+        freqStart: start, freqEnd: start * 0.6,
+        attackMs: 5, decayMs: 480, sweepMs: 380,
+        vol: 0.10 + (1 - t) * 0.10,
+      });
+    }
+    // 🤖 LIDAR — short digital "pew", square-ish wave for that
+    // crisp laser-zap feel. Very brief.
+    function voiceLidar(ac, now, t) {
+      tone(ac, now, {
+        wave: 'square',
+        freqStart: 1800 - t * 600,   // 1800..1200
+        freqEnd:   1100 - t * 400,
+        attackMs: 1, decayMs: 30, sweepMs: 30,
+        vol: 0.04 + (1 - t) * 0.06,
+      });
+    }
+    // 🔥 HEAT — wide pitch range mapped to "warm vs cool". Close = high
+    // sharp tone (HOT), far = low warm tone (cool).
+    function voiceHeat(ac, now, t) {
+      tone(ac, now, {
+        wave: 'triangle',
+        freq: 200 + (1 - t) * 1400,  // far 200 Hz, close 1600 Hz
+        attackMs: 4, decayMs: 100,
+        vol: 0.05 + (1 - t) * 0.08,
+      });
+    }
+    // 📡 SWEEP — short white-noise-ish click via square wave at
+    // very high pitch. Like the radar tick from old movies.
+    function voiceSweep(ac, now, t) {
+      tone(ac, now, {
+        wave: 'square',
+        freq: 3000 - t * 800,
+        attackMs: 1, decayMs: 25,
+        vol: 0.03 + (1 - t) * 0.05,
+      });
     }
     function setEnabled(on) {
       enabled = !!on;
