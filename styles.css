@@ -5196,38 +5196,45 @@ aside.log-rail .log-card #log {
   left: -5px;
 }
 
-/* Floating collapse / expand button — sits on the rail's left edge
-   when the rail is open, slides to the viewport edge when collapsed.
-   Single click toggles. CSS transition follows the --log-rail-w
-   change so the button glides into position. */
+/* Floating collapse / expand chevron — visually ATTACHED to the
+   rail's left edge as a small tab. Compact (14 × 36), low-key by
+   default, lights up cyan on hover. Slides with the rail width
+   so it always rides the rail boundary. */
 .log-rail-collapse-btn {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
   right: var(--log-rail-w, 380px);
   z-index: 100;
-  width: 22px;
-  height: 64px;
+  width: 14px;
+  height: 36px;
   background: var(--card-bg-2, #0a1628);
   color: var(--text-secondary, #93a8c4);
   border: 1px solid var(--border, #1d3556);
   border-right: none;
-  border-radius: 8px 0 0 8px;
+  border-radius: 6px 0 0 6px;
   cursor: pointer;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 18px;
+  font-size: 12px;
   font-weight: 700;
+  line-height: 1;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: right 0.22s ease-out, background 0.12s, color 0.12s, box-shadow 0.12s;
-  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.25);
+  opacity: 0.55;
+  /* Subtle shadow on the LEFT only so the button reads as a tab
+     attached to the rail (the rail itself is to the right). */
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.3);
+  transition: right 0.22s ease-out, opacity 0.15s, background 0.12s,
+              color 0.12s, width 0.15s, transform 0.15s;
 }
 .log-rail-collapse-btn:hover {
+  opacity: 1;
   background: var(--accent, #38bdf8);
   color: var(--bg-deep, #061121);
-  box-shadow: -3px 0 12px rgba(0, 0, 0, 0.45);
+  width: 18px;
+  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.45);
 }
 /* COLLAPSED state — rail width snaps to 0, aside hidden, button at edge */
 body.rail-collapsed {
