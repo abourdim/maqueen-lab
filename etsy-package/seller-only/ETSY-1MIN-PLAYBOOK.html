@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ETSY 1MIN PLAYBOOK — maqueen-lab</title>
+
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    line-height: 1.55;
+    color: #1a1d24;
+    background: #fafbfc;
+  }
+  body[dir="rtl"] {
+    font-family: 'Tajawal', -apple-system, Segoe UI, sans-serif;
+    direction: rtl;
+    text-align: right;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0a0e12; color: #e8ecef; }
+    a { color: #00ff88; }
+    code { background: #161b22; }
+    pre { background: #161b22; border-color: #30363d; }
+    table th { background: #161b22; }
+    blockquote { border-color: #30363d; color: #9ca3af; }
+    hr { border-color: #30363d; }
+  }
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #00ff88;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-top: 2.2em;
+    padding-top: 0.8em;
+    border-top: 1px solid #e1e4e8;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.15em;
+    margin-top: 1.5em;
+    color: #008855;
+  }
+  @media (prefers-color-scheme: dark) {
+    h2 { border-color: #30363d; }
+    h3 { color: #00ff88; }
+  }
+  p, li { font-size: 15px; }
+  code {
+    background: #f2f4f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e4e8;
+    vertical-align: top;
+  }
+  body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+  th {
+    background: #f2f4f7;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #576574;
+  }
+  @media (prefers-color-scheme: dark) {
+    td, th { border-color: #30363d; }
+    th { color: #9ca3af; }
+    code { color: #e8ecef; }
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #00884a;
+    background: rgba(0, 255, 136, 0.06);
+    color: #4a5258;
+    border-radius: 0 6px 6px 0;
+  }
+  body[dir="rtl"] blockquote {
+    border-left: 0; border-right: 4px solid #00884a;
+    border-radius: 6px 0 0 6px;
+  }
+  hr { border: 0; border-top: 2px dashed #d1d5db; margin: 3em 0; }
+  a { color: #006644; text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+
+  .toc-float {
+    position: fixed; top: 20px; right: 20px;
+    width: 260px; max-height: 80vh; overflow-y: auto;
+    background: rgba(255,255,255,0.96); border: 1px solid #d1d5db;
+    border-radius: 8px; padding: 16px 18px;
+    font-size: 12px; line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none;
+  }
+  body[dir="rtl"] .toc-float { right: auto; left: 20px; font-family: Tajawal, sans-serif; }
+  @media (min-width: 1280px) { .toc-float { display: block; } }
+  @media (prefers-color-scheme: dark) {
+    .toc-float { background: rgba(22,27,34,0.96); border-color: #30363d; }
+  }
+  .toc-float h4 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; }
+  .toc-float ol { margin: 0; padding-left: 20px; }
+  body[dir="rtl"] .toc-float ol { padding-left: 0; padding-right: 20px; }
+
+  .sibling-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+  .sibling-bar a {
+    background: rgba(0,136,85,0.08); border: 1px solid rgba(0,136,85,0.25);
+    padding: 4px 10px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.04em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sibling-bar a { background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.25); }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; max-width: none; padding: 10mm; font-size: 11pt; }
+    h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+    tr, pre, blockquote { page-break-inside: avoid; break-inside: avoid; }
+    .toc-float, .sibling-bar { display: none; }
+    a { color: #000; border-bottom: none; }
+  }
+</style>
+</head>
+<body dir="ltr">
+
+
+<nav class="toc-float" aria-label="Quick contents">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#etsy-video-specs-memorise-once">Etsy video specs (memorise
+once)</a></li>
+    <li><a href="#pre-flight-checklist-90-seconds-do-once-per-shoot">Pre-flight
+checklist (90 seconds, do once per shoot)</a></li>
+    <li><a href="#the-60-second-arc">The 60-second arc</a></li>
+    <li><a href="#script-template-a--your-microbit-becomes-a-playground-hero-demo">Script
+Template A — "Your micro:bit becomes a playground" (hero demo)</a></li>
+    <li><a href="#script-template-b--teacher-tuesday-classroom-angle">Script
+Template B — "Teacher Tuesday" (classroom angle)</a></li>
+    <li><a href="#script-template-c--kid-builds-a-robot-parent--home-school-angle">Script
+Template C — "Kid builds a robot" (parent / home-school angle)</a></li>
+    <li><a href="#during-recording-tactics">During-recording tactics</a></li>
+    <li><a href="#common-mistakes-to-avoid">Common mistakes to avoid</a></li>
+    <li><a href="#after-you-press-stop">After you press Stop</a></li>
+    <li><a href="#etsy-specific-upload-tips">Etsy-specific upload tips</a></li>
+    <li><a href="#the-5-take-rule">The 5-take rule</a></li>
+    <li><a href="#quick-reference-cheat-card">Quick-reference cheat card</a></li>
+    <li><a href="#listing-page-copy-snippets">Listing-page copy snippets</a></li>
+    <li><a href="#7-image-listing-order">7-image listing order</a></li>
+  </ol>
+</nav>
+<main>
+<h1 id="micromaqueen-lab--etsy-1-minute-demo-playbook">micro:bit
+Playground → Etsy 1-Minute Demo Playbook</h1>
+<p><strong>For Etsy listing videos (60-second cap, 9:16 portrait,
+autoplay-muted preview).</strong></p>
+<p>A second-by-second script: <strong>what to say</strong> +
+<strong>what to click / do</strong> to produce a tight Etsy demo that
+converts. Keep this open on a second monitor or print A4.</p>
+<hr />
+<h2 id="etsy-video-specs-memorise-once">Etsy video specs (memorise
+once)</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Spec</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Length</strong></td>
+<td>Max 60 seconds (aim for 55 s to be safe)</td>
+</tr>
+<tr class="even">
+<td><strong>Aspect</strong></td>
+<td><strong>9:16 portrait</strong> — Etsy autoplays in the mobile
+feed</td>
+</tr>
+<tr class="odd">
+<td><strong>Resolution</strong></td>
+<td>1080 × 1920 minimum</td>
+</tr>
+<tr class="even">
+<td><strong>Codec</strong></td>
+<td>MP4 / H.264 + AAC audio</td>
+</tr>
+<tr class="odd">
+<td><strong>File size</strong></td>
+<td>Under 100 MB</td>
+</tr>
+<tr class="even">
+<td><strong>Audio</strong></td>
+<td>Muted by default in feed → <strong>captions or on-screen text are
+mandatory</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>Cover frame</strong></td>
+<td>First frame becomes the thumbnail — make it visually loud</td>
+</tr>
+<tr class="even">
+<td><strong>Hook window</strong></td>
+<td>First 3 seconds decide whether a scroller stops</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="pre-flight-checklist-90-seconds-do-once-per-shoot">Pre-flight
+checklist (90 seconds, do once per shoot)</h2>
+<p>Before you press Record:</p>
+<ul class="task-list">
+<li><label><input type="checkbox" />BBC micro:bit V2 powered on, showing
+the <strong>X</strong> icon <em>(if not → re-flash
+<code>makecode.ts</code>)</em></label></li>
+<li><label><input type="checkbox" />Chrome or Edge open with
+<code>index.html</code> loaded</label></li>
+<li><label><input type="checkbox" />BLE paired — status chip is
+<strong>green</strong></label></li>
+<li><label><input type="checkbox" />Theme set — <strong>Neon</strong>
+photographs best; <strong>Arctic</strong> reads best in harsh
+daylight</label></li>
+<li><label><input type="checkbox" />Language matches your voiceover (EN
+/ FR / AR)</label></li>
+<li><label><input type="checkbox" />Servo plugged into P1 if you're
+showing Maqueen with Sweep servo</label></li>
+<li><label><input type="checkbox" />Tab 6 (3D) open with Buggy or Robot
+Arm selected — looks impressive in the hero shot</label></li>
+<li><label><input type="checkbox" />Phone in 9:16 on a tripod,
+front-lit, clean background</label></li>
+<li><label><input type="checkbox" />Desk cleared — only the board + one
+prop (buggy / servo / cable) in frame</label></li>
+<li><label><input type="checkbox" />Captions app running OR on-screen
+text plan ready</label></li>
+<li><label><input type="checkbox" />Script read aloud once, timed under
+55 seconds</label></li>
+<li><label><input type="checkbox" />Phone silenced, kids / dogs
+warned</label></li>
+</ul>
+<hr />
+<h2 id="the-60-second-arc">The 60-second arc</h2>
+<pre><code> 0–3 s   HOOK        &quot;Watch what this micro:bit does in 60 seconds.&quot;
+ 3–10 s  CONTEXT     Board → laptop → Connect → green chip.
+10–35 s  DEMO        Tilt → 3D mirrors. Button A → LED heart. Servo swings. Joystick.
+35–50 s  PAYOFF      Live graph with Simulate. Record / Replay / CSV.
+50–55 s  CTA         &quot;Full kit, lifetime updates — link below.&quot;
+55–60 s  END FRAME   Logo + handle frozen for the loop preview.</code></pre>
+<p>Etsy loops the video, so the <strong>end frame should match the
+cover</strong> — keeps viewers watching the loop.</p>
+<hr />
+<h2
+id="script-template-a--your-microbit-becomes-a-playground-hero-demo">Script
+Template A — "Your micro:bit becomes a playground" (hero demo)</h2>
+<p><strong>Use case:</strong> the main Etsy listing video. Showcases the
+3D, the BLE pairing, and the live graph in one go.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Time</th>
+<th>What to SAY</th>
+<th>What to CLICK / DO</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0–3 s</td>
+<td><em>"Your micro:bit becomes a playground — in the browser, in 60
+seconds."</em></td>
+<td>Close-up of the real board with the X icon on the LEDs. Your hand
+holds it.</td>
+</tr>
+<tr class="even">
+<td>3–10 s</td>
+<td><em>"One page, one click, paired."</em></td>
+<td>Cut to the laptop. Click <strong>🔗 Connect to micro:bit</strong> →
+pick the board → chip turns green.</td>
+</tr>
+<tr class="odd">
+<td>10–20 s</td>
+<td><em>"Sensors live — tilt it, the 3D model tilts too."</em></td>
+<td>Tab <strong>6 · SLAM map</strong>. Tilt the real board. The virtual
+one mirrors it. Hold both in frame.</td>
+</tr>
+<tr class="even">
+<td>20–30 s</td>
+<td><em>"Press A — the LEDs react. Drag a slider — the servo
+swings."</em></td>
+<td>Press A. Cut to Tab <strong>3 · Motors</strong>, drag Servo 1 slider
+— real servo swings in frame.</td>
+</tr>
+<tr class="odd">
+<td>30–40 s</td>
+<td><em>"Live graph with record, replay, CSV. A lab in a browser
+tab."</em></td>
+<td>Tab <strong>5 · Graph</strong> → click <strong>🎲 Simulate</strong>
+→ chart dances → hover on <strong>⏺ Record</strong> and <strong>📄
+CSV</strong>.</td>
+</tr>
+<tr class="even">
+<td>40–50 s</td>
+<td><em>"4 themes, 3 languages, works offline, no install, no
+account."</em></td>
+<td>Quick theme swap (header dropdown) → show Neon → Arctic.</td>
+</tr>
+<tr class="odd">
+<td>50–55 s</td>
+<td><em>"Link below — lifetime updates, teachers and kids
+welcome."</em></td>
+<td>Face-cam back on. Eye contact.</td>
+</tr>
+<tr class="even">
+<td>55–60 s</td>
+<td><em>"Happy hacking."</em></td>
+<td>Hold still. Logo + handle overlay freezes. This becomes the loop
+frame.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="script-template-b--teacher-tuesday-classroom-angle">Script
+Template B — "Teacher Tuesday" (classroom angle)</h2>
+<p><strong>Use case:</strong> targeting teachers and STEM workshop
+organisers.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Time</th>
+<th>What to SAY</th>
+<th>What to CLICK / DO</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0–3 s</td>
+<td><em>"STEM teachers — you need to see this."</em></td>
+<td>Overhead shot of a laptop + 5 micro:bits laid out on a desk.</td>
+</tr>
+<tr class="even">
+<td>3–10 s</td>
+<td><em>"One browser tab. Live sensors. No install on 30
+laptops."</em></td>
+<td>Click Connect. Status goes green. Cut to Drive tab — values
+streaming.</td>
+</tr>
+<tr class="odd">
+<td>10–20 s</td>
+<td><em>"Calibrate the compass right in the UI. Baseline the sound for a
+quiet classroom."</em></td>
+<td>Drive tab → Calibrate. Show the Set Level / Set Ambient
+buttons.</td>
+</tr>
+<tr class="even">
+<td>20–30 s</td>
+<td><em>"Record a full lesson. Export CSV. Drop into a lab
+report."</em></td>
+<td>Distance tab → Record → Stop → Save Session → CSV.</td>
+</tr>
+<tr class="odd">
+<td>30–40 s</td>
+<td><em>"4 themes — Arctic for projectors. 3 languages — Arabic with
+full RTL."</em></td>
+<td>Swap theme to Arctic. Swap language to Arabic — watch the UI flip
+RTL.</td>
+</tr>
+<tr class="even">
+<td>40–50 s</td>
+<td><em>"Site license for up to 30 teachers. Lifetime
+updates."</em></td>
+<td>Text overlay with the licensing tiers + Etsy shop name.</td>
+</tr>
+<tr class="odd">
+<td>50–60 s</td>
+<td><em>"Link below. Tag me when you run a workshop."</em></td>
+<td>Face-cam, hold the micro:bit, smile, freeze on logo.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2
+id="script-template-c--kid-builds-a-robot-parent--home-school-angle">Script
+Template C — "Kid builds a robot" (parent / home-school angle)</h2>
+<p><strong>Use case:</strong> showing a young maker using the app — UGC
+/ influencer feel.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Time</th>
+<th>What to SAY</th>
+<th>What to CLICK / DO</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0–3 s</td>
+<td><em>"My kid built a robot. With a browser tab."</em></td>
+<td>Close-up: a small hand tapping Connect.</td>
+</tr>
+<tr class="even">
+<td>3–10 s</td>
+<td><em>"The micro:bit drives the servo. The 3D model mirrors the real
+robot."</em></td>
+<td>Tab 6 (Maqueen robot). Real robot next to the laptop. Buggy in 3D
+follows.</td>
+</tr>
+<tr class="odd">
+<td>10–20 s</td>
+<td><em>"D-pad in the browser → arrows on the LED → commands to the
+motors."</em></td>
+<td>Tab 4 (Joystick). Press ⬆ → LED arrow. Buggy crawls forward.</td>
+</tr>
+<tr class="even">
+<td>20–30 s</td>
+<td><em>"Tilt the brain — the ball rolls to the targets."</em></td>
+<td>Tab 6 → Balance Game model. Tilt the board. Ball rolls.</td>
+</tr>
+<tr class="odd">
+<td>30–40 s</td>
+<td><em>"Graph the sensors. Record the run. Replay for
+homework."</em></td>
+<td>Tab 5 → Record 3 s of accel → Replay → Save Session.</td>
+</tr>
+<tr class="even">
+<td>40–50 s</td>
+<td><em>"No login. Nothing leaves the computer. Offline after first
+load."</em></td>
+<td>Close the Wi-Fi indicator (airplane mode). App still works.</td>
+</tr>
+<tr class="odd">
+<td>50–60 s</td>
+<td><em>"Full kit on Etsy. Link below."</em></td>
+<td>Kid holding the robot + board. Smile. Freeze.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="during-recording-tactics">During-recording tactics</h2>
+<ul>
+<li><strong>One scene per phase.</strong> Do not cut every 2 s — it
+feels frantic.</li>
+<li><strong>Switch scenes on words</strong>, not mid-sentence.</li>
+<li><strong>Pause 1 second on the graph record button</strong> — visual
+emphasis.</li>
+<li><strong>Look at the camera lens</strong>, not the screen, during all
+CTAs.</li>
+<li><strong>Smile for the final 3 seconds</strong>. The loop frame
+matters.</li>
+<li><strong>Watch the clock</strong> — if you pass 55 s, re-cut. Etsy
+compresses aggressively.</li>
+</ul>
+<hr />
+<h2 id="common-mistakes-to-avoid">Common mistakes to avoid</h2>
+<table>
+<thead>
+<tr class="header">
+<th>❌ Don't</th>
+<th>✅ Do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Start with "Hi, I'm…" + 10 s intro</td>
+<td>First 3 s = the board tilting a 3D model on the laptop</td>
+</tr>
+<tr class="even">
+<td>Film landscape (16:9)</td>
+<td>9:16 portrait — Etsy autoplays on mobile</td>
+</tr>
+<tr class="odd">
+<td>Demo on Safari / iPhone</td>
+<td>Show Chrome/Edge only. iOS users will buy and refund</td>
+</tr>
+<tr class="even">
+<td>Skip captions</td>
+<td>Burn in captions — the feed is muted by default</td>
+</tr>
+<tr class="odd">
+<td>Whisper</td>
+<td>Speak 15% louder and 10% slower than normal conversation</td>
+</tr>
+<tr class="even">
+<td>Forget the CTA</td>
+<td>"Link below" in the last 5 s, every single time</td>
+</tr>
+<tr class="odd">
+<td>End mid-sentence</td>
+<td>Land your closing line. Then hold 2 seconds of silence</td>
+</tr>
+<tr class="even">
+<td>Cluttered desk</td>
+<td>Clean area in frame — even a tiny frame shows clutter</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="after-you-press-stop">After you press Stop</h2>
+<ol type="1">
+<li>Watch the playback <strong>once</strong>, eyes off the script. Does
+it land?</li>
+<li>If &gt;60 s → trim with a simple editor (iMovie, CapCut, DaVinci).
+Aim for 55 s.</li>
+<li>Burn in captions if you haven't already. Keep them centered below
+the subject.</li>
+<li>First frame — set it to a strong, still visual (the board in hand,
+or the logo). This is your cover.</li>
+<li>Export MP4 / H.264, under 100 MB.</li>
+<li>Upload to the Etsy listing. Verify autoplay. Check on a phone with
+sound off.</li>
+</ol>
+<hr />
+<h2 id="etsy-specific-upload-tips">Etsy-specific upload tips</h2>
+<ul>
+<li>Etsy listing videos appear at the top as an <strong>autoplaying
+preview tile</strong>. First frame is the cover — make it visually
+clean.</li>
+<li>Use the listing <strong>title</strong> to echo the video's first
+words. If you say <em>"Your micro:bit becomes a playground"</em>, the
+listing title starts with <em>"Maqueen Lab — BLE Control
+Panel…"</em>.</li>
+<li>Add the captions text into the listing <strong>description</strong>
+— searchable, helps SEO.</li>
+<li>Tag the listing with words you actually said in the video.</li>
+<li>Price tiers: single user <code>{{PRICE}}</code> · classroom / site
+<code>{{PRICE}}</code>.</li>
+</ul>
+<hr />
+<h2 id="the-5-take-rule">The 5-take rule</h2>
+<p><strong>Never publish your first take.</strong> Plan to do 3–5:</p>
+<ol type="1">
+<li><strong>Take 1</strong> — read the script literally. Find the
+awkward bits.</li>
+<li><strong>Take 2</strong> — fix the awkward bits. Less reading, more
+talking.</li>
+<li><strong>Take 3</strong> — drop the script. Talk to a friend, not to
+a camera.</li>
+<li><strong>Take 4</strong> — slow down 10 %. Add one deliberate
+pause.</li>
+<li><strong>Take 5</strong> — your keeper.</li>
+</ol>
+<hr />
+<h2 id="quick-reference-cheat-card">Quick-reference cheat card</h2>
+<pre><code>PRE     V2 has X icon · Chrome open · BLE green · 9:16 phone · Cosmos theme
+LAUNCH  Record → first words land in the first 3 seconds
+DURING  Tilt → 3D · A → LED · slider → servo · Simulate → graph
+AFTER   Stop → trim to 55 s → burn captions → first frame = thumbnail
+UPLOAD  Etsy listing → upload MP4 → echo first words in listing title</code></pre>
+<hr />
+<h2 id="listing-page-copy-snippets">Listing-page copy snippets</h2>
+<p><strong>Title (140 chars max):</strong></p>
+<pre><code>Maqueen Lab — BLE Control Panel for Teachers &amp; Kids · Sensors · Servos · Live Graph · 3D Models · No Install · Chrome / Edge</code></pre>
+<p><strong>160-char short description:</strong></p>
+<pre><code>Browser-based BLE control panel for the BBC micro:bit V2. Sensors, servos, live graphs, 3D models, and a Joystick — all from Chrome. No install, no account.</code></pre>
+<p><strong>13 Etsy tags:</strong></p>
+<pre><code>micro:bit, BLE, bluetooth, education, STEM, robotics, kids coding, teacher resource, sensors, servos, classroom, home school, makerspace</code></pre>
+<p><strong>Materials:</strong></p>
+<pre><code>HTML5, JavaScript, Web Bluetooth, SVG gauges, Three.js, PWA, MakeCode, TypeScript</code></pre>
+<p><strong>SEO keywords:</strong></p>
+<pre><code>browser-based · no-install · privacy-first · offline-capable · web bluetooth · micro:bit V2 · STEM workshop · teacher resource</code></pre>
+<p><strong>Price tiers (fill the <code>{{PRICE}}</code>
+placeholders):</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Tier</th>
+<th>Who</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Single user</td>
+<td>One teacher / family / maker</td>
+<td><code>{{PRICE}}</code></td>
+</tr>
+<tr class="even">
+<td>Classroom / Site</td>
+<td>Up to 30 teachers at one school</td>
+<td><code>{{PRICE}}</code></td>
+</tr>
+<tr class="odd">
+<td>District / OEM</td>
+<td>Multiple sites — DM through order</td>
+<td>Custom</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-image-listing-order">7-image listing order</h2>
+<ol type="1">
+<li><strong>Hero</strong> — real micro:bit + laptop, 3D model mirroring
+the board's tilt. Title overlay in Orbitron.</li>
+<li><strong>Tabs overview</strong> — grid screenshot of all 8 tabs with
+emoji labels.</li>
+<li><strong>Live graph</strong> — SVG gauges close-up with colored lines +
+annotations, Record button glowing red.</li>
+<li><strong>3D models</strong> — split screenshot of Buggy + Robot
+Arm.</li>
+<li><strong>Hand-holding</strong> — real servo plugged into P1, sliders
+on the screen.</li>
+<li><strong>Theme sampler</strong> — 2×2 grid: Stealth · Neon · Arctic ·
+Blaze.</li>
+<li><strong>License card</strong> — "Single-user license · Lifetime
+updates · No cloud · Chrome / Edge" on a dark gradient.</li>
+</ol>
+<hr />
+<p><em>Made for Maqueen Lab v1.2.0 — print this on A4,
+laminate, keep next to the shoot rig.</em></p>
+
+</main>
+</body>
+</html>

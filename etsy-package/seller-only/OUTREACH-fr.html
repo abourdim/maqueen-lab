@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OUTREACH fr — maqueen-lab</title>
+
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    line-height: 1.55;
+    color: #1a1d24;
+    background: #fafbfc;
+  }
+  body[dir="rtl"] {
+    font-family: 'Tajawal', -apple-system, Segoe UI, sans-serif;
+    direction: rtl;
+    text-align: right;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0a0e12; color: #e8ecef; }
+    a { color: #00ff88; }
+    code { background: #161b22; }
+    pre { background: #161b22; border-color: #30363d; }
+    table th { background: #161b22; }
+    blockquote { border-color: #30363d; color: #9ca3af; }
+    hr { border-color: #30363d; }
+  }
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #00ff88;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-top: 2.2em;
+    padding-top: 0.8em;
+    border-top: 1px solid #e1e4e8;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.15em;
+    margin-top: 1.5em;
+    color: #008855;
+  }
+  @media (prefers-color-scheme: dark) {
+    h2 { border-color: #30363d; }
+    h3 { color: #00ff88; }
+  }
+  p, li { font-size: 15px; }
+  code {
+    background: #f2f4f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e4e8;
+    vertical-align: top;
+  }
+  body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+  th {
+    background: #f2f4f7;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #576574;
+  }
+  @media (prefers-color-scheme: dark) {
+    td, th { border-color: #30363d; }
+    th { color: #9ca3af; }
+    code { color: #e8ecef; }
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #00884a;
+    background: rgba(0, 255, 136, 0.06);
+    color: #4a5258;
+    border-radius: 0 6px 6px 0;
+  }
+  body[dir="rtl"] blockquote {
+    border-left: 0; border-right: 4px solid #00884a;
+    border-radius: 6px 0 0 6px;
+  }
+  hr { border: 0; border-top: 2px dashed #d1d5db; margin: 3em 0; }
+  a { color: #006644; text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+
+  .toc-float {
+    position: fixed; top: 20px; right: 20px;
+    width: 260px; max-height: 80vh; overflow-y: auto;
+    background: rgba(255,255,255,0.96); border: 1px solid #d1d5db;
+    border-radius: 8px; padding: 16px 18px;
+    font-size: 12px; line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none;
+  }
+  body[dir="rtl"] .toc-float { right: auto; left: 20px; font-family: Tajawal, sans-serif; }
+  @media (min-width: 1280px) { .toc-float { display: block; } }
+  @media (prefers-color-scheme: dark) {
+    .toc-float { background: rgba(22,27,34,0.96); border-color: #30363d; }
+  }
+  .toc-float h4 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; }
+  .toc-float ol { margin: 0; padding-left: 20px; }
+  body[dir="rtl"] .toc-float ol { padding-left: 0; padding-right: 20px; }
+
+  .sibling-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+  .sibling-bar a {
+    background: rgba(0,136,85,0.08); border: 1px solid rgba(0,136,85,0.25);
+    padding: 4px 10px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.04em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sibling-bar a { background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.25); }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; max-width: none; padding: 10mm; font-size: 11pt; }
+    h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+    tr, pre, blockquote { page-break-inside: avoid; break-inside: avoid; }
+    .toc-float, .sibling-bar { display: none; }
+    a { color: #000; border-bottom: none; }
+  }
+</style>
+</head>
+<body dir="ltr">
+<nav class="sibling-bar">
+  <a href="OUTREACH-en.html">EN</a>
+  <a href="OUTREACH-fr.html">FR</a>
+  <a href="OUTREACH-ar.html">AR</a>
+</nav>
+
+<nav class="toc-float" aria-label="Quick contents">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#contenu">Contenu</a></li>
+    <li><a href="#template-1--enseignant-stem-premier-contact">Template
+1 — Enseignant STEM (premier contact)</a></li>
+    <li><a href="#template-2--enseignant-stem-relance-après-5-jours">Template
+2 — Enseignant STEM (relance après 5 jours)</a></li>
+    <li><a href="#template-3--fablab--coordinateur-makerspace">Template
+3 — Fablab / coordinateur makerspace</a></li>
+    <li><a href="#template-4--organisateur-de-coopérative-école-à-la-maison">Template
+4 — Organisateur de coopérative école à la maison</a></li>
+    <li><a href="#template-5--acheteur-académique-licence-site">Template
+5 — Acheteur académique (licence site)</a></li>
+    <li><a href="#template-6--librairie--revendeur-stem-partenariat">Template
+6 — Librairie / revendeur STEM (partenariat)</a></li>
+    <li><a href="#template-7--relance-post-démo">Template 7 —
+Relance post-démo</a></li>
+    <li><a href="#banque-dobjets-demail">Banque d'objets
+d'email</a></li>
+  </ol>
+</nav>
+<main>
+<h1 id="templates-dapproche-à-froid--français">Templates d'approche à
+froid — Français</h1>
+<blockquote>
+<p>Templates de vente directe pour contacter enseignants STEM,
+coordinateurs de fablab, coopératives d'école à la maison, et acheteurs
+académiques. Versions jumelles dans <a
+href="./OUTREACH-en.md"><code>OUTREACH-en.md</code></a> et <a
+href="./OUTREACH-ar.md"><code>OUTREACH-ar.md</code></a>.</p>
+<p><strong>Conseils de délivrabilité</strong></p>
+<ul>
+<li>Envoyer depuis un domaine personnel, pas Gmail. Les filtres
+anti-spam des enseignants tuent les envois en
+<code>@gmail.com</code>.</li>
+<li>Un email par contact par semaine maximum. Arrêter après deux
+non-réponses.</li>
+<li>Ne pas attacher le ZIP. Pointez vers la démo live
+(<code>abourdim.github.io/maqueen-lab</code>) — cela qualifie et
+économise votre boîte.</li>
+<li>Pour les enseignants français : <strong>Madame / Monsieur
+[Nom]</strong> avec vouvoiement. Pour fablabs : prénom OK.</li>
+<li>Pour le Québec : vouvoiement mais ton légèrement plus direct.</li>
+</ul>
+</blockquote>
+<h2 id="contenu">Contenu</h2>
+<ul>
+<li><a href="#t1">Template 1 — Enseignant STEM (premier
+contact)</a></li>
+<li><a href="#t2">Template 2 — Enseignant STEM (relance après 5
+jours)</a></li>
+<li><a href="#t3">Template 3 — Fablab / coordinateur makerspace</a></li>
+<li><a href="#t4">Template 4 — Organisateur de coopérative école à la
+maison</a></li>
+<li><a href="#t5">Template 5 — Acheteur académique (licence
+site)</a></li>
+<li><a href="#t6">Template 6 — Librairie / revendeur STEM
+(partenariat)</a></li>
+<li><a href="#t7">Template 7 — Relance post-démo</a></li>
+<li><a href="#subjects">Banque d'objets d'email</a></li>
+</ul>
+<hr />
+<h2
+id="template-1--enseignant-stem-premier-contact"><a id="t1"></a>Template
+1 — Enseignant STEM (premier contact)</h2>
+<p><strong>Objet :</strong> Un outil micro:bit basé navigateur pour
+votre classe (rien à installer)</p>
+<blockquote>
+<p>Bonjour {{PRENOM}},</p>
+<p>J'ai vu votre {{CONTEXT : « unité d'initiation au code » / « page du
+club codage » / « plan de séquence micro:bit »}} et j'ai pensé à un
+outil que j'ai créé — il pourrait vous faire gagner une séance entière
+sur l'installation.</p>
+<p>C'est un panneau de contrôle web pour le BBC micro:bit V2. Un onglet
+de navigateur, rien à installer, fonctionne sur Chromebook. Les élèves
+cliquent Connecter, choisissent leur carte, et chaque capteur diffuse en
+direct à l'écran. Ils peuvent peindre les LEDs, tracer température/son
+en temps réel, faire tourner des servos, et voir un miroir 3D de la
+carte s'incliner avec la vraie.</p>
+<p><strong>Essayez en 30 secondes</strong> (mode Simulation, pas besoin
+de micro:bit) : abourdim.github.io/maqueen-lab</p>
+<p>Si ça vous est utile, le ZIP complet (12,99 € sur Etsy) contient le
+firmware + guide illustré trilingue + template de plan de séquence. Je
+peux vous envoyer une copie gratuite si vous voulez le tester avec une
+classe et me faire un retour.</p>
+<p>Pas de pression — merci pour tout ce que vous faites pour ces
+élèves.</p>
+<p>— {{NOM}}</p>
+</blockquote>
+<hr />
+<h2
+id="template-2--enseignant-stem-relance-après-5-jours"><a id="t2"></a>Template
+2 — Enseignant STEM (relance après 5 jours)</h2>
+<p><strong>Objet :</strong> Re : Un outil micro:bit basé navigateur pour
+votre classe</p>
+<blockquote>
+<p>Bonjour {{PRENOM}} — je remonte ce message au cas où il se serait
+perdu. Version courte : panneau de contrôle sans installation pour vos
+micro:bits. Démo live : abourdim.github.io/maqueen-lab</p>
+<p>Si ce n'est pas pour vous, pas de souci — j'arrête d'écrire. Si vous
+n'avez juste pas eu le temps de regarder, aucune urgence.</p>
+<p>— {{NOM}}</p>
+</blockquote>
+<hr />
+<h2
+id="template-3--fablab--coordinateur-makerspace"><a id="t3"></a>Template
+3 — Fablab / coordinateur makerspace</h2>
+<p><strong>Objet :</strong> Terrain de jeu Web Bluetooth pour les
+micro:bits de votre fablab</p>
+<blockquote>
+<p>Salut {{PRENOM}},</p>
+<p>Rapide — j'ai construit un panneau de contrôle web pour le BBC
+micro:bit V2. On ouvre dans Chrome, on clique Connecter, et chaque
+capteur + la matrice LED + les servos sont live, sans IDE. Firmware
+compatible open source (MakeCode), export CSV, miroir 3D de la
+carte.</p>
+<p>Ça pourrait être utile pour les ateliers libres ou les sessions Kids
+Code Hour — les visiteurs s'assoient et jouent directement, pas de setup
+Arduino.</p>
+<p>Démo live : abourdim.github.io/maqueen-lab Kit complet sur Etsy —
+MP pour une copie fablab-friendly.</p>
+<p>— {{NOM}}</p>
+</blockquote>
+<hr />
+<h2
+id="template-4--organisateur-de-coopérative-école-à-la-maison"><a id="t4"></a>Template
+4 — Organisateur de coopérative école à la maison</h2>
+<p><strong>Objet :</strong> Un outil STEM trilingue pour votre unité
+micro:bit</p>
+<blockquote>
+<p>Bonjour {{PRENOM}},</p>
+<p>J'ai remarqué que {{COOP_NAME}} propose un bloc micro:bit — je
+voulais vous partager un outil qui pourrait faire gagner du temps
+d'installation.</p>
+<p>C'est un panneau de contrôle web : ouvrez Chrome sur n'importe quel
+ordinateur, connectez le micro:bit, et les élèves voient les capteurs en
+direct. Le guide illustré fourni est en français, anglais ET arabe —
+utile si vous avez des familles multilingues dans la coopérative.</p>
+<p><strong>Sûr pour les moins de 13 ans :</strong> fonctionne
+entièrement dans le navigateur, aucun compte, aucune connexion, rien ne
+quitte l'appareil. Conforme RGPD par conception.</p>
+<p>🧪 À essayer : abourdim.github.io/maqueen-lab</p>
+<p>Je peux vous envoyer une copie gratuite si vous évaluez pour la
+prochaine session.</p>
+<p>— {{NOM}}</p>
+</blockquote>
+<hr />
+<h2
+id="template-5--acheteur-académique-licence-site"><a id="t5"></a>Template
+5 — Acheteur académique (licence site)</h2>
+<p><strong>Objet :</strong> Licence établissement pour micro:bit
+Playground — {{ACADEMIE}}</p>
+<blockquote>
+<p>Madame, Monsieur {{NOM}},</p>
+<p>Je me permets de vous contacter car {{ACADEMIE}} {{CONTEXT : «
+développe un programme CSTI » / « a piloté une initiative STEM récente »
+/ « inscrit le numérique éducatif dans son projet »}}, et je développe
+un outil qui pourrait s'intégrer à la partie micro:bit de cette
+démarche.</p>
+<p><strong>Maqueen Lab</strong> est un panneau de contrôle basé
+navigateur pour le BBC micro:bit V2. Il fonctionne sur Chromebook, ne
+nécessite aucune installation, aucun compte, aucun cloud, aucune
+collecte de données — il respecte le RGPD et les exigences typiques d'un
+DPO d'académie.</p>
+<p>La licence établissement couvre un nombre illimité d'enseignants sur
+un site pour <strong>199 € / an</strong> (les bundles comparables
+tournent entre 200 et 400 €). Licence multi-sites à partir de
+<strong>499 €</strong> pour trois sites.</p>
+<p>Inclus : application web, firmware à flasher, guide illustré
+trilingue (EN/FR/AR), pack accessibilité (descriptions audio + Braille),
+template de plan de séquence.</p>
+<p>Je peux vous faire parvenir le dossier de conformité RGPD / RGAA, ou
+organiser une démo de 20 minutes.</p>
+<p>Cordialement, — {{NOM}} {{URL}}</p>
+</blockquote>
+<hr />
+<h2
+id="template-6--librairie--revendeur-stem-partenariat"><a id="t6"></a>Template
+6 — Librairie / revendeur STEM (partenariat)</h2>
+<p><strong>Objet :</strong> Add-on micro:bit en marque blanche pour les
+kits {{BOUTIQUE}}</p>
+<blockquote>
+<p>Bonjour {{PRENOM}},</p>
+<p>Grand fan de {{BOUTIQUE}} — votre {{PRODUCT : « kit micro:bit
+débutant » / « bundle robotique »}} est exactement là où un outil que
+j'ai créé ajouterait une couche visuelle qui capte les enfants.</p>
+<p>Je fabrique un panneau de contrôle web pour le BBC micro:bit V2.
+C'est le moment « wow » que les parents postent sur Instagram — capteurs
+en direct dans le navigateur, matrice LED qui s'anime en temps réel,
+carte 3D qui s'incline avec la vraie.</p>
+<p>Deux façons d'être utile :</p>
+<ol type="1">
+<li><strong>Affiliation</strong> — 30 % de commission sur les achats
+Etsy via votre lien.</li>
+<li><strong>Marque blanche</strong> — je rebrande l'app à vos couleurs
+et vous la livrez en bonus numérique dans vos kits. Licence forfaitaire,
+pas de coût par unité.</li>
+</ol>
+<p>Démo live : abourdim.github.io/maqueen-lab</p>
+<p>Un appel de 15 minutes ?</p>
+<p>— {{NOM}}</p>
+</blockquote>
+<hr />
+<h2 id="template-7--relance-post-démo"><a id="t7"></a>Template 7 —
+Relance post-démo</h2>
+<p><strong>Objet :</strong> La démo Maqueen Lab a fonctionné
+sur votre configuration ?</p>
+<blockquote>
+<p>Bonjour {{PRENOM}},</p>
+<p>Juste un petit point — avez-vous eu l'occasion d'essayer la démo sur
+les Chromebooks de votre établissement ? Je sais que les proxys réseau
+des écoles peuvent être capricieux avec Web Bluetooth.</p>
+<p>Si ça a fonctionné : 🎉. Sinon, envoyez-moi une capture de ce qui
+s'est affiché — dans 90 % des cas c'est soit (a) Chrome sur un
+Chromebook verrouillé qui a besoin de
+<code>chrome://flags/#enable-experimental-web-platform-features</code>
+activé, soit (b) un firewall qui intercepte le dialogue d'appairage.</p>
+<p>Dans tous les cas, je vous aide à passer l'obstacle.</p>
+<p>— {{NOM}}</p>
+</blockquote>
+<hr />
+<h2 id="banque-dobjets-demail"><a id="subjects"></a>Banque d'objets
+d'email</h2>
+<p>À faire tourner — répéter le même objet vers la même organisation
+plombe la délivrabilité.</p>
+<p><strong>Curiosité :</strong></p>
+<ul>
+<li>Un outil micro:bit basé navigateur pour votre classe (rien à
+installer)</li>
+<li>L'outil qui a fait gagner une séance entière à un enseignant</li>
+<li>Déjà essayé sur Chromebook ?</li>
+</ul>
+<p><strong>Bénéfice direct :</strong></p>
+<ul>
+<li>Panneau de contrôle sans installation pour vos micro:bits</li>
+<li>Capteurs en direct dans le navigateur — sans IDE, sans setup</li>
+<li>Un outil STEM qui s'appaire sur Chromebook en 30 secondes</li>
+</ul>
+<p><strong>Basés sur une question :</strong></p>
+<ul>
+<li>Comment utilisez-vous le micro:bit en classe ?</li>
+<li>Votre coopérative utilise-t-elle des micro:bits ?</li>
+<li>Question rapide sur votre unité {{MATIERE}}</li>
+</ul>
+<p><strong>Faible engagement :</strong></p>
+<ul>
+<li>Démo de 30 secondes avant de décider</li>
+<li>Copie gratuite si vous voulez tester avec une classe</li>
+<li>Pas de pitch — juste un outil qui pourrait vous servir</li>
+</ul>
+
+</main>
+</body>
+</html>

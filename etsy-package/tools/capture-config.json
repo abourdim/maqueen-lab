@@ -1,0 +1,111 @@
+{
+  "_rewrite": [
+    "⚠️ REWRITE PER PRODUCT — selectors below were inherited from maqueen-lab.",
+    "After apply-template.js runs, Maqueen Lab / https://abourdim.github.io/maqueen-lab/ are substituted,",
+    "but every DOM selector (#connectionStatus, #tempValue, .tab-btn[data-page=...], etc.)",
+    "still targets maqueen-lab's DOM. Walk each section and edit:",
+    "  1. tabs[].selector — your app's tab button selectors + data-page values",
+    "  2. synthetic.connect.* — your connect state DOM + globalCall",
+    "  3. synthetic.sensors — your sensor value element IDs",
+    "  4. synthetic.pills — delete or remap to your UI pill IDs",
+    "  5. synthetic.activityFeed — your log/activity container",
+    "  6. variants.themes.values — your theme names (or delete block)",
+    "  7. variants.models.* — your variant selector + values (or delete)",
+    "  8. pairs.* — only keep pairs that make sense for your product",
+    "  9. annotations — rewrite target selectors + captions",
+    " 10. heroTabs — which tabs to feature in multi-aspect mode",
+    "Ship capture-config.example.json alongside as a reference of maqueen-lab's filled-in values."
+  ],
+
+  "productName": "Maqueen Lab",
+  "appContainer": ".app",
+  "toastContainer": ".toast-container",
+
+  "onboarding": {
+    "localStorageKey": "mb_onboarded",
+    "closeSelectors": [".ob-close", "[data-close-onboarding]", "button:has-text(\"Start\")"]
+  },
+
+  "theme": {
+    "storageKey": "mb_theme",
+    "default": "neon",
+    "attr": "data-theme",
+    "attrTarget": "html"
+  },
+
+  "tabs": [
+    { "slug": "controls", "selector": ".tab-btn[data-page=\"controls\"]", "settle": 500 },
+    { "slug": "sensors",  "selector": ".tab-btn[data-page=\"senses\"]",   "settle": 1000 },
+    { "slug": "motors",   "selector": ".tab-btn[data-page=\"servos\"]",   "settle": 800 },
+    { "slug": "joystick",  "selector": ".tab-btn[data-page=\"joystick\"]",  "settle": 600 },
+    { "slug": "graph",    "selector": ".tab-btn[data-page=\"graph\"]",    "settle": 1500,
+      "prep": { "action": "click", "selector": "button:has-text(\"Simulate\")", "wait": 2000 } },
+    { "slug": "3d",       "selector": ".tab-btn[data-page=\"board3d\"]",  "settle": 2000 },
+    { "slug": "bench",    "selector": ".tab-btn[data-page=\"bench\"]",    "settle": 500, "requiresExpert": true },
+    { "slug": "more",     "selector": ".tab-btn[data-page=\"others\"]",   "settle": 500 }
+  ],
+
+  "expertMode": { "toggleSelector": "#expertModeBtn" },
+
+  "synthetic": {
+    "silenceToastsGlobal": "window.showToast = () => {};",
+    "connect": {
+      "globalCall": "setConnectionStatus(true)",
+      "pillSelector": "#connectionStatus",
+      "pillAddClass": "connected",
+      "pillRemoveClass": "disconnected",
+      "pillTextSelector": "span:last-child",
+      "pillText": "Connected",
+      "disableConnectSelector": "#connectBtn",
+      "enableDisconnectSelector": "#disconnectBtn"
+    },
+    "sensors": [
+      { "selector": "#tempValue",   "value": "22"   },
+      { "selector": "#lightValue",  "value": "148"  }
+    ],
+    "pills": [],
+    "activityFeed": {
+      "selector": "#activity",
+      "entryClass": "activity-item",
+      "entries": [
+        "[10:42:03] 🔗 Paired with device",
+        "[10:42:04] 📡 Sensor stream active"
+      ]
+    }
+  },
+
+  "variants": {
+    "themes": {
+      "tabSlug": "controls",
+      "values": ["stealth", "neon", "arctic", "blaze"]
+    },
+    "models": {
+      "tabSlug": "3d",
+      "selector": "#board3dModel",
+      "type": "select",
+      "values": ["microbit", "buggy", "arm", "balance", "weather"]
+    }
+  },
+
+  "pairs": {
+    "connect": { "tabSlug": "controls" },
+    "graph":   { "tabSlug": "graph",
+                 "activate": { "selector": "button:has-text(\"Simulate\")", "wait": 2500 } }
+  },
+
+  "annotations": [
+    { "sceneName": "graph",   "tabSlug": "graph",
+      "target": "#graphRecordBtn", "text": "One click to save", "side": "right" }
+  ],
+
+  "heroTabs": ["controls", "3d", "graph"],
+
+  "audiences": [
+    { "name": "teacher-a", "theme": "arctic", "tabSlug": "controls", "synthetic": true },
+    { "name": "teacher-b", "theme": "arctic", "tabSlug": "graph",    "synthetic": true },
+    { "name": "kid-a",     "theme": "neon",   "tabSlug": "controls", "synthetic": true },
+    { "name": "maker-a",   "theme": "blaze",  "tabSlug": "motors",   "synthetic": true }
+  ],
+
+  "altTextSuffix": "Every component, live in your browser"
+}

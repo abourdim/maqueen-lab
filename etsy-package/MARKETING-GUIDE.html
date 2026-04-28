@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MARKETING GUIDE — maqueen-lab</title>
+
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    line-height: 1.55;
+    color: #1a1d24;
+    background: #fafbfc;
+  }
+  body[dir="rtl"] {
+    font-family: 'Tajawal', -apple-system, Segoe UI, sans-serif;
+    direction: rtl;
+    text-align: right;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0a0e12; color: #e8ecef; }
+    a { color: #00ff88; }
+    code { background: #161b22; }
+    pre { background: #161b22; border-color: #30363d; }
+    table th { background: #161b22; }
+    blockquote { border-color: #30363d; color: #9ca3af; }
+    hr { border-color: #30363d; }
+  }
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #00ff88;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-top: 2.2em;
+    padding-top: 0.8em;
+    border-top: 1px solid #e1e4e8;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.15em;
+    margin-top: 1.5em;
+    color: #008855;
+  }
+  @media (prefers-color-scheme: dark) {
+    h2 { border-color: #30363d; }
+    h3 { color: #00ff88; }
+  }
+  p, li { font-size: 15px; }
+  code {
+    background: #f2f4f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e4e8;
+    vertical-align: top;
+  }
+  body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+  th {
+    background: #f2f4f7;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #576574;
+  }
+  @media (prefers-color-scheme: dark) {
+    td, th { border-color: #30363d; }
+    th { color: #9ca3af; }
+    code { color: #e8ecef; }
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #00884a;
+    background: rgba(0, 255, 136, 0.06);
+    color: #4a5258;
+    border-radius: 0 6px 6px 0;
+  }
+  body[dir="rtl"] blockquote {
+    border-left: 0; border-right: 4px solid #00884a;
+    border-radius: 6px 0 0 6px;
+  }
+  hr { border: 0; border-top: 2px dashed #d1d5db; margin: 3em 0; }
+  a { color: #006644; text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+
+  .toc-float {
+    position: fixed; top: 20px; right: 20px;
+    width: 260px; max-height: 80vh; overflow-y: auto;
+    background: rgba(255,255,255,0.96); border: 1px solid #d1d5db;
+    border-radius: 8px; padding: 16px 18px;
+    font-size: 12px; line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none;
+  }
+  body[dir="rtl"] .toc-float { right: auto; left: 20px; font-family: Tajawal, sans-serif; }
+  @media (min-width: 1280px) { .toc-float { display: block; } }
+  @media (prefers-color-scheme: dark) {
+    .toc-float { background: rgba(22,27,34,0.96); border-color: #30363d; }
+  }
+  .toc-float h4 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; }
+  .toc-float ol { margin: 0; padding-left: 20px; }
+  body[dir="rtl"] .toc-float ol { padding-left: 0; padding-right: 20px; }
+
+  .sibling-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+  .sibling-bar a {
+    background: rgba(0,136,85,0.08); border: 1px solid rgba(0,136,85,0.25);
+    padding: 4px 10px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.04em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sibling-bar a { background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.25); }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; max-width: none; padding: 10mm; font-size: 11pt; }
+    h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+    tr, pre, blockquote { page-break-inside: avoid; break-inside: avoid; }
+    .toc-float, .sibling-bar { display: none; }
+    a { color: #000; border-bottom: none; }
+  }
+</style>
+</head>
+<body dir="ltr">
+
+
+<nav class="toc-float" aria-label="Quick contents">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#table-of-contents">Table of contents</a></li>
+    <li><a href="#etsy-listing-images-slots-110">Etsy listing images (slots
+1–10)</a></li>
+    <li><a href="#etsy-listing-video">Etsy listing video</a></li>
+    <li><a href="#narrated-videos-youtube--pinterest--reels">Narrated videos
+(YouTube / Pinterest / Reels)</a></li>
+    <li><a href="#animated-gifs-mobile-feed-magnets">Animated GIFs (mobile feed
+magnets)</a></li>
+    <li><a href="#printables-ship-in-the-zip">Printables (ship in the ZIP)</a></li>
+    <li><a href="#specialty-proof-assets">Specialty proof assets</a></li>
+    <li><a href="#sales-support-tools">Sales support tools</a></li>
+    <li><a href="#accessibility-pack">Accessibility pack</a></li>
+    <li><a href="#physical-artifact">Physical artifact</a></li>
+    <li><a href="#per-buyer-fulfilment">Per-buyer fulfilment</a></li>
+    <li><a href="#developer-audience-hooks">Developer-audience hooks</a></li>
+    <li><a href="#deep-link-url-params">Deep-link URL params</a></li>
+    <li><a href="#launch-day-sequence">Launch-day sequence</a></li>
+  </ol>
+</nav>
+<main>
+<h1 id="marketing-asset-guide--micromaqueen-lab">Marketing Asset
+Guide — Maqueen Lab</h1>
+<p>A walkthrough of <strong>every asset</strong> the marketing pipeline
+produces: what it is, where it goes, and when to use it. Keep this open
+when you're building out the Etsy listing, scheduling social posts, or
+responding to buyer messages.</p>
+<p>If a file mentioned here doesn't exist yet, the pipeline step that
+produces it is listed at the end of each section — run it to
+generate.</p>
+<hr />
+<h2 id="table-of-contents">Table of contents</h2>
+<ol type="1">
+<li><a href="#etsy-listing-images-slots-110">Etsy listing images (slots
+1–10)</a></li>
+<li><a href="#etsy-listing-video">Etsy listing video</a></li>
+<li><a href="#narrated-videos-youtube--pinterest--reels">Narrated videos
+(YouTube / Pinterest / Reels)</a></li>
+<li><a href="#animated-gifs-mobile-feed-magnets">Animated GIFs (mobile
+feed magnets)</a></li>
+<li><a href="#printables-ship-in-the-zip">Printables (ship in the
+ZIP)</a></li>
+<li><a href="#specialty-proof-assets">Specialty proof assets</a></li>
+<li><a href="#sales-support-tools">Sales support tools</a></li>
+<li><a href="#accessibility-pack">Accessibility pack</a></li>
+<li><a href="#physical-artifact">Physical artifact</a></li>
+<li><a href="#per-buyer-fulfilment">Per-buyer fulfilment</a></li>
+<li><a href="#developer-audience-hooks">Developer-audience
+hooks</a></li>
+<li><a href="#deep-link-url-params">Deep-link URL params</a></li>
+<li><a href="#launch-day-sequence">Launch-day sequence</a></li>
+</ol>
+<hr />
+<h2 id="etsy-listing-images-slots-110">Etsy listing images (slots
+1–10)</h2>
+<p>Etsy allows 10 images per listing. Ordering matters: image 1 is the
+search-result thumbnail, images 2–3 are the "scroll" your buyer sees
+first on the listing page, 4–10 fill out the gallery. Etsy also runs its
+own thumbnail A/B experiment among your first few images.</p>
+<h3 id="slot-1--hero-thumbnail-the-conversion-lever">Slot 1 — Hero
+thumbnail (THE conversion lever)</h3>
+<p>Three ready-to-upload hero variants. Upload all three and let Etsy's
+experiment pick the winner, or rotate manually weekly.</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>output/en/heroes/hero-teacher.png</code></td>
+<td>Default for launch — widest audience. Arctic palette, classroom
+pitch.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/heroes/hero-kid.png</code></td>
+<td>A/B candidate. Neon palette, playground pitch.</td>
+</tr>
+<tr class="odd">
+<td><code>output/en/heroes/hero-maker.png</code></td>
+<td>A/B candidate. Blaze palette, MakerFaire / hacker crowd.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/heroes/hero-laptop.png</code></td>
+<td>For listings embedded on a blog — the CSS laptop frame signals "runs
+on real hardware."</td>
+</tr>
+<tr class="odd">
+<td><code>output/en/heroes/hero-fr.png</code></td>
+<td>Only for the FR-localized duplicate listing.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/heroes/hero-ar.png</code></td>
+<td>Only for the AR-localized duplicate listing.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong> Etsy listing image 1 · Pinterest board cover
+· email-header banner. <strong>When:</strong> Set at listing creation.
+Rotate 2 weeks in if CTR &lt; 1.2 % in Etsy Stats.</p>
+<h3 id="slots-23--proof-the-thing-works-scroll-stoppers">Slots 2–3 —
+"Proof the thing works" scroll-stoppers</h3>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>output/shared/photoreal/microbit-hero.png</code></td>
+<td>Photoreal 3D render of the micro:bit V2. Reads as "we have a real
+device" without needing a physical photo.</td>
+</tr>
+<tr class="even">
+<td><code>output/shared/ble-dialog/ble-pairing.png</code></td>
+<td>Synthesized Chrome Bluetooth picker. Answers the #1 pre-purchase
+fear: "will my browser actually pair with this thing?"</td>
+</tr>
+<tr class="odd">
+<td><code>output/shared/ble-dialog/ble-pairing-lifted.png</code></td>
+<td>Alternative with lifted backdrop for print/mockup compositing.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong> Etsy image 2 (photoreal) and image 3 (BLE
+dialog). <strong>When:</strong> Permanent slots. These don't age out;
+they're evergreen trust signals.</p>
+<h3 id="slots-46--feature-grid--app-state">Slots 4–6 — Feature grid +
+app state</h3>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>output/en/screenshots/screenshot-&lt;tab&gt;-live.png</code></td>
+<td>Synthetic-state captures of each tab (controls / sensors / motors /
+joystick / graph / 3d / bench / more). UI looks <em>alive</em> —
+connected pill, populated sensors, activity feed.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/screenshots/pair-graph-active.png</code></td>
+<td>Graph with live waveform.</td>
+</tr>
+<tr class="odd">
+<td><code>output/en/screenshots/pair-3d-tilted.png</code></td>
+<td>3D model at 30° tilt.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/screenshots/screenshot-graph-annotated.png</code></td>
+<td>Graph with a "One click to save data" call-out arrow.</td>
+</tr>
+<tr class="odd">
+<td><code>output/en/screenshots/screenshot-3d-annotated.png</code></td>
+<td>3D tab with "Tilt yours — this follows" call-out.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/screenshots/screenshot-sensors-annotated.png</code></td>
+<td>Drive tab with "Live from micro:bit" call-out.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong> Etsy images 4–6 · Pinterest secondary pins.
+<strong>When:</strong> Permanent slots. Replace a screenshot only after
+you've shipped a major UI change.</p>
+<h3 id="slots-78--personality--variety">Slots 7–8 — Personality /
+variety</h3>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>output/en/screenshots/screenshot-theme-&lt;stealth/neon/arctic/blaze&gt;.png</code></td>
+<td>2×2 grid collage showing the 4 themes. Good for "personalize it"
+angle.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/theme-morph.gif</code></td>
+<td>6-second animated GIF cycling through all 4 themes. Etsy autoplays
+GIFs in the image grid on mobile.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong> Etsy image 7 (theme grid) · image 8 (GIF).
+<strong>When:</strong> Permanent. The GIF in particular is a measurable
+CTR lift on mobile.</p>
+<h3 id="slot-9--audience-speaks-to-you">Slot 9 — Audience speaks to
+you</h3>
+<p>One of these depending on which audience you want to push:</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>For</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>output/en/screenshots/screenshot-audience-teacher-*.png</code></td>
+<td>Teacher-focused listing angle</td>
+</tr>
+<tr class="even">
+<td><code>output/en/screenshots/screenshot-audience-kid-*.png</code></td>
+<td>Parent-of-kid angle</td>
+</tr>
+<tr class="odd">
+<td><code>output/en/screenshots/screenshot-audience-maker-*.png</code></td>
+<td>Maker / hobbyist angle</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong> Etsy image 9 · Pinterest "pitch" pins.
+<strong>When:</strong> Rotate based on seasonal campaigns
+(back-to-school → teacher, holidays → kid, MakerFaire week → maker).</p>
+<h3 id="slot-10--whats-in-the-zip">Slot 10 — What's in the ZIP</h3>
+<p><code>etsy-package/output/shared/mockups/etsy-mockup-5.png</code> —
+pre-composed "what's inside" mockup listing all deliverables.</p>
+<hr />
+<h2 id="etsy-listing-video">Etsy listing video</h2>
+<p>Etsy allows <strong>one</strong> video per listing, muted autoplay in
+the thumbnail grid, 60-second max, 1080×1920 9:16.</p>
+<h3 id="use-outputlangetsy-video-v1mp4">Use:
+<code>output/&lt;lang&gt;/etsy-video-v1.mp4</code></h3>
+<p>Three ready variants: <code>output/en/</code>,
+<code>output/fr/</code>, <code>output/ar/</code>.</p>
+<ul>
+<li>60s exactly</li>
+<li>Burned-in captions in the matching language</li>
+<li><strong>Audio track included</strong> — Zira (EN), Hortense (FR), or
+Naayf (AR) narrates</li>
+<li>~5.5 MB (well under Etsy's 100 MB cap)</li>
+</ul>
+<p><strong>Where:</strong> Etsy listing "Video" slot.
+<strong>When:</strong> At listing creation. Re-render with
+<code>node tools/generate-video.mjs</code> then
+<code>node tools/narrate-video.mjs &lt;lang&gt;</code> whenever the
+screenshots change.</p>
+<blockquote>
+<p>Etsy autoplays muted in the grid — buyers who tap to unmute hear the
+narration. Both use cases covered.</p>
+</blockquote>
+<hr />
+<h2 id="narrated-videos-youtube--pinterest--reels">Narrated videos
+(YouTube / Pinterest / Reels)</h2>
+<p>Same 60-second visual, but with voice-over (the captions read aloud
+by an OS TTS engine).</p>
+<p>The main per-language videos
+(<code>output/en/etsy-video-v1.mp4</code>,
+<code>output/fr/etsy-video-v1.mp4</code>) already have narration. A
+backup copy lives at
+<code>output/&lt;lang&gt;/narrated/etsy-video-v1.mp4</code> —
+byte-identical.</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Audio voice</th>
+<th>Captions</th>
+<th>Channel</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>output/en/etsy-video-v1.mp4</code></td>
+<td>Zira (en-US female)</td>
+<td>EN burned</td>
+<td>Etsy listing video · YouTube · Instagram Reels</td>
+</tr>
+<tr class="even">
+<td><code>output/fr/etsy-video-v1.mp4</code></td>
+<td>Hortense (fr-FR female)</td>
+<td>FR burned</td>
+<td>FR Etsy listing · FR YouTube · FR Pinterest</td>
+</tr>
+<tr class="odd">
+<td><code>output/ar/etsy-video-v1.mp4</code></td>
+<td>Naayf (ar-SA male)</td>
+<td>AR burned · RTL</td>
+<td>AR Etsy listing · AR YouTube · AR Pinterest</td>
+</tr>
+<tr class="even">
+<td><code>output/&lt;lang&gt;/narrated/etsy-video-v1.mp4</code></td>
+<td>same as above</td>
+<td>same</td>
+<td>backup copy of the narrated output</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong></p>
+<ul>
+<li>YouTube — upload as a product demo with the caption script in the
+description for SEO</li>
+<li>Pinterest — Video Pin (not regular pin)</li>
+<li>Instagram / TikTok — Reels (crop to 9:16 if needed; already
+9:16)</li>
+<li>Embedded in your Etsy shop announcement</li>
+</ul>
+<p><strong>When:</strong> Cross-post at launch, then one refresh every 2
+months if click-through dropped.</p>
+<p><strong>Note:</strong> the main per-language videos
+(<code>output/{en,fr,ar}/etsy-video-v1.mp4</code>) already have audio —
+use them for the Etsy listing slot directly. The
+<code>output/&lt;lang&gt;/narrated/</code> copies are identical backups;
+pick either.</p>
+<hr />
+<h2 id="animated-gifs-mobile-feed-magnets">Animated GIFs (mobile feed
+magnets)</h2>
+<p>Short, loopable, autoplay-everywhere demonstrations of one specific
+feature.</p>
+<h3 id="use-outputengifsnamegif-and-matching-mp4">Use:
+<code>output/en/gifs/&lt;name&gt;.gif</code> (and matching
+<code>.mp4</code>)</h3>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Shows</th>
+<th>Best channel</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ledmatrix-heart.gif</code></td>
+<td>Drawing a heart on the 5×5 LED matrix, progressive</td>
+<td>Pinterest pin, Twitter/Bluesky reply to "what does it do?"</td>
+</tr>
+<tr class="even">
+<td><code>graph-record.gif</code></td>
+<td>Distance tab with Simulate running — live waveform</td>
+<td>Etsy listing slot (secondary) · YouTube community post</td>
+</tr>
+<tr class="odd">
+<td><code>3d-tilt-sweep.gif</code></td>
+<td>3D model tilting ±40° over 5 seconds</td>
+<td>Pinterest hover card · Instagram story sticker</td>
+</tr>
+<tr class="even">
+<td><code>theme-swap.gif</code></td>
+<td>All 4 themes cycle</td>
+<td>"Customize it" bullet in the description · Twitter thread</td>
+</tr>
+<tr class="odd">
+<td><code>speed-test/speed-test.gif</code></td>
+<td>"0 → live data in 3.2s" proof</td>
+<td>Pinned tweet · Facebook group reply when a teacher asks "does this
+actually work?"</td>
+</tr>
+</tbody>
+</table>
+<p><strong>When:</strong> Share 1 GIF per week on social during the
+launch quarter. Rotate which one based on engagement.</p>
+<hr />
+<h2 id="printables-ship-in-the-zip">Printables (ship in the ZIP)</h2>
+<p>Included in every buyer's download.</p>
+<table>
+<thead>
+<tr class="header">
+<th>File (in ZIP at <code>printables/</code>)</th>
+<th>Physical use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>quickstart-card.html</code></td>
+<td>A4 card for each student's desk. 5-step setup.</td>
+</tr>
+<tr class="even">
+<td><code>classroom-poster.html</code></td>
+<td>A3 poster for classroom wall. "Drive Real Robots With Code" + 5
+steps.</td>
+</tr>
+<tr class="odd">
+<td><code>shortcuts-cheatsheet.html</code></td>
+<td>A4 landscape. Laminate and tape near workstations.</td>
+</tr>
+<tr class="even">
+<td><code>lesson-plan-template.html</code></td>
+<td>A4 form + worked 45-min lesson. Photocopy for each teacher.</td>
+</tr>
+<tr class="odd">
+<td><code>sticker-sheet.html</code></td>
+<td>A4, 30 achievement badges. Print on Avery 22807 sticker paper.</td>
+</tr>
+<tr class="even">
+<td><code>README-quickstart.html</code></td>
+<td>Auto-plays the <code>theme-morph.gif</code> live preview. Buyer
+opens in a browser after download.</td>
+</tr>
+</tbody>
+</table>
+<p>All have <strong>QR codes</strong> (bottom-right) pointing to the
+live demo with per-printable UTM tags, so you can see in Etsy Stats
+which laminated poster is driving the most demo traffic.</p>
+<p><strong>When:</strong> Nothing to do — they ship with every buyer ZIP
+automatically.</p>
+<h3 id="localized-marketing-poster--flyer--outputlangprint">Localized
+marketing poster + flyer — <code>output/&lt;lang&gt;/print/</code></h3>
+<p>Print-ready collateral in all three languages, generated by
+<code>tools/generate-print.mjs</code>. Unlike the buyer-ZIP printables
+above, these target outside-the-listing distribution — hang at
+conferences, hand out at teacher meetups, DM to a partner bookshop.</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Size</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>poster-a3.pdf</code></td>
+<td>A3 portrait (297×420mm)</td>
+<td>Classroom / makerspace wall. Hero pitch + 3 features + QR.</td>
+</tr>
+<tr class="even">
+<td><code>poster-a3.png</code></td>
+<td>250 DPI preview</td>
+<td>Digital sharing (newsletters, Slack).</td>
+</tr>
+<tr class="odd">
+<td><code>flyer-a4.pdf</code></td>
+<td>A4 portrait (210×297mm)</td>
+<td>Teacher handout. Pitch + 60-second steps + 3 screenshots + QR.</td>
+</tr>
+<tr class="even">
+<td><code>flyer-a4.png</code></td>
+<td>250 DPI preview</td>
+<td>Social share / newsletter.</td>
+</tr>
+</tbody>
+</table>
+<p>Three languages × two sizes = 12 files total. Arabic renders RTL
+automatically with Tajawal typography. QR codes carry
+<code>utm_medium=print</code> so Etsy Stats attributes print-driven
+traffic.</p>
+<p><strong>When:</strong> regenerate before print runs with
+<code>node tools/build-localized.mjs &lt;lang&gt;</code> (step 9 of the
+pipeline).</p>
+<h3 id="social-media-kit--outputlangsocial">Social media kit —
+<code>output/&lt;lang&gt;/social/</code></h3>
+<p>Four pre-sized PNGs per language, generated by
+<code>tools/generate-social.mjs</code>. Drop straight into the
+scheduled-post tool.</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Size</th>
+<th>Platform</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ig-post.png</code></td>
+<td>1080×1080</td>
+<td>Instagram feed · Facebook square post</td>
+</tr>
+<tr class="even">
+<td><code>ig-story.png</code></td>
+<td>1080×1920</td>
+<td>Instagram story · WhatsApp · Reels cover</td>
+</tr>
+<tr class="odd">
+<td><code>twitter.png</code></td>
+<td>1200×675</td>
+<td>Twitter / X post card</td>
+</tr>
+<tr class="even">
+<td><code>linkedin.png</code></td>
+<td>1200×627</td>
+<td>LinkedIn share image</td>
+</tr>
+</tbody>
+</table>
+<p>Same pitch + screenshot, layout adapts to aspect. Arabic
+auto-RTL.</p>
+<h3 id="brand-identity--outputlangidentity">Brand identity —
+<code>output/&lt;lang&gt;/identity/</code></h3>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Size</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>business-card.pdf</code></td>
+<td>85×55mm print-ready</td>
+<td>Hand out at conferences / teacher meetups.</td>
+</tr>
+<tr class="even">
+<td><code>business-card.png</code></td>
+<td>~1280×830 preview</td>
+<td>Digital share / signature image.</td>
+</tr>
+<tr class="odd">
+<td><code>email-signature.png</code></td>
+<td>600×160</td>
+<td>Gmail / Outlook signature — point teachers to the demo.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="press-kit--press-kithtml">Press kit —
+<code>press-kit.html</code></h3>
+<p>Single-page media kit with 3-lang toggle (EN/FR/AR). Includes fact
+sheet, boilerplate in three lengths (one-liner / short / long),
+press-grade asset links, and contact block. Upload next to the live demo
+at <code>/press-kit.html</code> — send the URL to journalists and
+bloggers instead of attaching 40 MB of images.</p>
+<hr />
+<h2 id="specialty-proof-assets">Specialty proof assets</h2>
+<p>Single-purpose images that answer a specific objection.</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Answers the objection</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>output/shared/ble-dialog/ble-pairing.png</code></td>
+<td>"Will Chrome actually pair with a micro:bit?" (Shows the native
+dialog.)</td>
+</tr>
+<tr class="even">
+<td><code>output/en/speed-test/speed-test.mp4</code> /
+<code>.gif</code></td>
+<td>"Will this work in a 4-minute class period?" (3.2s to live
+data.)</td>
+</tr>
+<tr class="odd">
+<td><code>output/en/screenshots/screenshot-offline.png</code></td>
+<td>"Works offline?" (Big OFFLINE MODE overlay, sensors still
+populated.)</td>
+</tr>
+<tr class="even">
+<td><code>output/shared/photoreal/microbit-hero.png</code></td>
+<td>"Do you have a real product?" (Photoreal 3D render.)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong> FAQ section of the listing · link in DM reply
+templates · cited in blog posts. <strong>When:</strong> Paste a link to
+the relevant one when a buyer pre-purchase message asks that specific
+question.</p>
+<hr />
+<h2 id="sales-support-tools">Sales support tools</h2>
+<p>Not images — tools that power your workflow.</p>
+<h3
+id="outputencaptionscaptionsmd"><code>output/en/captions/captions.md</code></h3>
+<p>A/B-ready caption bank. 5 hero titles, 5 subtitles, 5 social
+captions, 5 Pinterest captions, 5 email subjects — per audience (teacher
+/ kid / maker).</p>
+<p><strong>When:</strong></p>
+<ul>
+<li>Pick a new hero title every 3 weeks; re-run
+<code>node tools/hero-compose.mjs</code> to regenerate listing image
+1.</li>
+<li>Email subject lines for launch-week mailings.</li>
+<li>Social copy rotation for the first 30 days.</li>
+</ul>
+<h3
+id="outputenchatbotembedjshtml"><code>output/en/chatbot/embed.{js,html}</code></h3>
+<p>Client-side chatbot for the live-demo page. 12 canned FAQs covering
+the 90 % of pre-purchase questions.</p>
+<p><strong>Where:</strong> Paste into
+<code>maqueen-lab/index.html</code> or the hosted live-demo page
+(<code>abourdim.github.io/maqueen-lab</code>). Nothing else to do.
+<strong>When:</strong> Before first listing publish. Saves ~60–80 % of
+inbound DMs.</p>
+<h3 id="toolsfaq-rulesjson"><code>tools/faq-rules.json</code></h3>
+<p>The rule set behind the chatbot. Edit when buyers ask something that
+isn't already covered.</p>
+<hr />
+<h2 id="accessibility-pack">Accessibility pack</h2>
+<p>Meets U.S. IDEA / UK SEND school-procurement accessibility
+requirements — the kind that unlock district-level budgets.</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>output/en/accessibility/audio-descriptions/*.wav</code></td>
+<td>30-second spoken descriptions of each printable. Zira (en-US)
+voice.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/accessibility/audio-descriptions/*.txt</code></td>
+<td>Same as text transcript — for Braille display users or DAISY
+readers.</td>
+</tr>
+<tr class="odd">
+<td><code>output/en/accessibility/braille/*.brl</code></td>
+<td>Unicode Grade-1 Braille of key phrases. Print on heavy paper +
+emboss.</td>
+</tr>
+<tr class="even">
+<td><code>output/en/accessibility/braille/printable.html</code></td>
+<td>Combined embosser-friendly sheet.</td>
+</tr>
+<tr class="odd">
+<td><code>output/en/accessibility/README.md</code></td>
+<td>Accessibility statement — paste into the Etsy listing
+description.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong></p>
+<ul>
+<li>Link the accessibility statement in the Etsy FAQ.</li>
+<li>Bundle the WAVs + BRL files in the buyer ZIP under
+<code>accessibility/</code> folder.</li>
+<li>Mention "WCAG 2.1 AA, IDEA-compatible" in the listing tags.</li>
+</ul>
+<p><strong>When:</strong> Permanent. This is moat — very few Etsy STEM
+sellers ship accessibility.</p>
+<hr />
+<h2 id="physical-artifact">Physical artifact</h2>
+<h3
+id="outputsharedstandstand-3mmsvgdxf--readmemd"><code>output/shared/stand/stand-3mm.{svg,dxf}</code>
++ <code>README.md</code></h3>
+<p>Lasercut acrylic desk stand for the micro:bit V2. 2-piece flat-pack,
+friction-fit joint, no glue. Teacher-facing README includes laser
+settings for K40 / xTool / Glowforge.</p>
+<p><strong>Where:</strong></p>
+<ul>
+<li>Include the SVG + DXF + README inside the buyer ZIP at
+<code>extras/stand/</code></li>
+<li>Promote in the listing description: "Laser-cutter? Free acrylic
+stand DXF included"</li>
+</ul>
+<p><strong>When:</strong> Permanent differentiator. Makers + makerspaces
+will cut and share photos — free UGC.</p>
+<hr />
+<h2 id="per-buyer-fulfilment">Per-buyer fulfilment</h2>
+<h3 id="toolswatermark-zipmjs"><code>tools/watermark-zip.mjs</code></h3>
+<p>Generates a watermarked ZIP with the buyer's name + order ID baked
+into README-quickstart.html and LICENSE. Filename includes buyer
+initials.</p>
+<p><strong>Run at fulfilment:</strong></p>
+<pre class="bash"><code>node tools/watermark-zip.mjs --buyer &quot;Alice Smith&quot; --order &quot;12345&quot;</code></pre>
+<p>Output:
+<code>output/shared/buyers/MaqueenLab-AS-12345-v1.2.0.zip</code></p>
+<p><strong>When:</strong></p>
+<ul>
+<li>Manually for each Etsy order during low-volume weeks.</li>
+<li>Automate via Etsy API webhook once you hit 20+ orders / day.</li>
+</ul>
+<p><strong>Effect:</strong> Buyer thinks "personalized." Pirate thinks
+"traceable." Both are what you want.</p>
+<h3
+id="outputshareddatasets-100-csvs"><code>output/shared/datasets/</code>
+(100 CSVs)</h3>
+<p>Synthetic but realistic micro:bit sensor sessions across 9 scenarios.
+Makes the product hardware-OPTIONAL — teachers can teach data analysis
+without a physical board.</p>
+<p><strong>Where:</strong></p>
+<ul>
+<li>Bundle under <code>extras/datasets/</code> in the buyer ZIP.</li>
+<li>Cite in the listing description: "100 pre-recorded sensor datasets
+included — no hardware required for Day 1"</li>
+<li>Leading image bullet for the teacher-segment hero.</li>
+</ul>
+<p><strong>When:</strong> Permanent. Unique selling point — competitors
+won't catch up in &lt;3 months.</p>
+<hr />
+<h2 id="developer-audience-hooks">Developer-audience hooks</h2>
+<h3 id="makecode-extension"><code>makecode-extension/</code></h3>
+<p>Standalone MakeCode extension with 3 blocks (<code>start</code>,
+<code>streamSensors</code>, <code>listenForCommands</code>). Push to a
+public GitHub repo, MakeCode discovers it automatically.</p>
+<p><strong>Where:</strong></p>
+<ul>
+<li>Own GitHub repo like
+<code>github.com/abourdim/maqueen-lab-companion</code></li>
+<li>Listed in the Etsy description: "MakeCode extension published —
+search maqueen-lab-companion"</li>
+</ul>
+<p><strong>When:</strong></p>
+<ul>
+<li>Push when you launch the Etsy listing. MakeCode has 10M+ users;
+being in their ecosystem is a free discovery channel.</li>
+</ul>
+<hr />
+<h2 id="deep-link-url-params">Deep-link URL params</h2>
+<p>The app now reads <code>window.location.hash</code> on load. Links
+like these jump straight to a specific state:</p>
+<table>
+<thead>
+<tr class="header">
+<th>URL</th>
+<th>What buyer sees</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>#tab=graph</code></td>
+<td>Distance tab, ready to Simulate</td>
+</tr>
+<tr class="even">
+<td><code>#tab=board3d&amp;theme=cosmos</code></td>
+<td>3D micro:bit in Cosmos theme</td>
+</tr>
+<tr class="odd">
+<td><code>#tab=senses&amp;lang=fr</code></td>
+<td>Drive tab in French</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where:</strong></p>
+<ul>
+<li>Etsy description: "→ See the live 3D tab:
+abourdim.github.io/maqueen-lab/#tab=board3d"</li>
+<li>Pinterest pin descriptions</li>
+<li>Email signature / blog post demo links</li>
+</ul>
+<p><strong>When:</strong> Every outbound link. Converts passive readers
+into demo-doers, and demo-doers convert ~4× better than
+description-readers.</p>
+<hr />
+<h2 id="launch-day-sequence">Launch-day sequence</h2>
+<p>Drop-in run order for a zero-to-live launch day.
+Start-to-listing-published in ~2 hours assuming all scripts have been
+run at least once.</p>
+<h3 id="t2h--regenerate-visuals">T–2h — Regenerate visuals</h3>
+<pre class="bash"><code>node tools/capture-screenshots.mjs            # 49+ PNGs, ~1 min
+node tools/hero-compose.mjs                   # 6 hero variants
+node tools/theme-morph.mjs                    # 1080×1080 theme loop
+node tools/generate-video.mjs                 # silent EN 60s base
+node tools/narrate-video.mjs en               # adds EN voice-over
+node tools/generate-video.mjs --lang fr       # silent FR 60s base
+node tools/narrate-video.mjs fr               # adds FR voice-over
+cp output/en/narrated/etsy-video-v1.mp4 output/en/etsy-video-v1.mp4
+cp output/fr/narrated/etsy-video-v1.mp4 output/output/fr/etsy-video-v1.mp4
+node tools/generate-gifs.mjs                  # 4 demo GIFs
+node tools/speed-test-clip.mjs                # 3.2s proof clip
+node tools/fake-ble-dialog.mjs                # synth Chrome dialog
+node tools/photoreal-board.mjs hero           # photoreal render
+node tools/generate-stand-svg.mjs             # acrylic stand</code></pre>
+<h3 id="t90m--build-the-zip-includes-everything-from-output">T–90m —
+Build the ZIP (includes everything from output/)</h3>
+<pre class="bash"><code>node etsy-package/build-package.js</code></pre>
+<h3 id="t60m--fill-the-etsy-listing">T–60m — Fill the Etsy listing</h3>
+<ol type="1">
+<li>Create the listing (copy title + description from
+<code>seller-only/ETSY_LISTING.md</code>)</li>
+<li>Upload images in order:
+<ul>
+<li>Slot 1 — <code>output/en/heroes/hero-teacher.png</code></li>
+<li>Slot 2 — <code>output/shared/photoreal/microbit-hero.png</code></li>
+<li>Slot 3 — <code>output/shared/ble-dialog/ble-pairing.png</code></li>
+<li>Slot 4–6 — Three synthetic-live screenshots of your choice</li>
+<li>Slot 7 — <code>output/en/screenshots/screenshot-theme-*.png</code>
+(pick best)</li>
+<li>Slot 8 — <code>output/en/theme-morph.gif</code></li>
+<li>Slot 9 — An audience-pack shot matching your launch focus</li>
+<li>Slot 10 — <code>output/shared/mockups/etsy-mockup-5.png</code>
+(what's in the ZIP)</li>
+</ul></li>
+<li>Upload <code>output/en/etsy-video-v1.mp4</code> as the listing
+video</li>
+<li>Paste 13 tags from the <code>ETSY_LISTING.md</code> tags list</li>
+<li>Attach the generated ZIP</li>
+</ol>
+<h3 id="t30m--distribution-channels">T–30m — Distribution channels</h3>
+<ol type="1">
+<li>Publish the YouTube demo
+(<code>output/en/narrated/etsy-video-v1.mp4</code>)</li>
+<li>Pin 4 Pinterest pins (<code>seller-only/pinterest-pins.html</code>
+output)</li>
+<li>Tweet the GIF + Etsy link
+(<code>output/en/gifs/graph-record.gif</code>)</li>
+<li>Email your list with the EN narrated video embedded</li>
+<li>Push the MakeCode extension repo public on GitHub</li>
+</ol>
+<h3 id="t0--hit-publish">T+0 — Hit Publish</h3>
+<p>Don't forget to create the LAUNCH10 coupon in Etsy's Shop Manager
+before publishing.</p>
+<h3 id="t1w--review-etsy-stats">T+1w — Review Etsy Stats</h3>
+<ul>
+<li>If listing CTR &lt; 1.2 % → swap hero image (try
+<code>hero-kid</code> or <code>hero-maker</code>)</li>
+<li>If CTR ≥ 1.5 % but conversion &lt; 1 % → rewrite description;
+cross-check with captions bank</li>
+<li>If traffic is good → start running LAUNCH10 promo + ask first 10
+buyers for reviews</li>
+</ul>
+<hr />
+<p><em>Generated <code>2026-04-20</code>. Regenerate with
+<code>node tools/capture-screenshots.mjs &amp;&amp; ...</code> — see
+individual tool docs.</em></p>
+
+</main>
+</body>
+</html>

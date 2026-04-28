@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>START HERE — Maqueen Lab Etsy Package</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.55;
+    color: #1a1d24;
+    background: #fafbfc;
+    padding: 0;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0a0e12; color: #e8ecef; }
+    a { color: #00ff88; }
+    code, pre { background: #161b22; color: #e8ecef; }
+    .card { background: #12181d; border-color: #2a3038; }
+    .tree { background: #12181d; }
+    .tag { background: #1a2028; color: #9ca3af; }
+    .accent-bar { background: linear-gradient(180deg, #00884a 0%, #00ff88 100%); }
+    .role-card { background: linear-gradient(135deg, #161b22 0%, #12181d 100%); }
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #0a0e12 0%, #1a2028 100%);
+    color: #e8ecef;
+    padding: 48px 24px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 30%, rgba(0,255,136,0.12) 0%, transparent 55%),
+      radial-gradient(circle at 85% 70%, rgba(0,136,74,0.10) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: 2.4em;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero h1 .green { color: #00ff88; }
+  .hero .sub {
+    font-size: 1.15em;
+    opacity: 0.8;
+    max-width: 640px;
+  }
+  .hero .version {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 4px 12px;
+    background: rgba(0, 255, 136, 0.15);
+    color: #00ff88;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    letter-spacing: -0.01em;
+    margin: 48px 0 16px;
+    padding-left: 14px;
+    border-left: 4px solid #00884a;
+  }
+  h3 {
+    font-size: 1.1em;
+    margin: 24px 0 8px;
+    color: #008855;
+  }
+  p { margin-bottom: 12px; }
+  code {
+    background: #f2f4f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.88em;
+  }
+  pre {
+    background: #f6f8fa;
+    padding: 14px 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    border: 1px solid #e1e4e8;
+  }
+  pre code { background: none; padding: 0; }
+
+  .role-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    margin: 20px 0;
+  }
+  .role-card {
+    background: #fff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .role-card .icon { font-size: 1.6em; margin-bottom: 8px; display: block; }
+  .role-card h3 { margin-top: 0; font-size: 1.05em; color: inherit; }
+  .role-card .path { font-family: Menlo, Consolas, monospace; font-size: 11px; opacity: 0.7; margin-top: 8px; }
+
+  .tree {
+    background: #f6f8fa;
+    padding: 20px 24px;
+    border-radius: 10px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 16px 0;
+    white-space: pre;
+    border: 1px solid #e1e4e8;
+  }
+  @media (prefers-color-scheme: dark) {
+    .tree { border-color: #2a3038; }
+  }
+  .tree .comment { color: #6b7280; font-family: inherit; }
+  .tree .folder { color: #00884a; font-weight: 600; }
+  .tree .file-key { color: #1a73e8; font-weight: 600; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 24px;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e1e4e8;
+    vertical-align: top;
+  }
+  th {
+    background: #f2f4f7;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #576574;
+  }
+  @media (prefers-color-scheme: dark) {
+    th { background: #12181d; color: #9ca3af; border-color: #2a3038; }
+    td { border-color: #2a3038; }
+  }
+  td code { font-size: 12px; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    background: #f2f4f7;
+    color: #576574;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .tag.buyer { background: #dbeafe; color: #1e40af; }
+  .tag.seller { background: #fef3c7; color: #92400e; }
+  .tag.dev { background: #e0e7ff; color: #4338ca; }
+  .tag.marketing { background: #d1fae5; color: #065f46; }
+  @media (prefers-color-scheme: dark) {
+    .tag.buyer { background: rgba(30,64,175,0.25); color: #93c5fd; }
+    .tag.seller { background: rgba(146,64,14,0.25); color: #fcd34d; }
+    .tag.dev { background: rgba(67,56,202,0.25); color: #a5b4fc; }
+    .tag.marketing { background: rgba(6,95,70,0.25); color: #6ee7b7; }
+  }
+
+  .callout {
+    background: rgba(0, 255, 136, 0.08);
+    border-left: 4px solid #00884a;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+  }
+  .callout strong { color: #065f46; }
+  @media (prefers-color-scheme: dark) {
+    .callout { background: rgba(0, 255, 136, 0.08); }
+    .callout strong { color: #6ee7b7; }
+  }
+
+  .footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid #e1e4e8;
+    font-size: 13px;
+    opacity: 0.7;
+    text-align: center;
+  }
+
+  .toc {
+    background: rgba(0, 255, 136, 0.06);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 0 0 24px;
+    border-left: 4px solid #00884a;
+  }
+  .toc ol { margin-left: 20px; font-size: 14px; }
+  .toc li { margin: 2px 0; }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1><span class="green">START</span> HERE</h1>
+    <div class="sub">You just unzipped the Maqueen Lab Etsy package. This page explains every folder and file — what it is, who it's for, and what to do next.</div>
+    <div class="version">v1.2.0 · orientation</div>
+  </div>
+</section>
+
+<main>
+
+<div class="toc">
+  <strong>Jump to:</strong>
+  <ol>
+    <li><a href="#who">1. Who are you? (pick your path)</a></li>
+    <li><a href="#tree">2. The folder tree at a glance</a></li>
+    <li><a href="#top">3. Top-level files</a></li>
+    <li><a href="#seller-only">4. <code>seller-only/</code> — what the seller reads</a></li>
+    <li><a href="#tools">5. <code>tools/</code> — the build pipeline</a></li>
+    <li><a href="#output">6. <code>output/</code> — everything that's generated</a></li>
+    <li><a href="#zip">7. The shipped ZIP (buyer's copy)</a></li>
+    <li><a href="#quickstart">8. Common tasks — cheat sheet</a></li>
+  </ol>
+</div>
+
+<h2 id="who">1. Who are you?</h2>
+<p>Pick the role closest to what you're doing right now. Each card points to the 2–3 files you actually need.</p>
+
+<div class="role-grid">
+  <div class="role-card">
+    <span class="icon">🛒</span>
+    <span class="tag buyer">buyer</span>
+    <h3>I just bought this on Etsy</h3>
+    <p>Open <code>README-quickstart.html</code> for the 3-step "what to do first" walkthrough. Full manual is <code>USERGUIDE.html</code>.</p>
+    <div class="path">README-quickstart.html → USERGUIDE.html</div>
+  </div>
+  <div class="role-card">
+    <span class="icon">💼</span>
+    <span class="tag seller">seller</span>
+    <h3>I'm launching / running the Etsy listing</h3>
+    <p>Your launch playbook lives in <code>seller-only/</code>. Start with <code>seller-only/TODO.md</code>. For the listing copy, <code>seller-only/ETSY_LISTING.md</code>.</p>
+    <div class="path">seller-only/TODO.md → seller-only/ETSY_LISTING.md</div>
+  </div>
+  <div class="role-card">
+    <span class="icon">📣</span>
+    <span class="tag marketing">marketing</span>
+    <h3>I need assets for social / Pinterest / YouTube</h3>
+    <p>Open <code>MARKETING-GUIDE.html</code> — it maps every generated file to its best channel + when to use it.</p>
+    <div class="path">MARKETING-GUIDE.html → output/{en,fr,ar}/{social,print,identity,gifs,heroes}/</div>
+  </div>
+  <div class="role-card">
+    <span class="icon">🔧</span>
+    <span class="tag dev">developer</span>
+    <h3>I'm maintaining or extending the pipeline</h3>
+    <p>Scripts live in <code>tools/</code>. <code>build-package.js</code> at root builds the buyer ZIP. Every tool has its own docstring.</p>
+    <div class="path">build-package.js + tools/*.mjs</div>
+  </div>
+</div>
+
+<h2 id="tree">2. The folder tree at a glance</h2>
+
+<div class="tree">
+etsy-package/
+├─ <span class="file-key">START_HERE.html</span>              <span class="comment">← this page</span>
+├─ <span class="file-key">README.md</span>                    <span class="comment">buyer's first-contact readme (shipped in ZIP)</span>
+├─ <span class="file-key">README-quickstart.html</span>       <span class="comment">buyer welcome page (shipped in ZIP)</span>
+├─ <span class="file-key">USERGUIDE.html</span> / .md         <span class="comment">complete user manual</span>
+├─ <span class="file-key">MARKETING-GUIDE.html</span> / .md   <span class="comment">where &amp; when to use each generated asset</span>
+├─ <span class="file-key">press-kit.html</span>              <span class="comment">for journalists/bloggers — 3-lang toggle, boilerplate, press-grade assets</span>
+├─ <span class="file-key">LICENSE.txt</span>                  <span class="comment">buyer license</span>
+├─ <span class="file-key">build-package.js</span>             <span class="comment">main build — produces the buyer ZIP</span>
+├─ <span class="file-key">MaqueenLab-v1.2.0.zip</span>     <span class="comment">← what you upload to Etsy</span>
+├─ MaqueenLab-v1.2.0/        <span class="comment">unpacked version of the ZIP (for inspection)</span>
+│
+├─ classroom-poster.html, quickstart-card.html, ... <span class="comment">printable SOURCES (rendered to PNG by build)</span>
+├─ <span class="file-key">etsy-listing-mockups.html</span>    <span class="comment">the 7 Etsy listing-image mockups</span>
+├─ <span class="file-key">lesson-plan-template.html</span>    <span class="comment">classroom lesson plan template</span>
+├─ <span class="file-key">shortcuts-cheatsheet.html</span>    <span class="comment">keyboard shortcut reference</span>
+├─ <span class="file-key">sticker-sheet.html</span>           <span class="comment">30 achievement badges</span>
+│
+├─ <span class="folder">seller-only/</span>                 <span class="comment">files the seller reads — NEVER ships to buyer</span>
+│   ├─ ETSY_LISTING.{md,html}    <span class="comment">listing title, tags, description, FAQ (EN + seller strategy)</span>
+│   ├─ ETSY_LISTING-fr.md        <span class="comment">buyer-facing listing copy in French</span>
+│   ├─ ETSY_LISTING-ar.md        <span class="comment">buyer-facing listing copy in Arabic (RTL)</span>
+│   ├─ OUTREACH-{en,fr,ar}.md    <span class="comment">cold-outreach templates for teachers, fablabs, districts, resellers</span>
+│   ├─ TESTIMONIALS.md           <span class="comment">testimonial capture playbook (funnel, rules, reward ladder)</span>
+│   ├─ TESTIMONIALS-{en,fr,ar}.md <span class="comment">showcase ask + permission waiver + thank-you, 3 langs</span>
+│   ├─ ETSY_PUBLISH_GUIDE.html   <span class="comment">step-by-step Etsy publish flow</span>
+│   ├─ ETSY-1MIN-PLAYBOOK.md     <span class="comment">60s video script</span>
+│   ├─ etsy-playbook.html (+ -fr, -ar)  <span class="comment">trilingual playbooks</span>
+│   ├─ pinterest-pins.html       <span class="comment">4 portrait pins</span>
+│   ├─ video-teleprompter.html   <span class="comment">fullscreen teleprompter for shooting</span>
+│   ├─ video-shoot-card.html     <span class="comment">A4 print — tape next to the rig</span>
+│   ├─ TODO.md                   <span class="comment">pre-launch checklist</span>
+│   ├─ LICENSE-SITE              <span class="comment">site-license legal text</span>
+│   ├─ SITE_LICENSE_CERTIFICATE.html <span class="comment">per-sale cert template</span>
+│   └─ screenshots/              <span class="comment">original seed screenshots (source)</span>
+│
+├─ <span class="folder">tools/</span>                       <span class="comment">build-pipeline scripts (Node ESM)</span>
+│   ├─ capture-screenshots.mjs   <span class="comment">all tab/theme/audience screenshots via Playwright</span>
+│   ├─ capture-config.json       <span class="comment">per-product DOM selectors &amp; synthetic state</span>
+│   ├─ generate-video.mjs        <span class="comment">60-sec Etsy listing video</span>
+│   ├─ narrate-video.mjs         <span class="comment">adds TTS voice-over</span>
+│   ├─ generate-gifs.mjs         <span class="comment">5-sec demo GIFs</span>
+│   ├─ theme-morph.mjs           <span class="comment">1:1 square theme crossfade loop</span>
+│   ├─ hero-compose.mjs + hero-specs.json  <span class="comment">A/B hero images</span>
+│   ├─ speed-test-clip.mjs       <span class="comment">"3.2s to live data" proof</span>
+│   ├─ fake-ble-dialog.mjs       <span class="comment">synth Chrome BLE picker shot</span>
+│   ├─ photoreal-board.mjs       <span class="comment">Three.js photoreal micro:bit</span>
+│   ├─ generate-captions.mjs     <span class="comment">A/B caption bank</span>
+│   ├─ generate-accessibility.mjs <span class="comment">audio descriptions + Braille</span>
+│   ├─ chatbot-embed.mjs         <span class="comment">"Ask the product" widget</span>
+│   ├─ generate-datasets.mjs     <span class="comment">100 CSV sensor sessions</span>
+│   ├─ generate-stand-svg.mjs    <span class="comment">lasercut acrylic stand</span>
+│   ├─ qr-inject.mjs             <span class="comment">UTM-tagged QRs on printables</span>
+│   ├─ watermark-zip.mjs         <span class="comment">per-buyer watermarked ZIP</span>
+│   ├─ visual-regress.mjs        <span class="comment">md5 + ffmpeg diff harness</span>
+│   ├─ build-localized.mjs       <span class="comment">one-shot full-pipeline runner (--lang fr)</span>
+│   ├─ build-docs-html.mjs      <span class="comment">all *.md → *.html (RTL-aware, sibling-lang bar)</span>
+│   └─ captions/                 <span class="comment">video-captions-{en,fr,ar}.srt</span>
+│
+└─ <span class="folder">output/</span>                      <span class="comment">EVERYTHING that the pipeline generates</span>
+    ├─ <span class="folder">en/</span>                      <span class="comment">English deliverables</span>
+    │   ├─ etsy-video-v1.mp4     <span class="comment">60s listing video (Zira narration + EN captions)</span>
+    │   ├─ theme-morph.mp4 / .gif <span class="comment">6s theme loop</span>
+    │   ├─ screenshots/          <span class="comment">58 captures of every tab / state / theme</span>
+    │   ├─ screenshots-baseline/ <span class="comment">regression baseline</span>
+    │   ├─ heroes/               <span class="comment">4 Etsy hero variants (teacher/kid/maker/laptop)</span>
+    │   ├─ gifs/                 <span class="comment">4 × 5-sec demo GIFs</span>
+    │   ├─ speed-test/           <span class="comment">"3.2s to live data" proof clip</span>
+    │   ├─ captions/             <span class="comment">A/B caption bank (3 personas × 5 variants)</span>
+    │   ├─ accessibility/        <span class="comment">Zira narrations + EN Braille</span>
+    │   ├─ chatbot/              <span class="comment">embed.js widget + EN FAQ rules</span>
+    │   ├─ print/                <span class="comment">poster-a3 + flyer-a4 (PNG + print-ready PDF)</span>
+    │   ├─ social/               <span class="comment">IG post/story + Twitter + LinkedIn PNGs</span>
+    │   ├─ identity/             <span class="comment">business-card + email-signature</span>
+    │   └─ narrated/             <span class="comment">backup copy of the narrated MP4</span>
+    ├─ <span class="folder">fr/</span>                      <span class="comment">French deliverables (same shape, Hortense narration)</span>
+    ├─ <span class="folder">ar/</span>                      <span class="comment">Arabic deliverables (RTL layout, Naayf narration)</span>
+    ├─ <span class="folder">shared/</span>                  <span class="comment">language-agnostic</span>
+    │   ├─ ble-dialog/           <span class="comment">synth Chrome BLE picker</span>
+    │   ├─ photoreal/            <span class="comment">Three.js board renders</span>
+    │   ├─ datasets/             <span class="comment">100 CSV sensor sessions + teacher README</span>
+    │   ├─ stand/                <span class="comment">lasercut SVG + DXF</span>
+    │   ├─ printables-with-qr/   <span class="comment">printables with UTM QRs embedded</span>
+    │   ├─ mockups/              <span class="comment">etsy-mockup-1..7.png</span>
+    │   ├─ pinterest-pins/       <span class="comment">pinterest-pin-1..4.png</span>
+    │   ├─ printable-renders/    <span class="comment">classroom-poster.png etc.</span>
+    │   ├─ video-shoot-card.png
+    │   └─ buyers/               <span class="comment">per-buyer watermarked ZIPs (gitignored)</span>
+    └─ <span class="folder">_tmp/</span>                    <span class="comment">gitignored intermediates — delete freely</span>
+</div>
+
+<h2 id="top">3. Top-level files</h2>
+
+<table>
+  <thead><tr><th>File</th><th>For</th><th>What / when</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>README.md</code></td>
+      <td><span class="tag buyer">buyer</span></td>
+      <td>First-contact readme shipped inside the ZIP. Points at <code>README-quickstart.html</code>.</td>
+    </tr>
+    <tr>
+      <td><code>README-quickstart.html</code></td>
+      <td><span class="tag buyer">buyer</span></td>
+      <td>Welcome page with auto-playing theme-morph GIF + "First 3 Things To Do." Opens in any browser.</td>
+    </tr>
+    <tr>
+      <td><code>USERGUIDE.{md,html}</code></td>
+      <td><span class="tag buyer">buyer</span></td>
+      <td>Complete user manual — every tab, every shortcut, every feature. Print the .md or browse the .html.</td>
+    </tr>
+    <tr>
+      <td><code>MARKETING-GUIDE.{md,html}</code></td>
+      <td><span class="tag seller">seller</span> <span class="tag marketing">marketing</span></td>
+      <td>"Where do I use this file?" for every generated asset. Slot-by-slot Etsy mapping + launch-day sequence.</td>
+    </tr>
+    <tr>
+      <td><code>LICENSE.txt</code></td>
+      <td><span class="tag buyer">buyer</span></td>
+      <td>Single-user license text shipped in the ZIP.</td>
+    </tr>
+    <tr>
+      <td><code>build-package.js</code></td>
+      <td><span class="tag dev">dev</span></td>
+      <td>The build. Renders printables to PNG, copies app + docs + mockups + printables, zips. Run with <code>node etsy-package/build-package.js</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MaqueenLab-v1.2.0.zip</code></td>
+      <td><span class="tag seller">seller</span></td>
+      <td><strong>The Etsy upload.</strong> This is what the buyer downloads.</td>
+    </tr>
+    <tr>
+      <td><code>MaqueenLab-v1.2.0/</code></td>
+      <td><span class="tag dev">dev</span></td>
+      <td>Unpacked copy of the ZIP — handy for inspecting contents without extracting.</td>
+    </tr>
+    <tr>
+      <td><code>classroom-poster.html</code>, <code>quickstart-card.html</code>, <code>sticker-sheet.html</code>, <code>shortcuts-cheatsheet.html</code>, <code>lesson-plan-template.html</code></td>
+      <td><span class="tag dev">dev</span> <span class="tag buyer">buyer</span></td>
+      <td><strong>Source</strong> printables. Edit the HTML to change content. Build renders them to PNG into <code>output/shared/printable-renders/</code> and copies both the HTML source + rendered PNG into the buyer ZIP.</td>
+    </tr>
+    <tr>
+      <td><code>etsy-listing-mockups.html</code></td>
+      <td><span class="tag seller">seller</span></td>
+      <td>Source for the 7 Etsy listing-image mockups. Rendered to <code>output/shared/mockups/etsy-mockup-1..7.png</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="seller-only">4. <code>seller-only/</code> — seller-read files</h2>
+<p>Everything here is <strong>excluded</strong> from the buyer ZIP. These are your playbooks, listing copy, and reference material.</p>
+
+<table>
+  <thead><tr><th>File</th><th>When to use</th></tr></thead>
+  <tbody>
+    <tr><td><code>TODO.md</code></td><td>Pre-launch manual tasks — hardware photo, 60s video, LAUNCH10 promo code. Check these off before publishing.</td></tr>
+    <tr><td><code>ETSY_LISTING.md</code> + <code>.html</code></td><td>English listing title, 13 tags, description, compare table, FAQ + seller-internal strategy (pricing, UTM, Pinterest plan). Paste into Etsy's form.</td></tr>
+    <tr><td><code>ETSY_LISTING-fr.md</code></td><td>French buyer-facing copy (titre, tags, description, FAQ, messages). Create a separate Etsy listing in FR — monolingual listings rank better.</td></tr>
+    <tr><td><code>ETSY_LISTING-ar.md</code></td><td>Arabic buyer-facing copy, RTL. Create a separate Etsy listing in AR — this is an uncontested keyword market.</td></tr>
+    <tr><td><code>OUTREACH-{en,fr,ar}.md</code></td><td>Cold-outreach email templates in 3 languages. 7 templates each: STEM teacher (first + follow-up), fablab coordinator, homeschool co-op, district tech buyer (site license), reseller partnership, post-demo follow-up + subject-line bank.</td></tr>
+    <tr><td><code>TESTIMONIALS.md</code></td><td>Review-capture playbook: funnel (day 3 nudge → day 7 showcase ask → waiver → reward), usage rules, reward ladder.</td></tr>
+    <tr><td><code>TESTIMONIALS-{en,fr,ar}.md</code></td><td>3 templates × 3 langs: showcase ask, permission-to-repost waiver, thank-you + reward delivery. Plus quote-extraction helper.</td></tr>
+    <tr><td><code>ETSY_PUBLISH_GUIDE.html</code></td><td>16-step interactive publish checklist with localStorage persistence.</td></tr>
+    <tr><td><code>ETSY-1MIN-PLAYBOOK.md</code></td><td>60-second video shot-by-shot script.</td></tr>
+    <tr><td><code>etsy-playbook.html</code> (+ <code>-fr</code>, <code>-ar</code>)</td><td>Richer trilingual video playbooks. Print and keep next to the shoot rig.</td></tr>
+    <tr><td><code>pinterest-pins.html</code></td><td>4 portrait pins rendered to <code>output/shared/pinterest-pins/</code>.</td></tr>
+    <tr><td><code>video-teleprompter.html</code></td><td>Open fullscreen on a second monitor. <kbd>Space</kbd> for 3-2-1 countdown, auto-advances through 8 scenes.</td></tr>
+    <tr><td><code>video-shoot-card.html</code></td><td>A4 print. Pre-flight checklist + shot table. Tape next to the shoot rig.</td></tr>
+    <tr><td><code>LICENSE-SITE</code> + <code>SITE_LICENSE_CERTIFICATE.html</code></td><td>Paperwork for $149+ site-license tier (up to 30 teachers at one school).</td></tr>
+    <tr><td><code>screenshots/</code></td><td>Hand-captured reference screenshots — preserved for history. The live captures are in <code>output/en/screenshots/</code>.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="tools">5. <code>tools/</code> — the build pipeline</h2>
+<p>Every script is a standalone Node ESM file. Each has a docstring at the top. The short version:</p>
+
+<h3>The pipeline, in order</h3>
+<pre><code>node tools/capture-screenshots.mjs          # all screenshots (EN)
+node tools/hero-compose.mjs                 # 4 Etsy hero variants
+node tools/theme-morph.mjs                  # 6s theme loop
+node tools/generate-gifs.mjs                # 4 demo GIFs
+node tools/speed-test-clip.mjs              # 3.2s proof clip
+node tools/fake-ble-dialog.mjs              # synth Chrome dialog
+node tools/photoreal-board.mjs hero         # Three.js board render
+node tools/generate-captions.mjs            # A/B caption bank
+node tools/generate-accessibility.mjs       # audio desc + Braille
+node tools/chatbot-embed.mjs                # "Ask the product" widget
+node tools/generate-print.mjs               # poster A3 + flyer A4 (EN)
+node tools/generate-social.mjs              # IG/Twitter/LinkedIn PNGs (EN)
+node tools/generate-identity.mjs            # business card + email sig (EN)
+node tools/generate-datasets.mjs 100        # 100 CSVs (hardware-optional)
+node tools/generate-stand-svg.mjs           # lasercut stand SVG+DXF
+node tools/generate-video.mjs               # silent 60s base (EN)
+node tools/narrate-video.mjs en             # + Zira voice-over
+node tools/qr-inject.mjs --inplace          # QR codes on printables
+
+# Then build the ZIP:
+node build-package.js</code></pre>
+
+<h3>Localization — one command</h3>
+<pre><code>node tools/build-localized.mjs fr   # runs everything with --lang fr</code></pre>
+
+<h3>Other tools</h3>
+<table>
+  <tbody>
+    <tr><td><code>watermark-zip.mjs</code></td><td>Per-order watermarked ZIP. Run at Etsy fulfilment: <code>--buyer "Name" --order "12345"</code>.</td></tr>
+    <tr><td><code>visual-regress.mjs</code></td><td>Catches unintended screenshot changes. <code>--baseline</code> to snapshot, default to diff.</td></tr>
+    <tr><td><code>build-docs-html.mjs</code></td><td>Builds <strong>HTML twins of every <code>.md</code></strong> in <code>etsy-package/</code>, <code>seller-only/</code>, and <code>output/&lt;lang&gt;/</code>. RTL-aware for AR files. Inserts an EN/FR/AR sibling bar on triplet files. Run after editing any markdown.</td></tr>
+    <tr><td><code>capture-config.json</code></td><td>Per-product config: app container, tab selectors, sensor IDs, themes, synthetic state (including per-language strings). <strong>Edit this, not the scripts.</strong></td></tr>
+    <tr><td><code>hero-specs.json</code></td><td>A/B hero variants declaration. Add/edit entries here, rerun <code>hero-compose.mjs</code>.</td></tr>
+    <tr><td><code>print-specs.json</code></td><td>Per-language strings for <code>generate-print.mjs</code> (poster + flyer copy).</td></tr>
+    <tr><td><code>social-specs.json</code></td><td>Per-language strings + format list for <code>generate-social.mjs</code> (IG / Twitter / LinkedIn).</td></tr>
+    <tr><td><code>captions/video-captions-{en,fr,ar}.srt</code></td><td>The 8-scene SRT scripts. These drive both the burned-in captions and the TTS narration.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="output">6. <code>output/</code> — everything generated</h2>
+<p>The full tree was in §2. The short rules:</p>
+
+<ul style="margin-left: 20px; margin-bottom: 16px;">
+  <li><strong><code>output/en/</code></strong> — English-language deliverables. Use these for your main Etsy listing. Zira narration.</li>
+  <li><strong><code>output/fr/</code></strong> — French-language deliverables. Use these for a French-audience listing / Pinterest / YouTube. Hortense narration.</li>
+  <li><strong><code>output/ar/</code></strong> — Arabic-language deliverables with RTL layout. Naayf narration. Full parity with EN + FR.</li>
+  <li><strong><code>output/shared/</code></strong> — language-agnostic (mockups, photoreal board, BLE dialog, datasets, lasercut stand, printable renders). One copy for all locales.</li>
+  <li><strong><code>output/_tmp/</code></strong> — ffmpeg / Playwright intermediates. Safe to delete. Gitignored.</li>
+</ul>
+
+<div class="callout">
+  <strong>Which video do I upload to Etsy?</strong>
+  EN listing: <code>output/en/etsy-video-v1.mp4</code> (Zira narration).
+  FR listing: <code>output/fr/etsy-video-v1.mp4</code> (Hortense narration).
+  AR listing: <code>output/ar/etsy-video-v1.mp4</code> (Naayf narration, RTL layout).
+  All three already have audio tracks. Etsy plays muted in the grid, users can unmute to hear voice-over.
+</div>
+
+<h2 id="zip">7. The shipped ZIP (buyer's copy)</h2>
+<p><code>MaqueenLab-v1.2.0.zip</code> is what the buyer downloads from their Etsy order page. Its contents:</p>
+
+<div class="tree">
+MaqueenLab-v1.2.0/
+├─ index.html               <span class="comment">the app entry point</span>
+├─ styles.css, sw.js, manifest.json, js/, assets/, docs/
+├─ makecode.ts              <span class="comment">firmware source for the micro:bit</span>
+├─ pxt.json                 <span class="comment">MakeCode project config</span>
+├─ tests.html               <span class="comment">unit tests</span>
+├─ README.md, SETUP.md, CHANGELOG.md, LICENSE, LICENSE.txt
+├─ printables/              <span class="comment">6 printable PNG + HTML source + theme-morph.gif</span>
+└─ etsy-mockups/            <span class="comment">7 Etsy listing mockup PNGs (seller reference)</span>
+</div>
+
+<p>The ZIP <strong>excludes</strong> <code>seller-only/</code>, <code>tools/</code>, and <code>output/</code> — those are seller/dev/intermediate territory.</p>
+
+<h2 id="quickstart">8. Common tasks — cheat sheet</h2>
+
+<h3>Regenerate everything from scratch</h3>
+<pre><code>node tools/build-localized.mjs en     # full EN pipeline
+node tools/build-localized.mjs fr     # full FR pipeline
+node build-package.js                 # rebuild the buyer ZIP</code></pre>
+
+<h3>Change a printable's text</h3>
+<p>Edit the source HTML at the etsy-package root (e.g. <code>classroom-poster.html</code>), then re-run <code>node build-package.js</code> to re-render the PNG and rebuild the ZIP.</p>
+
+<h3>Update the Etsy listing copy</h3>
+<p>Edit <code>seller-only/ETSY_LISTING.md</code>. The HTML twin updates manually to match. Then copy/paste into Etsy's listing form.</p>
+
+<h3>Launch-day sequence</h3>
+<p>Open <a href="MARKETING-GUIDE.html">MARKETING-GUIDE.html</a> and scroll to "Launch-day sequence" at the bottom. T-2h → T+1w playbook.</p>
+
+<h3>Add a new language</h3>
+<ol style="margin-left: 20px;">
+  <li>Translate <code>tools/captions/video-captions-en.srt</code> to <code>video-captions-xx.srt</code>.</li>
+  <li>Add <code>xx:</code> entries to per-language fields in <code>tools/capture-config.json</code> (pillText, pills, activityFeed.entries).</li>
+  <li>Add <code>xx</code> TEMPLATES block to <code>tools/generate-captions.mjs</code> and RULES to <code>tools/chatbot-embed.mjs</code>.</li>
+  <li>Install a matching OS TTS voice (SAPI / <code>say</code> / espeak-ng).</li>
+  <li>Run <code>node tools/build-localized.mjs xx</code>.</li>
+</ol>
+
+<h3>Ship a per-buyer watermarked ZIP</h3>
+<pre><code>node tools/watermark-zip.mjs --buyer "Alice Smith" --order "12345"
+# Produces output/shared/buyers/MaqueenLab-AS-12345-v1.2.0.zip</code></pre>
+
+<div class="footer">
+  Maqueen Lab · v1.2.0 · Etsy package · generated 2026-04-20
+  <br>
+  Open <a href="MARKETING-GUIDE.html">MARKETING-GUIDE.html</a> next for deeper asset guidance.
+</div>
+
+</main>
+
+</body>
+</html>

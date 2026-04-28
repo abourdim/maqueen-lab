@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OUTREACH ar — maqueen-lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    line-height: 1.55;
+    color: #1a1d24;
+    background: #fafbfc;
+  }
+  body[dir="rtl"] {
+    font-family: 'Tajawal', -apple-system, Segoe UI, sans-serif;
+    direction: rtl;
+    text-align: right;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0a0e12; color: #e8ecef; }
+    a { color: #00ff88; }
+    code { background: #161b22; }
+    pre { background: #161b22; border-color: #30363d; }
+    table th { background: #161b22; }
+    blockquote { border-color: #30363d; color: #9ca3af; }
+    hr { border-color: #30363d; }
+  }
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #00ff88;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-top: 2.2em;
+    padding-top: 0.8em;
+    border-top: 1px solid #e1e4e8;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.15em;
+    margin-top: 1.5em;
+    color: #008855;
+  }
+  @media (prefers-color-scheme: dark) {
+    h2 { border-color: #30363d; }
+    h3 { color: #00ff88; }
+  }
+  p, li { font-size: 15px; }
+  code {
+    background: #f2f4f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e4e8;
+    vertical-align: top;
+  }
+  body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+  th {
+    background: #f2f4f7;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #576574;
+  }
+  @media (prefers-color-scheme: dark) {
+    td, th { border-color: #30363d; }
+    th { color: #9ca3af; }
+    code { color: #e8ecef; }
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #00884a;
+    background: rgba(0, 255, 136, 0.06);
+    color: #4a5258;
+    border-radius: 0 6px 6px 0;
+  }
+  body[dir="rtl"] blockquote {
+    border-left: 0; border-right: 4px solid #00884a;
+    border-radius: 6px 0 0 6px;
+  }
+  hr { border: 0; border-top: 2px dashed #d1d5db; margin: 3em 0; }
+  a { color: #006644; text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+
+  .toc-float {
+    position: fixed; top: 20px; right: 20px;
+    width: 260px; max-height: 80vh; overflow-y: auto;
+    background: rgba(255,255,255,0.96); border: 1px solid #d1d5db;
+    border-radius: 8px; padding: 16px 18px;
+    font-size: 12px; line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none;
+  }
+  body[dir="rtl"] .toc-float { right: auto; left: 20px; font-family: Tajawal, sans-serif; }
+  @media (min-width: 1280px) { .toc-float { display: block; } }
+  @media (prefers-color-scheme: dark) {
+    .toc-float { background: rgba(22,27,34,0.96); border-color: #30363d; }
+  }
+  .toc-float h4 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; }
+  .toc-float ol { margin: 0; padding-left: 20px; }
+  body[dir="rtl"] .toc-float ol { padding-left: 0; padding-right: 20px; }
+
+  .sibling-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+  .sibling-bar a {
+    background: rgba(0,136,85,0.08); border: 1px solid rgba(0,136,85,0.25);
+    padding: 4px 10px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.04em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sibling-bar a { background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.25); }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; max-width: none; padding: 10mm; font-size: 11pt; }
+    h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+    tr, pre, blockquote { page-break-inside: avoid; break-inside: avoid; }
+    .toc-float, .sibling-bar { display: none; }
+    a { color: #000; border-bottom: none; }
+  }
+</style>
+</head>
+<body dir="rtl">
+<nav class="sibling-bar">
+  <a href="OUTREACH-en.html">EN</a>
+  <a href="OUTREACH-fr.html">FR</a>
+  <a href="OUTREACH-ar.html">AR</a>
+</nav>
+
+<nav class="toc-float" aria-label="Quick contents">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#المحتوى">المحتوى</a></li>
+    <li><a href="#قالب-1--معلم-stem-أول-اتصال">قالب 1 — معلم STEM
+(أول اتصال)</a></li>
+    <li><a href="#قالب-2--معلم-stem-متابعة-بعد-5-أيام">قالب 2 —
+معلم STEM (متابعة بعد 5 أيام)</a></li>
+    <li><a href="#قالب-3--منسق-فاب-لاب">قالب 3 — منسق فاب لاب</a></li>
+    <li><a href="#قالب-4--منظم-تعليم-منزلي--حلقة-تعليمية">قالب 4 —
+منظم تعليم منزلي / حلقة تعليمية</a></li>
+    <li><a href="#قالب-5--مشتري-تقني-على-مستوى-إدارةوزارة-رخصة-موقع">قالب
+5 — مشتري تقني على مستوى إدارة/وزارة (رخصة موقع)</a></li>
+    <li><a href="#قالب-6--مكتبة--بائع-أطقم-stem-شراكة">قالب 6 —
+مكتبة / بائع أطقم STEM (شراكة)</a></li>
+    <li><a href="#قالب-7--متابعة-بعد-العرض-التوضيحي">قالب 7 —
+متابعة بعد العرض التوضيحي</a></li>
+    <li><a href="#بنك-سطور-الموضوع">بنك سطور الموضوع</a></li>
+  </ol>
+</nav>
+<main>
+<h1 id="قوالب-التواصل-المباشر--العربية">قوالب التواصل المباشر —
+العربية</h1>
+<blockquote>
+<p>قوالب بيع مباشر لمراسلة معلمي STEM، ومنسقي الفاب لاب، ومنظمي التعليم
+المنزلي، ومشتري التقنية على مستوى المنطقة التعليمية. النسخ المقابلة في
+<a href="./OUTREACH-en.md"><code>OUTREACH-en.md</code></a> و <a
+href="./OUTREACH-fr.md"><code>OUTREACH-fr.md</code></a>.</p>
+<p><strong>نصائح للتسليم</strong></p>
+<ul>
+<li>أرسل من نطاق شخصي، وليس Gmail. فلاتر السبام المدرسية تحجب بريد
+<code>@gmail.com</code> البارد.</li>
+<li>بريد واحد لكل جهة اتصال في الأسبوع بحد أقصى. توقف بعد عدم الرد
+مرتين.</li>
+<li>لا ترفق الـ ZIP. أشر إلى العرض التوضيحي المباشر
+(<code>abourdim.github.io/maqueen-lab</code>) — هذا يُصنّف العميل ويوفر
+صندوقك.</li>
+<li>للمعلمين العرب: <strong>الأستاذ/ة [الاسم]</strong> مع صيغة احترام.
+للفاب لاب: الاسم الأول مقبول.</li>
+<li>في السوق السعودي: استخدم صيغة « حضرتكم »؛ في مصر: « حضرتك »؛ في
+المغرب: خليط مقبول.</li>
+</ul>
+</blockquote>
+<h2 id="المحتوى">المحتوى</h2>
+<ul>
+<li><a href="#t1">قالب 1 — معلم STEM (أول اتصال)</a></li>
+<li><a href="#t2">قالب 2 — معلم STEM (متابعة بعد 5 أيام)</a></li>
+<li><a href="#t3">قالب 3 — منسق فاب لاب</a></li>
+<li><a href="#t4">قالب 4 — منظم تعليم منزلي</a></li>
+<li><a href="#t5">قالب 5 — مشتري تقني على مستوى وزارة/إدارة (رخصة
+موقع)</a></li>
+<li><a href="#t6">قالب 6 — مكتبة / بائع أطقم STEM (شراكة)</a></li>
+<li><a href="#t7">قالب 7 — متابعة بعد العرض التوضيحي</a></li>
+<li><a href="#subjects">بنك سطور الموضوع</a></li>
+</ul>
+<hr />
+<h2 id="قالب-1--معلم-stem-أول-اتصال"><a id="t1"></a>قالب 1 — معلم STEM
+(أول اتصال)</h2>
+<p><strong>الموضوع:</strong> أداة micro:bit تعمل في المتصفح لفصلك (بدون
+تثبيت)</p>
+<blockquote>
+<p>الأستاذ/ة {{الاسم}}،</p>
+<p>رأيت {{السياق: « وحدة مقدمة البرمجة » / « صفحة نادي البرمجة » / « خطة
+درس micro:bit »}} الخاصة بك، وأردت مشاركتك بأداة صنعتها — قد توفر عليك
+حصة كاملة من الإعداد.</p>
+<p>إنها لوحة تحكم ويب لـ BBC micro:bit V2. علامة تبويب واحدة في المتصفح،
+بدون تثبيت، تعمل على Chromebook. ينقر الطلاب Connect، يختارون لوحتهم،
+وكل حساس يُبث مباشرة على الشاشة. يمكنهم الرسم على مصفوفة LED، وتتبع
+الحرارة/الصوت في الوقت الحقيقي، وتشغيل السيرفو، ورؤية مرآة ثلاثية
+الأبعاد للوحة تميل مع اللوحة الحقيقية.</p>
+<p><strong>جرّبها في 30 ثانية</strong> (وضع المحاكاة، بدون micro:bit):
+abourdim.github.io/maqueen-lab</p>
+<p>إذا كانت مفيدة، الـ ZIP الكامل (12.99 دولار على Etsy) يتضمن الفيرموير
++ دليل مصوّر ثلاثي اللغة + قالب خطة درس. يسعدني إرسال نسخة مجانية لك إذا
+أردت تجربتها مع فصل ومشاركة الملاحظات.</p>
+<p>لا ضغط بأي حال — شكراً لكل ما تفعلينه/تفعله لهؤلاء الطلاب.</p>
+<p>— {{الاسم}}</p>
+</blockquote>
+<hr />
+<h2 id="قالب-2--معلم-stem-متابعة-بعد-5-أيام"><a id="t2"></a>قالب 2 —
+معلم STEM (متابعة بعد 5 أيام)</h2>
+<p><strong>الموضوع:</strong> رد: أداة micro:bit تعمل في المتصفح
+لفصلك</p>
+<blockquote>
+<p>الأستاذ/ة {{الاسم}} — أعيد إرسال هذا في حال ضاع. نسخة سطر واحد: لوحة
+تحكم في المتصفح بدون تثبيت لـ micro:bit. العرض المباشر:
+abourdim.github.io/maqueen-lab</p>
+<p>إذا لم تكن مناسبة، لا بأس — سأتوقف عن المراسلة. إذا لم يتسنَّ لك الوقت،
+لا عجلة.</p>
+<p>— {{الاسم}}</p>
+</blockquote>
+<hr />
+<h2 id="قالب-3--منسق-فاب-لاب"><a id="t3"></a>قالب 3 — منسق فاب لاب</h2>
+<p><strong>الموضوع:</strong> ساحة Web Bluetooth لأجهزة micro:bit في
+الفاب لاب</p>
+<blockquote>
+<p>مرحباً {{الاسم}}،</p>
+<p>باختصار — بنيت لوحة تحكم ويب لـ BBC micro:bit V2. افتح في Chrome،
+اضغط Connect، وكل حساس + مصفوفة LED + السيرفو تعمل مباشرة، بدون IDE.
+فيرموير متوافق مع المصدر المفتوح (MakeCode)، تصدير CSV، مرآة ثلاثية
+الأبعاد للوحة.</p>
+<p>اعتقدت أنها قد تكون مفيدة لورش العمل المفتوحة أو جلسات Kids Code Hour
+— الزوار يجلسون ويلعبون مباشرة، بدون إعداد Arduino.</p>
+<p>العرض المباشر: abourdim.github.io/maqueen-lab الطقم الكامل على
+Etsy — راسلني لنسخة ملائمة للفاب لاب.</p>
+<p>— {{الاسم}}</p>
+</blockquote>
+<hr />
+<h2 id="قالب-4--منظم-تعليم-منزلي--حلقة-تعليمية"><a id="t4"></a>قالب 4 —
+منظم تعليم منزلي / حلقة تعليمية</h2>
+<p><strong>الموضوع:</strong> أداة STEM ثلاثية اللغة لوحدة micro:bit
+عندكم</p>
+<blockquote>
+<p>مرحباً {{الاسم}}،</p>
+<p>لاحظت أن {{اسم_المجموعة}} تقدم برنامج micro:bit — أردت مشاركتكم بأداة
+قد توفر وقت الإعداد.</p>
+<p>إنها لوحة تحكم ويب: افتح Chrome على أي جهاز، وصّل micro:bit، ويرى
+الطلاب الحساسات مباشرة. الدليل المصوّر المرفق بالإنجليزية والفرنسية
+<strong>والعربية</strong> — مفيد إذا كانت لديكم عائلات متعددة
+اللغات.</p>
+<p><strong>آمن لمن هم دون 13 عاماً:</strong> يعمل بالكامل في المتصفح،
+بدون حسابات، بدون تسجيل دخول، لا شيء يغادر الجهاز.</p>
+<p>🧪 للتجربة: abourdim.github.io/maqueen-lab</p>
+<p>يسعدني إرسال نسخة مجانية لكم إذا كنتم تُقيّمون للجلسة القادمة.</p>
+<p>— {{الاسم}}</p>
+</blockquote>
+<hr />
+<h2
+id="قالب-5--مشتري-تقني-على-مستوى-إدارةوزارة-رخصة-موقع"><a id="t5"></a>قالب
+5 — مشتري تقني على مستوى إدارة/وزارة (رخصة موقع)</h2>
+<p><strong>الموضوع:</strong> رخصة موقع لـ Maqueen Lab —
+{{الإدارة/المنطقة}}</p>
+<blockquote>
+<p>السيد/ة {{الصفة}} {{الاسم}}،</p>
+<p>أتواصل معكم لأن {{اسم_الإدارة}} {{السياق: « تدير برنامج علوم الحاسوب
+للجميع » / « قادت مؤخراً مبادرة STEM على مستوى المنطقة » / « تضع التقنية
+التعليمية في خطتها الاستراتيجية »}}، وأطوّر أداة قد تناسب الجزء الخاص بـ
+micro:bit من هذا العمل.</p>
+<p><strong>Maqueen Lab</strong> لوحة تحكم تعتمد على المتصفح لـ
+BBC micro:bit V2. تعمل على Chromebook، لا تتطلب تثبيتاً، بدون حسابات،
+بدون سحاب، بدون جمع بيانات — تتوافق مع متطلبات خصوصية الطلاب النموذجية
+لمراجعة موردي البيانات.</p>
+<p>رخصة الموقع تغطي عدداً غير محدود من المعلمين في موقع واحد مقابل
+<strong>199 دولاراً / سنوياً</strong> (الحزم المماثلة تتراوح بين 200 و 400
+دولار). التسعير متعدد المواقع يبدأ من <strong>499 دولاراً</strong> لثلاثة
+مواقع.</p>
+<p>متضمن: تطبيق الويب، الفيرموير القابل للبرمجة، دليل مصوّر ثلاثي اللغة
+(EN/FR/AR)، حزمة إمكانية الوصول (أوصاف صوتية + Braille)، قالب خطة
+الدرس.</p>
+<p>يسعدني إرسال وثيقة الإفصاح عن الخصوصية + شروط متوافقة مع المشتريات
+الحكومية، أو تقديم عرض توضيحي مدته 20 دقيقة.</p>
+<p>مع التقدير، — {{الاسم}} {{الرابط}}</p>
+</blockquote>
+<hr />
+<h2 id="قالب-6--مكتبة--بائع-أطقم-stem-شراكة"><a id="t6"></a>قالب 6 —
+مكتبة / بائع أطقم STEM (شراكة)</h2>
+<p><strong>الموضوع:</strong> إضافة micro:bit علامة بيضاء لأطقم
+{{المتجر}}</p>
+<blockquote>
+<p>مرحباً {{الاسم}}،</p>
+<p>معجب كبير بـ {{المتجر}} — {{المنتج: « طقم micro:bit المبتدئ » / «
+حزمة الروبوتات »}} الخاصة بكم هو بالضبط حيث ستضيف أداة صنعتها طبقة بصرية
+تجذب الأطفال.</p>
+<p>أصنع لوحة تحكم ويب لـ BBC micro:bit V2. إنها لحظة « واو » التي ينشرها
+الآباء على Instagram — الحساسات تُبث مباشرة في المتصفح، مصفوفة LED تنبض
+في الوقت الحقيقي، لوحة ثلاثية الأبعاد تميل مع الحقيقية.</p>
+<p>طريقتان يمكنني أن أكون مفيداً بهما:</p>
+<ol type="1">
+<li><strong>التسويق بالعمولة</strong> — 30٪ عمولة على مشتريات Etsy عبر
+رابطكم.</li>
+<li><strong>العلامة البيضاء</strong> — أعيد تصميم التطبيق بعلامتكم
+التجارية وتسلمونه كإضافة رقمية مع أطقمكم. ترخيص بمبلغ ثابت، بدون تكلفة
+لكل وحدة.</li>
+</ol>
+<p>العرض المباشر: abourdim.github.io/maqueen-lab</p>
+<p>هل يستحق مكالمة 15 دقيقة؟</p>
+<p>— {{الاسم}}</p>
+</blockquote>
+<hr />
+<h2 id="قالب-7--متابعة-بعد-العرض-التوضيحي"><a id="t7"></a>قالب 7 —
+متابعة بعد العرض التوضيحي</h2>
+<p><strong>الموضوع:</strong> هل عمل عرض Maqueen Lab على
+جهازكم؟</p>
+<blockquote>
+<p>مرحباً {{الاسم}}،</p>
+<p>متابعة سريعة — هل أتيحت لك فرصة تجربة العرض التوضيحي على Chromebook
+في مدرستك؟ أعلم أن بروكسيات الشبكات المدرسية قد تكون متقلبة مع Web
+Bluetooth.</p>
+<p>إذا نجح: 🎉. إذا لم ينجح، أرسل لي لقطة شاشة لما عُرض — في 90٪ من
+الحالات يكون إما (أ) Chrome على Chromebook مقفل يحتاج تفعيل
+<code>chrome://flags/#enable-experimental-web-platform-features</code>،
+أو (ب) جدار حماية يعترض حوار الإقران.</p>
+<p>في كلتا الحالتين، سأساعدك على تجاوزه.</p>
+<p>— {{الاسم}}</p>
+</blockquote>
+<hr />
+<h2 id="بنك-سطور-الموضوع"><a id="subjects"></a>بنك سطور الموضوع</h2>
+<p>نوّع سطور الموضوع — تكرار نفس السطر للمؤسسة نفسها يُفشل التسليم.</p>
+<p><strong>فضول:</strong></p>
+<ul>
+<li>أداة micro:bit تعمل في المتصفح لفصلك (بدون تثبيت)</li>
+<li>الأداة التي وفّرت لمعلم حصة كاملة</li>
+<li>جربتها على Chromebook بعد؟</li>
+</ul>
+<p><strong>فائدة مباشرة:</strong></p>
+<ul>
+<li>لوحة تحكم بدون تثبيت لأجهزة micro:bit</li>
+<li>حساسات حية في المتصفح — بدون IDE، بدون إعداد</li>
+<li>أداة STEM تُقرن على Chromebook في 30 ثانية</li>
+</ul>
+<p><strong>مبنية على سؤال:</strong></p>
+<ul>
+<li>كيف تستخدم micro:bit في الفصل؟</li>
+<li>هل تستخدم مجموعتك أجهزة micro:bit؟</li>
+<li>سؤال سريع عن وحدة {{المادة}} عندك</li>
+</ul>
+<p><strong>التزام منخفض:</strong></p>
+<ul>
+<li>عرض توضيحي لمدة 30 ثانية قبل اتخاذ القرار</li>
+<li>نسخة مجانية إذا أردت تجربتها مع فصل</li>
+<li>بدون عرض بيع — مجرد أداة قد تفيدك</li>
+</ul>
+
+</main>
+</body>
+</html>

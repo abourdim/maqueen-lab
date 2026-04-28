@@ -8,7 +8,15 @@
   "VERSION_UPPER": "V0.1.54",
   "VERSION_PLAIN": "0.1.54",
   "TAGLINE": "Every component, live in your browser",
-  "HARDWARE": "DFRobot Maqueen Lite v4 (micro:bit)",
+  "HARDWARE": "DFRobot Maqueen Lite v4 (micro:bit V2)",
+  "PRICE_LAUNCH": "12.99",
+  "PRICE_STANDARD": "17.99",
+  "PRICE_BUNDLE": "29.99",
+  "PRICE_TRIPWIRE": "5",
+  "PRICE_SITE": "199",
+  "PRICE_DISTRICT": "499",
+  "PROMO_CODE": "LAUNCH10",
+  "PROMO_PRICE": "7",
   "_note_ALLOWED_TERMS": "Maqueen Lab IS the canonical source \u2014 these terms are legitimate features.",
   "ALLOWED_TERMS": [
     "Maqueen",
@@ -37,6 +45,9 @@
     "Component Explorer",
     "BLE",
     "Web Bluetooth",
-    "echo confirmation"
+    "echo confirmation",
+    "accelerometer",
+    "8 tabs",
+    "8 sub-tabs"
   ]
 }

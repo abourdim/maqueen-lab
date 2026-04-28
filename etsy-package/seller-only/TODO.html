@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TODO — maqueen-lab</title>
+
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    line-height: 1.55;
+    color: #1a1d24;
+    background: #fafbfc;
+  }
+  body[dir="rtl"] {
+    font-family: 'Tajawal', -apple-system, Segoe UI, sans-serif;
+    direction: rtl;
+    text-align: right;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0a0e12; color: #e8ecef; }
+    a { color: #00ff88; }
+    code { background: #161b22; }
+    pre { background: #161b22; border-color: #30363d; }
+    table th { background: #161b22; }
+    blockquote { border-color: #30363d; color: #9ca3af; }
+    hr { border-color: #30363d; }
+  }
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #00ff88;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-top: 2.2em;
+    padding-top: 0.8em;
+    border-top: 1px solid #e1e4e8;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.15em;
+    margin-top: 1.5em;
+    color: #008855;
+  }
+  @media (prefers-color-scheme: dark) {
+    h2 { border-color: #30363d; }
+    h3 { color: #00ff88; }
+  }
+  p, li { font-size: 15px; }
+  code {
+    background: #f2f4f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e4e8;
+    vertical-align: top;
+  }
+  body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+  th {
+    background: #f2f4f7;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #576574;
+  }
+  @media (prefers-color-scheme: dark) {
+    td, th { border-color: #30363d; }
+    th { color: #9ca3af; }
+    code { color: #e8ecef; }
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #00884a;
+    background: rgba(0, 255, 136, 0.06);
+    color: #4a5258;
+    border-radius: 0 6px 6px 0;
+  }
+  body[dir="rtl"] blockquote {
+    border-left: 0; border-right: 4px solid #00884a;
+    border-radius: 6px 0 0 6px;
+  }
+  hr { border: 0; border-top: 2px dashed #d1d5db; margin: 3em 0; }
+  a { color: #006644; text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+
+  .toc-float {
+    position: fixed; top: 20px; right: 20px;
+    width: 260px; max-height: 80vh; overflow-y: auto;
+    background: rgba(255,255,255,0.96); border: 1px solid #d1d5db;
+    border-radius: 8px; padding: 16px 18px;
+    font-size: 12px; line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none;
+  }
+  body[dir="rtl"] .toc-float { right: auto; left: 20px; font-family: Tajawal, sans-serif; }
+  @media (min-width: 1280px) { .toc-float { display: block; } }
+  @media (prefers-color-scheme: dark) {
+    .toc-float { background: rgba(22,27,34,0.96); border-color: #30363d; }
+  }
+  .toc-float h4 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; }
+  .toc-float ol { margin: 0; padding-left: 20px; }
+  body[dir="rtl"] .toc-float ol { padding-left: 0; padding-right: 20px; }
+
+  .sibling-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+  .sibling-bar a {
+    background: rgba(0,136,85,0.08); border: 1px solid rgba(0,136,85,0.25);
+    padding: 4px 10px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.04em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sibling-bar a { background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.25); }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; max-width: none; padding: 10mm; font-size: 11pt; }
+    h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+    tr, pre, blockquote { page-break-inside: avoid; break-inside: avoid; }
+    .toc-float, .sibling-bar { display: none; }
+    a { color: #000; border-bottom: none; }
+  }
+</style>
+</head>
+<body dir="ltr">
+
+
+<nav class="toc-float" aria-label="Quick contents">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#-launch-critical--only-you-can-do-these">🚨 Launch-critical —
+only you can do these</a></li>
+    <li><a href="#before-launch">Before launch</a></li>
+    <li><a href="#after-launch">After launch</a></li>
+    <li><a href="#extra-improvements-queued-see-etsy_listingmd-for-specs">Extra
+improvements queued (see ETSY_LISTING.md for specs)</a></li>
+  </ol>
+</nav>
+<main>
+<h1 id="pre-launch-manual-todos">Pre-launch manual TODOs</h1>
+<p>Things the build pipeline can't do for you. Review before hitting
+<strong>Publish</strong> on Etsy.</p>
+<blockquote>
+<p>🛒 <strong>Etsy create-listing URL</strong>: <a
+href="https://www.etsy.com/your/shops/me/listing-editor/create">https://www.etsy.com/your/shops/me/listing-editor/create</a>
+🧪 <strong>Live demo</strong>: <a
+href="https://abourdim.github.io/maqueen-lab/">https://abourdim.github.io/maqueen-lab/</a></p>
+</blockquote>
+<h2 id="-launch-critical--only-you-can-do-these">🚨 Launch-critical —
+only you can do these</h2>
+<p>These are the three items flagged as "likely launch killers" in the
+review that require human hands. Don't hit Publish until they're
+done.</p>
+<ul class="task-list">
+<li><label><input type="checkbox" /><strong>Photograph a real micro:bit
+propped on a laptop running the app.</strong> Replace the current
+text-only hero (mockup 1) — hardware in the photo is the single biggest
+Etsy thumbnail conversion factor for teacher- product listings. Follow
+the staging note in ETSY_LISTING.md.</label></li>
+<li><label><input type="checkbox" /><strong>Record the 60-second listing
+video</strong> following <code>seller-only/etsy-playbook.html</code>
+(EN). Export ≤100 MB, 1080p+, upload as the listing video. Etsy
+algorithmically prefers listings with videos by ~30%.</label></li>
+<li><label><input type="checkbox" /><strong>Create the LAUNCH10 Etsy
+promo code</strong> (Shop Manager → Marketing → Sales &amp; coupons →
+new code <code>LAUNCH10</code>, $7 discount off $12.99, 10 uses, expires
+14 days). Paste the review-request template from ETSY_LISTING.md to the
+first 10 buyers.</label></li>
+</ul>
+<hr />
+<h2 id="before-launch">Before launch</h2>
+<h3 id="-listing-imagery">🖼 Listing imagery</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" /><strong>Shoot a real micro:bit
+photo</strong> for the hero. Current hero
+(<code>etsy-mockups/etsy-mockup-1.png</code>) uses only an app
+screenshot. Reviewers flagged that listings with <em>physical hardware +
+the app together</em> convert better. Retake the hero with a micro:bit
+V2 held next to (or propped on top of) a laptop showing the Drive tab.
+Good light, plain background, crop square.</label></li>
+<li><label><input type="checkbox" /><strong>Test Etsy's square thumbnail
+crop</strong> on mockup 1. The canvas is 2000×1500 (4:3). Etsy will
+center-crop to square for the search thumbnail — make sure the product
+name and the "Chrome &amp; Edge only" badge both survive that
+crop.</label></li>
+<li><label><input type="checkbox" /><strong>Add a dedicated
+compatibility infographic</strong> as a new listing image (slot 2 or 3).
+Chrome/Edge ✅, Safari/iPhone ❌, with a visible "please check before
+buying" callout. Current compat badge on the hero is a start but a
+dedicated image is what actually lives in buyers' visual memory after
+they scroll.</label></li>
+</ul>
+<h3 id="-video">🎬 Video</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" />Record the 60-second listing video
+following <code>seller-only/etsy-playbook.html</code> (EN). Upload as
+the listing video (Etsy allows one per listing, ≤100 MB,
+1080p+).</label></li>
+</ul>
+<h3 id="-listing-copy">📝 Listing copy</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" />Double-check every
+<code>{{PRICE}}</code> placeholder is filled in before pasting from
+<code>seller-only/ETSY_LISTING.md</code> into the Etsy
+form.</label></li>
+<li><label><input type="checkbox" />Final sanity check: does the
+description's "what you get" list exactly match what
+<code>MaqueenLab-v1.2.0.zip</code> actually contains? (Open the ZIP
+fresh and compare — mismatches = bad reviews.)</label></li>
+</ul>
+<hr />
+<h2 id="after-launch">After launch</h2>
+<h3 id="-first-week">📊 First week</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" />Monitor the Etsy listing's "Stats"
+tab daily for the first 7 days. If CTR on search &lt; 1.2% → hero image
+is the problem. If CTR is fine but conversion &lt; 1% → description or
+price is the problem.</label></li>
+<li><label><input type="checkbox" />Reply to every message within 24 h
+(Etsy rewards fast sellers).</label></li>
+<li><label><input type="checkbox" />Collect the first 5 reviews. Raise
+price from $12.99 → $17.99 once you hit 5 ★ reviews (per
+<code>ETSY_LISTING.md</code> pricing ladder).</label></li>
+</ul>
+<h3 id="-ongoing">🔁 Ongoing</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" />Keep <code>LICENSE.txt</code> clause
+4 (Updates) and the Etsy FAQ "Will it get updates?" in lockstep.
+Changing one without the other will get called out by
+buyers.</label></li>
+<li><label><input type="checkbox" />When you bump the version, rebuild
+the ZIP (<code>npm run build:etsy</code>) AND update the attached file
+on the Etsy listing. Old buyers get the new version free from their
+purchase history.</label></li>
+</ul>
+<hr />
+<h2 id="extra-improvements-queued-see-etsy_listingmd-for-specs">Extra
+improvements queued (see ETSY_LISTING.md for specs)</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" /><del>Host a live demo on
+GitHub Pages</del> — done. Live at <a
+href="https://abourdim.github.io/maqueen-lab/">https://abourdim.github.io/maqueen-lab/</a>.
+Already in the listing description.</label></li>
+<li><label><input type="checkbox" /><strong>Record a 5-second demo
+GIF</strong> (pairing + LED draw) — becomes listing image #3. Etsy
+mobile auto-plays GIFs in the image grid.</label></li>
+<li><label><input type="checkbox" /><strong>Create the tripwire $5
+Classroom Poster listing</strong> after main listing has 3 reviews.
+Drives buyers back for the full thing.</label></li>
+<li><label><input type="checkbox" /><strong>Stand up the lead-magnet
+landing page</strong> — free 3-lesson PDF behind an email opt-in. Builds
+a remarketing list.</label></li>
+<li><label><input type="checkbox" /><strong>Create the LAUNCH10 promo
+code</strong> (first 10 buyers: $12.99 → $7 with review request). Ships
+reviews fast.</label></li>
+<li><label><input type="checkbox" /><strong>Duplicate listing in FR +
+AR</strong> using <code>etsy-playbook-fr.html</code> +
+<code>etsy-playbook-ar.html</code> scripts. Same ZIP, localized
+copy.</label></li>
+<li><label><input type="checkbox" /><strong>UTM-tag every share
+link</strong> (pinterest, reddit, blog). Etsy Stats shows you which
+channel actually converts.</label></li>
+</ul>
+
+</main>
+</body>
+</html>

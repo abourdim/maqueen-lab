@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School Site License Certificate — Maqueen Lab</title>
+<style>
+  /* screen defaults */
+  :root{
+    --ink:#1b2540;
+    --gold:#b88a2c;
+    --gold-dark:#8e6716;
+    --paper:#fdfaf2;
+    --accent:#2b4a7a;
+    --muted:#7a8196;
+    --border:#e6ddc7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#454a58;font-family:"Georgia","Times New Roman",serif;color:var(--ink);padding:24px;min-height:100vh}
+
+  /* toolbar */
+  .toolbar{max-width:1080px;margin:0 auto 16px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  .toolbar button{background:#2b4a7a;color:#fff;border:0;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.3px}
+  .toolbar button:hover{background:#1f3a63}
+  .toolbar .hint{color:#c9d0de;font-size:12px;align-self:center;margin-right:auto}
+
+  /* page */
+  .page{
+    width:210mm;min-height:297mm;margin:0 auto;background:var(--paper);
+    background-image:
+      radial-gradient(ellipse at top, #fff 0%, var(--paper) 60%),
+      repeating-linear-gradient(45deg, rgba(184,138,44,0.03) 0 1px, transparent 1px 40px);
+    padding:22mm 20mm;box-shadow:0 20px 60px rgba(0,0,0,0.35);position:relative;overflow:hidden
+  }
+  /* decorative border */
+  .page::before{
+    content:"";position:absolute;inset:8mm;border:2px double var(--gold);border-radius:4px;pointer-events:none
+  }
+  .page::after{
+    content:"";position:absolute;inset:10mm;border:1px solid rgba(184,138,44,0.35);border-radius:2px;pointer-events:none
+  }
+
+  /* header */
+  .eyebrow{text-align:center;letter-spacing:6px;font-size:10px;color:var(--gold-dark);text-transform:uppercase;font-weight:700;margin:8mm 0 6mm;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+  .title{text-align:center;font-size:32pt;line-height:1.1;margin:0 0 6mm;font-weight:normal;color:var(--ink);letter-spacing:0.5px}
+  .title em{font-style:italic;color:var(--accent)}
+  .subtitle{text-align:center;font-size:13pt;color:var(--muted);font-style:italic;margin:0 0 8mm}
+  .rule{display:flex;align-items:center;justify-content:center;gap:10px;margin:6mm 0 10mm;color:var(--gold)}
+  .rule::before,.rule::after{content:"";flex:0 0 80px;height:1px;background:var(--gold)}
+  .rule span{font-size:14pt}
+
+  /* body prose */
+  .prose{font-size:12pt;line-height:1.7;text-align:center;margin:0 6mm}
+  .prose p{margin:0 0 4mm}
+  .granted{font-size:14pt;margin:8mm 0 4mm;font-weight:normal}
+  .granted .name{display:block;font-size:22pt;color:var(--accent);font-weight:bold;margin-top:3mm;letter-spacing:0.5px;border-bottom:1px dashed var(--gold);padding-bottom:2mm;min-height:1.2em}
+
+  /* grants */
+  .grants{display:grid;grid-template-columns:1fr 1fr;gap:4mm 8mm;margin:8mm 10mm;text-align:left;font-size:10.5pt;line-height:1.5}
+  .grants .item{display:flex;gap:6mm;align-items:flex-start}
+  .grants .item::before{content:"✓";color:var(--gold);font-weight:bold;font-size:14pt;line-height:1}
+  .grants b{color:var(--accent)}
+
+  /* seal + signature block */
+  .sig-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10mm;align-items:end;margin:14mm 10mm 6mm}
+  .sig{border-top:1.5px solid var(--ink);padding-top:2mm;text-align:center;font-size:10pt;color:var(--muted)}
+  .sig .val{display:block;color:var(--ink);font-size:13pt;margin-bottom:2mm;font-family:"Brush Script MT","Snell Roundhand",cursive;min-height:1.3em}
+
+  .seal{width:36mm;height:36mm;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--gold-dark);text-align:center;font-family:-apple-system,BlinkMacSystemFont,sans-serif;position:relative;background:radial-gradient(circle,#fdfaf2 60%,#f3e7c9 100%)}
+  .seal::before{content:"";position:absolute;inset:2mm;border:1px dashed var(--gold);border-radius:50%}
+  .seal .tiny{font-size:7pt;letter-spacing:2px;text-transform:uppercase;font-weight:700}
+  .seal .big{font-size:12pt;font-weight:bold;line-height:1.1;margin:1mm 0}
+  .seal .yr{font-size:9pt}
+
+  /* meta footer */
+  .meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6mm 8mm;margin:8mm 10mm 0;font-size:9.5pt;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+  .meta .row{border-bottom:1px solid var(--border);padding-bottom:2mm}
+  .meta .k{color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-size:7.5pt;margin-bottom:1mm}
+  .meta .v{color:var(--ink);min-height:1.2em}
+
+  .footnote{text-align:center;color:var(--muted);font-size:8.5pt;margin-top:8mm;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-style:italic}
+
+  /* editable fields */
+  [contenteditable="true"]{outline:none}
+  [contenteditable="true"]:hover{background:rgba(184,138,44,0.08)}
+  [contenteditable="true"]:focus{background:rgba(184,138,44,0.15);box-shadow:0 0 0 2px rgba(184,138,44,0.25)}
+
+  /* print */
+  @media print{
+    @page{size:A4 portrait;margin:0}
+    body{background:#fff;padding:0;margin:0}
+    .toolbar{display:none!important}
+    .page{box-shadow:none;margin:0;width:210mm;min-height:297mm}
+    [contenteditable="true"]:hover,[contenteditable="true"]:focus{background:none!important;box-shadow:none!important}
+  }
+  @media (max-width:800px){
+    .page{width:auto;padding:12mm 8mm}
+    .grants{grid-template-columns:1fr;margin:6mm 0}
+    .meta{grid-template-columns:1fr;margin:6mm 0}
+    .sig-row{grid-template-columns:1fr;gap:8mm;margin:8mm 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="hint">Click any field to edit • Save as PDF: File → Print → "Save as PDF"</span>
+  <button onclick="window.print()">Save as PDF / Print</button>
+  <button onclick="resetFields()">Reset fields</button>
+</div>
+
+<article class="page" id="certificate">
+
+  <div class="eyebrow">Workshop·DIY — STEM Education Tools</div>
+
+  <h1 class="title">Certificate of <em>School Site License</em></h1>
+  <p class="subtitle">Maqueen Lab — Bluetooth Learning Environment for DFRobot Maqueen Lite v4 (micro:bit V2)</p>
+
+  <div class="rule"><span>✦</span></div>
+
+  <div class="prose">
+    <p>This document certifies that a <b>perpetual School Site License</b> for the Software known as <i>Maqueen Lab</i> has been granted by the author to the following institution:</p>
+
+    <p class="granted">
+      <span>is hereby granted to</span>
+      <span class="name" contenteditable="true" data-field="school">[School Name]</span>
+    </p>
+
+    <p>located at <span contenteditable="true" data-field="address">[Full street address, city, country]</span>, for use by its teaching staff and students in accordance with the terms set forth in the accompanying <b>LICENSE</b> file.</p>
+  </div>
+
+  <div class="grants">
+    <div class="item">Up to <b>30 teachers</b> at one physical site</div>
+    <div class="item"><b>Unlimited students</b>, on-site or remote</div>
+    <div class="item">On-site, remote, &amp; after-school programs</div>
+    <div class="item">Internal modification for site use</div>
+    <div class="item">Free <b>bug-fix updates for 12 months</b></div>
+    <div class="item">Perpetual license for this version</div>
+  </div>
+
+  <div class="sig-row">
+    <div class="sig">
+      <span class="val" contenteditable="true" data-field="licensor">Abdelhak Bourdim</span>
+      Licensor — Workshop·DIY
+    </div>
+    <div class="seal">
+      <span class="tiny">Workshop·DIY</span>
+      <span class="big">Licensed<br>Site</span>
+      <span class="yr" contenteditable="true" data-field="year">2026</span>
+    </div>
+    <div class="sig">
+      <span class="val" contenteditable="true" data-field="principal">[Authorized Signatory]</span>
+      Authorized Signatory — Licensee
+    </div>
+  </div>
+
+  <div class="meta">
+    <div class="row">
+      <div class="k">Etsy / TpT Order #</div>
+      <div class="v" contenteditable="true" data-field="order">—</div>
+    </div>
+    <div class="row">
+      <div class="k">Purchaser Email</div>
+      <div class="v" contenteditable="true" data-field="email">—</div>
+    </div>
+    <div class="row">
+      <div class="k">Date of Purchase</div>
+      <div class="v" contenteditable="true" data-field="date">—</div>
+    </div>
+    <div class="row">
+      <div class="k">Software Version</div>
+      <div class="v" contenteditable="true" data-field="version">V8.2</div>
+    </div>
+    <div class="row">
+      <div class="k">License Type</div>
+      <div class="v">School Site License</div>
+    </div>
+    <div class="row">
+      <div class="k">Certificate ID</div>
+      <div class="v" contenteditable="true" data-field="cid">MBP-SITE-0001</div>
+    </div>
+  </div>
+
+  <p class="footnote">
+    This certificate is issued solely as a visual receipt of license. The binding legal terms are those of the <b>LICENSE</b> file included in the purchased download package. Retain this certificate together with the original Etsy / Teachers Pay Teachers order confirmation as proof of license.
+  </p>
+
+</article>
+
+<script>
+(function(){
+  var KEY = 'mbp_cert_fields_v1';
+  var fields = document.querySelectorAll('[contenteditable="true"]');
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){}
+  fields.forEach(function(el){
+    var k = el.dataset.field;
+    if (saved[k]) el.textContent = saved[k];
+    el.addEventListener('input', function(){
+      saved[k] = el.textContent;
+      localStorage.setItem(KEY, JSON.stringify(saved));
+    });
+  });
+  window.resetFields = function(){
+    if (!confirm('Reset all fields to defaults?')) return;
+    localStorage.removeItem(KEY);
+    location.reload();
+  };
+})();
+</script>
+</body>
+</html>
