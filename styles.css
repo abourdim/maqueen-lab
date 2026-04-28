@@ -4863,6 +4863,31 @@ aside.log-rail {
   /* Internal scroll if both CONNECT + LOG don't fit in viewport */
   overflow: hidden;
 }
+/* 🤖 Robot anatomy at the very top of the rail — the rail's
+   identity header. 'This is what you're talking to.' Same floating-
+   card chrome as CONNECT/LOG below, slight extra padding so the SVG
+   has breathing room. */
+aside.log-rail > .rail-robot {
+  flex: 0 0 auto;
+  margin: 8px 8px 0;
+  padding: 10px 12px;
+  background: var(--bg-deep, #061121);
+  border: 1px solid var(--border, #1d3556);
+  border-radius: 10px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+aside.log-rail > .rail-robot > svg {
+  width: 100% !important;
+  max-width: 220px !important;
+  height: auto !important;
+  display: block;
+}
+
 /* CONNECT card on top — auto height (sized to its own content).
    Heavy compaction for the narrow rail: we strip non-essential
    metadata (subtitle, Name row, dim version/build/commit lines)

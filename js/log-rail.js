@@ -49,16 +49,21 @@
     return w;
   }
 
-  // Move CONNECT card + maqueen-panel + log-card out of their inline
-  // parents into a dedicated <aside> rail at the layout level.
-  // Order in the rail: CONNECT (top) → maqueen-panel (live sensor
-  // strip) → LOG (bottom, fills remaining space). All BLE-related
-  // panels in one coherent sidebar.
+  // Move CONNECT card + maqueen-panel + log-card + anatomy SVG out
+  // of their inline parents into a dedicated <aside> rail at the
+  // layout level. Order in the rail (top → bottom):
+  //   1. Anatomy ROBOT identity     ← what we're talking to
+  //   2. CONNECT card                ← how we talk to it
+  //   3. maqueen-panel sensors       ← what it's saying back
+  //   4. MESSAGE LOG (fills rest)    ← raw wire
+  // The robot at the top makes the rail self-introduce: 'meet your
+  // robot, here's how to connect, here's the data, here's the wire'.
   // Idempotent — safe to call twice.
   function relocateCard() {
     const card    = document.querySelector('.log-card');
     const connect = document.querySelector('.connection-card');
     const panel   = document.getElementById('maqueen-panel');
+    const robot   = document.getElementById('mqAnatomy');
     const app     = document.querySelector('.app');
     if (!card || !app) return null;
     let aside = document.getElementById('logRailAside');
@@ -82,6 +87,20 @@
       aside.id = 'logRailAside';
       aside.className = 'log-rail';
       shell.appendChild(aside);
+    }
+
+    // 🤖 Robot anatomy goes FIRST — identity header for the rail.
+    // Wrapped in a div for styling (centering, padding, divider).
+    if (robot) {
+      const robotWrap = document.createElement('div');
+      robotWrap.className = 'rail-robot';
+      // Strip the inline width:200px from the SVG — let CSS govern
+      // the rail-context size so we can shrink it for the narrower
+      // column without fighting inline styles.
+      robot.style.width = '';
+      robot.style.maxWidth = '';
+      robotWrap.appendChild(robot);
+      aside.appendChild(robotWrap);
     }
 
     // Order in the rail: CONNECT (top) → maqueen-panel (live sensor
