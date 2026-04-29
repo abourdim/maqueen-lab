@@ -76,6 +76,17 @@
     return tagged;
   }
 
+  // Promote Dashboard to first position in the Drive workbench:
+  // move .mq-dash-panel immediately before .mq-macro-bar in the DOM so
+  // when the Drive bench is active the gauges appear at the top.
+  function promoteDashboard() {
+    const dash  = document.querySelector('.mq-dash-panel');
+    const macro = document.querySelector('.mq-macro-bar');
+    if (dash && macro && macro.parentNode && dash !== macro.previousElementSibling) {
+      macro.parentNode.insertBefore(dash, macro);
+    }
+  }
+
   function buildPillbar() {
     if (document.getElementById('mqWorkbenchPills')) return;
     // Anchor: insert pill-bar JUST BEFORE the first workbench panel
@@ -120,6 +131,7 @@
       if (tagged > 0 && !pills) buildPillbar();
       if (document.getElementById('mqWorkbenchPills') || ++tries > 30) {
         clearInterval(t);
+        promoteDashboard();   // Dashboard first, INPUT bar second
         activate(getActive());
       }
     }, 200);
