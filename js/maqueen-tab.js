@@ -1124,6 +1124,8 @@
       const b = document.querySelector(`.mq-servo-sweep[data-port="${port}"]`);
       if (!b) return;
       b.textContent = sweeping[port] ? '⏸ Stop' : '▶ Sweep';
+      // Toggle the .mq-servo-sweep-active class so CSS knows to pulse.
+      b.classList.toggle('mq-servo-sweep-active', !!sweeping[port]);
     }
     // Document-level event delegation — single listener that survives any
     // number of setMode() innerHTML rewrites of the quick-buttons container.

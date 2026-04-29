@@ -5310,6 +5310,229 @@ body.rail-collapsed .log-rail-collapse-btn {
   box-shadow: 0 0 10px rgba(56,189,248,0.5);
 }
 /* ============================================================
+   WAVE 9.1 — SERVOS PANEL: typography + life.
+   User feedback: "still overlapping, texts too small, no animations,
+   boring not funny". Punchy hierarchy + micro-interactions on every
+   clickable surface. Pure CSS.
+   ============================================================ */
+
+/* Bigger, brighter section labels — "MODE", "CONTROLS" etc. */
+.mq-servo-mode-group > div:first-child,
+.mq-servo-controls-group > div:first-child {
+  font-size: 11px !important;
+  letter-spacing: 0.18em !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+  color: #38bdf8 !important;
+  margin-bottom: 8px !important;
+  position: relative;
+  padding-left: 14px;
+}
+.mq-servo-mode-group > div:first-child::before,
+.mq-servo-controls-group > div:first-child::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateY(-50%);
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* S1 / S2 labels — bigger, gradient, glowing */
+#mqS1Label, #mqS2Label {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em;
+}
+#mqS1Readout, #mqS2Readout {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 10px currentColor;
+  transition: transform 0.12s, color 0.12s;
+}
+
+/* Slider thumb — glowing puck, scales on drag */
+input[type="range"]#mqS1Slider::-webkit-slider-thumb,
+input[type="range"]#mqS2Slider::-webkit-slider-thumb,
+input[type="range"]#mqServoSweepSpeed::-webkit-slider-thumb,
+input[type="range"]#mqServoSweepFrom::-webkit-slider-thumb,
+input[type="range"]#mqServoSweepTo::-webkit-slider-thumb {
+  box-shadow: 0 0 12px currentColor;
+}
+
+/* Quick angle buttons — bouncy hover, ripple on click */
+.mq-servo-quick {
+  position: relative;
+  overflow: hidden;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  transition: transform 0.12s, box-shadow 0.18s, background 0.15s, border-color 0.15s !important;
+}
+.mq-servo-quick:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 14px rgba(56,189,248,0.35);
+  border-color: currentColor !important;
+  background: rgba(56,189,248,0.08) !important;
+}
+.mq-servo-quick:active { transform: translateY(0) scale(0.97); }
+.mq-servo-quick::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle, currentColor 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.5);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.mq-servo-quick:active::after {
+  opacity: 0.4;
+  transform: scale(1.6);
+  transition: 0s;
+}
+
+/* The ▶ Sweep button — visually DISTINCT (it's a toggle, not a snap).
+   Filled-pill look with a constant subtle pulse, hot when active. */
+.mq-servo-sweep {
+  position: relative;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  background: linear-gradient(135deg, #fbbf24, #fb923c) !important;
+  color: #1a0e2a !important;
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 10px rgba(251,191,36,0.35);
+  transition: transform 0.12s, box-shadow 0.18s !important;
+}
+.mq-servo-sweep:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 18px rgba(251,191,36,0.55);
+}
+.mq-servo-sweep.mq-servo-sweep-active,
+.mq-servo-sweep[aria-pressed="true"] {
+  background: linear-gradient(135deg, #ef4444, #fb923c) !important;
+  border-color: #ef4444 !important;
+  color: #fff !important;
+  animation: mqSweepPulse 1.2s ease-in-out infinite;
+}
+@keyframes mqSweepPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(239,68,68,0.5); }
+  50%      { box-shadow: 0 0 24px rgba(239,68,68,0.85), 0 0 0 6px rgba(239,68,68,0.15); }
+}
+
+/* MODE tabs (180° / 360°) — chunky, snappy, visible state */
+.mq-servo-mode {
+  position: relative;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.04em !important;
+  padding: 8px 4px !important;
+  transition: background 0.15s, color 0.15s, transform 0.12s !important;
+}
+.mq-servo-mode:hover {
+  transform: translateY(-1px);
+  background: rgba(56,189,248,0.08) !important;
+}
+.mq-servo-mode.mq-servo-mode-active {
+  background: rgba(56,189,248,0.18) !important;
+  border-color: currentColor !important;
+  font-weight: 800 !important;
+  box-shadow: inset 0 0 10px rgba(56,189,248,0.2);
+}
+
+/* Sweep range preset chips — bouncy, with a sliding accent on active */
+.mq-sweep-preset {
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 5px 11px !important;
+  border-radius: 999px !important;
+  background: rgba(250,204,21,0.06) !important;
+  color: #facc15 !important;
+  border: 1px solid rgba(250,204,21,0.4) !important;
+  cursor: pointer;
+  transition: transform 0.12s, background 0.15s, box-shadow 0.18s !important;
+}
+.mq-sweep-preset:hover {
+  transform: translateY(-2px) scale(1.06);
+  background: rgba(250,204,21,0.16) !important;
+  box-shadow: 0 4px 12px rgba(250,204,21,0.3);
+}
+.mq-sweep-preset:active { transform: translateY(0) scale(0.96); }
+.mq-sweep-preset.mq-sweep-preset-active {
+  background: linear-gradient(135deg, #facc15, #fbbf24) !important;
+  color: #1a0e2a !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 14px rgba(250,204,21,0.55), inset 0 -2px 4px rgba(0,0,0,0.15);
+}
+
+/* Sweep speed bar — bigger labels with character */
+[id="mqServoSweepSpeed"] + span,
+[id="mqServoSweepSpeedRead"] {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em;
+}
+.mq-servo-mode-group + .mq-servo-controls-group + div span:first-child,
+.mq-servo-controls-group ~ div > div:first-child > span:first-child {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #facc15 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* fine-tune disclosure — bigger, more inviting */
+details summary {
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+details summary:hover { color: var(--accent, #38bdf8) !important; }
+details[open] summary { color: var(--accent, #38bdf8) !important; }
+details summary::marker { color: #facc15; }
+
+/* PWM scope summary — bigger, with a wave-pulse animation indicator */
+[id="mqServoScopeInfoSummary"] {
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.02em;
+  position: relative;
+  padding-right: 18px;
+}
+[id="mqServoScopeInfoSummary"]::after {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #facc15;
+  margin-left: 8px;
+  vertical-align: middle;
+  animation: mqScopePulse 1s ease-in-out infinite;
+}
+@keyframes mqScopePulse {
+  0%, 100% { transform: scale(1);   opacity: 1;   box-shadow: 0 0 0 0 rgba(250,204,21,0.7); }
+  50%      { transform: scale(1.4); opacity: 0.7; box-shadow: 0 0 0 6px rgba(250,204,21,0); }
+}
+
+/* Servo-card itself — gentle hover lift so kids see it as alive */
+[data-mq-sub="servos"] > div:nth-of-type(1) > div {
+  transition: transform 0.18s, box-shadow 0.2s, border-color 0.2s !important;
+}
+[data-mq-sub="servos"] > div:nth-of-type(1) > div:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(0,0,0,0.4), 0 0 18px rgba(56,189,248,0.1);
+}
+
+/* Big arrow ▶ next to "Sweep speed" — animated bouncing */
+[id*="mqServoSweepSpeed"] + span,
+.mq-macro-bar { /* unused inheritance fix */ }
+[for="mqServoSweepSpeed"],
+div[style*="Sweep speed"] {
+  /* If you find a precise hook, animate the play arrow */
+}
+
+/* ============================================================
    WAVE 9 — Mode dial · Floating STOP · Density profiles.
    See js/mode-dial.js + js/cockpit-redesign.js for behavior.
    ============================================================ */
