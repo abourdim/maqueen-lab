@@ -1863,16 +1863,18 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                  above cover 99% of cases. Disclosure summary shows the
                                                  currently-resolved range so kids see what's set. -->
                                             <details style="margin-top:2px;">
-                                                <summary style="cursor:pointer; opacity:0.65; font-size:9px; user-select:none;">
+                                                <summary style="cursor:pointer; user-select:none;">
                                                     ⚙ fine-tune (<span id="mqServoSweepFromRead" style="color:#facc15; font-weight:700;">0°</span>–<span id="mqServoSweepToRead" style="color:#facc15; font-weight:700;">180°</span>)
                                                 </summary>
-                                                <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-                                                    <span style="opacity:0.7;" data-i18n="mq_servo_sweep_from">from</span>
+                                                <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+                                                    <span style="opacity:0.9; min-width:42px; font-weight:700; font-size:13px;" data-i18n="mq_servo_sweep_from">from</span>
                                                     <input type="range" id="mqServoSweepFrom" min="0" max="180" step="1" value="0" style="flex:1; accent-color:#facc15;"/>
+                                                    <span id="mqServoSweepFromInline" style="color:#facc15; font-weight:800; font-size:18px; min-width:60px; text-align:right; text-shadow:0 0 8px currentColor;">0°</span>
                                                 </div>
-                                                <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                                                    <span style="opacity:0.7;" data-i18n="mq_servo_sweep_to">to</span>
+                                                <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+                                                    <span style="opacity:0.9; min-width:42px; font-weight:700; font-size:13px;" data-i18n="mq_servo_sweep_to">to</span>
                                                     <input type="range" id="mqServoSweepTo" min="0" max="180" step="1" value="180" style="flex:1; accent-color:#facc15;"/>
+                                                    <span id="mqServoSweepToInline" style="color:#facc15; font-weight:800; font-size:18px; min-width:60px; text-align:right; text-shadow:0 0 8px currentColor;">180°</span>
                                                 </div>
                                             </details>
                                         </div>

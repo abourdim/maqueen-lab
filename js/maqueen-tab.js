@@ -978,11 +978,18 @@
     }
     const sweepFromInput = document.getElementById('mqServoSweepFrom');
     const sweepToInput   = document.getElementById('mqServoSweepTo');
-    const sweepFromRead  = document.getElementById('mqServoSweepFromRead');
-    const sweepToRead    = document.getElementById('mqServoSweepToRead');
+    const sweepFromRead   = document.getElementById('mqServoSweepFromRead');
+    const sweepToRead     = document.getElementById('mqServoSweepToRead');
+    // Inline readouts that live next to each slider when the
+    // fine-tune disclosure is expanded (so kids see live values
+    // while dragging instead of having to glance up at the summary).
+    const sweepFromInline = document.getElementById('mqServoSweepFromInline');
+    const sweepToInline   = document.getElementById('mqServoSweepToInline');
     function paintSweepRangeReadouts() {
-      if (sweepFromRead) sweepFromRead.textContent = sweepFromDeg + '°';
-      if (sweepToRead)   sweepToRead.textContent   = sweepToDeg + '°';
+      if (sweepFromRead)   sweepFromRead.textContent   = sweepFromDeg + '°';
+      if (sweepToRead)     sweepToRead.textContent     = sweepToDeg + '°';
+      if (sweepFromInline) sweepFromInline.textContent = sweepFromDeg + '°';
+      if (sweepToInline)   sweepToInline.textContent   = sweepToDeg + '°';
       // Highlight any preset that exactly matches the current range.
       document.querySelectorAll('.mq-sweep-preset').forEach(b => {
         const f = +b.dataset.from, t = +b.dataset.to;
