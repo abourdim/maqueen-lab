@@ -42,9 +42,9 @@
   };
 
   const PILL_DEFS = [
-    { key: 'drive', label: '🚗 Drive',   color: '#a78bfa' },
-    { key: 'map',   label: '🗺️ Map',    color: '#38bdf8' },
-    { key: 'games', label: '🎮 Games',  color: '#c084fc' },
+    { key: 'drive', icon: '🚗', label: 'Drive!',  color: '#a78bfa' },
+    { key: 'map',   icon: '🗺️', label: 'Map',     color: '#38bdf8' },
+    { key: 'games', icon: '🎮', label: 'Play!',   color: '#f472b6' },
   ];
 
   const STORAGE_KEY = 'maqueen.workbench';
@@ -103,7 +103,7 @@
       b.className = 'mq-wb-pill';
       b.dataset.bench = def.key;
       b.style.setProperty('--pill-color', def.color);
-      b.innerHTML = `<span>${def.label}</span>`;
+      b.innerHTML = `<span class="mq-wb-icon">${def.icon}</span><span>${def.label}</span>`;
       b.addEventListener('click', () => activate(def.key));
       bar.appendChild(b);
     });

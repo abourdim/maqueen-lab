@@ -6591,44 +6591,97 @@ body.mq-density-demo .mq-mode-dial {
    Wave 9.7 — Cockpit + Workbench (Drive sub-tab)
    See js/cockpit-workbench.js for runtime tagging.
    ============================================================ */
+/* ── Workbench tab bar — fun, obvious, kid-friendly ───────────────── */
 .mq-workbench-pills {
   display: flex;
-  gap: 6px;
-  margin: 10px 0 8px;
-  padding: 4px;
-  background: linear-gradient(180deg, rgba(15,23,42,0.8), rgba(10,22,40,0.8));
-  border: 1px solid rgba(148,163,184,0.18);
-  border-radius: 12px;
+  gap: 8px;
+  margin: 14px 0 10px;
+  padding: 0;
+  background: none;
+  border: none;
   flex-wrap: wrap;
 }
+
 .mq-wb-pill {
   flex: 1 1 0;
   min-width: 110px;
-  padding: 9px 14px;
-  font-size: 13px;
-  font-weight: 700;
+  padding: 13px 18px;
+  font-size: 15px;
+  font-weight: 900;
   font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.04em;
-  background: transparent;
-  color: var(--text-secondary, #93a8c4);
-  border: 1px solid transparent;
-  border-radius: 9px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(10,14,46,0.7);
+  color: rgba(148,163,184,0.6);
+  border: 2px solid rgba(148,163,184,0.14);
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.18s ease,
+              background 0.15s ease,
+              color 0.15s ease,
+              border-color 0.15s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  user-select: none;
 }
+/* Emoji icon inside the pill — give it room to breathe and scale */
+.mq-wb-pill .mq-wb-icon {
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* Hover: lift + colorize */
 .mq-wb-pill:hover {
-  color: var(--pill-color, #93a8c4);
-  background: rgba(148,163,184,0.06);
+  transform: translateY(-3px) scale(1.03);
+  color: var(--pill-color, #e6eef9);
+  border-color: color-mix(in srgb, var(--pill-color) 50%, transparent);
+  background: color-mix(in srgb, var(--pill-color) 8%, rgba(10,14,46,0.85));
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--pill-color) 20%, transparent);
 }
+.mq-wb-pill:hover .mq-wb-icon { transform: scale(1.25) rotate(-6deg); }
+
+/* Active: bright, glowing, obviously selected */
 .mq-wb-pill-active {
-  color: var(--pill-color, #93a8c4);
-  background: color-mix(in srgb, var(--pill-color) 12%, transparent);
-  border-color: color-mix(in srgb, var(--pill-color) 40%, transparent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--pill-color) 25%, transparent);
+  color: #fff;
+  background: color-mix(in srgb, var(--pill-color) 22%, rgba(8,12,40,0.95));
+  border-color: var(--pill-color);
+  border-width: 2px;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--pill-color) 18%, transparent),
+    0 8px 28px color-mix(in srgb, var(--pill-color) 35%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--pill-color) 40%, transparent);
+  transform: translateY(-4px) scale(1.04);
+  z-index: 2;
 }
+.mq-wb-pill-active .mq-wb-icon {
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 6px var(--pill-color));
+}
+/* Tiny "active" underline accent */
+.mq-wb-pill-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 20%; right: 20%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--pill-color);
+  box-shadow: 0 0 8px var(--pill-color);
+}
+
 .mq-wb-hidden { display: none !important; }
+
 @media (max-width: 600px) {
-  .mq-wb-pill { flex: 1 1 calc(50% - 4px); }
+  .mq-wb-pill {
+    flex: 1 1 calc(50% - 4px);
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .mq-wb-pill .mq-wb-icon { font-size: 17px; }
 }
 
 /* ============================================================
