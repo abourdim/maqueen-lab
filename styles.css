@@ -6591,3 +6591,76 @@ body.mq-density-demo .mq-mode-dial {
 @media (max-width: 600px) {
   .mq-wb-pill { flex: 1 1 calc(50% - 4px); }
 }
+
+/* ============================================================
+   Wave 9.8 — rail cleanup: telemetry chips into cockpit,
+   robot+connect into Settings drawer.
+   ============================================================ */
+
+/* Telemetry strip inside the cockpit (above the workbench pill-bar) */
+#maqueen-panel.in-cockpit {
+  margin: 6px 0 8px !important;
+  padding: 6px 10px !important;
+  font-size: 12px !important;
+  gap: 10px !important;
+  background: linear-gradient(90deg, rgba(0,212,255,0.06), rgba(56,189,248,0.04)) !important;
+  border: 1px solid rgba(0,212,255,0.18) !important;
+  border-radius: 9px !important;
+}
+#maqueen-panel.in-cockpit > div { font-size: 11.5px !important; }
+#maqueen-panel.in-cockpit .mq-dot { width: 12px !important; height: 12px !important; }
+/* In cockpit context the polling buttons make less sense — let them
+   stay but compact them. They're useful for kids to test polling. */
+#maqueen-panel.in-cockpit button {
+  padding: 3px 7px !important;
+  font-size: 10.5px !important;
+}
+
+/* Sections we inject into the Settings drawer body */
+.mq-drawer-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(148,163,184,0.18);
+}
+.mq-drawer-section:first-child { border-top: none; padding-top: 0; }
+.mq-drawer-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #93a8c4);
+  margin-bottom: 10px;
+}
+/* The relocated cards are full-width inside the drawer */
+.mq-drawer-section .rail-robot,
+.mq-drawer-section .connection-card {
+  margin: 0;
+  width: 100%;
+}
+
+/* ── Connection-details panel (below the .header bar) ──────────────── */
+.mq-connect-panel {
+  background: rgba(30,41,59,0.7);
+  border-bottom: 1px solid rgba(56,189,248,0.15);
+  padding: 0 18px;
+}
+.mq-connect-panel-summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 7px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #93a8c4);
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+.mq-connect-panel-summary::-webkit-details-marker { display: none; }
+.mq-connect-panel[open] .mq-connect-panel-summary { color: #38bdf8; padding-bottom: 6px; }
+/* CONNECT card inside the panel — full width, no extra margin */
+.mq-connect-panel .connection-card { margin: 0 0 12px; width: 100%; }
+
+/* Header proxy buttons: hide the disabled one — no JS timing needed.
+   disabled = disconnected → hide Disconnect; connected → hide Connect */
+#headerDisconnectBtn:disabled { display: none !important; }
+#headerConnectBtn:disabled    { display: none !important; }

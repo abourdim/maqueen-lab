@@ -32,6 +32,9 @@
     // synchronously inside the user's own click handler.
     const hConn = document.getElementById('headerConnectBtn');
     const hDisc = document.getElementById('headerDisconnectBtn');
+    // Disconnect starts hidden — only revealed when BLE connects.
+    // syncState() in wireProxies() will show it once oDisc.disabled=false.
+    if (hDisc) hDisc.style.display = 'none';
     if (hConn) hConn.addEventListener('click', () => {
       const o = document.getElementById('connectBtn');
       if (o) o.click();
@@ -45,15 +48,23 @@
       const oConn = document.getElementById('connectBtn');
       const oDisc = document.getElementById('disconnectBtn');
       if (!hConn || !hDisc) return false;
-      function syncDisabled() {
-        if (oConn) hConn.disabled = oConn.disabled;
-        if (oDisc) hDisc.disabled = oDisc.disabled;
+      // Sync disabled AND visibility: show only the relevant action.
+      // Disconnected → show Connect, hide Disconnect (and vice-versa).
+      function syncState() {
+        if (oConn) {
+          hConn.disabled = oConn.disabled;
+          hConn.style.display = oConn.disabled ? 'none' : '';
+        }
+        if (oDisc) {
+          hDisc.disabled = oDisc.disabled;
+          hDisc.style.display = oDisc.disabled ? 'none' : '';
+        }
       }
       if (oConn && oDisc) {
-        const mo = new MutationObserver(syncDisabled);
+        const mo = new MutationObserver(syncState);
         mo.observe(oConn, { attributes: true, attributeFilter: ['disabled'] });
         mo.observe(oDisc, { attributes: true, attributeFilter: ['disabled'] });
-        syncDisabled();
+        syncState();
         return true;
       }
       return false;
