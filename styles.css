@@ -6677,7 +6677,24 @@ body.mq-density-demo .mq-mode-dial {
 }
 #mqConnectPanel #firmwareBtn,
 #mqConnectPanel #mq-streams-toggle      { padding: 3px 10px !important; font-size: 11px !important; }
-#mqConnectPanel #mqStackFlow            { flex: 1 !important; min-width: 180px !important; }
+/* Stack flow: compact + calm — scale down the SVG, suppress particles */
+#mqConnectPanel #mqStackFlow {
+  flex: 1 !important;
+  min-width: 160px !important;
+  overflow: hidden !important;
+}
+#mqConnectPanel #mqStackFlowStats {
+  font-size: 10px !important;
+  opacity: 0.55 !important;
+}
+/* Scale the SVG to ~60% so nodes fit without dominating */
+#mqConnectPanel #mqStackFlowSvg {
+  transform: scale(0.6) !important;
+  transform-origin: left center !important;
+  max-height: 52px !important;   /* clip to one row height */
+}
+/* Suppress the animated flying particles — keep node icons only */
+#mqConnectPanel #mqStackFlowParticles { opacity: 0 !important; }
 
 /* Header proxy buttons: hide the disabled one — no JS timing needed.
    disabled = disconnected → hide Disconnect; connected → hide Connect */
