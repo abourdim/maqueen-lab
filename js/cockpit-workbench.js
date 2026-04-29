@@ -21,10 +21,11 @@
   // Map: workbench key -> CSS selector list (each match becomes
   // a member of that workbench).
   const BENCH = {
+    // Personality bar and Speed/Wander row are PROMOTED to cockpit
+    // (always visible) — they're behavior settings that apply to every
+    // activity, not Drive-specific. They sit above the pill-bar.
     drive: [
-      '#mqPersonalityBar',
-      '#mqPersonalityBar + div',          // speed/wander row
-      '#mqPersonalityBar + div + div',    // INPUT-modes block
+      '.mq-macro-bar',                    // INPUT modes + Macro Rec/Replay
       '.mq-dash-panel',                   // dashboard (controls feedback)
     ],
     map: [
@@ -90,7 +91,10 @@
 
   function buildPillbar() {
     if (document.getElementById('mqWorkbenchPills')) return;
-    const anchor = document.getElementById('mqPersonalityBar');
+    // Anchor: insert pill-bar JUST BEFORE the first workbench panel
+    // (the INPUT modes + Macro row, class .mq-macro-bar). Everything
+    // above it (keypad, Personality, Speed/Wander) is the cockpit.
+    const anchor = document.querySelector('.mq-macro-bar');
     if (!anchor) return;
     const bar = document.createElement('div');
     bar.id = 'mqWorkbenchPills';
