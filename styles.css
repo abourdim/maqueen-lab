@@ -5323,7 +5323,11 @@ body.rail-collapsed .log-rail-collapse-btn {
   border-width: 2px !important;
   margin-bottom: 16px !important;
 }
-[data-mq-sub="ultrasonic"] .mq-radar-style svg {
+/* Scope: only the FIRST (main) SVG in each radar block — not the tiny
+   sparkline SVG inside the Bat-mode 'last 30 pings' panel which has
+   its own fixed 24 px height and was being blown up to 360 px by an
+   over-greedy selector. */
+[data-mq-sub="ultrasonic"] .mq-radar-style > div > svg:first-of-type {
   width: 100% !important;
   min-height: 360px;
   max-height: 560px;
