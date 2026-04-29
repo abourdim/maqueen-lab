@@ -6735,7 +6735,7 @@ body.mq-density-demo .mq-mode-dial {
    The viewBox handles aspect-ratio scaling automatically — no transform needed. */
 #mqConnectPanel #mqStackFlowSvg {
   height: 34px !important;
-  width: 100% !important;
+  width: auto !important;   /* let viewBox aspect-ratio breathe — no stretch */
 }
 /* BLE particle animations are visible in the connect panel */
 
