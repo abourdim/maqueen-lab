@@ -4575,9 +4575,10 @@ html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
 .mq-macro-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;          /* two natural rows: dial | rec+replay */
+  gap: 6px 8px;
   margin-top: 6px;
-  padding: 4px 8px;
+  padding: 6px 8px;
   background: var(--bg-deep, #061121);
   border: 1px solid var(--border, #1d3556);
   border-radius: 6px;
@@ -4585,6 +4586,15 @@ html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
   font-size: 10px;
   color: var(--text-secondary, #93a8c4);
 }
+/* Row 1: mode dial takes the full width so it never shares a row */
+.mq-macro-bar #mqModeDial {
+  flex: 1 1 100%;
+  margin-bottom: 0;
+}
+/* Row 2: Record + Replay + status sit on their own line */
+.mq-macro-bar #mqMacroRec,
+.mq-macro-bar #mqMacroPlay { flex-shrink: 0; }
+.mq-macro-bar .mq-macro-status { flex: 1; }
 .mq-macro-btn {
   background: var(--card-bg-2, #0a1628);
   border: 1px solid var(--border, #1d3556);
@@ -5829,9 +5839,9 @@ details[open] {
   margin-top: 14px !important;
 }
 .mq-mode-dial {
-  padding: 8px 12px !important;
+  padding: 6px 10px !important;
   gap: 6px !important;
-  margin-bottom: 10px !important;
+  margin-bottom: 0 !important;  /* row-gap on .mq-macro-bar handles spacing */
 }
 .mq-mode-pill {
   padding: 7px 12px !important;
