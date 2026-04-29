@@ -4625,12 +4625,12 @@ html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
   0%, 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.5); }
   50%      { box-shadow: 0 0 0 5px rgba(248, 113, 113, 0); }
 }
-.mq-macro-play       { color: #4ade80; border-color: #4ade80; }
-.mq-macro-play:not(:disabled):hover { background: rgba(74, 222, 128, 0.12); }
+.mq-macro-play       { color: #38bdf8; border-color: #38bdf8; }
+.mq-macro-play:not(:disabled):hover { background: rgba(56, 189, 248, 0.12); }
 .mq-macro-play.mq-macro-active {
-  background: rgba(74, 222, 128, 0.22);
-  color: #86efac;
-  border-color: #86efac;
+  background: rgba(56, 189, 248, 0.22);
+  color: #7dd3fc;
+  border-color: #7dd3fc;
 }
 .mq-macro-status {
   flex: 1;
