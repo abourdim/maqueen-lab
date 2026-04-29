@@ -1105,6 +1105,14 @@
       // when the FW? capability list contains 'sweep', else falls back
       // to browser. 'browser' / 'firmware' are user overrides.
       const useFirmware = window.mqSweepMode && window.mqSweepMode.shouldUseFirmware();
+      // Kill the CSS snap-transition on the dial for the duration of the
+      // sweep. The 0.18 s ease-out transition is great for single manual
+      // moves but fights a 30 Hz animation loop: each setAttribute starts
+      // a new 180 ms transition that gets cancelled 33 ms later, so the
+      // horn appears frozen / barely moving. We'll restore it in stopSweep.
+      const sweepDial = port === 1 ? dial1 : dial2;
+      if (sweepDial) sweepDial.style.transition = 'none';
+
       if (useFirmware) {
         // ONE COMMAND: micro:bit drives the servo at 50 Hz locally and
         // pushes SWP:port,angle back at 20 Hz so visuals follow truth.
@@ -1157,6 +1165,9 @@
           window.bleScheduler.send(`SWEEP:${port},STOP`, { coalesce: true }).catch(() => {});
         }
       } catch {}
+      // Restore the snap-transition now that the high-frequency loop is done.
+      const stopDial = port === 1 ? dial1 : dial2;
+      if (stopDial) stopDial.style.transition = 'transform 0.18s ease-out';
       paintSweepButton(port);
     }
 

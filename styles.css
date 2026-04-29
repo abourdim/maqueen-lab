@@ -6832,425 +6832,336 @@ body.mq-density-demo .mq-mode-dial {
 /* BLE particle animations are visible in the connect panel */
 
 /* ══════════════════════════════════════════════════════════════
-   DASHBOARD GAUGE THEMES  v2 — each theme has a truly different
-   structural design (shape, layout, texture, animation).
-   Activated by data-dash-theme on .mq-dash-panel.
+   DASHBOARD GAUGE THEMES  v3
+   Each non-dark theme hides the SVG and shows a .mq-alt widget
+   with a completely different structure built by gauge-themes.js
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Picker button base ───────────────────────────────────────── */
+/* ── Picker buttons ─────────────────────────────────────────── */
 .mq-gauge-theme-btn {
-  background: none;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 2px 5px;
-  font-size: 14px;
-  cursor: pointer;
-  opacity: 0.45;
-  transition: opacity 0.15s, border-color 0.15s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  background: none; border: 1px solid transparent; border-radius: 6px;
+  padding: 2px 5px; font-size: 14px; cursor: pointer; opacity: 0.45;
+  transition: opacity 0.15s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
   line-height: 1;
 }
 .mq-gauge-theme-btn:hover { opacity: 0.85; transform: scale(1.3) rotate(-5deg); }
-.mq-gauge-theme-active    { opacity: 1 !important; border-color: rgba(255,255,255,0.4) !important; background: rgba(255,255,255,0.08) !important; }
+.mq-gauge-theme-active {
+  opacity: 1 !important;
+  border-color: rgba(255,255,255,0.35) !important;
+  background: rgba(255,255,255,0.07) !important;
+}
 
-/* ── 🌑 DARK — default, no overrides ────────────────────────── */
+/* ── Hide SVG + original labels for all alt themes ───────────── */
+.mq-dash-panel:not([data-dash-theme="dark"]):not([data-dash-theme=""]) .mq-gauge svg,
+.mq-dash-panel:not([data-dash-theme="dark"]):not([data-dash-theme=""]) .mq-gauge .mq-gauge-label,
+.mq-dash-panel:not([data-dash-theme="dark"]):not([data-dash-theme=""]) .mq-gauge .mq-gauge-value {
+  display: none !important;
+}
 
-/* ══════════════════════════════════════════════════
-   🏎️  RACE — F1 pit-wall HUD
-   Design: parallelogram cards, carbon-fibre panel,
-   racing stripe left border, red danger glow,
-   speed-readout font, rev-counter pulse animation.
-   ══════════════════════════════════════════════════ */
+/* ── Shared alt widget base ─────────────────────────────────── */
+.mq-alt {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; width: 100%; height: 100%;
+  padding: 8px 4px;
+  box-sizing: border-box;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ════════════════════════════════════════════
+   🏎️  RACE — Digital F1 LED cockpit
+   Panel: carbon fibre, red stripe border
+   Widget: 10-dot LED bar + giant number
+   ════════════════════════════════════════════ */
 .mq-dash-panel[data-dash-theme="race"] {
-  background:
-    repeating-linear-gradient(45deg, #090909 0, #090909 4px, #111 4px, #111 10px) !important;
+  background: repeating-linear-gradient(
+    45deg, #090909 0, #090909 4px, #101010 4px, #101010 10px) !important;
   border: none !important;
   border-left: 4px solid #dc2626 !important;
-  border-top: 4px solid #dc2626 !important;
-  border-radius: 0 8px 8px 0 !important;
-  box-shadow: -4px 0 0 #7f1d1d, 0 0 40px rgba(220,38,38,0.3),
-              inset 1px 1px 0 rgba(255,255,255,0.06) !important;
+  border-top: 2px solid #dc2626 !important;
+  border-radius: 0 6px 6px 0 !important;
+  box-shadow: -4px 0 0 #7f1d1d, 0 0 40px rgba(220,38,38,0.25) !important;
 }
 .mq-dash-panel[data-dash-theme="race"] .mq-dash-header {
-  color: #fff !important;
-  font-size: 12px !important;
-  letter-spacing: 0.15em !important;
-  text-transform: uppercase !important;
-  border-bottom: 1px solid rgba(220,38,38,0.5) !important;
-  padding-bottom: 6px !important;
-  margin-bottom: 10px !important;
+  color: #fff !important; letter-spacing: 0.15em !important;
+  border-bottom: 1px solid #dc262655 !important; padding-bottom: 6px !important;
 }
-.mq-dash-panel[data-dash-theme="race"] .mq-dash-gauges {
-  gap: 4px !important;
-}
-/* Parallelogram cards — skewed like F1 steering wheel panels */
+.mq-dash-panel[data-dash-theme="race"] .mq-dash-gauges { gap: 4px !important; }
 .mq-dash-panel[data-dash-theme="race"] .mq-gauge {
-  background: linear-gradient(160deg, #111 60%, #1a0000) !important;
-  border: none !important;
-  border-radius: 0 !important;
-  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%) !important;
-  box-shadow: none !important;
-  padding: 8px 18px !important;
-  position: relative !important;
+  background: #0a0000 !important; border: 1px solid #dc262633 !important;
+  border-radius: 4px !important; padding: 6px !important; min-height: 100px;
 }
-.mq-dash-panel[data-dash-theme="race"] .mq-gauge::after {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #dc2626, transparent);
+.mq-alt-race { gap: 6px; }
+.mq-alt-race-label {
+  font-size: 8px; font-weight: 800; letter-spacing: 0.2em;
+  color: #666; text-transform: uppercase;
 }
-.mq-dash-panel[data-dash-theme="race"] .mq-gauge svg {
-  filter: contrast(1.2) drop-shadow(0 0 8px rgba(220,38,38,0.5)) !important;
+.mq-alt-race-bar {
+  display: flex; gap: 3px; align-items: center;
 }
-.mq-dash-panel[data-dash-theme="race"] .mq-gauge-ticks { stroke: #ffffff !important; }
-.mq-dash-panel[data-dash-theme="race"] .mq-gauge-value {
-  color: #ff3333 !important;
-  font-size: 20px !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.02em !important;
-  text-shadow: 0 0 16px #ff0000, 0 0 32px rgba(255,0,0,0.4) !important;
-  animation: mqRacePulse 0.8s ease-in-out infinite !important;
+.mq-alt-race-bar span {
+  width: 8px; height: 18px; border-radius: 2px;
+  transition: background 0.1s, box-shadow 0.1s;
 }
-@keyframes mqRacePulse {
-  0%,100% { text-shadow: 0 0 16px #ff0000, 0 0 32px rgba(255,0,0,0.4); }
-  50%     { text-shadow: 0 0 24px #ff6666, 0 0 48px rgba(255,0,0,0.7); }
+.mq-alt-race-val {
+  font-size: 32px; font-weight: 900; letter-spacing: -0.02em;
+  color: #ff3333; line-height: 1;
+  text-shadow: 0 0 20px #ff000088, 0 0 40px #ff000044;
 }
-.mq-dash-panel[data-dash-theme="race"] .mq-gauge-label {
-  color: #888 !important; font-size: 7px !important; letter-spacing: 0.2em !important;
+.mq-alt-race-unit {
+  font-size: 8px; color: #555; letter-spacing: 0.15em; text-transform: uppercase;
 }
 .mq-dash-panel[data-dash-theme="race"] .mq-dash-lcd {
   background: #0a0000 !important; border: 1px solid #dc2626 !important;
-  border-radius: 0 !important; clip-path: none !important;
+  border-radius: 0 !important;
 }
 .mq-dash-panel[data-dash-theme="race"] .mq-dash-cell-val { color: #ff4444 !important; }
 
-/* ══════════════════════════════════════════════════
+/* ════════════════════════════════════════════
    📻  RETRO — 1970s hi-fi VU meter
-   Design: circular gauge cards (perfect circles),
-   warm mahogany wood-grain panel, amber/sepia filter,
-   incandescent glow, needle feels mechanical.
-   ══════════════════════════════════════════════════ */
+   Panel: wood-grain, inset bevel
+   Widget: SVG kept + warm backlight overlay
+   ════════════════════════════════════════════ */
 .mq-dash-panel[data-dash-theme="retro"] {
   background:
-    repeating-linear-gradient(90deg,
-      rgba(255,160,50,0.03) 0px, rgba(255,160,50,0.03) 1px,
-      transparent 1px, transparent 16px),
-    linear-gradient(180deg, #2a1500 0%, #130900 100%) !important;
-  border: 3px solid #92400e !important;
-  border-radius: 4px !important;
-  box-shadow:
-    inset 0 2px 4px rgba(255,200,100,0.12),
-    inset 0 -2px 4px rgba(0,0,0,0.6),
-    0 0 30px rgba(146,64,14,0.4),
-    0 8px 24px rgba(0,0,0,0.7) !important;
+    repeating-linear-gradient(90deg, rgba(255,160,50,0.03) 0, rgba(255,160,50,0.03) 1px, transparent 1px, transparent 20px),
+    linear-gradient(180deg, #2a1500, #120800) !important;
+  border: 3px solid #92400e !important; border-radius: 4px !important;
+  box-shadow: inset 0 2px 4px rgba(255,200,100,0.1), 0 0 30px rgba(146,64,14,0.4) !important;
 }
 .mq-dash-panel[data-dash-theme="retro"] .mq-dash-header {
-  color: #d97706 !important;
-  font-family: Georgia, serif !important;
-  font-style: italic !important;
-  font-size: 13px !important;
-  letter-spacing: 0.08em !important;
-  border-bottom: 1px solid rgba(217,119,6,0.3) !important;
-  padding-bottom: 8px !important;
-  margin-bottom: 12px !important;
+  color: #d97706 !important; font-family: Georgia, serif !important;
+  font-style: italic !important; letter-spacing: 0.08em !important;
 }
-.mq-dash-panel[data-dash-theme="retro"] .mq-dash-gauges {
-  gap: 14px !important;
-  padding: 4px 8px !important;
-}
-/* Perfect circles — like analog instrument bezels */
 .mq-dash-panel[data-dash-theme="retro"] .mq-gauge {
   background: radial-gradient(circle at 38% 35%, #2a1400, #0d0600) !important;
-  border: 4px solid #6b2e00 !important;
-  border-radius: 50% !important;
-  box-shadow:
-    0 0 0 2px #92400e,
-    0 0 0 4px #4a1500,
-    inset 0 4px 12px rgba(255,160,50,0.1),
-    inset 0 -4px 12px rgba(0,0,0,0.8),
-    0 6px 20px rgba(0,0,0,0.8) !important;
-  padding: 6px !important;
-  aspect-ratio: 1 !important;
-  overflow: hidden !important;
+  border: 4px solid #6b2e00 !important; border-radius: 50% !important;
+  box-shadow: 0 0 0 2px #92400e, 0 0 0 4px #4a1500,
+              inset 0 4px 12px rgba(255,160,50,0.1),
+              0 6px 20px rgba(0,0,0,0.8) !important;
+  aspect-ratio: 1 !important; overflow: hidden !important;
+  display: flex; flex-direction: column; position: relative !important;
+}
+/* Show SVG in retro — we only add a glow overlay */
+.mq-dash-panel[data-dash-theme="retro"] .mq-gauge svg { display: block !important; }
+.mq-dash-panel[data-dash-theme="retro"] .mq-gauge .mq-gauge-label {
+  display: block !important; color: #b45309 !important;
+  font-family: Georgia, serif !important; font-style: italic !important;
+}
+.mq-dash-panel[data-dash-theme="retro"] .mq-gauge .mq-gauge-value {
+  display: block !important; color: #fbbf24 !important;
+  font-family: Georgia, serif !important; font-style: italic !important; font-size: 16px !important;
+  text-shadow: 0 0 12px #f59e0b !important;
 }
 .mq-dash-panel[data-dash-theme="retro"] .mq-gauge svg {
-  filter: sepia(0.7) brightness(0.85) contrast(1.1)
-          drop-shadow(0 0 6px rgba(217,119,6,0.6)) !important;
+  filter: sepia(0.7) brightness(0.85) drop-shadow(0 0 6px rgba(217,119,6,0.6)) !important;
 }
 .mq-dash-panel[data-dash-theme="retro"] .mq-gauge-ticks { stroke: #b45309 !important; }
-.mq-dash-panel[data-dash-theme="retro"] .mq-gauge-value {
-  color: #fbbf24 !important;
-  font-family: Georgia, serif !important;
-  font-size: 16px !important;
-  font-style: italic !important;
-  text-shadow: 0 0 12px #f59e0b, 0 1px 0 rgba(0,0,0,0.8) !important;
+.mq-alt-retro {
+  position: absolute; inset: 0; pointer-events: none;
+  border-radius: 50%;
 }
-.mq-dash-panel[data-dash-theme="retro"] .mq-gauge-label {
-  color: #b45309 !important;
-  font-family: Georgia, serif !important;
-  font-style: italic !important;
-  font-size: 9px !important;
+.mq-alt-retro-glow {
+  position: absolute; inset: 0; border-radius: 50%;
+  mix-blend-mode: screen; transition: opacity 0.3s, background 0.3s;
 }
 .mq-dash-panel[data-dash-theme="retro"] .mq-dash-lcd {
-  background: #0d0600 !important;
-  border: 2px solid #78350f !important;
-  border-radius: 4px !important;
+  background: #0d0600 !important; border: 2px solid #78350f !important;
 }
 .mq-dash-panel[data-dash-theme="retro"] .mq-dash-cell-val {
   color: #fbbf24 !important; font-family: Georgia, serif !important;
 }
 
-/* ══════════════════════════════════════════════════
-   🌃  CYBER — Neon noir matrix
-   Design: chamfered (corner-cut) hexagonal cards,
-   deep purple panel, hue-rotated + saturated SVG,
-   cyan values with magenta split + periodic glitch,
-   grid lines overlay.
-   ══════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   🌃  CYBER — Neon arc gauge
+   Panel: grid-line, chamfered corners
+   Widget: conic-gradient circle + glow value
+   ════════════════════════════════════════════ */
 .mq-dash-panel[data-dash-theme="cyber"] {
   background:
     linear-gradient(90deg, rgba(236,72,153,0.04) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(34,211,238,0.04) 1px, transparent 1px),
+    linear-gradient(0deg,  rgba(34,211,238,0.04) 1px, transparent 1px),
     linear-gradient(135deg, #0a0018, #000a12) !important;
-  background-size: 24px 24px, 24px 24px, 100% 100% !important;
-  border: 1px solid #ec4899 !important;
-  border-radius: 0 !important;
-  clip-path: polygon(16px 0%, 100% 0%, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0% 100%, 0% 16px) !important;
-  box-shadow:
-    0 0 0 1px rgba(34,211,238,0.2),
-    0 0 30px rgba(236,72,153,0.3),
-    0 0 60px rgba(34,211,238,0.1),
-    inset 0 0 40px rgba(0,0,0,0.6) !important;
+  background-size: 24px 24px, 24px 24px, 100% !important;
+  border: 1px solid #ec4899 !important; border-radius: 0 !important;
+  clip-path: polygon(16px 0%,100% 0%,100% calc(100% - 16px),calc(100% - 16px) 100%,0% 100%,0% 16px) !important;
+  box-shadow: 0 0 30px rgba(236,72,153,0.3), 0 0 60px rgba(34,211,238,0.1) !important;
 }
 .mq-dash-panel[data-dash-theme="cyber"] .mq-dash-header {
-  color: #ec4899 !important;
-  font-size: 11px !important;
-  letter-spacing: 0.2em !important;
-  text-transform: uppercase !important;
+  color: #ec4899 !important; letter-spacing: 0.2em !important;
   text-shadow: 0 0 10px #ec4899 !important;
 }
-.mq-dash-panel[data-dash-theme="cyber"] .mq-dash-gauges {
-  gap: 6px !important;
-}
-/* Chamfered corner cards */
 .mq-dash-panel[data-dash-theme="cyber"] .mq-gauge {
-  background: #04000e !important;
-  border: 1px solid rgba(236,72,153,0.6) !important;
+  background: #04000e !important; border: 1px solid rgba(236,72,153,0.5) !important;
   border-radius: 0 !important;
   clip-path: polygon(10px 0%,100% 0%,100% calc(100% - 10px),calc(100% - 10px) 100%,0% 100%,0% 10px) !important;
-  box-shadow:
-    0 0 15px rgba(236,72,153,0.2),
-    inset 0 0 30px rgba(0,0,0,0.9) !important;
-  position: relative !important;
+  min-height: 110px;
 }
-/* Corner accent */
-.mq-dash-panel[data-dash-theme="cyber"] .mq-gauge::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(135deg, rgba(236,72,153,0.12) 0%, transparent 40%);
-  pointer-events: none;
+.mq-alt-cyber { position: relative; width: 100%; align-items: center; gap: 2px; }
+.mq-alt-cyber-arc {
+  width: 80px; height: 80px; border-radius: 50%;
+  position: relative;
+  /* JS sets conic-gradient here */
+  background: conic-gradient(#38bdf8 0deg, rgba(255,255,255,0.06) 0deg);
+  transition: background 0.2s;
 }
-.mq-dash-panel[data-dash-theme="cyber"] .mq-gauge svg {
-  filter: hue-rotate(195deg) saturate(2.2)
-          drop-shadow(0 0 10px rgba(236,72,153,0.7)) !important;
+/* Mask out center to make a donut */
+.mq-alt-cyber-arc::before {
+  content: ''; position: absolute; inset: 12px;
+  border-radius: 50%; background: #04000e;
 }
-.mq-dash-panel[data-dash-theme="cyber"] .mq-gauge-ticks { stroke: #22d3ee !important; }
-.mq-dash-panel[data-dash-theme="cyber"] .mq-gauge-value {
-  color: #22d3ee !important;
-  font-size: 17px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.05em !important;
-  text-shadow:
-    0 0 8px #22d3ee,
-    0 0 20px rgba(34,211,238,0.5),
-    3px 0 #ec4899,
-    -3px 0 #ec4899 !important;
-  animation: mqCyberGlitch 5s infinite !important;
+.mq-alt-cyber-center {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 80px; height: 80px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
 }
-@keyframes mqCyberGlitch {
-  0%,88%,100% { clip-path:none; transform:none; }
-  90% { clip-path:polygon(0 20%,100% 20%,100% 45%,0 45%); transform:translateX(4px); color:#ec4899; }
-  92% { clip-path:polygon(0 55%,100% 55%,100% 75%,0 75%); transform:translateX(-4px); }
-  94% { clip-path:none; transform:none; color:#22d3ee; }
+.mq-alt-cyber-val {
+  font-size: 18px; font-weight: 900; color: #22d3ee; line-height: 1;
+  transition: text-shadow 0.2s;
 }
-.mq-dash-panel[data-dash-theme="cyber"] .mq-gauge-label {
-  color: #ec4899 !important;
-  font-size: 8px !important;
-  letter-spacing: 0.2em !important;
-  text-shadow: 0 0 6px #ec4899 !important;
+.mq-alt-cyber-unit {
+  font-size: 7px; color: #ec489999; letter-spacing: 0.15em; text-transform: uppercase;
+}
+.mq-alt-cyber-label {
+  font-size: 8px; color: #ec4899; letter-spacing: 0.2em;
+  text-transform: uppercase; text-shadow: 0 0 6px #ec4899;
+  margin-top: 4px;
 }
 .mq-dash-panel[data-dash-theme="cyber"] .mq-dash-lcd {
-  background: #04000e !important;
-  border: 1px solid #ec4899 !important;
-  border-radius: 0 !important;
-  clip-path: none !important;
+  background: #04000e !important; border: 1px solid #ec4899 !important; border-radius: 0 !important;
 }
 .mq-dash-panel[data-dash-theme="cyber"] .mq-dash-cell-val { color: #22d3ee !important; }
 
-/* ══════════════════════════════════════════════════
-   🎈  FUN — Cartoon toy dashboard
-   Design: 2×2 grid of big circular bubble cards,
-   thick rainbow borders, gradient pastel panel,
-   values bounce, panel has playful double-ring.
-   ══════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   🎈  FUN — Floating bubble gauges
+   Panel: 2×2 grid, double-ring
+   Widget: big emoji + filled bar + value
+   ════════════════════════════════════════════ */
 .mq-dash-panel[data-dash-theme="fun"] {
   background: linear-gradient(135deg, #0a1535, #0f1f0f, #150a30) !important;
-  border: 4px solid #a78bfa !important;
-  border-radius: 24px !important;
-  box-shadow:
-    0 0 0 2px #fbbf24,
-    0 0 0 6px rgba(167,139,250,0.3),
-    0 12px 40px rgba(167,139,250,0.3) !important;
+  border: 4px solid #a78bfa !important; border-radius: 24px !important;
+  box-shadow: 0 0 0 2px #fbbf24, 0 0 0 6px rgba(167,139,250,0.3),
+              0 12px 40px rgba(167,139,250,0.3) !important;
 }
 .mq-dash-panel[data-dash-theme="fun"] .mq-dash-header {
-  color: #a78bfa !important;
-  font-size: 14px !important;
-  letter-spacing: 0.04em !important;
+  color: #a78bfa !important; font-size: 14px !important;
 }
-/* 2×2 bubble grid */
 .mq-dash-panel[data-dash-theme="fun"] .mq-dash-gauges {
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 16px !important;
-  padding: 8px !important;
+  grid-template-columns: repeat(2,1fr) !important; gap: 16px !important; padding: 8px !important;
 }
-/* Big bubble cards */
 .mq-dash-panel[data-dash-theme="fun"] .mq-gauge {
-  border-radius: 50% !important;
-  border: 5px solid !important;
-  padding: 8px !important;
-  aspect-ratio: 1 !important;
+  border-radius: 50% !important; border: 5px solid !important;
+  aspect-ratio: 1 !important; overflow: hidden !important;
   box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 -4px 8px rgba(0,0,0,0.4) !important;
   animation: mqFunFloat 3s ease-in-out infinite !important;
 }
 .mq-dash-panel[data-dash-theme="fun"] .mq-gauge:nth-child(1) {
-  border-color: #38bdf8 !important; background: radial-gradient(circle at 35% 35%, #003a5c, #001a2e) !important;
-  animation-delay: 0s !important;
+  border-color: #38bdf8 !important;
+  background: radial-gradient(circle at 35% 35%, #003a5c, #001a2e) !important;
 }
 .mq-dash-panel[data-dash-theme="fun"] .mq-gauge:nth-child(2) {
-  border-color: #fb923c !important; background: radial-gradient(circle at 35% 35%, #3a1500, #1a0800) !important;
-  animation-delay: 0.4s !important;
+  border-color: #fb923c !important;
+  background: radial-gradient(circle at 35% 35%, #3a1500, #1a0800) !important;
+  animation-delay: 0.5s !important;
 }
 .mq-dash-panel[data-dash-theme="fun"] .mq-gauge:nth-child(3) {
-  border-color: #4ade80 !important; background: radial-gradient(circle at 35% 35%, #003a16, #001a08) !important;
-  animation-delay: 0.8s !important;
+  border-color: #4ade80 !important;
+  background: radial-gradient(circle at 35% 35%, #003a16, #001a08) !important;
+  animation-delay: 1s !important;
 }
 .mq-dash-panel[data-dash-theme="fun"] .mq-gauge:nth-child(4) {
-  border-color: #fbbf24 !important; background: radial-gradient(circle at 35% 35%, #3a2800, #1a1400) !important;
-  animation-delay: 1.2s !important;
+  border-color: #fbbf24 !important;
+  background: radial-gradient(circle at 35% 35%, #3a2800, #1a1400) !important;
+  animation-delay: 1.5s !important;
 }
 @keyframes mqFunFloat {
   0%,100% { transform: translateY(0) scale(1); }
-  50%     { transform: translateY(-5px) scale(1.02); }
+  50%     { transform: translateY(-6px) scale(1.03); }
 }
-.mq-dash-panel[data-dash-theme="fun"] .mq-gauge svg {
-  filter: saturate(1.9) brightness(1.15) drop-shadow(0 3px 8px rgba(0,0,0,0.6)) !important;
+.mq-alt-fun { gap: 4px; justify-content: center; }
+.mq-alt-fun-emoji { font-size: 28px; line-height: 1; transition: all 0.3s; }
+.mq-alt-fun-val {
+  font-size: 22px; font-weight: 900; color: var(--fun-color, #fff);
+  text-shadow: 0 0 12px var(--fun-color, #fff);
+  animation: mqFunPop 1.5s ease-in-out infinite;
 }
-.mq-dash-panel[data-dash-theme="fun"] .mq-gauge-value {
-  font-size: 20px !important;
-  font-weight: 900 !important;
-  animation: mqFunBounce 1.2s cubic-bezier(0.36,0.07,0.19,0.97) infinite !important;
+@keyframes mqFunPop {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.1) rotate(1deg); }
 }
-@keyframes mqFunBounce {
-  0%,100% { transform: scale(1) rotate(0deg); }
-  25%     { transform: scale(1.15) rotate(-2deg); }
-  75%     { transform: scale(0.95) rotate(2deg); }
+.mq-alt-fun-bar {
+  width: 70%; height: 6px; background: rgba(255,255,255,0.1);
+  border-radius: 3px; overflow: hidden;
 }
-.mq-dash-panel[data-dash-theme="fun"] .mq-gauge-label {
-  font-size: 10px !important; font-weight: 900 !important;
-  letter-spacing: 0.05em !important;
+.mq-alt-fun-fill {
+  height: 100%; width: 0%; border-radius: 3px; transition: width 0.3s ease;
+}
+.mq-alt-fun-unit {
+  font-size: 8px; color: rgba(255,255,255,0.4); letter-spacing: 0.1em;
 }
 .mq-dash-panel[data-dash-theme="fun"] .mq-dash-lcd {
-  border-radius: 16px !important;
-  border: 2px solid #a78bfa !important;
+  border-radius: 16px !important; border: 2px solid #a78bfa !important;
   background: rgba(167,139,250,0.06) !important;
-  grid-template-columns: repeat(3, 1fr) !important;
 }
 
-/* ══════════════════════════════════════════════════
-   🚀  SPACE — NASA mission control CRT
-   Design: perfectly square borderless terminal cells,
-   monochrome phosphor green, CSS scanline overlay,
-   blinking cursor on values, Courier New typeface.
-   ══════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   🚀  SPACE — NASA CRT terminal
+   Panel: scanlines + vignette, square cells
+   Widget: ASCII bar + monospace readout
+   ════════════════════════════════════════════ */
 .mq-dash-panel[data-dash-theme="space"] {
-  background: #00060200 !important;
-  background-color: #000904 !important;
-  border: 2px solid #00ff88 !important;
-  border-radius: 2px !important;
-  box-shadow:
-    0 0 0 1px rgba(0,255,136,0.15),
-    0 0 40px rgba(0,255,136,0.2),
-    inset 0 0 80px rgba(0,0,0,0.9) !important;
-  position: relative !important;
-  overflow: hidden !important;
+  background: #000904 !important;
+  border: 2px solid #00ff88 !important; border-radius: 2px !important;
+  box-shadow: 0 0 40px rgba(0,255,136,0.2), inset 0 0 80px rgba(0,0,0,0.9) !important;
+  position: relative !important; overflow: hidden !important;
 }
-/* Scanlines */
 .mq-dash-panel[data-dash-theme="space"]::before {
-  content: '';
-  position: absolute; inset: 0; z-index: 10; pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg, transparent 0, transparent 2px,
-    rgba(0,255,136,0.04) 2px, rgba(0,255,136,0.04) 4px
-  );
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 10;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 2px,
+    rgba(0,255,136,0.04) 2px, rgba(0,255,136,0.04) 4px);
 }
-/* Screen curvature vignette */
 .mq-dash-panel[data-dash-theme="space"]::after {
-  content: '';
-  position: absolute; inset: 0; z-index: 11; pointer-events: none;
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 11;
   background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
 }
 .mq-dash-panel[data-dash-theme="space"] .mq-dash-header {
-  color: #00ff88 !important;
-  font-family: 'Courier New', monospace !important;
-  font-size: 11px !important;
-  letter-spacing: 0.15em !important;
-  text-transform: uppercase !important;
-  text-shadow: 0 0 8px #00ff88 !important;
+  color: #00ff88 !important; font-family: 'Courier New', monospace !important;
+  letter-spacing: 0.15em !important; text-shadow: 0 0 8px #00ff88 !important;
   position: relative; z-index: 12;
 }
 .mq-dash-panel[data-dash-theme="space"] .mq-dash-gauges {
-  gap: 3px !important;
-  position: relative; z-index: 12;
+  gap: 3px !important; position: relative; z-index: 12;
 }
-/* Square terminal cells */
 .mq-dash-panel[data-dash-theme="space"] .mq-gauge {
-  background: #000a04 !important;
-  border: 1px solid rgba(0,255,136,0.5) !important;
-  border-radius: 0 !important;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 8px rgba(0,255,136,0.1) !important;
+  background: #000a04 !important; border: 1px solid rgba(0,255,136,0.45) !important;
+  border-radius: 0 !important; min-height: 100px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8) !important;
 }
-.mq-dash-panel[data-dash-theme="space"] .mq-gauge svg {
-  filter: saturate(0) brightness(0.55) drop-shadow(0 0 8px #00ff88) !important;
-  mix-blend-mode: screen !important;
+.mq-alt-space {
+  gap: 3px; align-items: flex-start; padding: 6px 8px;
+  font-family: 'Courier New', monospace; width: 100%;
 }
-.mq-dash-panel[data-dash-theme="space"] .mq-gauge-ticks { stroke: #00ff88 !important; }
-.mq-dash-panel[data-dash-theme="space"] .mq-gauge-value {
-  color: #00ff88 !important;
-  font-family: 'Courier New', monospace !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.08em !important;
-  text-shadow: 0 0 6px #00ff88, 0 0 20px rgba(0,255,136,0.5) !important;
-  animation: mqSpaceBlink 3s step-end infinite !important;
+.mq-alt-space-prompt { font-size: 8px; color: #00ff8866; letter-spacing: 0.05em; }
+.mq-alt-space-val {
+  font-size: 24px; font-weight: 700; color: #00ff88; letter-spacing: 0.08em;
+  text-shadow: 0 0 8px #00ff88, 0 0 20px rgba(0,255,136,0.4);
+  animation: mqSpaceBlink 4s step-end infinite;
 }
 @keyframes mqSpaceBlink {
-  0%,90%,100% { opacity: 1; }
-  92%,96%     { opacity: 0.3; }
+  0%,92%,100% { opacity:1; } 94%,98% { opacity:0.2; }
 }
-.mq-dash-panel[data-dash-theme="space"] .mq-gauge-label {
-  color: rgba(0,255,136,0.65) !important;
-  font-family: 'Courier New', monospace !important;
-  font-size: 8px !important;
-  letter-spacing: 0.15em !important;
+.mq-alt-space-bar {
+  font-size: 9px; color: #00ff8899; letter-spacing: 0.01em; white-space: pre;
 }
+.mq-alt-space-status {
+  font-size: 8px; color: #00ff8855; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.mq-alt-space-status span { transition: color 0.3s; }
 .mq-dash-panel[data-dash-theme="space"] .mq-dash-lcd {
-  background: #000a04 !important;
-  border: 1px solid rgba(0,255,136,0.5) !important;
-  border-radius: 0 !important;
-  position: relative; z-index: 12;
+  background: #000a04 !important; border: 1px solid rgba(0,255,136,0.45) !important;
+  border-radius: 0 !important; position: relative; z-index: 12;
 }
 .mq-dash-panel[data-dash-theme="space"] .mq-dash-cell-val {
-  color: #00ff88 !important;
-  font-family: 'Courier New', monospace !important;
+  color: #00ff88 !important; font-family: 'Courier New', monospace !important;
   text-shadow: 0 0 6px #00ff88 !important;
 }
 
