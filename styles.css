@@ -4291,7 +4291,19 @@ html[dir="rtl"] .lang-picker { margin-left: 0; margin-right: auto; }
   border-radius: 8px;
   padding: 8px 10px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
+  /* Reorder children: map canvas FIRST, controls below */
+  display: flex;
+  flex-direction: column;
 }
+/* 1st: the SVG map + stats sidebar — the visual centrepiece */
+.mq-odo-panel .mq-odo-body   { order: 0; }
+/* 2nd: slim toolbar (snap / timelaps / draw&go / AR / recap / reset) */
+.mq-odo-panel .mq-odo-header { order: 1; margin-top: 8px; margin-bottom: 0; }
+/* 3rd: challenge selector */
+.mq-odo-panel .mq-chal-bar   { order: 2; }
+/* 4th: SLAM + Drift game bars */
+.mq-odo-panel #mqSlamBar,
+.mq-odo-panel #mqDriftBar     { order: 3; }
 .mq-odo-header {
   display: flex;
   align-items: center;
