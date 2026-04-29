@@ -65,13 +65,26 @@
       moved++;
     }
 
-    // 2) Robot identity → TOP of Settings drawer.
+    // 2a) Appearance row → very TOP of Settings drawer (theme + language
+    //     pickers are the most-used controls, should be instant to reach).
+    if (drawerBody && !drawerBody.dataset.appearanceLifted) {
+      const appRow = document.getElementById('settingsAppearanceRow');
+      if (appRow) {
+        drawerBody.insertBefore(appRow, drawerBody.firstChild);
+        drawerBody.dataset.appearanceLifted = '1';
+        moved++;
+      }
+    }
+
+    // 2b) Robot identity → TOP of Settings drawer (below Appearance).
     if (drawerBody && robotCard && !robotCard.dataset.relocated) {
       const sec = ensureSection(drawerBody, 'mqDrawerRobot', '🤖 Robot');
       robotCard.dataset.relocated = '1';
       sec.appendChild(robotCard);
-      // Prepend so Robot is always first in the drawer.
-      drawerBody.insertBefore(sec, drawerBody.firstChild);
+      // Insert after the appearance row (second position).
+      const appRow = document.getElementById('settingsAppearanceRow');
+      const anchor = appRow ? appRow.nextSibling : drawerBody.firstChild;
+      drawerBody.insertBefore(sec, anchor);
       moved++;
     }
 
