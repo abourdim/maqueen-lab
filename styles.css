@@ -6668,7 +6668,14 @@ body.mq-density-demo .mq-mode-dial {
 #mqConnectPanel #appBuildInfo           { display: none !important; }
 #mqConnectPanel #fwVersionLine {
   display: inline-flex !important; align-items: center !important;
+  gap: 4px !important;
   font-size: 11px !important; white-space: nowrap !important; opacity: 0.8 !important;
+}
+/* version value — spaced out and accented so it doesn't merge with the label */
+#mqConnectPanel #fwVersion {
+  margin-left: 2px !important;
+  color: #38bdf8 !important;
+  font-weight: 600 !important;
 }
 #mqConnectPanel .connection-details     { display: none !important; }
 #mqConnectPanel .connection-footer {
