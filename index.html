@@ -2404,7 +2404,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                     <!-- BAT ECHOLOCATION SCOPE — same physics as HC-SR04: emit chirp,
                                          time the echo, divide by 2, multiply by speed of sound. -->
                                     <div class="mq-radar-style mq-radar-style-active" data-style="bat" style="background:linear-gradient(180deg,#0b1426 0%,#020a14 100%); border:1px solid var(--border, #1d3556); border-radius:10px; padding:12px 8px 8px; margin-bottom:10px;">
-                                        <div style="position:relative; max-width:340px; margin:0 auto;">
+                                        <div style="position:relative; max-width:720px; margin:0 auto;">
                                             <svg viewBox="0 0 200 140" style="width:100%; height:auto; display:block;">
                                                 <defs>
                                                     <radialGradient id="mqBatGlow" cx="50%" cy="100%" r="60%">
@@ -2488,7 +2488,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 
                                     <!-- 🟢 SONAR — submarine-style phosphor green CRT, sweeping arm + range rings -->
                                     <div class="mq-radar-style" data-style="sonar" style="display:none; background:radial-gradient(circle at 50% 100%, #052e16 0%, #020a04 100%); border:1px solid #15803d; border-radius:10px; padding:12px 8px 8px; margin-bottom:10px;">
-                                        <div style="position:relative; max-width:340px; margin:0 auto;">
+                                        <div style="position:relative; max-width:720px; margin:0 auto;">
                                             <svg viewBox="0 0 200 140" style="width:100%; height:auto; display:block;">
                                                 <defs>
                                                     <radialGradient id="mqSonarSweep" cx="50%" cy="100%" r="100%">
@@ -2541,7 +2541,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 
                                     <!-- 🤖 LIDAR — modern laser scanner, point cloud + scanning beam -->
                                     <div class="mq-radar-style" data-style="lidar" style="display:none; background:radial-gradient(ellipse at 50% 100%, #0c1d3a 0%, #030914 100%); border:1px solid #38bdf8; border-radius:10px; padding:12px 8px 8px; margin-bottom:10px;">
-                                        <div style="position:relative; max-width:340px; margin:0 auto;">
+                                        <div style="position:relative; max-width:720px; margin:0 auto;">
                                             <svg viewBox="0 0 200 140" style="width:100%; height:auto; display:block;">
                                                 <defs>
                                                     <linearGradient id="mqLidarBeam" x1="50%" y1="100%" x2="50%" y2="0%">
@@ -2586,7 +2586,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
 
                                     <!-- 🔥 HEATMAP — horizontal proximity bar with marker -->
                                     <div class="mq-radar-style" data-style="heat" style="display:none; background:var(--bg-deep, #061121); border:1px solid var(--border, #1d3556); border-radius:10px; padding:18px 14px; margin-bottom:10px;">
-                                        <div style="position:relative; max-width:340px; margin:0 auto;">
+                                        <div style="position:relative; max-width:720px; margin:0 auto;">
                                             <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary, #93a8c4); font-family:'JetBrains Mono', monospace; margin-bottom:4px;">
                                                 <span>⚠ 0 cm</span>
                                                 <span>10</span>
@@ -2630,7 +2630,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                             <button class="mq-sweep-mode" data-mode="stars" title="5-point stars — playful but still scientific"><span data-i18n="mq_sweep_stars">✦✦✦ stars</span></button>
                                             <button class="mq-sweep-mode" data-mode="emoji" title="Kid-friendly emoji 💥/⚠️/✨ — the threshold story told in icons"><span data-i18n="mq_sweep_emoji">💥⚠✨ emoji</span></button>
                                         </div>
-                                        <div style="position:relative; max-width:420px; margin:0 auto;">
+                                        <div style="position:relative; max-width:880px; margin:0 auto;">
                                             <svg id="mqSweepSvg" viewBox="0 0 400 220" style="width:100%; height:auto; display:block;">
                                                 <defs>
                                                     <radialGradient id="mqSweepGlow" cx="50%" cy="100%" r="100%">
@@ -2668,10 +2668,10 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                     <line x1="200" y1="200" x2="280" y2="61"/>
                                                 </g>
                                                 <!-- Distance labels along baseline (right of center) -->
-                                                <g fill="#86efac" font-family="JetBrains Mono, monospace" font-size="8" opacity="0.85">
-                                                    <text x="244" y="212">10 cm</text>
-                                                    <text x="284" y="212">30 cm</text>
-                                                    <text x="334" y="212">100 cm</text>
+                                                <g fill="#86efac" font-family="JetBrains Mono, monospace" font-size="11" opacity="0.95" font-weight="700">
+                                                    <text x="244" y="214">10 cm</text>
+                                                    <text x="284" y="214">30 cm</text>
+                                                    <text x="334" y="214">100 cm</text>
                                                 </g>
                                                 <!-- 'sectors' render mode layer — drawn UNDER the beam so the
                                                      bright sweep stays on top of the persistent occupancy fills. -->
@@ -2696,12 +2696,18 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 </g>
                                                 <!-- Persistent blip layer (filled by JS) -->
                                                 <g id="mqSweepBlips"></g>
+                                                <!-- Expanding ping wave — JS triggers `mqSweepPingFx()` each
+                                                     time a fresh distance reading arrives. Pure SVG animation,
+                                                     resets each call. Visual feedback that the radar is alive. -->
+                                                <circle id="mqSweepPingFx" cx="200" cy="200" r="0" fill="none"
+                                                        stroke="#bbf7d0" stroke-width="2" opacity="0"
+                                                        pointer-events="none"/>
                                                 <!-- HUD: top-left angle + distance, top-center title -->
                                                 <g font-family="JetBrains Mono, monospace" fill="#86efac">
-                                                    <text x="14" y="20" font-size="11">Angle: <tspan id="mqSweepHudA" font-weight="700">— deg</tspan></text>
-                                                    <text x="14" y="36" font-size="11">Distance: <tspan id="mqSweepHudD" font-weight="700">— cm</tspan></text>
-                                                    <text x="200" y="20" font-size="11" text-anchor="middle" data-i18n="mq_radar_sweep_title" font-weight="700" letter-spacing="1">Radar Display</text>
-                                                    <text id="mqSweepHudLock" x="386" y="20" font-size="9" text-anchor="end" opacity="0">LOCK</text>
+                                                    <text x="16" y="22" font-size="13" font-weight="700">ANGLE  <tspan id="mqSweepHudA" font-weight="900" fill="#bbf7d0">— °</tspan></text>
+                                                    <text x="16" y="40" font-size="13" font-weight="700">DIST   <tspan id="mqSweepHudD" font-weight="900" fill="#bbf7d0">— cm</tspan></text>
+                                                    <text x="200" y="24" font-size="16" text-anchor="middle" data-i18n="mq_radar_sweep_title" font-weight="900" letter-spacing="3" fill="#bbf7d0">RADAR</text>
+                                                    <text id="mqSweepHudLock" x="386" y="22" font-size="11" font-weight="900" text-anchor="end" opacity="0" fill="#fbbf24">⚠ LOCK</text>
                                                 </g>
                                                 <!-- Scanline overlay (horizontal CRT lines) -->
                                                 <g pointer-events="none" stroke="#22c55e" stroke-width="0.4" stroke-opacity="0.05">

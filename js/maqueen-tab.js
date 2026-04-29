@@ -3150,6 +3150,27 @@
       if (performance.now() - lastAngleAt > 500) return;
       blips.push({ angle: lastAngle, cm: lastCm, t: performance.now() });
       if (blips.length > MAX_BLIPS) blips.shift();
+      // 🌊 Animated ping wave — expanding circle from origin to the
+      // current detection radius. Pure SVG; cancels any in-flight
+      // animation by rewriting the stroke + radius. Visual heartbeat
+      // that says 'fresh data just arrived'.
+      try {
+        const ping = document.getElementById('mqSweepPingFx');
+        if (ping && lastCm != null) {
+          // Map cm to SVG radius the same way the blip does:
+          // 100 cm = 160 svg-units (the outer arc)
+          const r = Math.min(160, lastCm * 1.6);
+          ping.setAttribute('r', '0');
+          ping.style.opacity = '0';
+          ping.animate(
+            [
+              { r: 0,    opacity: 0.85, strokeWidth: 3 },
+              { r: r,    opacity: 0,    strokeWidth: 0.5 },
+            ],
+            { duration: 600, easing: 'ease-out', fill: 'forwards' }
+          );
+        }
+      } catch {}
     }
 
     function render() {
