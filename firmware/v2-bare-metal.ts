@@ -6,17 +6,18 @@
  * Hardware: DFRobot Maqueen Lite v4 (ROB0148), micro:bit V2 ONLY.
  * Extensions required (add in MakeCode → Extensions):
  *   • bluetooth                        (uart service)
- *   • https://github.com/Bohwaz/pxt-neopixel
- *                  (BLE-SAFE NeoPixel fork — coexists with bluetooth.
- *                   The standalone 'neopixel' extension does NOT —
- *                   its CPU spin-wait timing is blown apart by BLE
- *                   radio interrupts, dropping packets AND mangling
- *                   colors. Bohwaz's fork tweaks the timing window.
- *                   Fallback: openblockcc/pxt-neopixel-ble works too.)
  *
- * To add a custom-URL extension in MakeCode:
- *   Settings → Extensions → paste the github URL → it becomes
- *   available under the 'neopixel' namespace (same API as standard).
+ * NEOPIXELS — NOT DRIVEN BY THIS FIRMWARE.
+ * The standard 'neopixel' extension and 'bluetooth' are mutually
+ * exclusive on micro:bit by design (NeoPixel WS2812B needs
+ * uninterruptible timing; BLE radio needs to interrupt). MakeCode
+ * REFUSES to compile a project with both. There is no widely-
+ * available community fork that resolves this — I checked. The
+ * 'RGB:i,r,g,b' verb is therefore parsed-and-echoed-only here
+ * (same behavior as v1). Real on-bot pixel output requires either
+ * (a) standard RGB LEDs on dedicated PWM pins, NOT WS2812B, or
+ * (b) a separate MCU for the pixels. The browser app's NeoPixels
+ * panel still shows your *intent* in the screen mockup.
  *
  * Why this exists: the Maqueen extension is a black box. This
  * firmware talks to the hardware DIRECTLY — I²C to the motor
@@ -54,7 +55,6 @@ let btConnected = false
 let logLevel = 0                    // 0=silent, 1=rx/tx, 2=+exec
 let streamsEnabled = false
 let lastIRCode = -1                 // updated by IR decoder background thread
-let neopixelStrip: neopixel.Strip = null
 
 // ============================================================
 //  USB SERIAL LOGGING (silent by default — see v1 comments)
@@ -176,31 +176,16 @@ function buzz(hz: number, ms: number) {
 }
 
 // ============================================================
-//  NEOPIXELS — BLE-safe via Bohwaz's pxt-neopixel fork
+//  NEOPIXELS — STUB (see header comment)
 // ============================================================
-//  WHY a fork? The standalone Microsoft `neopixel` extension uses
-//  CPU spin-wait timing for the WS2812B 800 kHz protocol. BLE
-//  radio interrupts blow that timing → garbled colors AND BLE
-//  packet drops. The fork at github.com/Bohwaz/pxt-neopixel
-//  tweaks the timing windows so the writes survive being briefly
-//  preempted by the radio. Same `neopixel.Strip` API as the
-//  standard extension — drop-in.
-//
-//  After adding the fork, BOTH the bluetooth and neopixel exts
-//  can be active in the same project.
+//  WS2812B + bluetooth on micro:bit is a hardware-level conflict.
+//  MakeCode won't compile both extensions together; no community
+//  fork resolves it (verified). RGB:i,r,g,b is parsed and echoed
+//  but does not drive any strip. The browser app shows the user's
+//  intent on the screen mockup.
 // ============================================================
 function setNeoPixel(idx: number, r: number, g: number, b: number) {
-    if (!neopixelStrip) {
-        neopixelStrip = neopixel.create(DigitalPin.P15, 4, NeoPixelMode.RGB)
-    }
-    const color = neopixel.rgb(r, g, b)
-    if (idx < 0 || idx > 3) {
-        // 'all pixels' shortcut: caller passed i = -1 (or '*' parsed as -1)
-        for (let k = 0; k < 4; k++) neopixelStrip.setPixelColor(k, color)
-    } else {
-        neopixelStrip.setPixelColor(idx, color)
-    }
-    neopixelStrip.show()
+    execlog("RGB stub: pixel " + idx + " #" + r + "," + g + "," + b)
 }
 
 // ============================================================

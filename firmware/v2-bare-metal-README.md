@@ -27,7 +27,7 @@ Replies (`ECHO:n verb`, `DIST:cm`, `LINE:l,r`, `IR:code`, `INFO:CONNECTED`, `ERR
 
 ## What's BETTER in v2
 
-- **🌈 NeoPixels actually light up.** v1 ships with the standalone `neopixel` extension *commented out* because Microsoft's stock `neopixel` is incompatible with `bluetooth` (CPU spin-wait timing is blown apart by BLE radio interrupts). v2 pulls in **[Bohwaz/pxt-neopixel](https://github.com/Bohwaz/pxt-neopixel)** — a fork with timing tweaked to coexist with `bluetooth`. Drop-in API. `RGB:i,r,g,b` lights the real on-bot pearls without BLE drops.
+- **NeoPixels: still no real on-bot pixel output.** WS2812B + Bluetooth is a hardware-level conflict on micro:bit (NeoPixels need uninterruptible timing; BLE radio needs to interrupt). MakeCode refuses to compile both extensions in the same project. There is **no community fork** that solves this (I checked). Per [Microsoft's own docs](https://support.microbit.org/support/solutions/articles/19000068302-why-can-t-i-use-the-bluetooth-and-neopixel-packages-at-the-same-time-) and the [MakeCode forum](https://forum.makecode.com/t/video-possible-to-use-neopixel-rgb-with-bluetooth-microbit/11525), the only paths to real RGB output with BLE are: **(a)** swap WS2812B for standard RGB LEDs on PWM pins, or **(b)** add a separate MCU for the pixel strip. v2 parses `RGB:i,r,g,b` for protocol parity with v1 but doesn't drive a strip — same as v1.
 - **⚡ Motor latency.** v1's extension wraps each motor write in defensive sleeps (≈25 ms per `motorRun`). v2 issues both motor writes via direct I²C in ≈8 ms.
 - **🛡️ Hard safety stop on disconnect.** Both firmwares stop motors on BLE drop; v2 does it via direct I²C so it can't be blocked by the extension's queue.
 
@@ -52,12 +52,7 @@ I²C  motor driver TB6612FNG @ 0x10
 1. Open <https://makecode.microbit.org/>
 2. New Project → switch to **JavaScript** view
 3. Paste the contents of `v2-bare-metal.ts`
-4. Add extension: **`bluetooth`** (Settings → Extensions → search "bluetooth")
-5. Add extension: **Bohwaz's BLE-safe NeoPixel fork** — Settings → Extensions → paste this URL into the search box:
-   ```
-   https://github.com/Bohwaz/pxt-neopixel
-   ```
-   It exposes the standard `neopixel` API but with BLE-coexistence timing. (Fallback if Bohwaz's repo is unreachable: `https://github.com/openblockcc/pxt-neopixel-ble` — same idea.)
+4. Add extension: **`bluetooth`** (Settings → Extensions → search "bluetooth"). That's the only extension this firmware needs.
 6. **Edit Project Settings** (gear icon → Project Settings):
    - "No pairing required" = **on** (otherwise the browser pairing prompt asks for a 6-digit PIN)
    - "Connection Event events" = **on**
