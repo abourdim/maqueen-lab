@@ -6647,8 +6647,6 @@ body.mq-density-demo .mq-mode-dial {
   background: rgba(15,23,42,0.55);
   border-bottom: 1px solid rgba(56,189,248,0.12);
   padding: 4px 18px;
-  overflow: hidden !important;
-  max-height: 50px !important;
 }
 /* Card is NOT a grid child — make it the outer flex row
    so .connection-grid (fw + buttons) and #mqStackFlow sit side-by-side */
@@ -6739,7 +6737,7 @@ body.mq-density-demo .mq-mode-dial {
   height: 34px !important;
   width: 100% !important;
 }
-#mqConnectPanel #mqStackFlowParticles { opacity: 0 !important; }
+/* BLE particle animations are visible in the connect panel */
 
 /* Header proxy buttons: hide the disabled one — no JS timing needed.
    disabled = disconnected → hide Disconnect; connected → hide Connect */
