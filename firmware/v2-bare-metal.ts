@@ -45,8 +45,11 @@
  *
  * BUILD STAMP — edit before flashing:
  */
-const BUILD_VERSION = "0.2.0-bare"
-const BUILD_DATE = "2026-04-28 20:30 UTC"
+const BUILD_VERSION = "0.2.1-bare"
+const BUILD_DATE = "2026-04-29 06:00 UTC"
+// Capabilities advertised on FW? — comma-separated. Browser uses
+// this to pick code paths (e.g. firmware-side sweep vs browser-side).
+const BUILD_CAPS = "sweep,head,bat,cal,mem"
 
 // ============================================================
 //  STATE
@@ -157,6 +160,122 @@ function setServo(port: number, angle: number) {
     } else if (port === 2) {
         pins.servoWritePin(AnalogPin.P2, angle)
     }
+}
+
+// ============================================================
+//  AUTONOMOUS SWEEP — firmware-side smooth servo sweep.
+// ============================================================
+//  Browser sends ONE command:
+//      SWEEP:port,from,to,period_ms[,ease]
+//  Firmware runs a 50 Hz inner loop per active port, computes the
+//  angle locally with a smoothstep curve, drives the servo, and
+//  pushes "SWP:port,angle" back at ~20 Hz so the browser's visuals
+//  (radar, dial, slider) stay in sync.
+//
+//  Why: doing the motion control over BLE means each angle update
+//  fights radio latency + scheduler coalesce. The servo's PID
+//  ends up overshooting/correcting → visible micro-reversals
+//  ("small back, forward"). Local control = silky smooth.
+//
+//  ease codes:
+//      0 = linear
+//      1 = quintic smoothstep (default — slow ends, fast middle)
+//
+//  An 8% endpoint dwell is built into the cycle so kids see clear
+//  start/stop pauses at each end.
+// ============================================================
+class SweepState {
+    active: boolean = false
+    fromDeg: number = 0
+    toDeg: number = 180
+    periodMs: number = 2000
+    ease: number = 1
+    startMs: number = 0
+    lastEmitMs: number = 0
+    lastEmitAngle: number = -1
+}
+const sweep1 = new SweepState()
+const sweep2 = new SweepState()
+
+function getSweepState(port: number): SweepState {
+    return port === 1 ? sweep1 : sweep2
+}
+
+// Compute the sweep angle at cycle progress t∈[0..1].
+// Layout: 8% dwell at FROM · rise · 8% dwell at TO · fall · wrap.
+function sweepAngleAt(s: SweepState, t: number): number {
+    const D = 8                                  // 8 % dwell, integer math
+    // t scaled to 0..100 for integer-friendly compares
+    const tx = Math.idiv(t * 1000, 10)           // 0..100
+    if (tx < D)  return s.fromDeg                                   // dwell low
+    if (tx > 100 - D) return s.fromDeg                              // dwell low (wrap)
+    if (tx >= 50 - D && tx <= 50 + D) return s.toDeg                // dwell high
+    let u: number
+    if (tx < 50) u = (tx - D)        / (50 - 2 * D)                  // rise 0..1
+    else         u = (tx - (50 + D)) / (50 - 2 * D)                  // fall 0..1
+    if (u < 0) u = 0
+    if (u > 1) u = 1
+    let e: number
+    if (s.ease === 0) {
+        e = u                                    // linear
+    } else {
+        // Quintic smoothstep: 6u^5 − 15u^4 + 10u^3
+        e = u * u * u * (u * (u * 6 - 15) + 10)
+    }
+    if (tx < 50) {
+        // rising
+        return Math.round(s.fromDeg + (s.toDeg - s.fromDeg) * e)
+    } else {
+        // falling
+        return Math.round(s.toDeg - (s.toDeg - s.fromDeg) * e)
+    }
+}
+
+function sweepStop(port: number) {
+    const s = getSweepState(port)
+    s.active = false
+    s.lastEmitAngle = -1
+}
+
+function sweepStart(port: number, from: number, to: number, periodMs: number, ease: number) {
+    const s = getSweepState(port)
+    s.fromDeg = Math.constrain(from, 0, 180)
+    s.toDeg = Math.constrain(to, 0, 180)
+    s.periodMs = Math.max(300, Math.min(20000, periodMs))
+    s.ease = (ease === 0) ? 0 : 1
+    s.startMs = control.millis()
+    s.lastEmitMs = 0
+    s.lastEmitAngle = -1
+    s.active = true
+}
+
+// Background fiber: drives BOTH ports at 50 Hz (every 20 ms).
+// Pushes SWP:port,angle at most every 50 ms per port, only when the
+// integer angle has changed (dedup). One fiber, two ports — keeps
+// CPU budget tiny and timing identical between them.
+function startSweepFiber() {
+    control.inBackground(function () {
+        while (true) {
+            const now = control.millis()
+            for (let port = 1; port <= 2; port++) {
+                const s = getSweepState(port)
+                if (!s.active) continue
+                const elapsed = now - s.startMs
+                const t = (elapsed % s.periodMs) / s.periodMs
+                const angle = sweepAngleAt(s, t)
+                // Drive the actual servo every loop (20 ms granularity).
+                if (port === 1) pins.servoWritePin(AnalogPin.P1, angle)
+                else            pins.servoWritePin(AnalogPin.P2, angle)
+                // Push SWP: at most every 50 ms, and only on integer change.
+                if (angle !== s.lastEmitAngle && (now - s.lastEmitMs) >= 50) {
+                    if (btConnected) bluetooth.uartWriteLine("SWP:" + port + "," + angle)
+                    s.lastEmitAngle = angle
+                    s.lastEmitMs = now
+                }
+            }
+            basic.pause(20)
+        }
+    })
 }
 
 // ============================================================
@@ -357,8 +476,34 @@ function handleRGB(arg: string) {
 function handleServo(arg: string) {
     const v = splitInts(arg)
     if (v.length < 2) return
+    // Direct SRV: command implicitly cancels any in-progress sweep on
+    // this port — user grabbed the wheel. Mirrors the slider-drag UX
+    // from the browser.
+    sweepStop(v[0])
     setServo(v[0], v[1])
     execlog("SRV " + v[0] + "=" + v[1] + "°")
+}
+
+// SWEEP:port,from,to,period[,ease]   start sweep
+// SWEEP:port,STOP                    stop, hold last angle
+function handleSweep(arg: string) {
+    // Split first token (port) from the rest by comma.
+    const firstComma = arg.indexOf(",")
+    if (firstComma < 1) return
+    const port = parseInt(arg.substr(0, firstComma))
+    if (port !== 1 && port !== 2) return
+    const rest = arg.substr(firstComma + 1)
+    if (rest === "STOP") {
+        sweepStop(port)
+        execlog("SWEEP " + port + " STOP")
+        return
+    }
+    // rest = "from,to,period[,ease]"
+    const v = splitInts(rest)
+    if (v.length < 3) return
+    const ease = v.length >= 4 ? v[3] : 1
+    sweepStart(port, v[0], v[1], v[2], ease)
+    execlog("SWEEP " + port + " " + v[0] + "-" + v[1] + " in " + v[2] + "ms ease=" + ease)
 }
 function handleBuzz(arg: string) {
     const v = splitInts(arg)
@@ -442,6 +587,7 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () 
     else if (verb.substr(0, 4) == "LED:") handleLED(verb.substr(4))
     else if (verb.substr(0, 4) == "RGB:") handleRGB(verb.substr(4))
     else if (verb.substr(0, 4) == "SRV:") handleServo(verb.substr(4))
+    else if (verb.substr(0, 6) == "SWEEP:") handleSweep(verb.substr(6))
     else if (verb.substr(0, 5) == "BUZZ:") handleBuzz(verb.substr(5))
     else if (verb == "LINE?") handleLineQuery()
     else if (verb == "DIST?") handleDistQuery()
@@ -454,6 +600,7 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () 
     // ---- session control ----
     else if (verb.substr(0, 4) == "LOG:") handleLog(verb.substr(4))
     else if (verb == "HELLO") send("HELLO:" + BUILD_VERSION + " (bare-metal)")
+    else if (verb == "FW?")   send("FW:" + BUILD_VERSION + "," + BUILD_CAPS)
     else if (verb == "STREAM:on") { streamsEnabled = true; send("STREAM:on") }
     else if (verb == "STREAM:off") { streamsEnabled = false; send("STREAM:off") }
     else err(seq, "UNKNOWN_VERB")
@@ -465,6 +612,7 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () 
 bluetooth.startUartService()
 basic.showIcon(IconNames.Heart)         // ready, awaiting connection
 startIRBackgroundDecoder()
+startSweepFiber()                       // 50 Hz autonomous sweep loop
 
 // Compass calibration: NOT auto-triggered. The browser sends the
 // 'CAL!' verb when the user explicitly asks for it via the app

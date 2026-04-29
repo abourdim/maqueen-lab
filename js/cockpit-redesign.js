@@ -136,16 +136,13 @@
   // ---- init --------------------------------------------------
   function init() {
     addFloatingStop();
-    let tries = 0;
-    const id = setInterval(() => {
-      buildDensityChooser();
-      if (document.getElementById('mqDensityBtn') || ++tries > 30) {
-        clearInterval(id);
-        let saved = 'standard';
-        try { saved = localStorage.getItem(KEY_DENSITY) || 'standard'; } catch {}
-        applyDensity(saved);
-      }
-    }, 200);
+    // Density chooser used to live as a standalone chip in the header.
+    // It now lives inside the Settings (⚙) panel — see settings-panel.js.
+    // We just apply the saved density on boot here; buildDensityChooser
+    // is no-op because the chip element won't exist.
+    let saved = 'standard';
+    try { saved = localStorage.getItem(KEY_DENSITY) || 'standard'; } catch {}
+    applyDensity(saved);
   }
 
   window.mqDensity = { apply: applyDensity, current: () => {

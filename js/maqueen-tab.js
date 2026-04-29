@@ -1078,19 +1078,53 @@
     // the quick-buttons innerHTML — otherwise the BLE animate keeps firing
     // on a stale id while the user's click on the new (re-rendered) button
     // does nothing because the old per-button listener is gone with the DOM.
+    // Visual update — used by BOTH the local-mode animation tick AND
+    // the firmware-mode SWP: push handler. Single source of truth so
+    // dial/slider/readout/radar/mascot/scope/code all stay in sync.
+    function applyVisualAngle(port, a) {
+      rotateDial(port, a);
+      setBigReadout(port, a);
+      const slider = port === 1 ? s1 : s2;
+      const readout = port === 1 ? r1 : r2;
+      if (slider) slider.value = a;
+      if (readout) readout.textContent = a + '°';
+      lastShown = { port, angle: a };
+      updateServoScope(a);
+      renderCode();
+      try { if (port === 1) mqSweepRadar.recordAngle(a); } catch {}
+      try { if (port === 1) mqOdometry.recordAngle(a); } catch {}
+      try { if (port === 1) mqMascot.sonarServo(a); } catch {}
+    }
+
     function startSweep(port) {
       if (!window.bleScheduler) return;
       if (sweeping[port]) return;
       sweeping[port] = true;
-      // ===== TWO RATES =====
+      // === DISPATCH: firmware-side SWEEP: vs browser-side animation ===
+      // mqSweepMode owns the policy: 'auto' (default) picks firmware
+      // when the FW? capability list contains 'sweep', else falls back
+      // to browser. 'browser' / 'firmware' are user overrides.
+      const useFirmware = window.mqSweepMode && window.mqSweepMode.shouldUseFirmware();
+      if (useFirmware) {
+        // ONE COMMAND: micro:bit drives the servo at 50 Hz locally and
+        // pushes SWP:port,angle back at 20 Hz so visuals follow truth.
+        // ease=1 is smoothstep; the firmware's curve matches our local
+        // sweepAngle() so the kid sees identical motion across modes.
+        try {
+          window.bleScheduler.send(
+            `SWEEP:${port},${sweepFromDeg},${sweepToDeg},${sweepPeriodMs},1`
+          ).catch(() => {});
+        } catch {}
+        paintSweepButton(port);
+        return;
+      }
+      // ===== BROWSER MODE — local animation =====
       // Visual ticks fire at 30 Hz so the on-screen dial / readout /
       // radar update smoothly. BUT we only emit SRV: every ~85 ms
       // (≈12 Hz), matching the BLE SRV rate cap and the SG90 servo's
       // ~100 ms physical slew time. Sending faster than the servo can
       // mechanically reach the target causes its internal PID to
-      // overshoot, then reverse — visible as 'small back, forward'
-      // micro-jitter during a sweep cycle. Slower commands let each
-      // step blend into the next without contention.
+      // overshoot, then reverse — visible as 'small back, forward'.
       const VISUAL_HZ = 30;
       const SEND_INTERVAL_MS = 85;
       let lastSent = null;
@@ -1099,23 +1133,8 @@
         // Read sweepPeriodMs LIVE so slider adjusts speed mid-sweep.
         const cycleT = (t % sweepPeriodMs) / sweepPeriodMs;
         const a = Math.round(sweepAngle(cycleT));
-        // === VISUAL UPDATE (every tick, 30 Hz) ===
-        rotateDial(port, a);
-        setBigReadout(port, a);
-        const slider = port === 1 ? s1 : s2;
-        const readout = port === 1 ? r1 : r2;
-        if (slider) slider.value = a;
-        if (readout) readout.textContent = a + '°';
-        lastShown = { port, angle: a };
-        updateServoScope(a);
-        renderCode();
-        try { if (port === 1) mqSweepRadar.recordAngle(a); } catch {}
-        try { if (port === 1) mqOdometry.recordAngle(a); } catch {}
-        try { if (port === 1) mqMascot.sonarServo(a); } catch {}
+        applyVisualAngle(port, a);
         // === BLE SEND GATE ===
-        // Dedup: same integer? skip. Else: throttle so we don't out-pace
-        // the servo's mechanical response time. Returning null = skip
-        // tick without stopping the loop.
         if (a === lastSent) return null;
         if ((t - lastSendT) < SEND_INTERVAL_MS) return null;
         lastSent = a;
@@ -1125,16 +1144,30 @@
       paintSweepButton(port);
     }
     function stopSweep(port) {
-      if (!sweeping[port]) {
-        // Even if our state says "stopped", make sure the scheduler doesn't
-        // have a stale animation running (defensive — shouldn't happen).
-        if (window.bleScheduler) window.bleScheduler.stop(`servo-sweep-${port}`);
-        paintSweepButton(port);
-        return;
-      }
+      const wasFirmware = sweeping[port] === 'firmware';
       sweeping[port] = false;
+      // Browser-mode: stop the local animation loop.
       if (window.bleScheduler) window.bleScheduler.stop(`servo-sweep-${port}`);
+      // Firmware-mode: tell the micro:bit to stop its own sweep loop.
+      // Always send (defensive — even if we think we were in browser mode,
+      // the firmware might still be running a stale sweep from a previous
+      // session). Cheap idempotent verb.
+      try {
+        if (window.bleScheduler) {
+          window.bleScheduler.send(`SWEEP:${port},STOP`, { coalesce: true }).catch(() => {});
+        }
+      } catch {}
       paintSweepButton(port);
+    }
+
+    // Subscribe to SWP:port,angle pushes from firmware-mode sweep so the
+    // browser visuals (slider/dial/radar/mascot) follow the robot's truth.
+    // No-op if the firmware isn't pushing (browser mode never emits SWP).
+    if (window.mqSweepMode && window.mqSweepMode.onSWP) {
+      window.mqSweepMode.onSWP((port, angle) => {
+        if (port !== 1 && port !== 2) return;
+        applyVisualAngle(port, angle);
+      });
     }
     // Repaint the current sweep button's text from the canonical state.
     // Always queries the DOM live so it works after innerHTML rewrites.
