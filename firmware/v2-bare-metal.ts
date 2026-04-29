@@ -185,14 +185,26 @@ function setServo(port: number, angle: number) {
 //  start/stop pauses at each end.
 // ============================================================
 class SweepState {
-    active: boolean = false
-    fromDeg: number = 0
-    toDeg: number = 180
-    periodMs: number = 2000
-    ease: number = 1
-    startMs: number = 0
-    lastEmitMs: number = 0
-    lastEmitAngle: number = -1
+    active: boolean
+    fromDeg: number
+    toDeg: number
+    periodMs: number
+    ease: number
+    startMs: number
+    lastEmitMs: number
+    lastEmitAngle: number
+    // MakeCode TS subset doesn't accept inline class field initializers —
+    // it requires an explicit constructor. Same logic, just hoisted.
+    constructor() {
+        this.active = false
+        this.fromDeg = 0
+        this.toDeg = 180
+        this.periodMs = 2000
+        this.ease = 1
+        this.startMs = 0
+        this.lastEmitMs = 0
+        this.lastEmitAngle = -1
+    }
 }
 const sweep1 = new SweepState()
 const sweep2 = new SweepState()

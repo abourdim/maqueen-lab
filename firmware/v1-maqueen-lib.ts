@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.56"
-const BUILD_DATE = "2026-04-29 06:16 UTC"
+const BUILD_VERSION = "0.1.57"
+const BUILD_DATE = "2026-04-29 17:05 UTC"
 // Capabilities advertised on FW? verb. Comma-separated string the
 // browser uses to pick code paths (e.g. firmware-side sweep vs
 // browser-side). Same protocol as v2 bare-metal.
@@ -261,14 +261,26 @@ function handleServo(arg: string) {
 //  Pushes 'SWP:port,angle' at ~20 Hz so browser visuals follow.
 // ============================================================
 class SweepState {
-    active: boolean = false
-    fromDeg: number = 0
-    toDeg: number = 180
-    periodMs: number = 2000
-    ease: number = 1
-    startMs: number = 0
-    lastEmitMs: number = 0
-    lastEmitAngle: number = -1
+    active: boolean
+    fromDeg: number
+    toDeg: number
+    periodMs: number
+    ease: number
+    startMs: number
+    lastEmitMs: number
+    lastEmitAngle: number
+    // MakeCode TS subset doesn't accept inline class field initializers —
+    // it requires an explicit constructor. Same logic, just hoisted.
+    constructor() {
+        this.active = false
+        this.fromDeg = 0
+        this.toDeg = 180
+        this.periodMs = 2000
+        this.ease = 1
+        this.startMs = 0
+        this.lastEmitMs = 0
+        this.lastEmitAngle = -1
+    }
 }
 const sweep1 = new SweepState()
 const sweep2 = new SweepState()
