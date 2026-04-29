@@ -625,6 +625,10 @@ bluetooth.startUartService()
 basic.showIcon(IconNames.Heart)         // ready, awaiting connection
 startIRBackgroundDecoder()
 startSweepFiber()                       // 50 Hz autonomous sweep loop
+// Center both servos to 90° at boot so heads/arms start in a known
+// neutral pose rather than wherever the gear was last left.
+pins.servoWritePin(AnalogPin.P1, 90)
+pins.servoWritePin(AnalogPin.P2, 90)
 
 // Compass calibration: NOT auto-triggered. The browser sends the
 // 'CAL!' verb when the user explicitly asks for it via the app

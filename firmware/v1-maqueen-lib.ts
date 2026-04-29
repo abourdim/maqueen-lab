@@ -54,8 +54,8 @@
  *
  * BUILD STAMP — edit these two lines before flashing:
  */
-const BUILD_VERSION = "0.1.57"
-const BUILD_DATE = "2026-04-29 17:05 UTC"
+const BUILD_VERSION = "0.1.58"
+const BUILD_DATE = "2026-04-29 17:09 UTC"
 // Capabilities advertised on FW? verb. Comma-separated string the
 // browser uses to pick code paths (e.g. firmware-side sweep vs
 // browser-side). Same protocol as v2 bare-metal.
@@ -780,4 +780,8 @@ bluetooth.startUartService()
 basic.showIcon(IconNames.No)
 setupIR()
 startSweepFiber()                      // 50 Hz autonomous sweep loop
+// Center both servos to 90° at boot so heads/arms start in a known
+// neutral pose rather than wherever the gear was last left.
+maqueen.servoRun(maqueen.Servos.S1, 90)
+maqueen.servoRun(maqueen.Servos.S2, 90)
 bootBanner()
