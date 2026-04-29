@@ -18,6 +18,37 @@
 (function () {
   'use strict';
 
+  // Attach a drag handle on the left edge so the user can resize the drawer.
+  function addResizeHandle(drawer) {
+    const handle = document.createElement('div');
+    handle.className = 'mq-drawer-resize-handle';
+    handle.title = 'Drag to resize';
+    drawer.appendChild(handle);
+
+    let startX, startW;
+    handle.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      startX = e.clientX;
+      startW = drawer.offsetWidth;
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'ew-resize';
+
+      function onMove(e) {
+        const delta = startX - e.clientX;   // dragging left → wider
+        const newW = Math.max(280, Math.min(window.innerWidth * 0.9, startW + delta));
+        drawer.style.width = newW + 'px';
+      }
+      function onUp() {
+        document.body.style.userSelect = '';
+        document.body.style.cursor = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  }
+
   function buildDrawer(id, title, accent, contentNode) {
     if (!contentNode || document.getElementById(id)) return null;
     const drawer = document.createElement('aside');
@@ -34,6 +65,7 @@
     drawer.querySelector('.mq-drawer-body').appendChild(contentNode);
     document.body.appendChild(drawer);
     drawer.querySelector('.mq-drawer-close').addEventListener('click', () => closeDrawer(drawer));
+    addResizeHandle(drawer);
     return drawer;
   }
 

@@ -5327,6 +5327,7 @@ body.rail-collapsed .log-rail-collapse-btn {
 .mq-drawer {
   position: fixed; top: 0; right: 0;
   width: 420px; max-width: 95vw; height: 100vh;
+  min-width: 280px;
   z-index: 9995;
   background: linear-gradient(180deg, var(--card-bg, #0f1f3d), var(--bg, #0a0e2e));
   border-left: 2px solid var(--drawer-accent, #38bdf8);
@@ -5335,6 +5336,7 @@ body.rail-collapsed .log-rail-collapse-btn {
   transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
   display: flex; flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  overflow: hidden;   /* keeps body scroll clean; handle is inside */
 }
 .mq-drawer.mq-drawer-open { transform: translateX(0); }
 .mq-drawer-header {
@@ -5365,9 +5367,24 @@ body.rail-collapsed .log-rail-collapse-btn {
 .mq-drawer-body {
   padding: 16px 18px;
   overflow-y: auto;
+  overflow-x: hidden;   /* no x-clip artifacts; resize handle owns width */
   flex: 1;
   font-size: 14px;
   color: var(--text, #e6eef9);
+}
+/* Drag handle — 6px strip on the left edge */
+.mq-drawer-resize-handle {
+  position: absolute;
+  top: 0; left: 0;
+  width: 6px; height: 100%;
+  cursor: ew-resize;
+  z-index: 10;
+  background: transparent;
+  transition: background 0.15s;
+}
+.mq-drawer-resize-handle:hover,
+.mq-drawer-resize-handle:active {
+  background: rgba(56,189,248,0.18);
 }
 /* Header icon buttons (⚙ Settings + 📖 Help) — small, opacity 0.7,
    hover full opacity. Matches the Connect/Disconnect button pair

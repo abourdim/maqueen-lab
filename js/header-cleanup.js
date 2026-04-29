@@ -112,12 +112,12 @@
           <span style="font-size:16px;">🎨</span>
           <span style="font-weight:700; color:#38bdf8; letter-spacing:0.05em; text-transform:uppercase; font-size:12px;">Appearance</span>
         </div>
-        <div style="display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap;">
-          <div style="flex:1; min-width:140px;">
+        <div style="display:flex; align-items:flex-start; gap:0; flex-wrap:nowrap; overflow:hidden;">
+          <div style="flex:1; min-width:0; padding-right:14px;">
             <div style="font-size:10px; font-weight:600; color:rgba(148,163,184,0.6); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px;">Theme</div>
             <div id="settingsThemeMount" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
           </div>
-          <div style="flex:0; min-width:80px;">
+          <div style="flex:0 0 auto; padding-left:14px; border-left:1px solid rgba(148,163,184,0.18);">
             <div style="font-size:10px; font-weight:600; color:rgba(148,163,184,0.6); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px;">Language</div>
             <div id="settingsLangMount" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
           </div>
