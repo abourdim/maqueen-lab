@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maqueen-App — Build Plan</title>
+<style>
+  :root {
+    --bg: #0a1628;
+    --bg-elev: #0f1e35;
+    --bg-card: #122844;
+    --border: #1d3556;
+    --text: #e6eef9;
+    --text-dim: #93a8c4;
+    --accent: #00d4ff;
+    --accent-glow: #00d4ff66;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  body {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+  h1 {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+    background: linear-gradient(135deg, #fff, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 16px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+  .meta {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 4px 16px;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  .meta dt { color: var(--text-dim); }
+  .meta dd { margin: 0; font-family: var(--mono); font-size: 13px; }
+  h2 {
+    font-size: 24px;
+    margin-top: 56px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+  h3 {
+    font-size: 18px;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    color: var(--accent);
+  }
+  h4 {
+    font-size: 16px;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  p { margin: 12px 0; }
+  ul, ol { margin: 12px 0; padding-left: 24px; }
+  li { margin: 6px 0; }
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--bg-elev);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+  pre {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--text);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg-elev);
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0, 212, 255, 0.04); }
+  td code { font-size: 12px; }
+  strong { color: #fff; }
+  blockquote {
+    border-left: 3px solid var(--amber);
+    background: rgba(251, 191, 36, 0.06);
+    padding: 12px 18px;
+    margin: 16px 0;
+    border-radius: 0 6px 6px 0;
+    color: var(--text-dim);
+  }
+  .phase {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 16px 0;
+  }
+  .phase h3 {
+    margin-top: 0;
+    color: var(--accent);
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 6px;
+  }
+  .badge.keep { background: rgba(74, 222, 128, 0.15); color: var(--green); border: 1px solid rgba(74, 222, 128, 0.3); }
+  .badge.replace { background: rgba(251, 191, 36, 0.15); color: var(--amber); border: 1px solid rgba(251, 191, 36, 0.3); }
+  .badge.remove { background: rgba(248, 113, 113, 0.15); color: var(--red); border: 1px solid rgba(248, 113, 113, 0.3); }
+  .badge.review { background: rgba(0, 212, 255, 0.15); color: var(--accent); border: 1px solid rgba(0, 212, 255, 0.3); }
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 28px;
+    margin-bottom: 40px;
+  }
+  .toc h3 { margin-top: 0; color: var(--text); border: none; }
+  .toc ol { padding-left: 22px; }
+  .toc a {
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .toc a:hover { color: var(--accent); }
+  .ascii {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: pre;
+    color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<h1>Maqueen-App — Build Plan</h1>
+<div class="subtitle">Forking bit-playground into a component lab for Maqueen Lite v4 + Mechanic Kits</div>
+
+<dl class="meta">
+  <dt>Target repo</dt><dd>https://github.com/abourdim/maqueen-lab</dd>
+  <dt>Local path</dt><dd>D:\work\dev\16_workshop\102_etsy\maqueen-lab\</dd>
+  <dt>Strategy</dt><dd>Fork bit-playground → strip → rebuild for Maqueen Lite v4</dd>
+</dl>
+
+<div class="toc">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#vision">Vision</a></li>
+    <li><a href="#hardware">Hardware reference — Maqueen Lite v4</a></li>
+    <li><a href="#arch">Architecture decisions</a></li>
+    <li><a href="#explorer">Component Explorer pattern</a></li>
+    <li><a href="#components">Per-component Explorer specs</a></li>
+    <li><a href="#kits">Mechanic kits</a></li>
+    <li><a href="#telemetry">Telemetry overlay</a></li>
+    <li><a href="#addons">Add-on framework</a></li>
+    <li><a href="#identity">Visual identity</a></li>
+    <li><a href="#fork">File-by-file fork strategy</a></li>
+    <li><a href="#phases">Phases &amp; sign-off gates</a></li>
+    <li><a href="#open">Open decisions</a></li>
+  </ol>
+</div>
+
+<h2 id="vision">1. Vision</h2>
+<p>Not a "robot remote" — a <strong>component lab</strong>. Every actuator and sensor on the Maqueen Lite gets a dedicated <strong>Explorer</strong> page where kids can:</p>
+<ul>
+  <li>See the component visualized photorealistically.</li>
+  <li>Manipulate it via sliders, buttons, color pickers.</li>
+  <li>Read live the code that drives it (TypeScript using <code>maqueen.*</code> lib first, raw <code>pins.*</code> later).</li>
+  <li>Run guided micro-challenges ("Make the arm wave", "Find the center").</li>
+  <li>Watch sensor data react to commands on a shared telemetry graph.</li>
+</ul>
+<p>All control flows over BLE UART. Every command is echo-confirmed.</p>
+
+<h2 id="hardware">2. Hardware reference — Maqueen Lite v4</h2>
+
+<h3>Pin map</h3>
+<table>
+  <tr><th>Pin</th><th>Used by</th><th>Direction</th><th>Notes</th></tr>
+  <tr><td><strong>P0</strong></td><td>Buzzer</td><td>Out (PWM)</td><td>Default <code>music</code> pin; also Gravity port</td></tr>
+  <tr><td><strong>P1</strong></td><td>Ultrasonic TRIG</td><td>Out</td><td>Also Gravity port — conflict if reassigned</td></tr>
+  <tr><td><strong>P2</strong></td><td>Ultrasonic ECHO</td><td>In</td><td>Also Gravity port — conflict if reassigned</td></tr>
+  <tr><td>P3, P4, P6, P7, P9, P10</td><td>LED matrix cols</td><td>—</td><td>Free if display disabled</td></tr>
+  <tr><td>P5</td><td>Button A</td><td>In</td><td>micro:bit built-in</td></tr>
+  <tr><td><strong>P8</strong></td><td>LED Left (simple)</td><td>Out</td><td>Digital ON/OFF</td></tr>
+  <tr><td>P11</td><td>Button B</td><td>In</td><td>micro:bit built-in</td></tr>
+  <tr><td><strong>P12</strong></td><td>LED Right (simple)</td><td>Out</td><td>Digital ON/OFF</td></tr>
+  <tr><td><strong>P13</strong></td><td>Line sensor Left</td><td>In</td><td>Digital 0/1</td></tr>
+  <tr><td><strong>P14</strong></td><td>Line sensor Right</td><td>In</td><td>Digital 0/1</td></tr>
+  <tr><td>P15, P16</td><td>—</td><td>free</td><td>—</td></tr>
+  <tr><td><strong>P19</strong></td><td>I2C SCL</td><td>—</td><td>Motor + RGB + Servos (addr <strong>0x10</strong>)</td></tr>
+  <tr><td><strong>P20</strong></td><td>I2C SDA</td><td>—</td><td>Same I2C bus</td></tr>
+</table>
+
+<h3>I2C 0x10 register map (motor driver chip)</h3>
+<table>
+  <tr><th>Register</th><th>Function</th></tr>
+  <tr><td><code>0x00</code></td><td>Motor M1 (left): direction + speed</td></tr>
+  <tr><td><code>0x02</code></td><td>Motor M2 (right): direction + speed</td></tr>
+  <tr><td><code>0x14</code></td><td>Servo S1 angle</td></tr>
+  <tr><td><code>0x15</code></td><td>Servo S2 angle</td></tr>
+  <tr><td><code>0x32</code></td><td>4× RGB LED data (16M colors each)</td></tr>
+</table>
+
+<h3>Free for kid add-ons</h3>
+<p>P3, P4, P6, P7, P9, P10, P15, P16 (P3/4/6/7/9/10 share LED display — disable display first).</p>
+
+<h3>Hardware components</h3>
+<ul>
+  <li>2× N20 motors (I2C-driven)</li>
+  <li>4× RGB ambient LEDs (I2C reg 0x32)</li>
+  <li>2× simple LEDs (P8, P12)</li>
+  <li>2× IR digital line sensors (P13, P14)</li>
+  <li>1× SR04 ultrasonic (P1 trig, P2 echo)</li>
+  <li>1× IR receiver (NEC, internal pin)</li>
+  <li>1× buzzer (P0)</li>
+  <li>2× servo ports S1, S2 (I2C 0x14, 0x15)</li>
+  <li>3× Gravity extension ports (P0, P1, P2 — all conflict-prone)</li>
+  <li>I2C bus (P19/P20) for add-ons</li>
+</ul>
+
+<h2 id="arch">3. Architecture decisions</h2>
+
+<h3>3.1 BLE protocol — sequence + echo confirmation</h3>
+<p>Every command carries a sequence number. Micro:bit echoes it. Web app validates round-trip.</p>
+<pre><code>Web → bit:   #42 SRV:1,90
+bit → Web:   ECHO:42 SRV:1,90
+bit → Web:   DONE:42                (optional, for slow ops)</code></pre>
+
+<p><strong>Web side (<code>js/ble-scheduler.js</code>):</strong></p>
+<ul>
+  <li><code>pendingCmds: Map&lt;seq, {verb, ts, resolve, reject}&gt;</code></li>
+  <li>500 ms timeout → reject + UI red flash + console log</li>
+  <li>Bench panel: sent / echoed / lost / avg latency</li>
+  <li>Animation streams: coalesce <em>before</em> assigning seq</li>
+</ul>
+
+<p><strong>UI per command (in code panel):</strong></p>
+<pre><code>ble.send('SRV:1,90')   ✅ 47ms
+ble.send('SRV:1,95')   ⏳
+ble.send('SRV:1,100')  ❌ timeout</code></pre>
+
+<h3>3.2 USB serial dual logging</h3>
+<p>Firmware mirrors everything to USB serial at 115200 baud:</p>
+<pre><code>[boot] MaqueenApp firmware v0.1.0 built 2026-04-26 01:23 UTC
+[boot] hardware: Maqueen Lite v4
+[boot] BLE name: BBC micro:bit [vagiv]
+[ble]  connected
+[rx]   #42 SRV:1,90
+[exec] maqueen.servoRun(S1, 90)
+[tx]   ECHO:42 SRV:1,90</code></pre>
+<p><strong>Verbosity</strong> via BLE: <code>LOG:0</code> (silent), <code>LOG:1</code> (rx/tx), <code>LOG:2</code> (+exec), <code>LOG:3</code> (+sensor polls).</p>
+
+<h3>3.3 Build banner</h3>
+<p><code>BUILD_VERSION</code> and <code>BUILD_DATE</code> are two <code>const</code> lines at top of firmware. Edit manually before each flash. Banner prints at boot.</p>
+
+<h3>3.4 Web-driven animations</h3>
+<p>Micro:bit firmware is <strong>dumb</strong>: no on-board loops. All animations (sweep, blink, rainbow) generated by the web app sending streamed commands.</p>
+<p><strong>BLE throughput cap:</strong> ~8 cmd/sec reliably. Scheduler:</p>
+<ul>
+  <li>Coalesces fast slider drags to latest value.</li>
+  <li>Rate-limits per characteristic.</li>
+  <li>Animation registry: <code>scheduler.animate(verb, frame → value, fps)</code> synced to BLE rate, not 60 Hz.</li>
+</ul>
+<p><strong>Visual stays at 60 fps locally</strong> — the kid never feels lag, even when BLE confirms slower.</p>
+
+<h3>3.5 Two firmware tracks (educational progression)</h3>
+<pre><code>firmware/
+├── v1-maqueen-lib.ts        ← uses maqueen.*  (default, ships v0.1.0)
+└── v2-raw-pins.ts           ← uses pins.*    (advanced, ships later)</code></pre>
+<p>Same UART verbs in both → same web app works with either. Code panel shows both translations side-by-side per action.</p>
+
+<h2 id="explorer">4. Component Explorer pattern</h2>
+<p>Every component uses the same layout:</p>
+<pre class="ascii">┌─────────────────────────────────────┐
+│  Visual (live, animated, 60fps)     │  ~40%
+├─────────────────────────────────────┤
+│  Controls (sliders, buttons)        │  ~30%
+├─────────────────────────────────────┤
+│  Live code (TS using maqueen lib) 📋│  ~20%
+├─────────────────────────────────────┤
+│  Try this: [Preset A] [B] [C]       │  ~10%
+└─────────────────────────────────────┘</pre>
+<p><strong>First contact</strong>: 2-second auto-demo plays the first time each Explorer opens.</p>
+<p><strong>Code panel</strong> shows two versions side-by-side: <code>maqueen.*</code> (lib) and <code>pins.*</code> (raw). Kids see the abstraction, then the mechanism.</p>
+<p><strong>"Highlight what changed"</strong>: when a slider moves, the line of code that changed flashes.</p>
+
+<h2 id="components">5. Per-component Explorer specs</h2>
+
+<h3>Servo (pilot — built first)</h3>
+<ul>
+  <li><strong>Visual</strong>: top-down SVG of Tower-Pro-style servo. Horn rotates live with slider. Ghost arm shows target angle. 0–180° angular ruler. Drag calibration limit pins on the ruler. Sweep mode = motion blur trail. Subtle gear-tick sound.</li>
+  <li><strong>Controls</strong>: angle 0–180, presets (0/45/90/135/180), Sweep mode + speed, Smooth-move steps/ms.</li>
+  <li><strong>Calibration</strong>: find center, set user min/max, save per-port (S1/S2) to localStorage, keyed by BLE device ID.</li>
+  <li><strong>Verb</strong>: <code>SRV:i,a</code> (i ∈ 1,2; a ∈ 0..180).</li>
+</ul>
+
+<h3>Simple LED</h3>
+<ul>
+  <li><strong>Visual</strong>: photorealistic 5mm LED dome. OFF = dim glass. ON = warm-up ramp + bloom corona + photon particles.</li>
+  <li><strong>Controls</strong>: ON/OFF toggle, blink Hz, pulse, fade pattern.</li>
+  <li><strong>Inset</strong>: mini Maqueen board showing which LED is lit.</li>
+  <li><strong>Verb</strong>: <code>LED:i,s</code> (i ∈ 0,1; s ∈ 0,1).</li>
+</ul>
+
+<h3>RGB (4 px)</h3>
+<ul>
+  <li><strong>Visual</strong>: top-down render of Maqueen board with 4 NeoPixels in real positions. Click any pixel → custom HSV wheel. Brightness drives bloom radius.</li>
+  <li><strong>Controls</strong>: per-pixel color, all-same toggle, brightness, animations (rainbow / chase / breathe / fade) with speed.</li>
+  <li><strong>Verb</strong>: <code>RGB:i,r,g,b</code> (i ∈ 0..3 or <code>*</code> for all).</li>
+</ul>
+
+<h3>Motor</h3>
+<ul>
+  <li><strong>Visual</strong>: robot top-down with wheel SVGs. Spokes spin at rate ∝ speed. Reverse = spin reverses. Motion lines for high speeds.</li>
+  <li><strong>Controls</strong>: speed −255..+255, direction, brake, ramp speed.</li>
+  <li><strong>Calibration</strong>: per-wheel trim (offset to drive straight), saved.</li>
+  <li><strong>Verb</strong>: <code>M:L,R</code> (signed −255..255 each).</li>
+</ul>
+
+<h3>Buzzer</h3>
+<ul>
+  <li><strong>Visual</strong>: speaker SVG with concentric sound waves (radius = volume, hue = freq). Piano keyboard along bottom. Web Audio plays the same tone in browser.</li>
+  <li><strong>Controls</strong>: frequency, duration, preset notes, melody picker.</li>
+  <li><strong>Verb</strong>: <code>BUZZ:f,ms</code>.</li>
+</ul>
+
+<h3>Ultrasonic</h3>
+<ul>
+  <li><strong>Visual</strong>: sonar sweep arc from front of robot. Distance dot pinned on arc. Polar grid (10–100 cm). Trail of last 50 readings as fading dots. Configurable green/yellow/red threshold bands. Chunky readout.</li>
+  <li><strong>Controls</strong>: polling rate, manual ping button, threshold zones.</li>
+  <li><strong>Calibration</strong>: zero offset.</li>
+  <li><strong>Verb</strong>: <code>DIST?</code> → <code>DIST:cm</code>.</li>
+</ul>
+
+<h3>Line sensors</h3>
+<ul>
+  <li><strong>Visual</strong>: robot bottom view with 2 "eyes." Below: draggable black tape strip kid can move under the eyes; real readings overlay simulation.</li>
+  <li><strong>Controls</strong>: polling rate, transition log.</li>
+  <li><strong>Verb</strong>: <code>LINE?</code> → <code>LINE:l,r</code>.</li>
+</ul>
+
+<h3>IR remote</h3>
+<ul>
+  <li><strong>Visual</strong>: photo-realistic SVG remote. Last-pressed key flashes + glows.</li>
+  <li><strong>Controls</strong>: raw-code mode / named-key mode. Learning mode: kid presses physical key, names it, app maps the code.</li>
+  <li><strong>Verb</strong>: push event <code>IR:code</code> (or poll <code>IR?</code>).</li>
+</ul>
+
+<h3>Drive Explorer (composite — uses motors + accel telemetry)</h3>
+<ul>
+  <li><strong>Visual</strong>: joystick + STOP button + ghost-robot canvas (dead-reckoning trail).</li>
+  <li><strong>Telemetry</strong>: live 3-axis accel graph with vertical command markers on the timeline.</li>
+  <li><strong>Verb</strong>: <code>M:L,R</code> + auto stream <code>ACC:x,y,z</code> ~20 Hz.</li>
+</ul>
+
+<h2 id="kits">6. Mechanic kits (Phase 4 add)</h2>
+<p>Top-level <strong>Kit picker</strong> (Base / Forklift / Loader / Beetle / Push). Persists in localStorage. Adapts the Servos tab UI per kit.</p>
+<table>
+  <tr><th>Kit</th><th>ID</th><th>Servos used</th><th>Replacement tab</th></tr>
+  <tr><td>Base</td><td>ROB0148</td><td>Generic S1/S2 sliders</td><td>Generic Servos</td></tr>
+  <tr><td>Forklift</td><td>ROB0156-F</td><td>S1=lift, S2=mast tilt?</td><td><strong>Fork</strong>: lift up/down, mast tilt</td></tr>
+  <tr><td>Loader</td><td>ROB0156-L</td><td>S1=arm raise, S2=bucket dump</td><td><strong>Bucket</strong>: raise / dump</td></tr>
+  <tr><td>Beetle</td><td>ROB0156-B</td><td>S1=arm height, S2=gripper</td><td><strong>Gripper</strong>: open/close, arm up/down</td></tr>
+  <tr><td>Push</td><td>ROB0156-P</td><td>S1=blade raise/lower</td><td><strong>Blade</strong>: raise/lower</td></tr>
+</table>
+<p>Each kit tab has named presets ("Pickup", "Carry", "Drop") not raw angles.</p>
+<p>In-app <strong>Help panel</strong> per kit: photo + link to official DFRobot PDF (linked, not bundled).</p>
+<p>Servo-to-mechanism mapping confirmed against the kit PDFs before coding presets.</p>
+
+<h2 id="telemetry">7. Telemetry overlay</h2>
+<p>In Drive Explorer, bottom panel = live 3-axis accel graph with command markers.</p>
+<pre class="ascii">Acceleration (g)
+  X ━━━━━╱╲━━━━━━╱╲╲━━━━     ← forward, then turn
+  Y ━━━━━━━━━━━╱──╲━━━━━     ← lateral on turn
+  Z ━━━━━━━━━━━━━━━━━━━━     ← gravity baseline
+        ↑           ↑
+   [▶ FWD 200]  [↻ L 150]    ← command markers on timeline</pre>
+<p><strong>Features:</strong></p>
+<ul>
+  <li>Auto-scroll timeline (10 s window, two-finger drag for history).</li>
+  <li>Hover any point → tooltip with g-value + nearest command.</li>
+  <li>Click a marker → highlights the curve segment after it.</li>
+  <li>Pause / play / snapshot (PNG export) / compare-runs.</li>
+</ul>
+<p><strong>Reusable across explorers</strong> via <code>js/telemetry.js</code>:</p>
+<ul>
+  <li>Servo: commanded angle vs time + accel if on moving arm.</li>
+  <li>Motor: command + accel + (later) wheel encoders.</li>
+  <li>Buzzer: actual mic-captured waveform.</li>
+  <li>Ultrasonic: distance vs time + manual-ping markers.</li>
+</ul>
+
+<h2 id="addons">8. Add-on framework (stubbed in v0.1.0)</h2>
+<p>Reserve the verb namespace now so v0.2.0+ doesn't break the protocol:</p>
+<pre><code>ADDON:LIST                       → ADDON:none|&lt;name&gt;,&lt;port&gt;|...
+ADDON:READ:&lt;port&gt;                → ADDON:&lt;port&gt;:&lt;value&gt;
+I2C:SCAN                         → I2C:0x10,0x3C,0x76,...
+I2C:READ:&lt;addr&gt;:&lt;reg&gt;:&lt;n&gt;        → I2C:&lt;addr&gt;:&lt;reg&gt;:&lt;bytes&gt;
+I2C:WRITE:&lt;addr&gt;:&lt;reg&gt;:&lt;bytes&gt;   → ECHO</code></pre>
+<p>Firmware ships with these verbs <strong>stubbed</strong> (return <code>none</code> / empty). Adding real Gravity/I2C add-ons later = drop-in <code>js/addons/&lt;name&gt;.js</code> files, no protocol bump.</p>
+
+<h2 id="identity">9. Visual identity</h2>
+<ul>
+  <li><strong>Background</strong>: deep navy <code>#0a1628</code></li>
+  <li><strong>Accent</strong>: electric cyan <code>#00d4ff</code></li>
+  <li><strong>Status</strong>: green/amber/red with neon-glow variants</li>
+  <li><strong>Typography</strong>: rounded sans (Inter / system) for UI, JetBrains Mono for code, chunky display for readings</li>
+  <li><strong>Mode</strong>: dark-first; light toggle</li>
+  <li><strong>Animation</strong>: spring-physics, never linear</li>
+  <li><strong>Sound</strong>: off by default, "🔊 enable" prompt</li>
+  <li><strong>Microinteractions</strong>: hover scale 1.02, active 0.98, focus ring with glow</li>
+  <li><strong>Haptic</strong>: vibration API on mobile slider snaps + button hits</li>
+</ul>
+
+<h3>Polish layer (build once, reuse everywhere)</h3>
+<ul>
+  <li>Shared Maqueen board SVG (used as base in every Explorer).</li>
+  <li>Particle system (~50 lines).</li>
+  <li>Bloom CSS filter preset.</li>
+  <li>Spring-physics util.</li>
+  <li>Configurable gauge widget (arc / ticks / needle).</li>
+  <li>Sound kit (Web Audio synth, no audio files).</li>
+</ul>
+
+<h3>Stack discipline</h3>
+<ul>
+  <li>SVG + CSS only — no 3D engine.</li>
+  <li>Web Animations API native — no animation library.</li>
+  <li>Vanilla JS — no framework, keeps bit-playground's lightweight feel.</li>
+</ul>
+
+<h2 id="fork">10. File-by-file fork strategy</h2>
+
+<h3><span class="badge keep">Keep</span> from bit-playground</h3>
+<table>
+  <tr><th>File / dir</th><th>Why</th></tr>
+  <tr><td><code>js/ble.js</code></td><td>UART layer — extend with seq/echo</td></tr>
+  <tr><td><code>js/core.js</code></td><td>App bootstrap, state, routing</td></tr>
+  <tr><td><code>js/lang.js</code> + <code>_locales/</code></td><td>EN/AR/FR engine</td></tr>
+  <tr><td><code>js/graph.js</code></td><td>Sensor graph engine</td></tr>
+  <tr><td><code>js/board3d.js</code></td><td>3D micro:bit renderer</td></tr>
+  <tr><td><code>js/models/microbit.js</code></td><td>The micro:bit itself</td></tr>
+  <tr><td><code>index.html</code>, <code>manifest.json</code>, <code>sw.js</code></td><td>Shell + PWA</td></tr>
+  <tr><td><code>tests.html</code></td><td>Test harness</td></tr>
+  <tr><td><code>LICENSE</code>, <code>SETUP.md</code>, <code>CHANGELOG.md</code></td><td>Docs</td></tr>
+</table>
+
+<h3><span class="badge replace">Replace</span> (same role, Maqueen content)</h3>
+<table>
+  <tr><th>File</th><th>Replace with</th></tr>
+  <tr><td><code>makecode.ts</code></td><td>Maqueen firmware (verbs over UART using <code>maqueen.*</code> lib)</td></tr>
+  <tr><td><code>js/sensors.js</code></td><td>Maqueen sensors (ultrasonic, line L/R, IR, accel)</td></tr>
+  <tr><td><code>js/servos.js</code></td><td>Maqueen S1/S2 + kit modes</td></tr>
+  <tr><td><code>js/controls.js</code></td><td>Drive joystick + motors + RGB + simple LEDs + buzzer</td></tr>
+  <tr><td><code>js/others.js</code></td><td>Trim to generic utilities</td></tr>
+  <tr><td><code>README.md</code></td><td>Maqueen-app README</td></tr>
+  <tr><td>Branded assets</td><td>Maqueen brand</td></tr>
+</table>
+
+<h3><span class="badge remove">Remove</span></h3>
+<table>
+  <tr><th>File / dir</th><th>Reason</th></tr>
+  <tr><td><code>js/models/arm.js</code></td><td>Not Maqueen</td></tr>
+  <tr><td><code>js/models/balance.js</code></td><td>Not Maqueen</td></tr>
+  <tr><td><code>js/models/buggy.js</code></td><td>Replace with Maqueen Lite 3D later</td></tr>
+  <tr><td><code>js/models/weather.js</code></td><td>Not Maqueen</td></tr>
+  <tr><td><code>etsy-package/</code></td><td>Regenerated per repo via <code>etsy-package-template</code></td></tr>
+  <tr><td>Servo gauge overlay (v0.7.177)</td><td>Redundant with Servo Explorer</td></tr>
+  <tr><td>bit-playground branding</td><td>—</td></tr>
+</table>
+
+<h3><span class="badge review">Review</span> (decide per-file when reached)</h3>
+<ul>
+  <li>Onboarding wizard / mode picker / templates picker — likely <strong>keep &amp; retheme</strong>.</li>
+  <li>Watermark (WDIY draggable) — keep workshop brand or swap.</li>
+  <li>Sound-in-sensor-graph (v0.7.177) — <strong>keep</strong>, applies to accel/ultrasonic.</li>
+  <li>BLE dual prefix (<code>BBC micro:bit</code> + <code>uBit</code>) — <strong>keep</strong>.</li>
+  <li>Console tab — <strong>keep</strong>, essential for echo-confirmed protocol debugging.</li>
+</ul>
+
+<p><strong>Net</strong>: ~75% bit-playground bones, ~25% Maqueen-specific code.</p>
+
+<h2 id="phases">11. Phases &amp; sign-off gates</h2>
+
+<div class="phase">
+  <h3>Phase 0 — Reset target dir</h3>
+  <ul>
+    <li>Delete <code>tobedeleted</code> placeholder. Keep <code>.git</code> (already wired to <code>github.com/abourdim/maqueen-lab</code>).</li>
+    <li>Verify <code>git remote -v</code>.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 1 — Fork bit-playground</h3>
+  <ul>
+    <li>Copy bit-playground source (latest <code>main</code>) into working tree, excluding <code>etsy-package/</code> and bit-playground assets.</li>
+    <li>Single commit: <code>init: fork from bit-playground vX.Y.Z</code>.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 2 — Strip</h3>
+  <ul>
+    <li>Remove non-Maqueen 3D models, redundant tabs, branded assets.</li>
+    <li>Strip bit-playground branding from <code>index.html</code>, <code>manifest.json</code>, <code>lang/*.json</code>, <code>README.md</code>.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 3 — Firmware (Maqueen Lite v4)</h3>
+  <ul>
+    <li><code>firmware/v1-maqueen-lib.ts</code> — verbs over BLE UART using <code>maqueen.*</code> lib.</li>
+    <li>USB serial mirror + boot banner + log verbosity verb.</li>
+    <li>Echo + sequence + DONE protocol.</li>
+    <li>Add-on framework verbs stubbed.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 3.5 — BLE scheduler</h3>
+  <ul>
+    <li><code>js/ble-scheduler.js</code>: seq, echo validation, timeout, coalesce, rate-limit, animation registry, bench meter.</li>
+    <li>Refactor existing <code>js/ble.js</code> to expose primitives the scheduler builds on.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 4 — Component Explorers</h3>
+  <ul>
+    <li>Build <strong>Servo Explorer</strong> as gold-standard pilot.</li>
+    <li>Then clone the pattern: LED, RGB, Motor, Buzzer, Ultrasonic, Line, IR, Drive.</li>
+    <li>Telemetry overlay (<code>js/telemetry.js</code>) wired into Drive + reusable hooks.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 4.5 — Kit picker</h3>
+  <ul>
+    <li>Top-level Kit selector. Per-kit Servos tab variants (Forklift / Loader / Beetle / Push).</li>
+    <li>Per-kit help panel with link to official DFRobot PDF.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 5 — User Guide</h3>
+  <ul>
+    <li><code>docs/USER_GUIDE.md</code> (trilingual EN/AR/FR): hardware overview, full pinout, I2C register map, conflict warnings, per-Explorer walkthrough, BLE UART protocol spec, firmware install, troubleshooting.</li>
+    <li>Mirror short pinout into <code>README.md</code> and <code>CHANGELOG.md</code> v0.1.0.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 6 — Branding &amp; i18n</h3>
+  <ul>
+    <li>App name + logo + color theme.</li>
+    <li>EN/AR/FR strings for every new tab + verb description.</li>
+    <li><code>manifest.json</code>, favicon, OG image placeholder.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 7 — Tests</h3>
+  <ul>
+    <li>Port bit-playground's <code>tests.html</code>.</li>
+    <li>Add tests: each verb's send/echo round-trip, joystick → motor mapping math, RGB I2C packet builder, distance gauge bounds, IR code display.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <h3>Phase 8 — Release v0.1.0</h3>
+  <ul>
+    <li>Bump version in <code>package.json</code> + <code>CHANGELOG.md</code>.</li>
+    <li>Push <code>main</code> to <code>https://github.com/abourdim/maqueen-lab</code>.</li>
+    <li>(Separate later session) Generate <code>etsy-package/</code> via the <code>etsy-package-template</code>.</li>
+  </ul>
+</div>
+
+<h2 id="open">12. Open decisions</h2>
+<ul>
+  <li>App display name + tagline.</li>
+  <li>License (default: MIT to match bit-playground).</li>
+  <li>Initial version (default: <code>v0.1.0</code>).</li>
+  <li>Visual identity confirmed: deep-navy <code>#0a1628</code> + cyan <code>#00d4ff</code>.</li>
+  <li>Sound default: <strong>off</strong>, with enable prompt.</li>
+  <li>DONE messages: separate <code>DONE:n</code> after slow ops, or <code>ECHO:n</code> enough?</li>
+  <li>v0.1.0 add-on scope: <strong>mechanic kits only</strong>, framework stubbed for future.</li>
+</ul>
+
+<blockquote>
+<strong>Sign-off rule:</strong> after each phase — pause, summary, wait for user OK before next phase.
+</blockquote>
+
+</body>
+</html>

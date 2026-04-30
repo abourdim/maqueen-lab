@@ -1,0 +1,40 @@
+{
+    "name": "maqueen-lab-companion",
+    "version": "0.1.0",
+    "description": "Companion firmware blocks for the maqueen-lab browser app — pairs any micro:bit V2 with the Etsy-distributed BLE Control Panel (https://abourdim.github.io/maqueen-lab/). Adds one-click streaming of temperature, light, sound, accel, compass, buttons, and touch pins, plus receives LED pattern / servo / sound commands.",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*",
+        "microphone": "*",
+        "bluetooth": "*",
+        "radio": "*"
+    },
+    "files": [
+        "main.ts",
+        "maqueen-lab.ts",
+        "README.md"
+    ],
+    "testFiles": [],
+    "public": true,
+    "preferredEditor": "tsprj",
+    "supportedTargets": [
+        "microbit"
+    ],
+    "yotta": {
+        "config": {
+            "microbit-dal": {
+                "bluetooth": {
+                    "enabled": 1,
+                    "open": 1,
+                    "whitelist": 0,
+                    "security_level": 0,
+                    "uart": 1,
+                    "event_service": 1,
+                    "device_info_service": 1,
+                    "advertising_interval": 200,
+                    "advertising_power": 7
+                }
+            }
+        }
+    }
+}

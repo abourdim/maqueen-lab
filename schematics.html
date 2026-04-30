@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maqueen Lite v4 — Deduced Schematics</title>
+<style>
+  :root {
+    --bg: #0a1628;
+    --bg-elev: #0f1e35;
+    --bg-card: #122844;
+    --border: #1d3556;
+    --text: #e6eef9;
+    --text-dim: #93a8c4;
+    --accent: #00d4ff;
+    --accent-glow: #00d4ff66;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --i2c: #c084fc;
+    --motor: #fb923c;
+    --led: #facc15;
+    --rgb: #f472b6;
+    --sensor: #4ade80;
+    --servo: #00d4ff;
+    --buzzer: #fbbf24;
+    --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+  body {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+    background: linear-gradient(135deg, #fff, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: 40px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted rgba(0, 212, 255, 0.4); }
+  a:hover { border-bottom-color: var(--accent); text-shadow: 0 0 6px var(--accent-glow); }
+  code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg-elev);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 8px; }
+  .swatch { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
+  .schematic-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    overflow-x: auto;
+  }
+  svg.schematic { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 24px;
+    font-size: 13px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg-elev);
+    color: var(--accent);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  tr:last-child td { border-bottom: none; }
+  td code { font-size: 11px; }
+  p { margin: 12px 0; }
+  .footer-nav { margin-top: 40px; text-align: center; color: var(--text-dim); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<h1>Maqueen Lite v4 — Deduced Schematics</h1>
+<div class="subtitle">
+  A visual diagram of the connections between the BBC micro:bit and the Maqueen Lite v4 carrier board.
+  Every line is traced to a specific source reference in the
+  <a href="https://github.com/DFRobot/pxt-maqueen" target="_blank" rel="noopener">pxt-maqueen</a> extension —
+  see <a href="pinout.html">pinout.html</a> for the line-by-line evidence table.
+</div>
+
+<div class="legend">
+  <span class="legend-item"><span class="swatch" style="background: var(--motor)"></span>Motors (PWM via I2C)</span>
+  <span class="legend-item"><span class="swatch" style="background: var(--rgb)"></span>4× RGB ambient (I2C)</span>
+  <span class="legend-item"><span class="swatch" style="background: var(--servo)"></span>Servos S1/S2 (I2C)</span>
+  <span class="legend-item"><span class="swatch" style="background: var(--led)"></span>Simple LEDs (digital)</span>
+  <span class="legend-item"><span class="swatch" style="background: var(--sensor)"></span>Sensors (digital)</span>
+  <span class="legend-item"><span class="swatch" style="background: var(--buzzer)"></span>Buzzer (PWM)</span>
+  <span class="legend-item"><span class="swatch" style="background: var(--i2c)"></span>I2C bus (P19/P20)</span>
+</div>
+
+<div class="schematic-wrap">
+<svg class="schematic" viewBox="0 0 1280 800" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .pin-label   { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
+      .sig-label   { font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+      .comp-label  { font-family: Inter, sans-serif; font-size: 12px; font-weight: 600; }
+      .comp-sub    { font-family: Inter, sans-serif; font-size: 9px; fill: #93a8c4; }
+      .reg         { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+    </style>
+  </defs>
+
+  <!-- =========================================================
+       Three-zone layout:
+         0–320  : micro:bit (with pin column on right edge)
+         360–700 : direct-GPIO components
+         760–1020: I2C 0x10 chip + register list
+         1080–1240: I2C-attached components (motors, servos, RGB)
+       Each signal gets its own horizontal track (Y position).
+       ========================================================= -->
+
+  <!-- =========================================================
+       Section titles
+       ========================================================= -->
+  <text x="180"  y="40" text-anchor="middle" fill="#00d4ff" font-size="15" font-weight="700">BBC micro:bit V2</text>
+  <text x="540"  y="40" text-anchor="middle" fill="#00d4ff" font-size="15" font-weight="700">Direct-GPIO components</text>
+  <text x="900"  y="40" text-anchor="middle" fill="#c084fc" font-size="15" font-weight="700">I2C 0x10 chip</text>
+  <text x="1160" y="40" text-anchor="middle" fill="#fb923c" font-size="15" font-weight="700">I2C-attached</text>
+
+  <!-- =========================================================
+       micro:bit board outline
+       ========================================================= -->
+  <g id="microbit">
+    <rect x="40" y="60" width="280" height="540" rx="14"
+          fill="#0a1628" stroke="#00d4ff" stroke-width="2" filter="url(#glow)"/>
+
+    <!-- 5x5 LED display -->
+    <g transform="translate(95 90)">
+      <rect width="170" height="100" rx="6" fill="#1d3556"/>
+      <g fill="#fbbf24" opacity="0.85">
+        <circle cx="22" cy="20" r="3.5"/><circle cx="55" cy="20" r="3.5"/><circle cx="85" cy="20" r="3.5"/><circle cx="115" cy="20" r="3.5"/><circle cx="148" cy="20" r="3.5"/>
+        <circle cx="22" cy="40" r="3.5"/><circle cx="55" cy="40" r="3.5"/><circle cx="85" cy="40" r="3.5"/><circle cx="115" cy="40" r="3.5"/><circle cx="148" cy="40" r="3.5"/>
+        <circle cx="22" cy="60" r="3.5"/><circle cx="55" cy="60" r="3.5"/><circle cx="85" cy="60" r="3.5"/><circle cx="115" cy="60" r="3.5"/><circle cx="148" cy="60" r="3.5"/>
+        <circle cx="22" cy="80" r="3.5"/><circle cx="55" cy="80" r="3.5"/><circle cx="85" cy="80" r="3.5"/><circle cx="115" cy="80" r="3.5"/><circle cx="148" cy="80" r="3.5"/>
+      </g>
+    </g>
+    <text x="180" y="208" text-anchor="middle" class="comp-sub">5×5 LED matrix</text>
+
+    <!-- Buttons A, B (annotation only) -->
+    <circle cx="80" cy="240" r="11" fill="#1d3556" stroke="#93a8c4"/>
+    <text x="80" y="244" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">A</text>
+    <text x="80" y="262" text-anchor="middle" class="comp-sub">P5</text>
+
+    <circle cx="280" cy="240" r="11" fill="#1d3556" stroke="#93a8c4"/>
+    <text x="280" y="244" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">B</text>
+    <text x="280" y="262" text-anchor="middle" class="comp-sub">P11</text>
+
+    <!-- Free pins note -->
+    <rect x="60" y="500" width="240" height="80" rx="6" fill="#0f1e35" stroke="#1d3556"/>
+    <text x="180" y="520" text-anchor="middle" fill="#93a8c4" font-size="11" font-weight="600">Free for user add-ons</text>
+    <text x="180" y="540" text-anchor="middle" class="pin-label" fill="#4ade80">P3 · P4 · P6 · P7</text>
+    <text x="180" y="558" text-anchor="middle" class="pin-label" fill="#4ade80">P9 · P10 · P15 · P16</text>
+    <text x="180" y="575" text-anchor="middle" class="comp-sub" font-style="italic">(P3/4/6/7/9/10 share LED matrix)</text>
+  </g>
+
+  <!-- =========================================================
+       Pin column on right edge of micro:bit + horizontal tracks
+       Y positions:
+         P0  buzzer   = 110
+         P1  TRIG     = 160
+         P2  ECHO     = 210
+         P8  LED L    = 280
+         P12 LED R    = 330
+         P13 Line L   = 380
+         P14 Line R   = 430
+         P19 SCL      = 480 — joins I2C bus
+         P20 SDA      = 480 — joins I2C bus
+       ========================================================= -->
+
+  <!-- Each pin row: dot + label inside board -->
+  <g class="pin-label">
+    <!-- P0 buzzer (PWM) -->
+    <circle cx="320" cy="110" r="5" fill="#fbbf24"/>
+    <text x="312" y="105" text-anchor="end" fill="#fbbf24">P0</text>
+
+    <!-- P1 TRIG -->
+    <circle cx="320" cy="160" r="5" fill="#4ade80"/>
+    <text x="312" y="155" text-anchor="end" fill="#4ade80">P1</text>
+
+    <!-- P2 ECHO -->
+    <circle cx="320" cy="210" r="5" fill="#4ade80"/>
+    <text x="312" y="205" text-anchor="end" fill="#4ade80">P2</text>
+
+    <!-- P8 LED L -->
+    <circle cx="320" cy="280" r="5" fill="#facc15"/>
+    <text x="312" y="275" text-anchor="end" fill="#facc15">P8</text>
+
+    <!-- P12 LED R -->
+    <circle cx="320" cy="330" r="5" fill="#facc15"/>
+    <text x="312" y="325" text-anchor="end" fill="#facc15">P12</text>
+
+    <!-- P13 Line L -->
+    <circle cx="320" cy="380" r="5" fill="#4ade80"/>
+    <text x="312" y="375" text-anchor="end" fill="#4ade80">P13</text>
+
+    <!-- P14 Line R -->
+    <circle cx="320" cy="430" r="5" fill="#4ade80"/>
+    <text x="312" y="425" text-anchor="end" fill="#4ade80">P14</text>
+
+    <!-- P19 SCL + P20 SDA -->
+    <circle cx="320" cy="475" r="5" fill="#c084fc"/>
+    <text x="312" y="470" text-anchor="end" fill="#c084fc">P19</text>
+    <circle cx="320" cy="490" r="5" fill="#c084fc"/>
+    <text x="312" y="485" text-anchor="end" fill="#c084fc">P20</text>
+  </g>
+
+  <!-- =========================================================
+       Direct-GPIO components — column at x=480..640
+       Each component sits at the same Y as its pin row.
+       ========================================================= -->
+
+  <!-- Buzzer @ y=110 -->
+  <g id="buzzer">
+    <rect x="480" y="92" width="160" height="36" rx="6" fill="#0a1628" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="498" y="115" fill="#fbbf24" font-size="14">♪</text>
+    <text x="520" y="116" fill="#fff" class="comp-label">Buzzer</text>
+    <text x="630" y="116" text-anchor="end" class="comp-sub">PWM</text>
+  </g>
+
+  <!-- Ultrasonic TRIG @ y=160 -->
+  <g id="ultra-trig">
+    <rect x="480" y="142" width="160" height="36" rx="6" fill="#0a1628" stroke="#4ade80" stroke-width="1.5"/>
+    <text x="495" y="166" fill="#fff" class="comp-label">SR04 ultrasonic</text>
+    <text x="630" y="166" text-anchor="end" class="comp-sub">TRIG</text>
+  </g>
+
+  <!-- Ultrasonic ECHO @ y=210 (same physical SR04, second wire) -->
+  <g id="ultra-echo">
+    <rect x="480" y="192" width="160" height="36" rx="6" fill="#0a1628" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="4 2"/>
+    <text x="495" y="216" fill="#93a8c4" class="comp-label">  └─ same SR04</text>
+    <text x="630" y="216" text-anchor="end" class="comp-sub">ECHO</text>
+  </g>
+
+  <!-- LED L @ y=280 -->
+  <g id="led-l">
+    <rect x="480" y="262" width="160" height="36" rx="6" fill="#0a1628" stroke="#facc15" stroke-width="1.5"/>
+    <circle cx="498" cy="280" r="9" fill="#facc15" filter="url(#glow)" opacity="0.9"/>
+    <text x="520" y="285" fill="#fff" class="comp-label">LED Left</text>
+    <text x="630" y="285" text-anchor="end" class="comp-sub">digital</text>
+  </g>
+
+  <!-- LED R @ y=330 -->
+  <g id="led-r">
+    <rect x="480" y="312" width="160" height="36" rx="6" fill="#0a1628" stroke="#facc15" stroke-width="1.5"/>
+    <circle cx="498" cy="330" r="9" fill="#facc15" filter="url(#glow)" opacity="0.9"/>
+    <text x="520" y="335" fill="#fff" class="comp-label">LED Right</text>
+    <text x="630" y="335" text-anchor="end" class="comp-sub">digital</text>
+  </g>
+
+  <!-- Line L @ y=380 -->
+  <g id="line-l">
+    <rect x="480" y="362" width="160" height="36" rx="6" fill="#0a1628" stroke="#4ade80" stroke-width="1.5"/>
+    <text x="495" y="385" fill="#fff" class="comp-label">Line sensor L</text>
+    <text x="630" y="385" text-anchor="end" class="comp-sub">digital</text>
+  </g>
+
+  <!-- Line R @ y=430 -->
+  <g id="line-r">
+    <rect x="480" y="412" width="160" height="36" rx="6" fill="#0a1628" stroke="#4ade80" stroke-width="1.5"/>
+    <text x="495" y="435" fill="#fff" class="comp-label">Line sensor R</text>
+    <text x="630" y="435" text-anchor="end" class="comp-sub">digital</text>
+  </g>
+
+  <!-- IR receiver on P16 (Maqueen Lite v4 convention; user-configurable via maqueenIR.initIR) -->
+  <g id="ir">
+    <rect x="480" y="540" width="160" height="46" rx="6" fill="#0a1628" stroke="#c084fc" stroke-width="1.5"/>
+    <text x="560" y="560" text-anchor="middle" fill="#fff" class="comp-label">IR receiver</text>
+    <text x="560" y="577" text-anchor="middle" class="comp-sub" font-style="italic">NEC · maqueenIR.initIR(P16)</text>
+  </g>
+
+  <!-- =========================================================
+       I2C 0x10 chip — center column
+       ========================================================= -->
+  <g id="i2c-chip">
+    <rect x="760" y="80" width="260" height="430" rx="10"
+          fill="#1d3556" stroke="#c084fc" stroke-width="2" filter="url(#glow)"/>
+
+    <!-- I2C bus terminals on left -->
+    <circle cx="760" cy="475" r="5" fill="#c084fc"/>
+    <circle cx="760" cy="490" r="5" fill="#c084fc"/>
+    <text x="745" y="478" text-anchor="end" class="pin-label" fill="#c084fc">SCL</text>
+    <text x="745" y="495" text-anchor="end" class="pin-label" fill="#c084fc">SDA</text>
+
+    <!-- Title -->
+    <text x="890" y="115" text-anchor="middle" fill="#c084fc" font-size="16" font-weight="700">I2C 0x10</text>
+    <text x="890" y="134" text-anchor="middle" class="comp-sub">motor + servo + RGB driver IC</text>
+
+    <!-- Register list -->
+    <g class="reg">
+      <text x="780" y="180" fill="#93a8c4">register</text>
+      <text x="900" y="180" fill="#93a8c4">→ component</text>
+      <line x1="780" y1="188" x2="1000" y2="188" stroke="#1d3556"/>
+
+      <text x="780" y="220" fill="#fb923c">0x00</text>
+      <text x="900" y="220" fill="#fb923c">→ Motor M1</text>
+
+      <text x="780" y="260" fill="#fb923c">0x02</text>
+      <text x="900" y="260" fill="#fb923c">→ Motor M2</text>
+
+      <text x="780" y="320" fill="#00d4ff">0x14</text>
+      <text x="900" y="320" fill="#00d4ff">→ Servo S1</text>
+
+      <text x="780" y="380" fill="#00d4ff">0x15</text>
+      <text x="900" y="380" fill="#00d4ff">→ Servo S2</text>
+
+      <text x="780" y="440" fill="#f472b6">0x32</text>
+      <text x="900" y="440" fill="#f472b6">→ 4× RGB</text>
+    </g>
+
+    <!-- Output terminals on right -->
+    <circle cx="1020" cy="220" r="5" fill="#fb923c"/>
+    <circle cx="1020" cy="260" r="5" fill="#fb923c"/>
+    <circle cx="1020" cy="320" r="5" fill="#00d4ff"/>
+    <circle cx="1020" cy="380" r="5" fill="#00d4ff"/>
+    <circle cx="1020" cy="440" r="5" fill="#f472b6"/>
+  </g>
+
+  <!-- =========================================================
+       I2C-attached components — far right column
+       ========================================================= -->
+
+  <!-- Motor M1 @ y=220 -->
+  <g id="motor-m1">
+    <rect x="1080" y="200" width="170" height="46" rx="6" fill="#0a1628" stroke="#fb923c" stroke-width="1.5"/>
+    <text x="1165" y="222" text-anchor="middle" fill="#fff" class="comp-label">N20 Motor M1</text>
+    <text x="1165" y="237" text-anchor="middle" class="comp-sub">left wheel</text>
+  </g>
+
+  <!-- Motor M2 @ y=260 -->
+  <g id="motor-m2">
+    <rect x="1080" y="240" width="170" height="46" rx="6" fill="#0a1628" stroke="#fb923c" stroke-width="1.5"/>
+    <text x="1165" y="262" text-anchor="middle" fill="#fff" class="comp-label">N20 Motor M2</text>
+    <text x="1165" y="277" text-anchor="middle" class="comp-sub">right wheel</text>
+  </g>
+
+  <!-- Servo S1 @ y=320 -->
+  <g id="srv-s1">
+    <rect x="1080" y="302" width="170" height="36" rx="6" fill="#0a1628" stroke="#00d4ff" stroke-width="1.5"/>
+    <text x="1165" y="324" text-anchor="middle" fill="#fff" class="comp-label">Servo S1</text>
+  </g>
+
+  <!-- Servo S2 @ y=380 -->
+  <g id="srv-s2">
+    <rect x="1080" y="362" width="170" height="36" rx="6" fill="#0a1628" stroke="#00d4ff" stroke-width="1.5"/>
+    <text x="1165" y="384" text-anchor="middle" fill="#fff" class="comp-label">Servo S2</text>
+  </g>
+
+  <!-- 4× RGB @ y=440 -->
+  <g id="rgb">
+    <rect x="1080" y="418" width="170" height="46" rx="6" fill="#0a1628" stroke="#f472b6" stroke-width="1.5"/>
+    <text x="1165" y="436" text-anchor="middle" fill="#fff" class="comp-label">4× RGB ambient</text>
+    <g transform="translate(1100 446)">
+      <circle cx="10" cy="6" r="6" fill="#ef4444" filter="url(#glow)"/>
+      <circle cx="42" cy="6" r="6" fill="#22c55e" filter="url(#glow)"/>
+      <circle cx="80" cy="6" r="6" fill="#3b82f6" filter="url(#glow)"/>
+      <circle cx="118" cy="6" r="6" fill="#a855f7" filter="url(#glow)"/>
+    </g>
+  </g>
+
+  <!-- =========================================================
+       Connection lines — straight horizontal where possible
+       ========================================================= -->
+
+  <!-- Direct GPIO: pin → component (each on its own track) -->
+  <line x1="325" y1="110" x2="480" y2="110" stroke="#fbbf24" stroke-width="2"/>
+  <line x1="325" y1="160" x2="480" y2="160" stroke="#4ade80" stroke-width="2"/>
+  <line x1="325" y1="210" x2="480" y2="210" stroke="#4ade80" stroke-width="2"/>
+  <line x1="325" y1="280" x2="480" y2="280" stroke="#facc15" stroke-width="2"/>
+  <line x1="325" y1="330" x2="480" y2="330" stroke="#facc15" stroke-width="2"/>
+  <line x1="325" y1="380" x2="480" y2="380" stroke="#4ade80" stroke-width="2"/>
+  <line x1="325" y1="430" x2="480" y2="430" stroke="#4ade80" stroke-width="2"/>
+
+  <!-- I2C bus: P19/P20 → I2C chip terminals (parallel pair) -->
+  <line x1="325" y1="475" x2="760" y2="475" stroke="#c084fc" stroke-width="2.5"/>
+  <line x1="325" y1="490" x2="760" y2="490" stroke="#c084fc" stroke-width="2.5"/>
+
+  <!-- I2C chip → motors / servos / RGB (short horizontal stubs) -->
+  <line x1="1025" y1="220" x2="1080" y2="220" stroke="#fb923c" stroke-width="2"/>
+  <line x1="1025" y1="260" x2="1080" y2="260" stroke="#fb923c" stroke-width="2"/>
+  <line x1="1025" y1="320" x2="1080" y2="320" stroke="#00d4ff" stroke-width="2"/>
+  <line x1="1025" y1="380" x2="1080" y2="380" stroke="#00d4ff" stroke-width="2"/>
+  <line x1="1025" y1="440" x2="1080" y2="440" stroke="#f472b6" stroke-width="2"/>
+
+  <!-- =========================================================
+       Source citations strip at bottom
+       ========================================================= -->
+  <g transform="translate(0 630)">
+    <rect x="40" y="0" width="1200" height="160" rx="10" fill="#0f1e35" stroke="#1d3556"/>
+    <text x="60" y="28" fill="#00d4ff" font-size="14" font-weight="700">Source — every connection traced to pxt-maqueen</text>
+
+    <g class="reg" fill="#93a8c4">
+      <text x="60"  y="56">P0  buzzer  ← micro:bit V2 default speaker pin (convention)</text>
+      <text x="60"  y="76">P1  TRIG    ← maqueen.ts:164  pins.digitalWritePin(DigitalPin.P1, 1)</text>
+      <text x="60"  y="96">P2  ECHO    ← maqueen.ts:172  pins.pulseIn(DigitalPin.P2, ...)</text>
+      <text x="60"  y="116">P8  LED L  ← maqueen.ts:287  pins.digitalWritePin(DigitalPin.P8, ledswitch)</text>
+      <text x="60"  y="136">P12 LED R  ← maqueen.ts:289  pins.digitalWritePin(DigitalPin.P12, ledswitch)</text>
+
+      <text x="640" y="56">P13 Line L  ← maqueen.ts:267  pins.digitalReadPin(DigitalPin.P13)</text>
+      <text x="640" y="76">P14 Line R  ← maqueen.ts:269  pins.digitalReadPin(DigitalPin.P14)</text>
+      <text x="640" y="96">I2C 0x10    ← maqueen.ts:19   const MOTER_ADDRESSS = 0x10</text>
+      <text x="640" y="116">  reg 0x00/0x02 → M1/M2  ← maqueen.ts:202, 208  buf[0] = 0x00 / 0x02</text>
+      <text x="640" y="136">  reg 0x14/0x15 → S1/S2 · 0x32 → RGB  ← lines 308, 311, 659</text>
+    </g>
+  </g>
+
+</svg>
+</div>
+
+<h2>Reading this diagram</h2>
+<table>
+  <tr><th>Visual element</th><th>What it represents</th></tr>
+  <tr><td><strong>Filled coloured pin</strong> on the micro:bit's right edge</td><td>A micro:bit GPIO pin actually used by the Maqueen carrier (color matches the component it connects to)</td></tr>
+  <tr><td><strong>Solid line</strong> between pin and component</td><td>A direct GPIO connection — single wire, single function</td></tr>
+  <tr><td><strong>Purple I2C bus lines</strong> (P19/P20)</td><td>Shared two-wire bus reaching the motor driver IC and (dashed) the RGB array — multiplexed by I2C address</td></tr>
+  <tr><td><strong>Blocks fanning out from the I2C 0x10 chip</strong></td><td>Components controlled <em>through</em> the motor driver IC, addressed by register: M1, M2, S1, S2, RGB</td></tr>
+  <tr><td><strong>Dashed-outline IR receiver block</strong></td><td>Connected via a fixed pin internal to <code>maqueenIR.cpp</code> — not declared in the TypeScript layer</td></tr>
+  <tr><td><strong>Free pins listed under the micro:bit</strong></td><td>P3/P4/P6/P7/P9/P10/P15/P16 — available for kid add-ons (P3/4/6/7/9/10 share the LED matrix; disable display first)</td></tr>
+</table>
+
+<h2>What's <em>not</em> shown</h2>
+<p>
+  The buzzer connection to <code>P0</code> is shown but is a convention-only deduction — pxt-maqueen does not declare it. Maqueen Lite v4 wires the on-board buzzer to <code>P0</code> following the standard micro:bit V2 speaker convention; this matches DFRobot's example sketches on the
+  <a href="https://wiki.dfrobot.com/rob0148-en/" target="_blank" rel="noopener">product wiki</a>.
+</p>
+<p>
+  The Gravity extension ports (P0, P1, P2) are <strong>not drawn separately</strong> — they share pins with the buzzer and ultrasonic. Plugging anything into them disables the on-board function on that pin. The future "Add-on" framework (<code>ADDON:*</code> verbs in firmware) will handle this conflict gracefully.
+</p>
+
+<div class="footer-nav">
+  <a href="pinout.html">← back to pinout reference</a> ·
+  <a href="plan.html">build plan</a> ·
+  <a href="index.html">Maqueen Lab →</a>
+</div>
+
+</body>
+</html>

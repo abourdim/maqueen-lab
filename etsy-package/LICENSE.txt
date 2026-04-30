@@ -1,0 +1,106 @@
+Maqueen Lab — Single-User / Classroom License Agreement
+==================================================================
+
+Version: 1.2
+Effective Date: April 2026
+Product: Maqueen Lab v0.1.54
+Licensor: the original author (as listed in the Etsy listing)
+
+1. GRANT OF LICENSE
+
+   This license grants you (the "Licensee") a non-exclusive, non-transferable,
+   perpetual right to:
+
+   a) Use Maqueen Lab on unlimited computers within your household,
+      classroom, or single educational organization
+   b) Use Maqueen Lab for personal, educational, and non-commercial
+      classroom purposes
+   c) Create, record, and distribute sensor sessions, graphs, recordings, and
+      teaching materials produced with Maqueen Lab
+   d) Print and distribute the included printable materials (quick-start card,
+      shortcuts cheat sheet, classroom poster, lesson plan template, sticker
+      sheet, welcome README) within your household or organization
+   e) Modify the HTML, CSS, and JavaScript source for your own local use
+      (e.g. translations, custom themes, additional 3D models)
+
+2. RESTRICTIONS
+
+   You may NOT:
+
+   a) Redistribute, resell, or sublicense the app files, themes, 3D models,
+      or printables as a standalone product
+   b) Remove or alter copyright notices, version strings, or attribution
+   c) Claim Maqueen Lab as your own creation
+   d) Upload the app files to public repositories, app stores, or CDNs
+   e) Bundle Maqueen Lab with hardware kits, courses, or other
+      products offered for resale without a separate commercial license
+   f) Use the app files to create a competing product
+
+3. OWNERSHIP
+
+   Maqueen Lab is the intellectual property of the Licensor. This
+   license does not transfer ownership of the software. "BBC micro:bit" is a
+   trademark of the Micro:bit Educational Foundation and is referenced here
+   only for compatibility purposes; this product is not affiliated with or
+   endorsed by the Foundation.
+
+4. UPDATES
+
+   This license includes free updates within the v1.x major release line.
+   Download new versions from your Etsy purchase history at no extra cost.
+   A future major version (v2.x) may be offered separately, with an
+   upgrade discount for existing buyers. Bug-fix updates are guaranteed
+   for 12 months after purchase.
+
+5. REFUNDS
+
+   Because this is an instant digital download, refunds cannot be offered
+   once the ZIP has been delivered. Please verify compatibility (Chrome or
+   Edge on desktop, DFRobot Maqueen Lite v4 (micro:bit V2)) before purchasing. If the product
+   does not work as described on a supported browser, contact the
+   Licensor via Etsy messaging within 14 days — we will make it right.
+
+6. SUPPORT
+
+   Basic support is provided via Etsy messaging. Response times may vary.
+   For bugs or feature requests, please include your micro:bit firmware
+   version, browser, and OS.
+
+7. DISCLAIMER
+
+   Maqueen Lab is provided "AS IS" without warranty of any kind,
+   express or implied. The Licensor shall not be liable for any damages,
+   hardware issues, data loss, or classroom mishaps arising from use of this
+   software. Always supervise children when connecting Bluetooth hardware.
+
+8. PRIVACY
+
+   Maqueen Lab runs 100% locally in your browser. No data is
+   collected, transmitted, or stored on external servers. No accounts, no
+   telemetry, no analytics. All settings, session recordings, and exported
+   JSON files remain on your device. Perfect for schools with strict data
+   policies.
+
+9. PRINTABLE MATERIALS
+
+   The included printable materials (Quick-Start Card, Keyboard Shortcuts
+   Cheat Sheet, Classroom Poster, Sticker Sheet, Lesson Plan Template,
+   Welcome README) may be printed and distributed freely within your
+   educational institution, organization, or family. They may not be resold
+   separately or redistributed outside the licensed organization.
+
+10. COMMERCIAL USE
+
+   For use in a paid bootcamp, a multi-site school district, or resale within
+   a hardware bundle, please contact the Licensor via Etsy messaging for an
+   extended commercial license.
+
+11. PROOF OF LICENSE
+
+   Your Etsy order number is your proof of license. Keep it with your
+   purchase records. Lost-order support is available via Etsy messaging.
+
+==================================================================
+Thank you for supporting independent educational software!
+Maqueen Lab v0.1.54 — Every component, live in your browser
+==================================================================

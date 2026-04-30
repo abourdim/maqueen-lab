@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MicroBit Controller — Unit Tests</title>
+<style>
+body { font-family: monospace; background: #1a1a2e; color: #e2e8f0; padding: 24px; }
+h1 { color: #22c55e; margin-bottom: 16px; }
+.pass { color: #22c55e; }
+.fail { color: #ef4444; font-weight: bold; }
+.test-group { margin: 16px 0; padding: 12px; background: #16213e; border-radius: 8px; }
+.test-group h2 { font-size: 14px; margin-bottom: 8px; color: #94a3b8; }
+.result { padding: 4px 0; font-size: 13px; }
+.summary { margin-top: 24px; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; }
+.summary.all-pass { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid #22c55e; }
+.summary.has-fail { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid #ef4444; }
+</style>
+</head>
+<body>
+<h1>🧪 MicroBit Controller — Unit Tests</h1>
+<div id="output"></div>
+
+<script>
+// ── Minimal test runner ──
+let passed = 0, failed = 0;
+const output = document.getElementById('output');
+let currentGroup = null;
+
+function group(name) {
+    currentGroup = document.createElement('div');
+    currentGroup.className = 'test-group';
+    currentGroup.innerHTML = `<h2>${name}</h2>`;
+    output.appendChild(currentGroup);
+}
+
+function assert(name, condition) {
+    const div = document.createElement('div');
+    div.className = 'result';
+    if (condition) {
+        div.innerHTML = `<span class="pass">✓</span> ${name}`;
+        passed++;
+    } else {
+        div.innerHTML = `<span class="fail">✗ FAIL:</span> ${name}`;
+        failed++;
+    }
+    (currentGroup || output).appendChild(div);
+}
+
+function assertEqual(name, actual, expected) {
+    const ok = actual === expected;
+    if (!ok) {
+        assert(`${name} — expected "${expected}", got "${actual}"`, false);
+    } else {
+        assert(name, true);
+    }
+}
+
+// ══════════════════════════════════════════
+// Functions under test (copied from modules)
+// ══════════════════════════════════════════
+
+// From controls.js — ledStateToHex
+function ledStateToHex(ledState) {
+    let hex = "";
+    for (let row = 0; row < 5; row++) {
+        let value = 0;
+        for (let col = 0; col < 5; col++) {
+            if (ledState[row][col]) {
+                value |= (1 << col);
+            }
+        }
+        hex += value.toString(16).toUpperCase().padStart(2, "0");
+    }
+    return hex;
+}
+
+// From makecode.ts — hexCharToNibble
+function hexCharToNibble(ch) {
+    const up = ch.toUpperCase();
+    const digits = "0123456789ABCDEF";
+    const idx = digits.indexOf(up);
+    if (idx < 0) return 0;
+    return idx;
+}
+
+// From makecode.ts — hexPairToByte
+function hexPairToByte(s) {
+    if (s.length < 2) return 0;
+    const hi = hexCharToNibble(s.charAt(0));
+    const lo = hexCharToNibble(s.charAt(1));
+    return (hi << 4) | lo;
+}
+
+// From makecode.ts — clampAngle
+function clampAngle(v) {
+    if (v < 0) return 0;
+    if (v > 180) return 180;
+    return Math.round(v);
+}
+
+// ══════════════════════════════════════════
+// Tests
+// ══════════════════════════════════════════
+
+group('ledStateToHex');
+{
+    // All off → 00 per row
+    const allOff = Array.from({length: 5}, () => Array(5).fill(false));
+    assertEqual('all LEDs off', ledStateToHex(allOff), '0000000000');
+
+    // All on → 1F per row (bits 0-4 set = 0x1F = 31)
+    const allOn = Array.from({length: 5}, () => Array(5).fill(true));
+    assertEqual('all LEDs on', ledStateToHex(allOn), '1F1F1F1F1F');
+
+    // Only top-left LED (row 0, col 0) → bit 0 set = 0x01
+    const topLeft = Array.from({length: 5}, () => Array(5).fill(false));
+    topLeft[0][0] = true;
+    assertEqual('single LED (0,0)', ledStateToHex(topLeft), '0100000000');
+
+    // Row 0: col 0 and col 4 on → bits 0+4 = 0x11
+    const corners = Array.from({length: 5}, () => Array(5).fill(false));
+    corners[0][0] = true;
+    corners[0][4] = true;
+    assertEqual('two corners row 0', ledStateToHex(corners), '1100000000');
+
+    // Heart preset pattern
+    const heart = Array.from({length: 5}, () => Array(5).fill(false));
+    [[1,1],[1,3],[2,0],[2,2],[2,4],[3,1],[3,3],[4,2]].forEach(([r,c]) => heart[r][c] = true);
+    const heartHex = ledStateToHex(heart);
+    assertEqual('heart pattern length', heartHex.length, 10);
+    assert('heart pattern non-empty', heartHex !== '0000000000');
+}
+
+group('hexCharToNibble');
+{
+    assertEqual('0 → 0', hexCharToNibble('0'), 0);
+    assertEqual('9 → 9', hexCharToNibble('9'), 9);
+    assertEqual('A → 10', hexCharToNibble('A'), 10);
+    assertEqual('F → 15', hexCharToNibble('F'), 15);
+    assertEqual('a → 10 (lowercase)', hexCharToNibble('a'), 10);
+    assertEqual('f → 15 (lowercase)', hexCharToNibble('f'), 15);
+    assertEqual('invalid → 0', hexCharToNibble('G'), 0);
+}
+
+group('hexPairToByte');
+{
+    assertEqual('00 → 0', hexPairToByte('00'), 0);
+    assertEqual('FF → 255', hexPairToByte('FF'), 255);
+    assertEqual('1F → 31', hexPairToByte('1F'), 31);
+    assertEqual('0A → 10', hexPairToByte('0A'), 10);
+    assertEqual('short string → 0', hexPairToByte('F'), 0);
+}
+
+group('clampAngle');
+{
+    assertEqual('normal value', clampAngle(90), 90);
+    assertEqual('zero', clampAngle(0), 0);
+    assertEqual('max', clampAngle(180), 180);
+    assertEqual('below min', clampAngle(-10), 0);
+    assertEqual('above max', clampAngle(200), 180);
+    assertEqual('float rounds', clampAngle(45.7), 46);
+    assertEqual('float rounds down', clampAngle(45.3), 45);
+}
+
+group('Hex round-trip (encode → decode)');
+{
+    // Encode a pattern, then decode it back
+    const pattern = Array.from({length: 5}, () => Array(5).fill(false));
+    pattern[0][0] = true; pattern[0][2] = true; pattern[0][4] = true;
+    pattern[2][1] = true; pattern[2][3] = true;
+    pattern[4][2] = true;
+
+    const hex = ledStateToHex(pattern);
+    assertEqual('round-trip hex length', hex.length, 10);
+
+    // Decode
+    const decoded = Array.from({length: 5}, () => Array(5).fill(false));
+    for (let row = 0; row < 5; row++) {
+        const val = hexPairToByte(hex.substr(row * 2, 2));
+        for (let col = 0; col < 5; col++) {
+            decoded[row][col] = (val & (1 << col)) !== 0;
+        }
+    }
+
+    let match = true;
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+            if (pattern[r][c] !== decoded[r][c]) match = false;
+        }
+    }
+    assert('encode→decode produces identical pattern', match);
+}
+
+group('UART message chunking');
+{
+    const BLE_MTU = 20;
+    const shortMsg = 'CMD:HEART';
+    const longMsg = 'TEXT:Hello this is a very long message that exceeds MTU';
+    const shortBytes = new TextEncoder().encode(shortMsg + '\n');
+    const longBytes = new TextEncoder().encode(longMsg + '\n');
+
+    assert('short message fits in one chunk', shortBytes.byteLength <= BLE_MTU);
+    assert('long message exceeds MTU', longBytes.byteLength > BLE_MTU);
+
+    // Simulate chunking
+    const chunks = [];
+    let offset = 0;
+    while (offset < longBytes.byteLength) {
+        const end = Math.min(offset + BLE_MTU, longBytes.byteLength);
+        chunks.push(longBytes.slice(offset, end));
+        offset = end;
+    }
+    assert('long message split into multiple chunks', chunks.length > 1);
+
+    // Reassemble
+    const reassembled = new Uint8Array(longBytes.byteLength);
+    let pos = 0;
+    chunks.forEach(chunk => {
+        reassembled.set(new Uint8Array(chunk), pos);
+        pos += chunk.byteLength;
+    });
+    const decoded = new TextDecoder().decode(reassembled);
+    assertEqual('reassembled matches original', decoded, longMsg + '\n');
+}
+
+group('Buzzer input validation');
+{
+    function validateBuzz(freq, dur) {
+        if (freq < 20 || freq > 20000 || isNaN(freq)) return false;
+        if (dur < 1 || dur > 5000 || isNaN(dur)) return false;
+        return true;
+    }
+    assert('valid: 440Hz, 200ms', validateBuzz(440, 200));
+    assert('valid: 20Hz min', validateBuzz(20, 100));
+    assert('valid: 20000Hz max', validateBuzz(20000, 100));
+    assert('invalid: freq too low', !validateBuzz(10, 200));
+    assert('invalid: freq too high', !validateBuzz(25000, 200));
+    assert('invalid: dur too long', !validateBuzz(440, 6000));
+    assert('invalid: dur zero', !validateBuzz(440, 0));
+    assert('invalid: NaN freq', !validateBuzz(NaN, 200));
+}
+
+// ── Summary ──
+const summary = document.createElement('div');
+const total = passed + failed;
+summary.className = 'summary ' + (failed === 0 ? 'all-pass' : 'has-fail');
+summary.textContent = failed === 0
+    ? `✓ All ${total} tests passed!`
+    : `${passed}/${total} passed, ${failed} failed`;
+output.appendChild(summary);
+</script>
+</body>
+</html>

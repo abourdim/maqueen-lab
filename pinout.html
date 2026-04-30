@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maqueen Lite v4 — Pinout Reference</title>
+<style>
+  :root {
+    --bg: #0a1628;
+    --bg-elev: #0f1e35;
+    --bg-card: #122844;
+    --border: #1d3556;
+    --text: #e6eef9;
+    --text-dim: #93a8c4;
+    --accent: #00d4ff;
+    --accent-glow: #00d4ff66;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  body {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+  h1 {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+    background: linear-gradient(135deg, #fff, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 16px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+  h2 {
+    font-size: 24px;
+    margin-top: 56px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+  h3 {
+    font-size: 18px;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    color: var(--accent);
+  }
+  p { margin: 12px 0; }
+  ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--bg-elev);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+  pre {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--text);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg-elev);
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0, 212, 255, 0.04); }
+  td code { font-size: 12px; }
+  strong { color: #fff; }
+  blockquote, .warn {
+    border-left: 3px solid var(--amber);
+    background: rgba(251, 191, 36, 0.08);
+    padding: 12px 18px;
+    margin: 16px 0;
+    border-radius: 0 6px 6px 0;
+    color: var(--text);
+  }
+  .warn strong { color: var(--amber); }
+  .pin-used { color: var(--accent); font-weight: 600; }
+  .pin-free { color: var(--green); }
+  .pin-conflict { color: var(--amber); font-weight: 600; }
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin: 16px 0 24px;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .legend .dot.used { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+  .legend .dot.free { background: var(--green); }
+  .legend .dot.conflict { background: var(--amber); }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted rgba(0, 212, 255, 0.4); }
+  a:hover { border-bottom-color: var(--accent); text-shadow: 0 0 6px var(--accent-glow); }
+  .ref-list li { margin: 8px 0; }
+  .ref-list li code { font-size: 12px; }
+  .lib-desc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 24px;
+    margin: 16px 0;
+  }
+  .lib-desc h3 { margin-top: 0; }
+  .source-table td:nth-child(3) { font-size: 12.5px; color: var(--text-dim); }
+  .source-table td:nth-child(3) code { font-size: 11.5px; }
+</style>
+</head>
+<body>
+
+<h1>Maqueen Lite v4 — Pinout Reference</h1>
+<div class="subtitle">Source of truth for every pin used by Maqueen Lab firmware and the underlying <code>pxt-maqueen</code> extension.</div>
+
+<h2>References</h2>
+<ul class="ref-list">
+  <li><strong>DFRobot pxt-maqueen extension</strong> — <a href="https://github.com/DFRobot/pxt-maqueen" target="_blank" rel="noopener">github.com/DFRobot/pxt-maqueen</a> — the canonical MakeCode library; the only authoritative source for which micro:bit pin drives what on Maqueen Lite v4. All pin assignments below are extracted from this repo.</li>
+  <li><strong>pxt-maqueen <code>maqueen.ts</code></strong> — <a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts" target="_blank" rel="noopener">maqueen.ts</a> — line-by-line <code>DigitalPin.PXX</code> and I2C <code>0x10</code> references cited in the "How we know" section below.</li>
+  <li><strong>pxt-maqueen <code>maqueenIR.cpp</code></strong> — <a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueenIR.cpp" target="_blank" rel="noopener">maqueenIR.cpp</a> — IR-receiver C++ shim. Pin is <strong>user-configurable</strong> via <code>maqueenIR.initIR(pin)</code>; on Maqueen Lite v4 the on-board IR receiver is wired to <strong>P16</strong>.</li>
+  <li><strong>DFRobot Maqueen Lite product page</strong> — <a href="https://www.dfrobot.com/product-1783.html" target="_blank" rel="noopener">dfrobot.com/product-1783.html</a> — high-level component list (4× RGB ambient, 2× LEDs, 2× line sensors, ultrasonic, IR, buzzer, S1/S2 servos, P0/P1/P2 Gravity ports, I2C). Does <strong>not</strong> publish the pin diagram in text.</li>
+  <li><strong>DFRobot Maqueen Lite wiki</strong> — <a href="https://wiki.dfrobot.com/rob0148-en/" target="_blank" rel="noopener">wiki.dfrobot.com/rob0148-en</a> — installation guide, function diagram (image-only), example sketches.</li>
+  <li><strong>micro:bit pin reference</strong> — <a href="https://tech.microbit.org/hardware/edgeconnector/" target="_blank" rel="noopener">tech.microbit.org/hardware/edgeconnector</a> — for resolving which <code>DigitalPin.PXX</code> map to which physical edge-connector pad and which are shared with the LED matrix.</li>
+</ul>
+
+<h2>About the pxt-maqueen library</h2>
+<div class="lib-desc">
+  <p><code>pxt-maqueen</code> is DFRobot's official MakeCode extension for the Maqueen family of educational robots (including Maqueen Lite v4). Add it in MakeCode by clicking <em>Extensions → search "maqueen"</em> or pasting its <a href="https://github.com/DFRobot/pxt-maqueen" target="_blank" rel="noopener">GitHub URL</a>. It exposes a <code>maqueen</code> namespace that wraps the low-level pin and I2C operations behind kid-friendly block APIs:</p>
+  <ul>
+    <li><code>maqueen.motorRun(motor, dir, speed)</code> — drives the I2C motor controller at address <code>0x10</code>.</li>
+    <li><code>maqueen.motorStop(motor)</code> — brake.</li>
+    <li><code>maqueen.servoRun(servo, angle)</code> — writes to I2C registers <code>0x14</code> (S1) and <code>0x15</code> (S2).</li>
+    <li><code>maqueen.writeLED(led, switch)</code> — toggles the simple LEDs on <code>P8</code> (left) and <code>P12</code> (right).</li>
+    <li><code>maqueen.readPatrol(sensor)</code> — reads the line-tracking sensors on <code>P13</code> (left) and <code>P14</code> (right).</li>
+    <li><code>maqueen.Ultrasonic(unit)</code> — drives <code>P1</code> (trig) / <code>P2</code> (echo) for SR04.</li>
+    <li><code>maqueen.IR_read()</code> — reads NEC codes from the on-board IR receiver via the <code>maqueenIR.cpp</code> C++ shim.</li>
+    <li>I2C-controlled RGB LEDs (4 ambient pixels) accessed at register <code>0x32</code> of the same <code>0x10</code> chip — <strong>not</strong> standard NeoPixels.</li>
+  </ul>
+  <p>Maqueen Lab's v1 firmware (<code>firmware/v1-maqueen-lib.ts</code>) uses these <code>maqueen.*</code> calls directly. The future v2 firmware will replace them with raw <code>pins.*</code> and I2C calls — same wire protocol, same web app, lower-level code shown side-by-side in every Component Explorer for educational progression.</p>
+</div>
+
+<div class="legend">
+  <span><i class="dot used"></i> Used by Maqueen hardware</span>
+  <span><i class="dot conflict"></i> Conflict with Gravity port</span>
+  <span><i class="dot free"></i> Free for user add-ons</span>
+</div>
+
+<h2>micro:bit pin usage</h2>
+<table>
+  <tr><th>Pin</th><th>Used by</th><th>Direction</th><th>Notes</th></tr>
+  <tr><td class="pin-conflict">P0</td><td>Buzzer</td><td>Out (PWM)</td><td>Default <code>music</code> pin; also Gravity port — conflicts if reassigned</td></tr>
+  <tr><td class="pin-conflict">P1</td><td>Ultrasonic TRIG</td><td>Out</td><td>Also labeled Gravity port — conflicts with ext sensor</td></tr>
+  <tr><td class="pin-conflict">P2</td><td>Ultrasonic ECHO</td><td>In</td><td>Also labeled Gravity port — conflicts with ext sensor</td></tr>
+  <tr><td class="pin-free">P3</td><td>—</td><td>free</td><td>Shared with LED matrix col1 (avoid for digital out)</td></tr>
+  <tr><td class="pin-free">P4</td><td>—</td><td>free</td><td>LED matrix col2</td></tr>
+  <tr><td class="pin-used">P5</td><td>Button A</td><td>In</td><td>micro:bit built-in</td></tr>
+  <tr><td class="pin-free">P6</td><td>—</td><td>free</td><td>LED matrix col9</td></tr>
+  <tr><td class="pin-free">P7</td><td>—</td><td>free</td><td>LED matrix col8</td></tr>
+  <tr><td class="pin-used">P8</td><td>LED Left (simple)</td><td>Out</td><td>Digital ON/OFF</td></tr>
+  <tr><td class="pin-free">P9</td><td>—</td><td>free</td><td>LED matrix col7</td></tr>
+  <tr><td class="pin-free">P10</td><td>—</td><td>free</td><td>LED matrix col3</td></tr>
+  <tr><td class="pin-used">P11</td><td>Button B</td><td>In</td><td>micro:bit built-in</td></tr>
+  <tr><td class="pin-used">P12</td><td>LED Right (simple)</td><td>Out</td><td>Digital ON/OFF</td></tr>
+  <tr><td class="pin-used">P13</td><td>Line sensor Left</td><td>In</td><td>Digital 0/1</td></tr>
+  <tr><td class="pin-used">P14</td><td>Line sensor Right</td><td>In</td><td>Digital 0/1</td></tr>
+  <tr><td class="pin-free">P15</td><td>—</td><td>free</td><td>—</td></tr>
+  <tr><td class="pin-free">P16</td><td>—</td><td>free</td><td>—</td></tr>
+  <tr><td class="pin-used">P19</td><td>I2C SCL</td><td>—</td><td>Motor driver + 4× RGB + servos S1/S2 (addr <strong>0x10</strong>)</td></tr>
+  <tr><td class="pin-used">P20</td><td>I2C SDA</td><td>—</td><td>Same I2C bus</td></tr>
+</table>
+
+<h2>Component map</h2>
+<table>
+  <tr><th>Component</th><th>Pin / Address</th><th>Notes</th></tr>
+  <tr><td>Motor driver</td><td>I2C <code>0x10</code></td><td>Reg <code>0x00</code> = M1, <code>0x02</code> = M2 (direction + speed)</td></tr>
+  <tr><td>4× RGB ambient lights</td><td>I2C <code>0x10</code>, reg <code>0x32</code></td><td><strong>Not standard NeoPixel</strong> — chip-driven via the motor driver IC</td></tr>
+  <tr><td>LED Left (simple)</td><td><code>P8</code> digital</td><td>ON/OFF</td></tr>
+  <tr><td>LED Right (simple)</td><td><code>P12</code> digital</td><td>ON/OFF</td></tr>
+  <tr><td>Line sensor Left</td><td><code>P13</code> digital</td><td>0 / 1</td></tr>
+  <tr><td>Line sensor Right</td><td><code>P14</code> digital</td><td>0 / 1</td></tr>
+  <tr><td>Ultrasonic TRIG</td><td><code>P1</code></td><td>SR04 / SR04P</td></tr>
+  <tr><td>Ultrasonic ECHO</td><td><code>P2</code></td><td>SR04 / SR04P</td></tr>
+  <tr><td>Buzzer</td><td><code>P0</code></td><td>micro:bit default <code>music</code> lib</td></tr>
+  <tr><td>Servos S1 / S2</td><td>I2C <code>0x10</code> (via extension)</td><td>Use <code>maqueen.servoRun(S1|S2, angle)</code></td></tr>
+  <tr><td>IR receiver</td><td><code>P16</code> (Maqueen Lite v4 default)</td><td><code>maqueenIR.initIR(Pins.P16)</code> + per-button <code>onPressEvent(...)</code></td></tr>
+</table>
+
+<h2>I2C 0x10 register map (motor driver chip)</h2>
+<table>
+  <tr><th>Register</th><th>Function</th></tr>
+  <tr><td><code>0x00</code></td><td>Motor M1 (left): direction + speed</td></tr>
+  <tr><td><code>0x02</code></td><td>Motor M2 (right): direction + speed</td></tr>
+  <tr><td><code>0x14</code></td><td>Servo S1 angle</td></tr>
+  <tr><td><code>0x15</code></td><td>Servo S2 angle</td></tr>
+  <tr><td><code>0x32</code></td><td>4× RGB LED data (16M colors each)</td></tr>
+</table>
+
+<h2>Free for kid add-ons</h2>
+<p><strong>P3, P4, P6, P7, P9, P10, P15, P16</strong></p>
+<p>P3/P4/P6/P7/P9/P10 share the LED display matrix — disable display first if used as digital outputs:</p>
+<pre><code>led.enable(false)</code></pre>
+
+<h2>Conflict warnings</h2>
+<div class="warn">
+<p><strong>P0 = buzzer.</strong> Plugging anything else into the Gravity P0 port silences the buzzer (or vice versa).</p>
+<p><strong>P1 / P2 = ultrasonic.</strong> Plugging a Gravity sensor into P1 or P2 disables the ultrasonic. The app will warn when both are used.</p>
+<p><strong>I2C bus</strong> (P19/P20) is shared. Add-ons at addresses other than <code>0x10</code> are fine; address collision is fatal.</p>
+</div>
+
+<h2>How we know — pin assignments traced to source</h2>
+<p>Every pin assignment below is extracted from the <a href="https://github.com/DFRobot/pxt-maqueen" target="_blank" rel="noopener">pxt-maqueen extension source</a>. Line numbers refer to <a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts" target="_blank" rel="noopener"><code>maqueen.ts</code></a> at the time of writing.</p>
+<table class="source-table">
+  <tr><th>Pin / Address</th><th>Component</th><th>Evidence</th></tr>
+  <tr><td><code>P1</code></td><td>Ultrasonic TRIG</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L164" target="_blank" rel="noopener">maqueen.ts:164</a> — <code>pins.digitalWritePin(DigitalPin.P1, 1)</code> inside <code>Ultrasonic()</code></td></tr>
+  <tr><td><code>P2</code></td><td>Ultrasonic ECHO</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L172" target="_blank" rel="noopener">maqueen.ts:172</a> — <code>d = pins.pulseIn(DigitalPin.P2, PulseValue.High, 500 * 58)</code></td></tr>
+  <tr><td><code>P8</code></td><td>LED Left (simple)</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L287" target="_blank" rel="noopener">maqueen.ts:287</a> — <code>pins.digitalWritePin(DigitalPin.P8, ledswitch)</code> inside <code>writeLED(LEDLeft, ...)</code></td></tr>
+  <tr><td><code>P12</code></td><td>LED Right (simple)</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L289" target="_blank" rel="noopener">maqueen.ts:289</a> — <code>pins.digitalWritePin(DigitalPin.P12, ledswitch)</code> inside <code>writeLED(LEDRight, ...)</code></td></tr>
+  <tr><td><code>P13</code></td><td>Line sensor Left</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L267" target="_blank" rel="noopener">maqueen.ts:267</a> — <code>return pins.digitalReadPin(DigitalPin.P13)</code> inside <code>readPatrol(PatrolLeft)</code></td></tr>
+  <tr><td><code>P14</code></td><td>Line sensor Right</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L269" target="_blank" rel="noopener">maqueen.ts:269</a> — <code>return pins.digitalReadPin(DigitalPin.P14)</code> inside <code>readPatrol(PatrolRight)</code></td></tr>
+  <tr><td>I2C <code>0x10</code></td><td>Motor + RGB + Servos chip</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L19" target="_blank" rel="noopener">maqueen.ts:19</a> — <code>const MOTER_ADDRESSS = 0x10</code>, used by <code>pins.i2cWriteBuffer(0x10, buf)</code> throughout</td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x14</code></td><td>Servo S1 angle</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L308" target="_blank" rel="noopener">maqueen.ts:308</a> — <code>buf[0] = 0x14</code> then <code>pins.i2cWriteBuffer(0x10, buf)</code> inside <code>servoRun(S1, angle)</code></td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x15</code></td><td>Servo S2 angle</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L311" target="_blank" rel="noopener">maqueen.ts:311</a> — <code>buf[0] = 0x15</code> for S2</td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x00</code></td><td>Motor M1</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L202" target="_blank" rel="noopener">maqueen.ts:202–205</a> — <code>buf[0] = 0x00; ...; pins.i2cWriteBuffer(0x10, buf)</code> inside <code>motorRun(M1, ...)</code></td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x02</code></td><td>Motor M2</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L208" target="_blank" rel="noopener">maqueen.ts:208–211</a> — <code>buf[0] = 0x02</code> for M2</td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x32</code></td><td>4× RGB ambient LEDs</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L659" target="_blank" rel="noopener">maqueen.ts:659</a> — <code>pins.i2cWriteNumber(I2CADDR, 0x32, NumberFormat.Int8LE)</code> inside the RGB write block</td></tr>
+  <tr><td>IR receiver (P16)</td><td>NEC IR</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueenIR.cpp" target="_blank" rel="noopener">maqueenIR.cpp</a> defines the API but does <strong>not</strong> hardcode a pin — user must call <code>maqueenIR.initIR(maqueenIR.Pins.P16)</code>. <strong>P16</strong> is the convention for Maqueen Lite v4.</td></tr>
+  <tr><td><code>P0</code></td><td>Buzzer</td><td><strong>Not in pxt-maqueen.</strong> Maqueen Lite v4 wires the on-board buzzer to <code>P0</code>, the micro:bit's default <code>music</code> library output. Confirmed by DFRobot's example sketches on the <a href="https://wiki.dfrobot.com/rob0148-en/" target="_blank" rel="noopener">wiki</a> and matches micro:bit V2's built-in speaker convention.</td></tr>
+  <tr><td><code>P19</code> / <code>P20</code></td><td>I2C SCL / SDA</td><td><strong>Not in pxt-maqueen.</strong> Standard micro:bit edge-connector I2C pins per <a href="https://tech.microbit.org/hardware/edgeconnector/" target="_blank" rel="noopener">tech.microbit.org/hardware/edgeconnector</a>; <code>pins.i2c*</code> calls in pxt-maqueen use these by default.</td></tr>
+  <tr><td><code>P5</code> / <code>P11</code></td><td>Button A / B</td><td><strong>Not in pxt-maqueen.</strong> Built into the micro:bit board itself, not the Maqueen carrier.</td></tr>
+  <tr><td><code>P3, P4, P6, P7, P9, P10</code></td><td>LED matrix columns</td><td><strong>Not in pxt-maqueen.</strong> Belong to the micro:bit's built-in 5×5 LED display; usable as digital I/O only after <code>led.enable(false)</code>.</td></tr>
+</table>
+
+<p><strong>To re-verify:</strong> clone the repo and grep for <code>DigitalPin.P</code> and <code>0x10</code>:</p>
+<pre><code>git clone https://github.com/DFRobot/pxt-maqueen
+grep -nE "DigitalPin\.|0x10|0x14|0x15|0x32" pxt-maqueen/maqueen.ts</code></pre>
+
+<h2>How Maqueen Lab firmware uses these</h2>
+<table>
+  <tr><th>Verb (over BLE)</th><th>micro:bit code</th></tr>
+  <tr><td><code>M:L,R</code></td><td><code>maqueen.motorRun(M1, dir, |L|)</code> + same for M2</td></tr>
+  <tr><td><code>STOP</code></td><td><code>maqueen.motorStop(All)</code></td></tr>
+  <tr><td><code>LED:i,s</code></td><td><code>maqueen.writeLED(i, s)</code></td></tr>
+  <tr><td><code>SRV:i,a</code></td><td><code>maqueen.servoRun(Si, a)</code></td></tr>
+  <tr><td><code>BUZZ:f,ms</code></td><td><code>music.playTone(f, ms)</code></td></tr>
+  <tr><td><code>LINE?</code></td><td><code>maqueen.readPatrol(L/R)</code> → <code>LINE:l,r</code></td></tr>
+  <tr><td><code>DIST?</code></td><td><code>maqueen.Ultrasonic(cm)</code> → <code>DIST:cm</code></td></tr>
+  <tr><td><code>IR?</code></td><td><code>maqueen.IR_read()</code> → <code>IR:code</code></td></tr>
+  <tr><td><code>RGB:i,r,g,b</code></td><td>I2C write to <code>0x10</code> reg <code>0x32</code></td></tr>
+  <tr><td>(auto)</td><td><code>input.acceleration(X/Y/Z)</code> → <code>ACC:x,y,z</code></td></tr>
+</table>
+
+<p>See <code>firmware/v1-maqueen-lib.ts</code> for the full implementation.</p>
+
+<h2>Future: raw-pin firmware (v2)</h2>
+<p>Phase 2 firmware (<code>firmware/v2-raw-pins.ts</code>) will replace <code>maqueen.*</code> calls with direct <code>pins.*</code> and <code>pins.i2cWriteBuffer(...)</code> operations — same wire protocol, lower-level code for advanced learners. The Component Explorers will show both versions side-by-side in the code panel.</p>
+
+</body>
+</html>

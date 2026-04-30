@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>USERGUIDE — maqueen-lab</title>
+
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    line-height: 1.55;
+    color: #1a1d24;
+    background: #fafbfc;
+  }
+  body[dir="rtl"] {
+    font-family: 'Tajawal', -apple-system, Segoe UI, sans-serif;
+    direction: rtl;
+    text-align: right;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0a0e12; color: #e8ecef; }
+    a { color: #00ff88; }
+    code { background: #161b22; }
+    pre { background: #161b22; border-color: #30363d; }
+    table th { background: #161b22; }
+    blockquote { border-color: #30363d; color: #9ca3af; }
+    hr { border-color: #30363d; }
+  }
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #00ff88;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-top: 2.2em;
+    padding-top: 0.8em;
+    border-top: 1px solid #e1e4e8;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.15em;
+    margin-top: 1.5em;
+    color: #008855;
+  }
+  @media (prefers-color-scheme: dark) {
+    h2 { border-color: #30363d; }
+    h3 { color: #00ff88; }
+  }
+  p, li { font-size: 15px; }
+  code {
+    background: #f2f4f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e4e8;
+    vertical-align: top;
+  }
+  body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+  th {
+    background: #f2f4f7;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #576574;
+  }
+  @media (prefers-color-scheme: dark) {
+    td, th { border-color: #30363d; }
+    th { color: #9ca3af; }
+    code { color: #e8ecef; }
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #00884a;
+    background: rgba(0, 255, 136, 0.06);
+    color: #4a5258;
+    border-radius: 0 6px 6px 0;
+  }
+  body[dir="rtl"] blockquote {
+    border-left: 0; border-right: 4px solid #00884a;
+    border-radius: 6px 0 0 6px;
+  }
+  hr { border: 0; border-top: 2px dashed #d1d5db; margin: 3em 0; }
+  a { color: #006644; text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+
+  .toc-float {
+    position: fixed; top: 20px; right: 20px;
+    width: 260px; max-height: 80vh; overflow-y: auto;
+    background: rgba(255,255,255,0.96); border: 1px solid #d1d5db;
+    border-radius: 8px; padding: 16px 18px;
+    font-size: 12px; line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none;
+  }
+  body[dir="rtl"] .toc-float { right: auto; left: 20px; font-family: Tajawal, sans-serif; }
+  @media (min-width: 1280px) { .toc-float { display: block; } }
+  @media (prefers-color-scheme: dark) {
+    .toc-float { background: rgba(22,27,34,0.96); border-color: #30363d; }
+  }
+  .toc-float h4 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; }
+  .toc-float ol { margin: 0; padding-left: 20px; }
+  body[dir="rtl"] .toc-float ol { padding-left: 0; padding-right: 20px; }
+
+  .sibling-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+  .sibling-bar a {
+    background: rgba(0,136,85,0.08); border: 1px solid rgba(0,136,85,0.25);
+    padding: 4px 10px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.04em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sibling-bar a { background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.25); }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; max-width: none; padding: 10mm; font-size: 11pt; }
+    h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+    tr, pre, blockquote { page-break-inside: avoid; break-inside: avoid; }
+    .toc-float, .sibling-bar { display: none; }
+    a { color: #000; border-bottom: none; }
+  }
+</style>
+</head>
+<body dir="ltr">
+
+
+<nav class="toc-float" aria-label="Quick contents">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#tour-of-the-folder">Tour of the folder</a></li>
+    <li><a href="#the-two-kinds-of-files">The two kinds of files</a></li>
+    <li><a href="#file-by-file-reference">File-by-file reference</a></li>
+    <li><a href="#the-full-etsy-workflow-in-order">The full Etsy workflow, in
+order</a></li>
+    <li><a href="#rules-of-thumb">Rules of thumb</a></li>
+  </ol>
+</nav>
+<main>
+<h1 id="etsy-package--user-guide"><code>etsy-package/</code> — User
+Guide</h1>
+<p>Everything in this folder exists for <strong>one purpose</strong>: to
+publish and maintain the <strong>Maqueen Lab</strong> listing
+on Etsy.</p>
+<blockquote>
+<p>🛒 <strong>Create a listing</strong>: <a
+href="https://www.etsy.com/your/shops/me/listing-editor/create">https://www.etsy.com/your/shops/me/listing-editor/create</a></p>
+</blockquote>
+<p>This guide walks through each file, what it's for, and at which step
+of the Etsy workflow you actually use it.</p>
+<hr />
+<h2 id="tour-of-the-folder">Tour of the folder</h2>
+<pre><code>etsy-package/
+├── USERGUIDE.md                 📘 This document
+├── README.md                    📄 Short layout reference
+├── build-package.js             🛠  ZIP builder (Node + Playwright)
+├── LICENSE.txt                  📜 Buyer license (ships in the ZIP)
+│
+├── quickstart-card.html         🖨 A4 printable
+├── shortcuts-cheatsheet.html    🖨 A4 landscape printable
+├── classroom-poster.html        🖨 A3 printable
+├── lesson-plan-template.html    🖨 A4 printable
+├── sticker-sheet.html           🖨 A4 printable
+├── README-quickstart.html       🖨 A4 printable
+├── etsy-listing-mockups.html    🖼 Source for the 7 listing images
+│
+├── output/                      🔧 Rendered PNGs (rebuilt on demand)
+├── MaqueenLab-v*/            📦 Build staging dir (rebuilt on demand)
+├── MaqueenLab-v*.zip         📦 Final ZIP (this is what the buyer downloads)
+│
+└── seller-only/                 🔒 Never ships to the buyer
+    ├── ETSY_LISTING.md
+    ├── ETSY_LISTING.html
+    ├── ETSY_PUBLISH_GUIDE.html
+    ├── etsy-playbook.html
+    ├── etsy-playbook-fr.html
+    ├── etsy-playbook-ar.html
+    ├── ETSY-1MIN-PLAYBOOK.md
+    ├── LICENSE-SITE
+    └── SITE_LICENSE_CERTIFICATE.html</code></pre>
+<hr />
+<h2 id="the-two-kinds-of-files">The two kinds of files</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Kind</th>
+<th>Who sees it</th>
+<th>Where it goes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Buyer-facing</strong></td>
+<td>The customer who pays on Etsy</td>
+<td>Bundled into the ZIP, or used as listing images</td>
+</tr>
+<tr class="even">
+<td><strong>Seller-only</strong></td>
+<td>You (and anyone running this shop)</td>
+<td>Stays on your disk / in this repo — never uploaded</td>
+</tr>
+</tbody>
+</table>
+<p>Anything under <code>seller-only/</code> is strategy, legal, or
+video-production material. It is never copied into the ZIP and should
+never be pasted into the Etsy listing itself unless explicitly intended
+(e.g. title, description, tags — which live in
+<code>ETSY_LISTING.md</code>).</p>
+<hr />
+<h2 id="file-by-file-reference">File-by-file reference</h2>
+<h3 id="-tooling">🛠 Tooling</h3>
+<h4 id="build-packagejs"><code>build-package.js</code></h4>
+<ul>
+<li><strong>What:</strong> Node script that renders the 6 printable HTML
+templates to PNG via Playwright, renders the 7 Etsy listing mockups, and
+zips everything into
+<code>MaqueenLab-v&lt;version&gt;.zip</code>.</li>
+<li><strong>When to use:</strong> every time you make a release. Run
+from the repo root:
+<pre class="bash"><code>node etsy-package/build-package.js
+# or
+npm run build:etsy</code></pre></li>
+<li><strong>Outputs:</strong>
+<ul>
+<li><code>etsy-package/output/*.png</code> (printables + mockups,
+rebuilt)</li>
+<li><code>etsy-package/MaqueenLab-v&lt;version&gt;/</code> (staging
+dir, rebuilt)</li>
+<li><code>etsy-package/MaqueenLab-v&lt;version&gt;.zip</code> (the
+buyer ZIP)</li>
+</ul></li>
+<li><strong>Versioning:</strong> edit the <code>VERSION</code> constant
+at the top of the file when you bump.</li>
+</ul>
+<h3 id="-buyer-license">📜 Buyer license</h3>
+<h4 id="licensetxt"><code>LICENSE.txt</code></h4>
+<ul>
+<li><strong>What:</strong> the end-user license that ships inside the
+ZIP. Single-user / single-classroom terms. Covers the app +
+printables.</li>
+<li><strong>When to use:</strong> automatically copied into the ZIP by
+<code>build-package.js</code>.</li>
+<li><strong>Edit carefully:</strong> changing this changes what buyers
+agree to. Keep a dated history if you revise it.</li>
+</ul>
+<h3 id="-printables-shipped-in-the-zip">🖨 Printables (shipped in the
+ZIP)</h3>
+<p>All six are standalone HTML files designed to be rendered as PNGs by
+<code>build-package.js</code> and included in the buyer ZIP under
+<code>printables/</code>. The HTML sources ship too, so teachers can
+tweak them.</p>
+<h4
+id="quickstart-cardhtml--a4-portrait"><code>quickstart-card.html</code>
+— A4 portrait</h4>
+<ul>
+<li><strong>What:</strong> 5-step setup card (flash firmware → open
+<code>index.html</code> → Chrome/Edge → connect BLE → play).</li>
+<li><strong>When to use:</strong> buyers print it as the first thing
+they hold when they unzip the package. Also the cover image of the
+"Printables" bundle advertised on the listing.</li>
+</ul>
+<h4
+id="shortcuts-cheatsheethtml--a4-landscape"><code>shortcuts-cheatsheet.html</code>
+— A4 landscape</h4>
+<ul>
+<li><strong>What:</strong> Keyboard shortcuts (Space, 1–8, P, F, K,
+Esc), BLE state cheat sheet, tab map.</li>
+<li><strong>When to use:</strong> teachers print and pin next to the
+classroom PC.</li>
+</ul>
+<h4
+id="classroom-posterhtml--a3-portrait"><code>classroom-poster.html</code>
+— A3 portrait</h4>
+<ul>
+<li><strong>What:</strong> "Drive Real Robots with Code!" poster in 5
+big kid-safe steps.</li>
+<li><strong>When to use:</strong> teachers print on A3 for classroom
+walls. Doubles as a strong visual for the listing cover.</li>
+</ul>
+<h4
+id="lesson-plan-templatehtml--a4-portrait"><code>lesson-plan-template.html</code>
+— A4 portrait</h4>
+<ul>
+<li><strong>What:</strong> Editable 45-minute lesson-plan template + one
+ready-to-teach sample ("Hot or Not? The Sensor Detective") with a
+rubric.</li>
+<li><strong>When to use:</strong> sell the "teacher-friendly" angle.
+Print, fill in by hand or in Canva, hand out.</li>
+</ul>
+<h4 id="sticker-sheethtml--a4-portrait"><code>sticker-sheet.html</code>
+— A4 portrait</h4>
+<ul>
+<li><strong>What:</strong> 30 circular badges — "I Connected BLE!",
+theme icons, 3D model crew, language badges, achievement stickers.</li>
+<li><strong>When to use:</strong> teachers print on sticker paper (Avery
+22807 or similar) for student rewards. Great "bonus" in Etsy
+description.</li>
+</ul>
+<h4
+id="readme-quickstarthtml--a4-portrait"><code>README-quickstart.html</code>
+— A4 portrait</h4>
+<ul>
+<li><strong>What:</strong> Polished buyer welcome page ("Thank you for
+buying…" + first 3 things to do).</li>
+<li><strong>When to use:</strong> ships alongside <code>README.md</code>
+in the ZIP so buyers see a printable welcome, not just a plain text
+file.</li>
+</ul>
+<h3 id="-listing-mockups">🖼 Listing mockups</h3>
+<h4
+id="etsy-listing-mockupshtml"><code>etsy-listing-mockups.html</code></h4>
+<ul>
+<li><strong>What:</strong> a single HTML file containing 7
+<code>&lt;div class="mockup"&gt;</code> elements, each 2000×1500 px.
+Rendered by <code>build-package.js</code> into
+<code>output/etsy-mockup-1.png</code> …
+<code>etsy-mockup-7.png</code>.</li>
+<li><strong>The seven mockups:</strong>
+<ol type="1">
+<li><strong>Hero shot</strong> — product name + tagline on Stealth
+background</li>
+<li><strong>16-cell feature grid</strong> — 8 tabs × features</li>
+<li><strong>Teacher pitch</strong> — "For teachers" with quotes</li>
+<li><strong>Kid pitch</strong> — big, playful, colorful</li>
+<li><strong>What's in the ZIP</strong> — file manifest</li>
+<li><strong>4-theme showcase</strong> — Stealth / Neon / Arctic /
+Blaze</li>
+<li><strong>Trilingual callout</strong> — EN / FR / AR</li>
+</ol></li>
+<li><strong>When to use:</strong> upload as the 7 listing images on Etsy
+in this order. Etsy shows the first image as the thumbnail in
+search.</li>
+</ul>
+<h3 id="-seller-only--strategy-legal-video">🔒 <code>seller-only/</code>
+— strategy, legal, video</h3>
+<p>All files here are <strong>gitignored for the ZIP</strong> (the build
+script never touches them) and should never be pasted verbatim into the
+public Etsy listing.</p>
+<h4 id="etsy_listingmd"><code>ETSY_LISTING.md</code></h4>
+<ul>
+<li><strong>What:</strong> the full business playbook in Markdown.
+Title, description, pricing strategy (single-user, classroom, school
+site, OEM), all candidate tags ranked by intent, paste-ready social
+copy, Pinterest plan, video scripts, 10 tier-2 product ideas with launch
+kits.</li>
+<li><strong>When to use:</strong> your source of truth when you're
+actually typing into the Etsy "Create listing" form. Copy from here,
+paste into Etsy.</li>
+</ul>
+<h4 id="etsy_listinghtml"><code>ETSY_LISTING.html</code></h4>
+<ul>
+<li><strong>What:</strong> HTML twin of <code>ETSY_LISTING.md</code> —
+opens in a browser, has a copy-to-clipboard button on every paste-ready
+block.</li>
+<li><strong>When to use:</strong> instead of the <code>.md</code> if
+you'd rather click a button than select-and-copy. Same content.</li>
+</ul>
+<h4
+id="etsy_publish_guidehtml"><code>ETSY_PUBLISH_GUIDE.html</code></h4>
+<ul>
+<li><strong>What:</strong> 16-step launch checklist with progress
+tracking (localStorage) and status pills. Covers everything from Etsy
+shop setup to scheduling the first Pinterest pin.</li>
+<li><strong>When to use:</strong> open this in a browser
+<strong>first</strong> on launch day. Tick off each step. Your progress
+persists across reloads.</li>
+</ul>
+<h4
+id="etsy-playbookhtml---frhtml---arhtml"><code>etsy-playbook.html</code>
+/ <code>-fr.html</code> / <code>-ar.html</code></h4>
+<ul>
+<li><strong>What:</strong> 60-second video script + shot list for the
+Etsy listing video. EN / FR / AR variants (Etsy lets you upload one
+video per listing; use whichever language best matches your target
+audience, or record three separate videos for international
+listings).</li>
+<li><strong>When to use:</strong> day you film the product video. Keep
+the playbook open on a second screen while recording.</li>
+</ul>
+<h4 id="etsy-1min-playbookmd"><code>ETSY-1MIN-PLAYBOOK.md</code></h4>
+<ul>
+<li><strong>What:</strong> Markdown twin of
+<code>etsy-playbook.html</code>. Same content, easier to diff in Git
+when you iterate on the script.</li>
+<li><strong>When to use:</strong> interchangeable with the HTML — use
+whichever is handier.</li>
+</ul>
+<h4 id="license-site"><code>LICENSE-SITE</code></h4>
+<ul>
+<li><strong>What:</strong> legal text for the <strong>School Site
+License</strong> tier ($149+, up to 30 teachers at one school, unlimited
+students).</li>
+<li><strong>When to use:</strong> when you create the higher-tier
+listing on Etsy. Rename to <code>LICENSE</code> inside that tier's ZIP
+before shipping.</li>
+</ul>
+<h4
+id="site_license_certificatehtml"><code>SITE_LICENSE_CERTIFICATE.html</code></h4>
+<ul>
+<li><strong>What:</strong> per-sale certificate template. Fill in the
+school name, order date, number of seats → print to PDF → email to the
+buyer.</li>
+<li><strong>When to use:</strong> after each School Site License order
+on Etsy.</li>
+</ul>
+<hr />
+<h2 id="the-full-etsy-workflow-in-order">The full Etsy workflow, in
+order</h2>
+<p>Numbered by when each file enters the picture:</p>
+<h3 id="1-prep-once-per-release">1. Prep (once per release)</h3>
+<ol type="1">
+<li>Bump <code>VERSION</code> in <code>build-package.js</code> and
+<code>package.json</code>.</li>
+<li>Run <code>npm run build:etsy</code> — produces the ZIP and the 7
+mockup PNGs.</li>
+<li>Open <code>seller-only/ETSY_LISTING.md</code>, update anything that
+changed (features list, pricing, version number in the
+description).</li>
+<li>Preview <code>etsy-listing-mockups.html</code> in Chrome; verify all
+7 mockups render with current branding.</li>
+</ol>
+<h3 id="2-record-the-video-once-per-language">2. Record the video (once
+per language)</h3>
+<ol start="5" type="1">
+<li>Open <code>seller-only/etsy-playbook.html</code> (EN / FR / AR) on a
+second screen. Record in OBS following the shot list.</li>
+<li>Export a 60-second MP4, ≤100 MB, 1080p or higher (Etsy's
+limit).</li>
+</ol>
+<h3 id="3-create-the-listing-launch-day">3. Create the listing (launch
+day)</h3>
+<ol start="7" type="1">
+<li>Open <code>seller-only/ETSY_PUBLISH_GUIDE.html</code> in Chrome.
+Tick each step as you go.</li>
+<li>Create the Etsy listing. Paste title, description, tags from
+<code>seller-only/ETSY_LISTING.md</code>.</li>
+<li>Upload the 7 mockup PNGs from <code>output/etsy-mockup-1.png</code>
+… <code>etsy-mockup-7.png</code> <strong>in numeric order</strong> (Etsy
+uses the first one as the thumbnail).</li>
+<li>Upload the video from step 6.</li>
+<li>Attach the digital file:
+<code>MaqueenLab-v&lt;version&gt;.zip</code>.</li>
+<li>Set pricing from the <code>ETSY_LISTING.md</code> pricing
+table.</li>
+<li>Publish.</li>
+</ol>
+<h3 id="4-after-each-sale">4. After each sale</h3>
+<ol start="14" type="1">
+<li>For a <strong>single-user</strong> or <strong>classroom</strong>
+sale: nothing to do — Etsy delivers the ZIP automatically. The buyer
+opens the ZIP and sees <code>README-quickstart.html</code> +
+<code>quickstart-card.pdf</code> first.</li>
+<li>For a <strong>School Site License</strong> sale: fill in
+<code>seller-only/SITE_LICENSE_CERTIFICATE.html</code>, print to PDF,
+email to the buyer. Log the order in your own tracker.</li>
+</ol>
+<h3 id="5-ongoing-maintenance">5. Ongoing maintenance</h3>
+<ol start="16" type="1">
+<li>When the app ships a new feature, edit <code>ETSY_LISTING.md</code>,
+bump the version, re-run <code>npm run build:etsy</code>, and update the
+Etsy listing's description + attached ZIP.</li>
+<li>Keep old ZIPs tracked in Git (the <code>.gitignore</code> exemption
+keeps <code>etsy-package/MaqueenLab-v*.zip</code> in history) so you
+can always recover the exact artifact any past buyer received.</li>
+</ol>
+<hr />
+<h2 id="rules-of-thumb">Rules of thumb</h2>
+<ul>
+<li><strong>Never</strong> paste pricing strategy from
+<code>ETSY_LISTING.md</code> into the public listing description —
+that's your playbook, not the pitch.</li>
+<li><strong>Never</strong> zip <code>seller-only/</code> manually into
+the buyer ZIP. <code>build-package.js</code> intentionally excludes
+it.</li>
+<li><strong>Always</strong> rebuild the ZIP after editing anything in
+<code>docs/</code>, <code>assets/</code>, <code>js/</code>, or the root
+app files. The ZIP is tracked in Git, so the buyer-facing artifact is
+always reproducible.</li>
+<li>When in doubt: if a file has "LISTING", "PUBLISH", "PLAYBOOK",
+"SITE", or "CERTIFICATE" in its name — it's seller-only.</li>
+</ul>
+<hr />
+<p>See also:</p>
+<ul>
+<li><a href="../README.md">../README.md</a> — project overview</li>
+<li><a href="../SETUP.md">../SETUP.md</a> — buyer 5-minute setup</li>
+<li><a href="../CHANGELOG.md">../CHANGELOG.md</a> — version history</li>
+<li><a href="README.md">README.md</a> — short layout reference</li>
+</ul>
+
+</main>
+</body>
+</html>

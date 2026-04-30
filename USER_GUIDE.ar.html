@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maqueen Lab — دليل القائد</title>
+<style>
+  :root {
+    --bg:        #0a0f1a;
+    --bg-elev:   #0f172a;
+    --bg-card:   #131c2e;
+    --border:    #1f2a44;
+    --text:      #e6eef9;
+    --text-dim:  #94a3b8;
+    --accent:    #38bdf8;
+    --accent2:   #fbbf24;
+    --green:     #4ade80;
+    --amber:     #fbbf24;
+    --red:       #f87171;
+    --pink:      #f472b6;
+    --orange:    #fb923c;
+    --yellow:    #facc15;
+    --mono: 'JetBrains Mono','Fira Code',Consolas,monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background:
+      radial-gradient(ellipse at 85% 5%, rgba(56,189,248,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 15% 95%, rgba(251,191,36,0.05) 0%, transparent 50%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', 'Tahoma', 'Arial', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.85; font-size: 16px; min-height: 100vh; scroll-behavior: smooth;
+  }
+  body { max-width: 1080px; margin: 0 auto; padding: 24px 24px 80px; }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { background: rgba(56,189,248,0.12); padding: 1px 6px; border-radius: 4px; font-family: var(--mono); font-size: 0.92em; color: #ddd6fe; direction: ltr; display: inline-block; }
+  kbd { background: var(--bg-elev); border: 1px solid var(--border); border-bottom-width: 2px; padding: 2px 6px; border-radius: 4px; font-family: var(--mono); font-size: 0.88em; color: var(--accent); direction: ltr; display: inline-block; }
+  .hero { text-align: center; padding: 48px 16px 24px; }
+  .hero-bot { display: inline-block; animation: bob 3.4s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+  .hero h1 {
+    font-size: clamp(36px, 7vw, 64px); font-weight: 900; letter-spacing: -0.02em; margin: 16px 0 8px;
+    background: linear-gradient(135deg, #fff, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero .pitch { font-size: 19px; color: var(--text-dim); max-width: 640px; margin: 0 auto 28px; }
+  .cta-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #0a1628; padding: 11px 22px; border-radius: 999px; font-weight: 700; font-size: 14px; text-decoration: none; transition: transform 0.12s, box-shadow 0.18s; }
+  .btn:hover { transform: scale(1.04); box-shadow: 0 0 22px rgba(56,189,248,0.55); text-decoration: none; }
+  .btn.alt { background: var(--accent2); color: #01202b; }
+  .btn.alt:hover { box-shadow: 0 0 22px rgba(56,189,248,0.55); }
+  .btn.ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+  .btn.ghost:hover { color: var(--accent); border-color: var(--accent); }
+  .toc { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.2); border-radius: 14px; padding: 18px 22px; margin: 24px 0 40px; }
+  .toc h3 { margin: 0 0 12px; font-size: 14px; color: var(--accent); letter-spacing: 0.08em; }
+  .toc ol { columns: 2; column-gap: 32px; margin: 0; padding-right: 22px; padding-left: 0; color: var(--text-dim); }
+  .toc ol li { margin-bottom: 6px; break-inside: avoid; }
+  .toc a { color: var(--text); }
+  .toc a:hover { color: var(--accent); }
+  @media (max-width: 600px) { .toc ol { columns: 1; } }
+  h2 { font-size: 30px; margin: 56px 0 6px; letter-spacing: -0.01em; line-height: 1.4; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  h2 .num { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: var(--accent); color: #0a1628; border-radius: 12px; font-size: 18px; font-weight: 900; }
+  h3 { font-size: 21px; margin: 32px 0 8px; color: var(--accent); }
+  h4 { font-size: 17px; margin: 20px 0 6px; color: var(--accent2); font-weight: 700; }
+  .lede { color: var(--text-dim); margin: 0 0 22px; font-size: 16px; max-width: 720px; }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s; }
+  .card:hover { border-color: var(--accent); box-shadow: 0 6px 24px rgba(56,189,248,0.18); }
+  .card .ico { font-size: 28px; line-height: 1; margin-bottom: 8px; display: block; }
+  .card h3 { font-size: 18px; margin: 0 0 6px; color: var(--text); }
+  .card .why { font-size: 13px; color: var(--accent); font-weight: 700; letter-spacing: 0.04em; margin: 0 0 6px; }
+  .card p { margin: 6px 0; color: var(--text-dim); font-size: 14.5px; }
+  .card ul { margin: 6px 0 0; padding-right: 18px; padding-left: 0; color: var(--text-dim); font-size: 14px; }
+  .card.tutor { border-right: 4px solid var(--green); border-left: 1px solid var(--border); }
+  .card.geek  { border-right: 4px solid var(--accent2); border-left: 1px solid var(--border); }
+  .card.warn  { border-right: 4px solid var(--amber); border-left: 1px solid var(--border); }
+  .card.danger{ border-right: 4px solid var(--red); border-left: 1px solid var(--border); }
+  ol.steps { padding-right: 0; padding-left: 0; counter-reset: stp; list-style: none; }
+  ol.steps li { counter-increment: stp; background: var(--bg-card); border-right: 3px solid var(--accent); border-radius: 10px 0 0 10px; padding: 12px 56px 12px 16px; margin-bottom: 10px; position: relative; }
+  ol.steps li::before { content: counter(stp); position: absolute; right: 12px; top: 12px; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #0a1628; font-weight: 900; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+  .figure { margin: 18px 0; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .figure svg { max-width: 100%; height: auto; direction: ltr; }
+  .figure .caption { margin-top: 10px; font-size: 13px; color: var(--text-dim); font-style: italic; }
+  table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 10px; overflow: hidden; margin: 14px 0; font-size: 14px; }
+  thead { background: rgba(56,189,248,0.18); }
+  th, td { padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--border); }
+  td:first-child { font-family: var(--mono); color: var(--accent); white-space: nowrap; direction: ltr; text-align: left; }
+  .geek-box { background: rgba(56,189,248,0.06); border: 1px dashed rgba(56,189,248,0.4); border-radius: 10px; padding: 12px 16px; margin: 16px 0; font-size: 14px; }
+  .geek-box::before { content: "🤓 تفاصيل تقنية"; display: block; color: var(--accent2); font-size: 11px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .funny-box { background: rgba(251,191,36,0.07); border-right: 4px solid var(--amber); border-radius: 10px 0 0 10px; padding: 12px 16px; margin: 16px 0; font-size: 15px; }
+  .funny-box::before { content: "🎉 هل تعلم؟"; display: block; color: var(--amber); font-size: 11px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .pro-tip { background: rgba(74,222,128,0.06); border-right: 4px solid var(--green); border-radius: 10px 0 0 10px; padding: 12px 16px; margin: 16px 0; }
+  .pro-tip::before { content: "💡 نصيحة"; display: block; color: var(--green); font-size: 11px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .pulse-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(74,222,128,0.8); animation: pulseRing 1.5s infinite; vertical-align: middle; margin-left: 6px; }
+  @keyframes pulseRing { 0%{box-shadow:0 0 0 0 rgba(74,222,128,0.8)} 100%{box-shadow:0 0 0 12px rgba(74,222,128,0)} }
+  .sweep-beam { transform-origin: 100px 100px; animation: sweep 3s linear infinite; }
+  @keyframes sweep { 0%{transform:rotate(-90deg)} 100%{transform:rotate(90deg)} }
+  .wheel { transform-origin: center; animation: spin 1.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  hr.div { border: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 36px 0; }
+  footer { text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); }
+  .res { display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--text); transition: border-color 0.15s, transform 0.1s; }
+  .res:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+  .res-icon { font-size: 22px; }
+  .res-text strong { display: block; font-size: 14px; color: var(--accent); }
+  .res-text span { font-size: 12px; color: var(--text-dim); }
+  section[id] { scroll-margin-top: 14px; }
+  .site-header { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 16px; padding: 10px 18px; background: rgba(10,15,26,0.78); backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); border-bottom: 1px solid rgba(56,189,248,0.18); margin: -24px -24px 0; flex-wrap: wrap; }
+  .site-header__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+  .site-header__brand:hover { text-decoration: none; }
+  .site-header__logo { width: 40px; height: 40px; background: #fff; border-radius: 8px; padding: 4px; box-shadow: 0 2px 10px rgba(56,189,248,0.25); }
+  .site-header__title { font-size: 18px; font-weight: 900; background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .site-header__sub { font-size: 11px; color: var(--text-dim); font-family: var(--mono); letter-spacing: 0.05em; }
+  .site-header__nav { margin-right: auto; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .site-header__nav .lang-pill { padding: 5px 11px; background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.2); border-radius: 999px; color: var(--text-dim); text-decoration: none; font-size: 12px; }
+  .site-header__nav .lang-pill.active { background: rgba(56,189,248,0.22); border-color: var(--accent); color: #fff; font-weight: 700; }
+  .site-header__nav .gh-link { margin-right: 8px; padding: 5px 11px; background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.3); border-radius: 999px; color: var(--accent2); text-decoration: none; font-size: 12px; font-weight: 700; }
+  @media (max-width: 700px) { .site-header__sub { display: none; } .site-header__nav { width: 100%; justify-content: center; } }
+  .stats-ribbon { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 8px 0 24px; }
+  .stat { background: linear-gradient(135deg, rgba(56,189,248,0.05), rgba(251,191,36,0.04)); border: 1px solid var(--border); border-radius: 14px; padding: 18px 14px; text-align: center; }
+  .stat__num { font-size: 36px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: var(--mono); direction: ltr; }
+  .stat__label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.05em; margin-top: 6px; }
+  .site-footer { margin: 80px -24px -80px; padding: 40px 32px 32px; background: radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.08) 0%, transparent 60%), #060912; border-top: 1px solid rgba(56,189,248,0.2); }
+  .site-footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; max-width: 1080px; margin: 0 auto; }
+  @media (max-width: 720px) { .site-footer__grid { grid-template-columns: 1fr 1fr; gap: 22px; } }
+  @media (max-width: 460px) { .site-footer__grid { grid-template-columns: 1fr; } }
+  .site-footer__brand { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .site-footer__brand img { width: 44px; height: 44px; background: #fff; border-radius: 8px; padding: 5px; }
+  .site-footer__brand-name { font-size: 18px; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .site-footer__brand-tag { font-size: 11px; color: var(--text-dim); font-family: var(--mono); }
+  .site-footer__about { color: var(--text-dim); font-size: 13.5px; line-height: 1.8; }
+  .site-footer h5 { color: var(--accent); font-size: 12px; letter-spacing: 0.05em; margin: 0 0 12px; font-weight: 800; }
+  .site-footer ul { list-style: none; padding: 0; margin: 0; }
+  .site-footer ul li { margin-bottom: 8px; font-size: 13px; }
+  .site-footer ul li a { color: var(--text-dim); text-decoration: none; }
+  .site-footer ul li a:hover { color: var(--accent); }
+  .site-footer__bottom { max-width: 1080px; margin: 32px auto 0; padding-top: 20px; border-top: 1px solid rgba(56,189,248,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: var(--text-dim); font-size: 12px; }
+  .site-footer__bottom a { color: var(--accent); text-decoration: none; }
+  .site-footer__chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .site-footer__chips span { padding: 3px 10px; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2); border-radius: 999px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); direction: ltr; display: inline-block; }
+  .divider-fun { text-align: center; margin: 48px 0; color: var(--text-dim); font-size: 16px; letter-spacing: 0.5em; opacity: 0.5; }
+  .back-top { position: fixed; left: 16px; bottom: 16px; background: var(--accent); color: #0a1628; border-radius: 999px; padding: 10px 14px; font-weight: 700; text-decoration: none; box-shadow: 0 6px 16px rgba(0,0,0,0.5); }
+  .back-top:hover { text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="index.html" class="site-header__brand" aria-label="Maqueen Lab الرئيسية">
+    <img src="assets/workshop-diy-logo.svg" alt="شعار Workshop DIY" class="site-header__logo"/>
+    <div>
+      <div class="site-header__title">MAQUEEN LAB</div>
+      <div class="site-header__sub">دليل القائد</div>
+    </div>
+  </a>
+  <nav class="site-header__nav" aria-label="منتقي اللغة">
+    <a href="USER_GUIDE.html"    class="lang-pill">🇬🇧 EN</a>
+    <a href="USER_GUIDE.fr.html" class="lang-pill">🇫🇷 FR</a>
+    <a href="USER_GUIDE.ar.html" class="lang-pill active">🇩🇿 AR</a>
+    <a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener" class="gh-link">⭐ GitHub</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <span class="hero-bot" aria-hidden="true">
+    <svg width="160" height="120" viewBox="0 0 200 150">
+      <rect x="40" y="50" width="120" height="60" rx="14" fill="#1d4ed8" stroke="#3b82f6" stroke-width="2"/>
+      <rect x="70" y="68" width="60" height="28" rx="3" fill="#0a0e2e" stroke="#38bdf8" stroke-width="1.2"/>
+      <text x="100" y="86" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="9">micro:bit</text>
+      <circle cx="76"  cy="60" r="4" fill="#fbbf24"/>
+      <circle cx="124" cy="60" r="4" fill="#fbbf24"/>
+      <g transform="translate(40 110)"><circle r="22" fill="#1f2937" stroke="#3b82f6" stroke-width="2"/><g class="wheel"><line x1="-22" y1="0" x2="22" y2="0" stroke="#64748b" stroke-width="3"/><line x1="0" y1="-22" x2="0" y2="22" stroke="#64748b" stroke-width="3"/></g></g>
+      <g transform="translate(160 110)"><circle r="22" fill="#1f2937" stroke="#3b82f6" stroke-width="2"/><g class="wheel"><line x1="-22" y1="0" x2="22" y2="0" stroke="#64748b" stroke-width="3"/><line x1="0" y1="-22" x2="0" y2="22" stroke="#64748b" stroke-width="3"/></g></g>
+      <line x1="100" y1="50" x2="100" y2="20" stroke="#38bdf8" stroke-width="1.5"/>
+      <circle cx="100" cy="18" r="4" fill="#38bdf8"><animate attributeName="r" values="3;6;3" dur="1.4s" repeatCount="indefinite"/></circle>
+    </svg>
+  </span>
+  <h1>دليل القائد</h1>
+  <p class="pitch">
+    أهلاً بك على متن السفينة، <b>يا مهندس الروبوتات المستقبلي</b>.
+    هذا دليلك لـ <b>Maqueen Lab</b> — غرفة التحكم المباشرة لروبوت DFRobot Maqueen Lite v4.
+    لا حاجة لخبرة سابقة. فقط الفضول و🤖.
+  </p>
+  <div class="cta-row">
+    <a class="btn"       href="index.html">▶ افتح التطبيق</a>
+    <a class="btn alt"   href="schematics-kids.html">🤖 تعرّف على روبوتك</a>
+    <a class="btn ghost" href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener">⭐ كود المصدر على GitHub</a>
+  </div>
+</section>
+
+<div class="stats-ribbon">
+  <div class="stat"><div class="stat__num">20</div><div class="stat__label">ميزات</div></div>
+  <div class="stat"><div class="stat__num">10</div><div class="stat__label">ألعاب تعليمية</div></div>
+  <div class="stat"><div class="stat__num">8</div><div class="stat__label">حساسات</div></div>
+  <div class="stat"><div class="stat__num">3</div><div class="stat__label">لغات</div></div>
+</div>
+
+<nav class="toc" aria-label="جدول المحتويات">
+  <h3>📖 المحتويات</h3>
+  <ol>
+    <li><a href="#quickstart">البداية السريعة (90 ثانية)</a></li>
+    <li><a href="#hardware">تعرّف على روبوتك</a></li>
+    <li><a href="#interface">غرفة القيادة</a></li>
+    <li><a href="#connect">الاتصال عبر البلوتوث</a></li>
+    <li><a href="#drive">القيادة (تبويب Drive)</a></li>
+    <li><a href="#dashboard">لوحة القيادة</a></li>
+    <li><a href="#path">خريطة المسار / SLAM</a></li>
+    <li><a href="#servos">السيرفو ومختبر PWM</a></li>
+    <li><a href="#leds">مصابيح LED</a></li>
+    <li><a href="#neopixels">نيوبيكسلز و Simon Says</a></li>
+    <li><a href="#buzzer">الجرس و Buzz the Tune</a></li>
+    <li><a href="#distance">المسافة والرادار الماسح</a></li>
+    <li><a href="#line">حساسات الخط والسباق</a></li>
+    <li><a href="#ir">جهاز التحكم بالأشعة</a></li>
+    <li><a href="#voice">الأوامر الصوتية</a></li>
+    <li><a href="#tilt">القيادة بالإمالة</a></li>
+    <li><a href="#autopilot">الطيار الآلي بالرسم</a></li>
+    <li><a href="#telemetry">التليمتري والملخّص</a></li>
+    <li><a href="#timelapse">تصدير الفيديو المتسارع</a></li>
+    <li><a href="#ar">الواقع المعزز</a></li>
+    <li><a href="#pair">إقران روبوتين</a></li>
+    <li><a href="#games">كل الألعاب التعليمية العشرة</a></li>
+    <li><a href="#mobile">وضع الهاتف واللوحي</a></li>
+    <li><a href="#themes">الألوان واللغات</a></li>
+    <li><a href="#troubleshoot">حل المشاكل</a></li>
+    <li><a href="#glossary">قاموس المصطلحات</a></li>
+    <li><a href="#parents">للآباء والمعلمين</a></li>
+  </ol>
+</nav>
+
+<section id="quickstart">
+  <h2><span class="num">1</span> البداية السريعة <span style="font-size:14px; color:var(--text-dim); font-weight:400;">(في أقل من 90 ثانية)</span></h2>
+  <p class="lede">من «ما هو الروبوت؟» إلى تشغيله في المطبخ — أسرع طريق.</p>
+  <ol class="steps">
+    <li><b>شغّل الروبوت.</b> قم بتحريك المفتاح خلف Maqueen Lite إلى <code>ON</code>. شاشة micro:bit تستيقظ. <span style="color:var(--green);"><span class="pulse-dot"></span>الضوء الأخضر = صحي.</span></li>
+    <li><b>افتح Maqueen Lab</b> في <b>Chrome</b> أو <b>Edge</b> (Web Bluetooth لا يعمل على Safari أو Firefox — هذه المتصفحات لا تستطيع التحدث مع الروبوت). → <a href="index.html">اضغط هنا لتشغيل التطبيق.</a></li>
+    <li><b>اضغط الزر الكبير <kbd>🔗 Connect</kbd></b> على اليمين. تظهر نافذة من المتصفح تعرض أجهزة البلوتوث القريبة.</li>
+    <li><b>اختر الجهاز الذي يبدأ بـ «BBC micro:bit»</b> (يتبعه 5 حروف عشوائية — هذا هو المعرف الفريد لروبوتك). اضغط <b>Pair</b>.</li>
+    <li><b>انتظر 3 ثوان تقريباً</b> حتى تتحول النقطة في الرأس إلى 🟢 خضراء. قرص «READY» يصبح «CONNECTED».</li>
+    <li><b>قده!</b> اضغط أحد الأسهم الأربعة في لوحة المفاتيح، أو اضغط <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>. الروبوت يتحرك. <kbd>Space</kbd> للتوقف.</li>
+  </ol>
+  <div class="pro-tip">
+    الاتصال يفشل؟ تأكد أن الروبوت <b>مشغل</b>، أن micro:bit نسخة <b>v2</b> (نسخة v1 تفتقر للذاكرة لـ BLE + الرادار)، وأن لا تبويب آخر متصل. <a href="#troubleshoot">حل كامل للمشاكل ←</a>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="hardware">
+  <h2><span class="num">2</span> تعرّف على روبوتك</h2>
+  <p class="lede">قبل القيادة، لنتجول حول الهيكل. Maqueen Lite v4 لديه حساسات أكثر مما لدى الهاتف الذكي من كاميرات.</p>
+  <div class="grid">
+    <div class="card geek"><span class="ico">🧠</span><h3>الدماغ</h3><p class="why">micro:bit v2</p><p>شاشة LED 5×5، زرين (A و B)، مقياس تسارع، مغناطيسي، ميكروفون، مكبر صوت، وراديو Bluetooth Low Energy.</p></div>
+    <div class="card geek"><span class="ico">⚡</span><h3>المحركات</h3><p class="why">سائق TB6612FNG عبر I²C 0x10</p><p>محركان DC، يتم التحكم بكل منهما بشكل مستقل من -255 (تراجع كامل) إلى +255 (أمام كامل). تحكم بالسرعة عبر PWM.</p></div>
+    <div class="card geek"><span class="ico">🦇</span><h3>«العيون»</h3><p class="why">SR04 الموجات فوق الصوتية على P1·P2</p><p>يرسل صوتاً بتردد 40 kHz ويقيس وقت الصدى. المدى من 2 cm إلى ~4 m. يرى عبر الزجاج، القماش، حتى الضباب.</p></div>
+    <div class="card geek"><span class="ico">👀</span><h3>«المستشعرات الأرضية»</h3><p class="why">حساسات الخط على P13 و P14</p><p>الانعكاس بالأشعة تحت الحمراء — الشريط الأسود يمتص، الورق الأبيض يعكس. كل حساس يعيد 0 أو 1.</p></div>
+  </div>
+  <div class="funny-box">
+    روبوتك لديه حساسات أكثر من <b>Mars Pathfinder</b> (1997). مركبة المريخ كانت تعتمد على خمس فوتوديودات للملاحة. أنت لديك سبعة حواس مدمجة، محركان، أربع بيكسلات، جرس، وبلوتوث. روبوتك كان سيتفوق على المريخ. 🚀
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="interface">
+  <h2><span class="num">3</span> غرفة القيادة</h2>
+  <p class="lede">عند تحميل التطبيق، تهبط على <b>Maqueen → Drive</b>. لوحة المفاتيح الكبيرة في الوسط، المقاييس بالأسفل، الحساسات على اليمين.</p>
+  <div class="grid">
+    <div class="card"><span class="ico">🤖</span><h4>الرأس</h4><p>الشعار، أعلام 🇬🇧 🇫🇷 🇩🇿، منتقي الألوان (ستة ألوان!)، زر QR-share 📱، زر إقران الروبوتات 🤝، وقرص الاتصال 🟢 الظاهر دائماً.</p></div>
+    <div class="card"><span class="ico">🎮</span><h4>صف التبويبات</h4><p><b>Maqueen</b> = غرفة القيادة (افتراضي). <b>Playground</b> = مساحة عامة للـ micro:bit. داخل Maqueen، 8 تبويبات فرعية حسب المكوّن.</p></div>
+    <div class="card"><span class="ico">🛤️</span><h4>الشريط الأيمن</h4><p>دائماً ظاهر على اليمين: بطاقة هوية الروبوت، أزرار CONNECT، شريط الحساسات الحي، سجل الرسائل. اسحب حافته لتغيير الحجم.</p></div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="connect">
+  <h2><span class="num">4</span> الاتصال عبر البلوتوث</h2>
+  <p class="lede">الجسر بين شاشتك والروبوت هو <b>Web Bluetooth</b>. لا تطبيق للتثبيت. لا برنامج تشغيل. مجرد إذن وانطلق.</p>
+  <h3>خطوة بخطوة</h3>
+  <ol class="steps">
+    <li><b>الروبوت مشغل.</b> micro:bit يظهر وجه ابتسامة عندما يكون البرنامج الثابت يعمل وجاهز للبث.</li>
+    <li><b>اضغط 🔗 Connect.</b> المتصفح يفتح نافذته الأصلية للإقران.</li>
+    <li><b>اختر «BBC micro:bit [xxxxx]»</b> من القائمة. الحروف الخمسة = المعرف الفريد لروبوتك.</li>
+    <li><b>انتظر النبض الأخضر.</b> النقطة 🟢 في الرأس تنبض عند الاتصال.</li>
+  </ol>
+  <h3>زر «streams»</h3>
+  <ul>
+    <li><b>OFF (افتراضي)</b> — فقط الأوامر عند الطلب. مهذب. هادئ. يوفر البطارية وعرض النطاق.</li>
+    <li><b>ON</b> — micro:bit يبث تلقائياً ACC (مقياس التسارع)، TEMP، LIGHT، COMPASS، و BTN بمعدل 5 Hz. مطلوب لتبويبات Sensors / Graph / 3D في <b>Playground</b>.</li>
+  </ul>
+  <div class="geek-box">
+    <b>ما يحدث فعلاً:</b> التطبيق يتحدث مع micro:bit عبر <b>Nordic UART Service</b> (منفذ متسلسل افتراضي عبر BLE). كل أمر هو سطر نصي صغير مثل <code>M:200,200</code> لـ «حرّك المحركين بسرعة 200». الروبوت يجيب <code>ECHO:42 M:200,200</code> («استلمت، أنفّذ»). الذهاب والإياب حوالي 30 ms — بسرعة أن ترمش ثلاث مرات.
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="drive">
+  <h2><span class="num">5</span> القيادة — تبويب Drive 🛞</h2>
+  <p class="lede">الميزة الرئيسية. ثلاث طرق للتحكم بالعجلات، بالإضافة إلى الكثير من الأتمتة.</p>
+  <h3>وسائل التحكم الثلاث</h3>
+  <div class="grid">
+    <div class="card"><span class="ico">⌨️</span><h4>لوحة المفاتيح</h4><p><kbd>W</kbd> أمام · <kbd>S</kbd> خلف · <kbd>A</kbd> دوران يسار · <kbd>D</kbd> دوران يمين · <kbd>Space</kbd> توقف. اضغط الأزرار على الشاشة إذا لم تكن لديك لوحة مفاتيح.</p></div>
+    <div class="card"><span class="ico">🎯</span><h4>عصا التحكم التناظرية</h4><p>اسحب النقطة البرتقالية في الدائرة. المسافة = السرعة. الاتجاه = حركة. الإفلات = توقف. الأفضل على شاشات اللمس.</p></div>
+    <div class="card"><span class="ico">📱</span><h4>القيادة بالإمالة</h4><p>على الهواتف، اضغط <kbd>📱 tilt</kbd> في شريط الماكرو وأمل هاتفك كعجلة قيادة. <a href="#tilt">التفاصيل أدناه.</a></p></div>
+  </div>
+  <h3>منزلق السرعة</h3>
+  <p>المنزلق الأفقي الكبير يحدد السرعة القصوى (50 = زحف، 255 = سباق). يضرب كل أمر قيادة — لذا في 100، الضغط على الأمام يستخدم السرعة 100، ليس 200.</p>
+  <h3>مربع «hold to drive»</h3>
+  <ul>
+    <li><b>OFF (افتراضي)</b> — الضغط على ↑ يبدأ القيادة، عليك الضغط على STOP للتوقف. كسيارة عن بعد.</li>
+    <li><b>ON</b> — الضغط على ↑ يقود <em>فقط أثناء الضغط</em>. إفلات الزر يوقف الروبوت. كدواسة بنزين حقيقية.</li>
+  </ul>
+  <p class="pro-tip">«Hold to drive» أكثر أماناً للأطفال — الروبوت يتوقف فور إفلاتك للزر.</p>
+  <h3>🎭 شخصيات الروبوت</h3>
+  <p>أربعة أزرار شريحية فوق صف السرعة تجمع السرعة + هامش العقبات + المسح الضوئي:</p>
+  <table>
+    <thead><tr><th>الشخصية</th><th>السرعة</th><th>هامش العقبات</th><th>المسح</th><th>الأسلوب</th></tr></thead>
+    <tbody>
+      <tr><td>🏃 Speedy</td>   <td>240</td><td>15 cm</td><td>كامل، سريع</td><td>شجاع وسريع</td></tr>
+      <tr><td>🐢 Cautious</td> <td>110</td><td>45 cm</td><td>مخروط أمامي ضيق، بطيء</td><td>يتوقف بعيداً قبل أي جدار</td></tr>
+      <tr><td>🔍 Curious</td>  <td>180</td><td>25 cm</td><td>كامل، متوسط</td><td>مستكشف متوازن</td></tr>
+      <tr><td>😴 Lazy</td>     <td>90</td> <td>55 cm</td><td>ضيق، بطيء جداً</td><td>وضع الهدوء — للمساحات الضيقة</td></tr>
+    </tbody>
+  </table>
+  <p>لمسة واحدة = تبديل كامل للشخصية. الاختيار يبقى بين الجلسات.</p>
+  <h3>🚦 التجوال التلقائي</h3>
+  <p>اضغط الزر الأخضر — الروبوت يتحرك بنفسه، يراقب السوناار، ويستدير من أي شيء أقرب من منزلق <code>obstacle ≤</code>. المس أي عنصر تحكم لاستعادة السيطرة.</p>
+  <div class="funny-box">
+    التجوال التلقائي هو أبسط «ذكاء اصطناعي» ممكن — فقط <code>إذا (شيء قريب) فاستدر</code>. ومع ذلك، مذهل كم يبدو حياً. مرحباً بك في سر الروبوتية #1: <b>قواعد بسيطة → سلوك ناشئ.</b>
+  </div>
+  <h3>🎬 تسجيل وتشغيل (الماكرو)</h3>
+  <p>اضغط <kbd>🔴 Record</kbd>، قُد سلسلة، اضغط مرة أخرى للتوقف. ثم <kbd>▶ Replay</kbd> يعيد التشغيل بالتوقيت الأصلي — مفيد لعروض الكوريغرافيا. محفوظ بين إعادة التحميل.</p>
+  <h3>🎙 الصوت و📱 الإمالة</h3>
+  <p>كلاهما ينبض عند التفعيل. <a href="#voice">تفاصيل الصوت</a> · <a href="#tilt">تفاصيل الإمالة</a>.</p>
+  <h3>🎯 شريط الألعاب المصغرة (Echo Hunt · Maze · Soccer)</h3>
+  <p>ثلاثة مشغلات سريعة تحت شريط الماكرو. <a href="#games">كل الألعاب موضحة ←</a></p>
+</section>
+
+<hr class="div"/>
+
+<section id="dashboard">
+  <h2><span class="num">6</span> لوحة القيادة 🏁</h2>
+  <p class="lede">تحت الأزرار، عنقود بأسلوب السيارات. أربع مقاييس + كمبيوتر رحلة LCD + مصابيح تحذير.</p>
+  <div class="grid">
+    <div class="card"><span class="ico">🚀</span><h4>السرعة</h4><p>إبرة سماوية. تقرأ cm/s، محسوبة من سرعات العجلات × ثابت معايرة.</p></div>
+    <div class="card"><span class="ico">⚡</span><h4>القوة</h4><p>إبرة برتقالية، 0–100 %. متوسط |يسار| + |يمين|. الدوران في المكان يستخدم قوة حتى عندما السرعة = 0.</p></div>
+    <div class="card"><span class="ico">🧭</span><h4>الاتجاه</h4><p>بوصلة شمال/جنوب/شرق/غرب. متكاملة من سرعات العجلات (لا قراءة مغناطيسي افتراضياً).</p></div>
+    <div class="card"><span class="ico">📡</span><h4>السوناار</h4><p>مقياس معكوس — 0 cm يثبت الإبرة يميناً (إنذار!)، 100+ cm يساراً (هدوء). اللون يتغير مع القرب.</p></div>
+  </div>
+  <h3>كمبيوتر الرحلة (شريط LCD)</h3>
+  <table>
+    <tr><td>ODO</td><td>المسافة الكلية المقطوعة في هذه الجلسة، بالأمتار</td></tr>
+    <tr><td>TRIP</td><td>المسافة منذ آخر <kbd>↺ reset</kbd></td></tr>
+    <tr><td>PEAK</td><td>أقصى cm/s تم الوصول إليه</td></tr>
+    <tr><td>AVG</td><td>متوسط cm/s أثناء الحركة</td></tr>
+    <tr><td>⏱</td><td>إجمالي وقت القيادة، mm:ss</td></tr>
+  </table>
+</section>
+
+<hr class="div"/>
+
+<section id="path">
+  <h2><span class="num">7</span> خريطة المسار / SLAM 🧭</h2>
+  <p class="lede">الروبوت يرسم مسار الفتات الخاص به في العالم — ويسقط نبضات السوناار في خريطة عقبات حية. SLAM حقيقي بحجم الأطفال.</p>
+  <h3>أزرار الرأس</h3>
+  <ul>
+    <li><kbd>📸 snap</kbd> — يحفظ الخريطة الحالية كـ PNG (مثالي للعرض في الفصل)</li>
+    <li><kbd>🎬 timelapse</kbd> — يصدر فيديو WebM لمدة 6 ثوان. <a href="#timelapse">التفاصيل أدناه.</a></li>
+    <li><kbd>🖍 draw &amp; go</kbd> — ارسم بإصبعك مساراً، الروبوت يقوده. <a href="#autopilot">التفاصيل أدناه.</a></li>
+    <li><kbd>📷 AR</kbd> — تراكب بيانات الحساس على كاميرا الهاتف. <a href="#ar">التفاصيل أدناه.</a></li>
+    <li><kbd>🍩 recap</kbd> — ملخّص بأسلوب Spotify-Wrapped. <a href="#telemetry">التفاصيل أدناه.</a></li>
+    <li><kbd>↺ reset</kbd> — مسح المسار والبدء من جديد.</li>
+  </ul>
+  <h3>🎯 التحديات</h3>
+  <p>اختر شكلاً مستهدفاً — مربع 40 cm، دائرة r=30 cm، رقم 8. التطبيق يرسم خطوطاً متقطعة؛ مهمتك القيادة على طولها. <b>SCORE</b> يتحدث حياً.</p>
+  <h3>🛰️ SLAM the Room</h3>
+  <p>جلسة موقّتة لمدة 60 ثانية. النتيجة = الخلايا الفريدة 10×10 cm التي زارها مسارك. <a href="#games">المزيد عن هذه اللعبة ←</a></p>
+  <div class="geek-box">
+    <b>لماذا «SLAM-lite»؟</b> SLAM الحقيقي يستخدم كلاً من قياس المسافة من العجلات <em>و</em> عوائد الحساس لـ<em>تصحيح</em> تقدير الموضع. هنا نقوم فقط بالتقدير الميت. قُد مربعاً مثالياً وسترى المسار يغلق <em>تقريباً</em> عند البداية — لكن ليس بالضبط. هذه الفجوة هي <em>الانحراف</em>، وإصلاحها هو قلب روبوتية المتحرك.
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="servos">
+  <h2><span class="num">8</span> السيرفو 🦾 — ومختبر PWM</h2>
+  <p class="lede">Maqueen لديه منفذي سيرفو (S1 و S2). وصل أي سيرفو هواية معياري — أذرع روبوت، حوامل سوناار، قابضات مخالب.</p>
+  <h3>الأنماط</h3>
+  <ul>
+    <li><b>موضع 180°</b> (افتراضي) — المنزلق يحدد الزاوية، 0° إلى 180°. القرن يقفز إلى تلك الزاوية.</li>
+    <li><b>سرعة 360°</b> — للسيرفو الدوار المستمر، المنزلق يحدد <em>السرعة</em>. 90 = توقف، 0 = خلف كامل، 180 = أمام كامل.</li>
+  </ul>
+  <h3>الأزرار السريعة</h3>
+  <ul>
+    <li><kbd>0°</kbd> <kbd>45°</kbd> <kbd>90°</kbd> <kbd>135°</kbd> <kbd>180°</kbd> — قفزة فورية للزوايا الشائعة.</li>
+  </ul>
+  <h3>وضع المسح</h3>
+  <p>فعّل زر <b>SWEEP</b> — السيرفو يتأرجح ذهاباً وإياباً. منزلقان يتحكمان في العرض:</p>
+  <ul>
+    <li><b>الفترة</b> — كم تستغرق دورة كاملة (0.5–10 ث)</li>
+    <li><b>المدى</b> — زوايا البداية والنهاية (افتراضي 0°→180°)</li>
+  </ul>
+  <h3>🧮 PWM Lab — لعبة</h3>
+  <p>تظهر زاوية سيرفو مستهدفة. اسحب المنزلق البنفسجي لمطابقتها. اضغط <kbd>Lock answer</kbd> — النتيجة = 100 − |الهدف − التخمين|. إذا كان الروبوت متصلاً، يتحرك تخمينك فعلياً S1 لتشعر بالإجابة. أفضل نتيجة محفوظة.</p>
+  <div class="geek-box">
+    <b>ما هو PWM؟</b> Pulse-Width Modulation. micro:bit يرسل نبضات بعرض محدد للسيرفو كل 20 ms. نبضة 1.5 ms = 90°. 0.5 ms = 0°. 2.5 ms = 180°. الدماغ الصغير للسيرفو يحول هذه العروض إلى زوايا.
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="leds">
+  <h2><span class="num">9</span> مصابيح LED 💡</h2>
+  <p class="lede">مصباحان أصفران، واحد على كل جانب من «وجه» الروبوت. تستخدم في الغالب كإشارات انعطاف أو مؤشرات حالة.</p>
+  <h3>التحكم</h3>
+  <ul>
+    <li><b>أزرار L / R</b> — تبديل كل LED تشغيل أو إيقاف.</li>
+    <li><b>Both / Off / Blink</b> — إعدادات سريعة.</li>
+    <li><b>منزلق معدل الوميض</b> — 100 ms (محموم) إلى 2000 ms (هادئ).</li>
+  </ul>
+  <p class="pro-tip">الأمر BLE هو <code>LED:i,s</code>. <code>i</code> = 0 (يسار) أو 1 (يمين)، <code>s</code> = 0 (إيقاف) أو 1 (تشغيل).</p>
+</section>
+
+<hr class="div"/>
+
+<section id="neopixels">
+  <h2><span class="num">10</span> نيوبيكسلز 💎 — و Simon Says</h2>
+  <p class="lede">أربع لآلئ RGB قابلة للعنونة على مقدمة الروبوت. كل واحدة يمكن أن تكون أياً من 16.7 مليون لون.</p>
+  <h3>منتقي الألوان</h3>
+  <p>اضغط أياً من اللآلئ الأربع، ثم اختر لوناً من العجلة. التغيير يصل الروبوت في أقل من 50 ms.</p>
+  <h3>الباليتات</h3>
+  <ul>
+    <li><kbd>🌈 Cyan</kbd> — أزرق وسماوي ناعم.</li>
+    <li><kbd>🔥 Heat</kbd> — تدرج أحمر→برتقالي→أصفر. كنار مخيم.</li>
+    <li><kbd>🌊 Ocean</kbd> — أزرق عميق إلى رغوة بحرية.</li>
+    <li><kbd>💎 Rainbow</kbd> — الطيف الكامل، كلاسيكي.</li>
+  </ul>
+  <h3>🌈 Simon Says — لعبة</h3>
+  <p>4 لوحات ملونة (أحمر/أخضر/أزرق/أصفر)، لكل واحدة نغمة فريدة. التطبيق يلعب تسلسلاً يتنامى؛ اضغط عليها بنفس الترتيب. خطأ واحد = نهاية اللعبة. <a href="#games">داخل الألعاب ←</a></p>
+</section>
+
+<hr class="div"/>
+
+<section id="buzzer">
+  <h2><span class="num">11</span> الجرس 🔊 — و Buzz the Tune</h2>
+  <p class="lede">جرس بيزو يستطيع لعب أي نغمة في النطاق المسموع (حوالي 20 Hz إلى 20 kHz). نغمة واحدة في كل مرة.</p>
+  <h3>التحكم</h3>
+  <ul>
+    <li><b>منزلق التردد</b> — 100 Hz (هدير منخفض) إلى 4000 Hz (صرير عالي).</li>
+    <li><b>منزلق المدة</b> — 50 ms (نغمة قصيرة) إلى 2000 ms (نغمة مستدامة).</li>
+    <li><b>مرسمة الذبذبات الحية</b> — تمثيل بصري للموجة.</li>
+  </ul>
+  <h3>🎵 Buzz the Tune — لعبة</h3>
+  <p>شريط بيانو من 8 مفاتيح (C5 → C6). اضغط للعب على الشاشة والروبوت. اضغط <kbd>🎼 Twinkle demo</kbd> لسماع Twinkle Twinkle Little Star واكتشاف «اللحن هو سلسلة من أزواج (طبقة، مدة)». <a href="#games">داخل الألعاب ←</a></p>
+  <h3>📡 Morse Decoder — لعبة</h3>
+  <p>الروبوت يرسل كلمة مخفية من 3–6 أحرف بشيفرة مورس. تكتب ما سمعت. النتيجة = المطابقات الدقيقة. <a href="#games">داخل الألعاب ←</a></p>
+  <div class="funny-box">
+    أول صفير لروبوتك هو نغمة <b>440 Hz</b>. هذا هو معيار الطبقة الدولي لـ<b>la</b> الموسيقي — نفس النغمة التي تضبط عليها الأوركسترا قبل كل حفل. روبوتك بـ 40 € يتحدث نفس لغة فيلهارمونية برلين. 🎻
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="distance">
+  <h2><span class="num">12</span> المسافة والرادار الماسح 📡</h2>
+  <p class="lede">حساس الموجات فوق الصوتية هو أفضل صديق للروبوت. هذا اللوحة لديها خمس طرق لتصور ما يراه.</p>
+  <h3>الأنماط الخمسة للرادار</h3>
+  <table>
+    <thead><tr><th>النمط</th><th>الأفضل لـ</th></tr></thead>
+    <tbody>
+      <tr><td>🦇 Bat</td>     <td>افتراضي. رقم مسافة كبير، مثل إدراك الخفافيش.</td></tr>
+      <tr><td>🚢 Sonar</td>   <td>أجواء غواصة — مسح دائري بطيء مع جهات اتصال مستمرة.</td></tr>
+      <tr><td>📐 LiDAR</td>   <td>عرض هندسي — خطوط وشبكات دقيقة.</td></tr>
+      <tr><td>🔥 Heat</td>    <td>خريطة حرارية. كاميرا أشعة تحت حمراء.</td></tr>
+      <tr><td>🌀 Sweep</td>   <td>رادار كلاسيكي. شعاع دوار، نقاط تتلاشى. خمسة أشكال علامات.</td></tr>
+    </tbody>
+  </table>
+  <h3>أصوات صوتية</h3>
+  <p>كل نمط رادار له تنبيه صوتي خاص به. <kbd>🔊 audio</kbd> يفعّل:</p>
+  <ul>
+    <li><b>Bat</b> — صرير عند 2200 Hz</li>
+    <li><b>Sonar</b> — بوب غواصة، 700 Hz بتلاشي طويل</li>
+    <li><b>LiDAR</b> — «pew» ليزر</li>
+    <li><b>Heat</b> — مثلث ذو طبقة عريضة</li>
+    <li><b>Sweep</b> — تيك رادار كلاسيكي</li>
+  </ul>
+</section>
+
+<hr class="div"/>
+
+<section id="line">
+  <h2><span class="num">13</span> حساسات الخط 👀 — وسباق الخط</h2>
+  <p class="lede">عينان بالأشعة تحت الحمراء تحت الروبوت تكتشفان الداكن مقابل الفاتح. شريط أسود على ورق أبيض = مثالي.</p>
+  <h3>🚥 متابعة الخط التلقائية</h3>
+  <p>يفعّل متابع خط أساسي. المنطق: <code>L يرى خط + R يرى خط → أمام. L فقط → دوران يمين. R فقط → دوران يسار. كلاهما مفقود → توقف.</code></p>
+  <h3>🏁 Line Follower Race — لعبة</h3>
+  <p>ساعة إيقاف. اطبع/ارسم مسار خط أسود. اضغط <kbd>▶ Start</kbd> عند عبور الروبوت لخط البداية، <kbd>🏁 Lap</kbd> عند انتهائه. أفضل لفة محفوظة. <a href="#games">داخل الألعاب ←</a></p>
+</section>
+
+<hr class="div"/>
+
+<section id="ir">
+  <h2><span class="num">14</span> جهاز التحكم بالأشعة 📺</h2>
+  <p class="lede">صل وحدة استقبال أشعة على المسمار المناسب (بروتوكول NEC). اضغط أزرار جهاز تحكم تلفاز — الرموز تظهر هنا.</p>
+  <p class="pro-tip">عيّن رموز الأشعة لأوامر القيادة — حوّل أي جهاز تلفاز إلى جهاز تحكم روبوت.</p>
+</section>
+
+<hr class="div"/>
+
+<section id="voice">
+  <h2><span class="num">15</span> الأوامر الصوتية 🎙</h2>
+  <p class="lede">قيادة بدون يدين. اضغط زر <kbd>🎙 voice</kbd> في شريط الماكرو وتحدث للهاتف.</p>
+  <h3>المفردات</h3>
+  <table>
+    <thead><tr><th>العبارة</th><th>الإجراء</th></tr></thead>
+    <tbody>
+      <tr><td>"forward" / "تقدم" / "go"</td><td>قيادة ↑</td></tr>
+      <tr><td>"back" / "إرجع" / "reverse"</td><td>قيادة ↓</td></tr>
+      <tr><td>"left" / "يسار"</td><td>دوران ↺</td></tr>
+      <tr><td>"right" / "يمين"</td><td>دوران ↻</td></tr>
+      <tr><td>"stop" / "قف"</td><td>توقف</td></tr>
+      <tr><td>"faster" / "أسرع"</td><td>+30 سرعة</td></tr>
+      <tr><td>"slower" / "أبطأ"</td><td>−30 سرعة</td></tr>
+    </tbody>
+  </table>
+  <h3>كيف يعمل</h3>
+  <ol class="steps">
+    <li>اضغط 🎙 voice. المتصفح يطلب إذن الميكروفون. اقبل.</li>
+    <li>الزر ينبض <span style="color:var(--red);">أحمر</span> — يستمع!</li>
+    <li>قل أمراً. التطبيق يكتب ما سمع بجانب الزر.</li>
+    <li>الكلمات المعروفة تشغّل زر لوحة المفاتيح المطابق.</li>
+    <li>اضغط 🎙 مرة أخرى للتوقف.</li>
+  </ol>
+  <div class="card warn" style="margin-top:14px;">
+    <p><b>الدعم:</b> Chrome و Edge فقط. Firefox و Safari لا يدعمان Web Speech API.</p>
+    <p><b>الخصوصية:</b> الصوت يُرسل إلى خدمة الكلام في المتصفح (Google لـ Chrome).</p>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="tilt">
+  <h2><span class="num">16</span> القيادة بالإمالة 📱</h2>
+  <p class="lede">وضع عجلة القيادة. أمسك هاتفك كعجلة قيادة Wii. أمل للأمام → الروبوت يتقدم. أمل لليمين → يدور يميناً.</p>
+  <h3>الإعداد</h3>
+  <ol class="steps">
+    <li>على هاتف أو لوحي، اضغط <kbd>📱 tilt</kbd> في شريط الماكرو.</li>
+    <li>iOS يطلب إذن الحركة — اضغط «اسمح بالوصول». على Android، لا شيء إضافي.</li>
+    <li>الزر ينبض ذهبياً. الهاتف <b>يعاير تلقائياً</b> لوضعك الحالي — هذا الآن «توقف».</li>
+    <li>أمل للأمام (أعلى الهاتف يبتعد) = أمام. أمل لليمين = يمين.</li>
+    <li>اضغط مرة أخرى للتوقف.</li>
+  </ol>
+</section>
+
+<hr class="div"/>
+
+<section id="autopilot">
+  <h2><span class="num">17</span> الطيار الآلي بالرسم 🖍</h2>
+  <p class="lede">ارسم بإصبعك مساراً على خريطة SLAM. الروبوت يقوده.</p>
+  <h3>كيفية الاستخدام</h3>
+  <ol class="steps">
+    <li>أعد ضبط المسار (<kbd>↺</kbd>) للبدء من الأصل.</li>
+    <li>اضغط <kbd>🖍 draw &amp; go</kbd> على الخريطة.</li>
+    <li>اسحب بإصبعك أو الفأرة على SVG. خط متقطع بنفسجي يتتبع إدخالك.</li>
+    <li>أفلت. الروبوت يبدأ في اتباع نقاط الطريق ذاتياً.</li>
+    <li>اضغط 🖍 مرة أخرى للإلغاء.</li>
+  </ol>
+  <p class="pro-tip">الانحراف يتراكم! المسارات الطويلة المنحنية قد تنتهي ببضع cm من الهدف لأننا لا نصحح بالحساسات. هذه نفس مشكلة الروبوتات الحقيقية.</p>
+</section>
+
+<hr class="div"/>
+
+<section id="telemetry">
+  <h2><span class="num">18</span> التليمتري والملخّص 📊🍩</h2>
+  <h3>📊 تصدير التليمتري</h3>
+  <ul>
+    <li><kbd>📊 Telemetry</kbd> — جلسة كاملة كـ JSON. الموقع، المسار، عقبات SLAM، إحصائيات لوحة القيادة.</li>
+    <li><kbd>📈 CSV</kbd> — فقط المسار (الأوقات + x,y بالـ cm) مع قسم العقبات. افتح في Excel / Python.</li>
+  </ul>
+  <h3>🍩 ملخّص الجلسة</h3>
+  <p>اضغط <kbd>🍩 recap</kbd>. تنبثق نافذة بـ<b>سرد بأسلوب Spotify-Wrapped</b> — المسافة الكلية، السرعة القصوى، العقبات المكتشفة، الموضع النهائي.</p>
+  <p>زر اختياري <kbd>✨ AI polish</kbd> يعيد الكتابة عبر Claude API لمزيد من البريق. يحتاج مفتاح Claude في <code>localStorage.maqueen.claudeKey</code> (احصل على واحد من <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>).</p>
+</section>
+
+<hr class="div"/>
+
+<section id="timelapse">
+  <h2><span class="num">19</span> تصدير الفيديو المتسارع 🎬</h2>
+  <p class="lede">اضغط 🎬 على الخريطة. فيديو WebM لمدة 6 ثوان من مسارك يتفتح وعقبات SLAM تظهر، يُولّد ويُحمّل.</p>
+  <ul>
+    <li><b>Auto-fit</b> — الفيديو يتزوم ليناسب كل خريطتك.</li>
+    <li><b>~10× أسرع</b> — الجلسات الطويلة تتكثف بشكل جميل.</li>
+    <li><b>يبدو رائعاً على وسائل التواصل</b> — الإطار الأخير يبقى نصف ثانية إضافية لمعاينات الصور المصغرة.</li>
+  </ul>
+</section>
+
+<hr class="div"/>
+
+<section id="ar">
+  <h2><span class="num">20</span> الواقع المعزز 📷</h2>
+  <p class="lede">الأفضل على الهاتف. اضغط <kbd>📷 AR</kbd> على الخريطة. الهاتف يطلب إذن الكاميرا. اقبل. شاشة الهاتف تعرض الغرفة مع بيانات الحساسات متراكبة.</p>
+  <h3>ما تراه</h3>
+  <ul>
+    <li>تغذية كاميرا خلفية حية، ملء الشاشة.</li>
+    <li>تقاطع في المنتصف = اتجاه الروبوت.</li>
+    <li>حلقة ديناميكية حول التقاطع — نصف قطرها يتقلص مع اقتراب العقبة.</li>
+    <li>HUD أعلى اليسار: المسافة الحية، حالة الخط، الاتجاه.</li>
+  </ul>
+</section>
+
+<hr class="div"/>
+
+<section id="pair">
+  <h2><span class="num">21</span> إقران روبوتين 🤝</h2>
+  <p class="lede">روبوتان، تبويبان متصفح، أحدهما يعكس الآخر. نظير-إلى-نظير عبر WebRTC نقي — لا خادم.</p>
+  <h3>المصافحة</h3>
+  <ol class="steps">
+    <li><b>التبويب A</b> يفتح 🤝 ويضغط <kbd>A · create offer</kbd>. تظهر كتلة SDP طويلة.</li>
+    <li>أرسل SDP لصديقك (دردشة، AirDrop، ورق).</li>
+    <li><b>التبويب B</b> يلصق SDP، يضغط <kbd>B · paste offer &amp; answer</kbd>. تظهر إجابة SDP.</li>
+    <li>صديقك يرسل الإجابة مرة أخرى.</li>
+    <li><b>التبويب A</b> يلصق الإجابة، يضغط <kbd>A · paste answer</kbd>. <b>متصل.</b></li>
+  </ol>
+</section>
+
+<hr class="div"/>
+
+<section id="games">
+  <h2><span class="num">22</span> كل الألعاب التعليمية العشرة 🎮</h2>
+  <p class="lede">كل لعبة تعيش في تبويبها المطابق. ليست أدوات تشتيت — كل لعبة تعلم مفهوماً حقيقياً في علوم الكمبيوتر / الهندسة.</p>
+  <div class="grid">
+    <div class="card tutor"><span class="ico">🛰️</span><h3>1. SLAM the Room</h3><p class="why">تبويب Path</p><p>قُد لمدة 60 ث. النتيجة = الخلايا الفريدة 10×10 cm المزارة.</p><ul><li>تعلم: التموضع + دمج الحساسات</li></ul></div>
+    <div class="card tutor"><span class="ico">🎯</span><h3>2. Echo Hunt</h3><p class="why">Drive · ألعاب مصغرة</p><p>كنز افتراضي مخفي. معدل النبض يتسارع كلما اقتربت.</p><ul><li>تعلم: التثليث + الخوارزميات</li></ul></div>
+    <div class="card tutor"><span class="ico">🧱</span><h3>3. Maze Runner</h3><p class="why">Drive · ألعاب مصغرة</p><p>سرعة بطيئة + هامش ضيق. ابن متاهات من الكرتون!</p><ul><li>تعلم: التحكم التفاعلي</li></ul></div>
+    <div class="card tutor"><span class="ico">🎵</span><h3>4. Buzz the Tune</h3><p class="why">تبويب Buzzer</p><p>شريط بيانو 8 مفاتيح. اضغط → الجرس يلعب. ديمو Twinkle مدمج.</p><ul><li>تعلم: التردد = الطبقة، المدة = الإيقاع</li></ul></div>
+    <div class="card tutor"><span class="ico">🌈</span><h3>5. Simon Says</h3><p class="why">تبويب NeoPixels</p><p>4 لوحات ملونة، تسلسل ينمو. خطأ واحد = نهاية اللعبة.</p><ul><li>تعلم: التسلسل + الذاكرة + نظرية RGB</li></ul></div>
+    <div class="card tutor"><span class="ico">📏</span><h3>6. Math the Distance</h3><p class="why">تبويب Drive</p><p>توقع d = v × t. اضغط «Run it» للتحقق على المعدات الحقيقية.</p><ul><li>تعلم: الحركة + المعايرة</li></ul></div>
+    <div class="card tutor"><span class="ico">⚽</span><h3>7. Robot Soccer</h3><p class="why">Drive · ألعاب مصغرة</p><p>لوحة نتائج لروبوتين. مع طاقم Push يصبح بلدوزر حقيقي.</p><ul><li>تعلم: الحركة + التكتيك</li></ul></div>
+    <div class="card tutor"><span class="ico">🏁</span><h3>8. Line Follower Race</h3><p class="why">تبويب Line</p><p>ساعة إيقاف متعددة اللفات. اطبع مساراً، احسب اللفات.</p><ul><li>تعلم: حلقات التغذية المرتدة</li></ul></div>
+    <div class="card tutor"><span class="ico">🎚️</span><h3>9. PWM Lab</h3><p class="why">تبويب Servos</p><p>«اصب 67° بالضبط». سحب منزلق، نتيجة بالدقة.</p><ul><li>تعلم: عرض النبضة = تحكم تناظري</li></ul></div>
+    <div class="card tutor"><span class="ico">📡</span><h3>10. Morse Decoder</h3><p class="why">تبويب Buzzer</p><p>الجرس يرسل كلمة مخفية بمورس. تكتب ما سمعت.</p><ul><li>تعلم: الترميز الرقمي + التفكير الثنائي</li></ul></div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="mobile">
+  <h2><span class="num">23</span> وضع الهاتف واللوحي 📱</h2>
+  <p class="lede">التطبيق كله صديق للمس ويتدفق تلقائياً تحت 1100 px من العرض.</p>
+  <h3>ما يتغير على الهاتف</h3>
+  <ul>
+    <li><b>الشريط الأيمن يتكدس فوق</b> التطبيق — Connect هي أول بطاقة مرئية.</li>
+    <li><b>شريط التبويبات الفرعية</b> يلتف إلى 3 شرائح في الصف.</li>
+    <li><b>مقاييس لوحة القيادة</b> تتدفق من 4-up إلى 2-up إلى 1-up.</li>
+    <li><b>غرفة Drive</b> تتكدس عمودياً — لوحة المفاتيح، الروبوت، عصا التحكم.</li>
+    <li><b>القرص-الزوم مفعل</b> — الأطفال يستطيعون التكبير في المقاييس و SVG.</li>
+  </ul>
+</section>
+
+<hr class="div"/>
+
+<section id="themes">
+  <h2><span class="num">24</span> الألوان واللغات 🎨</h2>
+  <h3>ستة ألوان</h3>
+  <div class="grid">
+    <div class="card" style="background:#1c1f2e;"><span class="ico">🛠️</span><h4>Workshop</h4><p>كهرماني دافئ.</p></div>
+    <div class="card" style="background:#1a3a5e;"><span class="ico">🌤️</span><h4>Sky</h4><p>أزرق هادئ للفصول.</p></div>
+    <div class="card" style="background:#1d3b2c;"><span class="ico">🌿</span><h4>Mint</h4><p>أخضر نعناع ناعم.</p></div>
+    <div class="card" style="background:#0d2818;"><span class="ico">🌳</span><h4>Forest</h4><p>أخضر بيت الشجرة.</p></div>
+    <div class="card" style="background:#0a1628; border-color:#38bdf8;"><span class="ico">🌌</span><h4>Cosmos (افتراضي)</h4><p>بنفسجي مجرة.</p></div>
+    <div class="card" style="background:#0a1628;"><span class="ico">🌙</span><h4>Night</h4><p>كحلي عميق للإضاءة المنخفضة.</p></div>
+  </div>
+  <p>اضغط أي علم في الرأس للتبديل. الاختيار يبقى.</p>
+  <h3>ثلاث لغات</h3>
+  <p><span style="font-size:24px;">🇬🇧</span> English · <span style="font-size:24px;">🇫🇷</span> Français · <span style="font-size:24px;">🇩🇿</span> العربية (مع تخطيط RTL كامل)</p>
+</section>
+
+<hr class="div"/>
+
+<section id="troubleshoot">
+  <h2><span class="num">25</span> حل المشاكل 🔧</h2>
+  <div class="grid">
+    <div class="card danger"><span class="ico">🚫</span><h4>«Web Bluetooth غير مدعوم»</h4><p>أنت في Safari أو Firefox. انتقل إلى Chrome أو Edge.</p></div>
+    <div class="card warn"><span class="ico">😶</span><h4>الروبوت لا يظهر في القائمة</h4><ul><li>تحقق أن المفتاح ON.</li><li>أعد تعيين micro:bit (الزر الأحمر خلف) وأعد البرمجة إذا لزم.</li><li>تأكد أن لا تبويب آخر متصل.</li></ul></div>
+    <div class="card warn"><span class="ico">🔌</span><h4>يتصل ثم ينقطع بعد 5 ثوان</h4><p>البطارية ضعيفة. راديو BLE شره. ضع بطاريات جديدة أو وصل USB.</p></div>
+    <div class="card warn"><span class="ico">🤔</span><h4>أوامر القيادة متجاهلة</h4><p>تحقق أن streams لم يتغير إلى OFF. أعد تحميل الصفحة. إذا لم ينفع، أعد برمجة البرنامج الثابت.</p></div>
+    <div class="card warn"><span class="ico">🎙</span><h4>زر الصوت رمادي</h4><p>المتصفح لا يدعم Web Speech. استخدم Chrome / Edge.</p></div>
+    <div class="card warn"><span class="ico">📱</span><h4>زر Tilt لا يفعل شيئاً على iPhone</h4><p>iOS يعزل حساسات الحركة خلف إذن صريح. الضغط يطلق المطالبة — اضغط «اسمح».</p></div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<section id="glossary">
+  <h2><span class="num">26</span> قاموس المصطلحات 🤓</h2>
+  <p class="lede">كل الكلمات. تخطى ما تعرفه. علم ما لا تعرفه.</p>
+  <table>
+    <tr><td>BLE</td><td><b>Bluetooth Low Energy.</b> بروتوكول الراديو الذي يستخدمه روبوتك.</td></tr>
+    <tr><td>GATT</td><td><b>Generic Attribute Profile.</b> «اللغة» التي تتحدث بها أجهزة BLE.</td></tr>
+    <tr><td>UART</td><td><b>Universal Asynchronous Receiver/Transmitter.</b> أقدم بروتوكول تسلسلي.</td></tr>
+    <tr><td>I²C</td><td><b>Inter-Integrated Circuit.</b> ناقل بسلكين. سائق المحرك في Maqueen على عنوان 0x10.</td></tr>
+    <tr><td>PWM</td><td><b>Pulse-Width Modulation.</b> محاكاة الإخراج التناظري بتبديل دبوس رقمي بسرعة.</td></tr>
+    <tr><td>SLAM</td><td><b>Simultaneous Localization And Mapping.</b> بناء خريطة لمكانك بينما تعرف أين أنت.</td></tr>
+    <tr><td>Odometry</td><td>تتبع الموضع بدمج حركة العجلات. رخيص، لكن ينحرف.</td></tr>
+    <tr><td>Differential drive</td><td>عجلتان متحكم بهما باستقلالية. النموذج الحركي لـ Maqueen.</td></tr>
+    <tr><td>WebRTC</td><td><b>Web Real-Time Communication.</b> نظير-إلى-نظير متصفح-إلى-متصفح.</td></tr>
+    <tr><td>SDP</td><td><b>Session Description Protocol.</b> الكتلة التي تنسخها وتلصقها أثناء الإقران.</td></tr>
+    <tr><td>NeoPixel</td><td>WS2812B LED قابل للعنونة. كل واحد كمبيوتر صغير يحتفظ بلونه.</td></tr>
+    <tr><td>SR04</td><td>الحساس الكلاسيكي للموجات فوق الصوتية. صرير 40 kHz، قياس وقت الطيران.</td></tr>
+  </table>
+</section>
+
+<hr class="div"/>
+
+<section id="parents">
+  <h2><span class="num">27</span> للآباء والمعلمين 👨‍🏫</h2>
+  <h3>ما هي القيمة التعليمية؟</h3>
+  <p>Maqueen Lab يغطي مناهج علوم الكمبيوتر / الهندسة الحقيقية متنكرة كلعب:</p>
+  <ul>
+    <li><b>التفكير الحاسوبي</b> — التسلسلات (Simon Says)، الحلقات (متابع الخط)، الشروط (التجوال التلقائي)</li>
+    <li><b>الرياضيات</b> — d=v·t (Math the Distance)، علم المثلثات (الطيار الآلي)</li>
+    <li><b>الفيزياء</b> — الحركة، PWM، الموجات فوق الصوتية، الكهرومغناطيسية (المحركات)</li>
+    <li><b>الهندسة</b> — معايرة الحساسات، حلقات التغذية المرتدة، dead reckoning مقابل SLAM</li>
+    <li><b>نظرية CS</b> — اجتياز الرسم البياني (الطيار الآلي)، آلات الحالة (Simon Says)، الترميز (مورس)</li>
+    <li><b>تحليل البيانات</b> — تصدير التليمتري → ممارسة Excel/Sheets</li>
+  </ul>
+  <h3>التقدم المُوصى به</h3>
+  <ol class="steps">
+    <li><b>الأسبوع 1:</b> Drive، LEDs، NeoPixels. سبب نقي وأثر.</li>
+    <li><b>الأسبوع 2:</b> Buzzer، Distance. مقدمة للحساسات.</li>
+    <li><b>الأسبوع 3:</b> Servos، متابع الخط. مقدمة للتحكم.</li>
+    <li><b>الأسبوع 4:</b> Path/SLAM، تسجيل الماكرو، التجوال. التركيب.</li>
+    <li><b>الأسبوع 5:</b> الطيار الآلي، الصوت، الإمالة. تفاعلات متقدمة.</li>
+    <li><b>الأسبوع 6:</b> تصدير التليمتري → مشروع Excel. تحليل البيانات.</li>
+  </ol>
+  <h3>السلامة</h3>
+  <ul>
+    <li>الروبوت ليس له نقاط قرص مكشوفة.</li>
+    <li>البطارية: AA معيارية أو USB.</li>
+    <li>السطح: بلاط / خشب / سجاد منخفض. السجاد العالي يعطل العجلات.</li>
+    <li>التحكم الصوتي يستخدم خدمات الكلام عبر الإنترنت.</li>
+  </ul>
+</section>
+
+<hr class="div"/>
+
+<section id="resources">
+  <h2>📚 المزيد من الموارد</h2>
+  <div class="grid">
+    <a class="res" href="index.html">              <span class="res-icon">▶</span><span class="res-text"><strong>افتح التطبيق</strong><span>غرفة القيادة نفسها</span></span></a>
+    <a class="res" href="schematics-kids.html">    <span class="res-icon">🤖</span><span class="res-text"><strong>تعرف على روبوتك</strong><span>مخطط للأطفال</span></span></a>
+    <a class="res" href="schematics.html">         <span class="res-icon">📐</span><span class="res-text"><strong>المخطط الهندسي</strong><span>pinout كامل</span></span></a>
+    <a class="res" href="pinout.html">             <span class="res-icon">📌</span><span class="res-text"><strong>مرجع pinout</strong><span>بحث سريع</span></span></a>
+    <a class="res" href="lab.html">                <span class="res-icon">🧪</span><span class="res-text"><strong>Component Lab</strong><span>مستكشف Servo</span></span></a>
+    <a class="res" href="plan.html">               <span class="res-icon">📋</span><span class="res-text"><strong>خطة البناء</strong><span>كيف صنع التطبيق</span></span></a>
+    <a class="res" href="todo.md">                 <span class="res-icon">✅</span><span class="res-text"><strong>خارطة الطريق</strong><span>لوحة 20 ميزة</span></span></a>
+    <a class="res" href="https://github.com/abourdim/maqueen-lab"      target="_blank" rel="noopener"><span class="res-icon">⭐</span><span class="res-text"><strong>المصدر على GitHub</strong><span>ترخيص MIT</span></span></a>
+    <a class="res" href="https://www.dfrobot.com/product-2230.html"     target="_blank" rel="noopener"><span class="res-icon">🛒</span><span class="res-text"><strong>اشتر Maqueen Lite v4</strong><span>~40 € من DFRobot</span></span></a>
+    <a class="res" href="https://makecode.microbit.org/"                target="_blank" rel="noopener"><span class="res-icon">🧱</span><span class="res-text"><strong>MakeCode</strong><span>برمجة مخصصة</span></span></a>
+    <a class="res" href="https://microbit.org/"                         target="_blank" rel="noopener"><span class="res-icon">🦄</span><span class="res-text"><strong>micro:bit الرسمي</strong><span>الدماغ</span></span></a>
+    <a class="res" href="https://console.anthropic.com/"                target="_blank" rel="noopener"><span class="res-icon">✨</span><span class="res-text"><strong>مفتاح Claude API</strong><span>لتلميع الملخّص</span></span></a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="site-footer__grid">
+    <div>
+      <div class="site-footer__brand">
+        <img src="assets/workshop-diy-logo.svg" alt="شعار Workshop DIY"/>
+        <div>
+          <div class="site-footer__brand-name">Maqueen Lab</div>
+          <div class="site-footer__brand-tag">Workshop DIY · MIT</div>
+        </div>
+      </div>
+      <p class="site-footer__about">
+        غرفة قيادة مباشرة لروبوت DFRobot Maqueen Lite v4 المعتمد على micro:bit.
+        صُنع للأطفال من قبل المخترعين. لا سحابة. لا اشتراكات. فقط بايتات،
+        عجلات، وزر STOP كبير ذهبي.
+      </p>
+      <div class="site-footer__chips" style="margin-top:14px;">
+        <span>Web Bluetooth</span><span>BLE GATT</span><span>micro:bit v2</span>
+        <span>WebRTC P2P</span><span>WebAudio</span>
+      </div>
+    </div>
+    <div>
+      <h5>📖 تعلّم</h5>
+      <ul>
+        <li><a href="#quickstart">البداية السريعة</a></li>
+        <li><a href="#hardware">المكونات</a></li>
+        <li><a href="#games">الألعاب العشرة</a></li>
+        <li><a href="#troubleshoot">حل المشاكل</a></li>
+        <li><a href="#glossary">قاموس المصطلحات</a></li>
+        <li><a href="#parents">المنهج التعليمي</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>🚀 استخدم</h5>
+      <ul>
+        <li><a href="index.html">▶ افتح التطبيق</a></li>
+        <li><a href="schematics-kids.html">🤖 روبوتي</a></li>
+        <li><a href="schematics.html">📐 المخطط الهندسي</a></li>
+        <li><a href="pinout.html">📌 Pinout</a></li>
+        <li><a href="lab.html">🧪 Component Lab</a></li>
+        <li><a href="todo.md">✅ خارطة الطريق</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>🌐 التواصل</h5>
+      <ul>
+        <li><a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener">⭐ GitHub</a></li>
+        <li><a href="https://github.com/abourdim/maqueen-lab/issues" target="_blank" rel="noopener">🐞 الإبلاغ عن خطأ</a></li>
+        <li><a href="https://www.dfrobot.com/product-2230.html" target="_blank" rel="noopener">🛒 شراء Maqueen</a></li>
+        <li><a href="https://makecode.microbit.org/" target="_blank" rel="noopener">🧱 MakeCode</a></li>
+        <li><a href="USER_GUIDE.html">🇬🇧 EN guide</a></li>
+        <li><a href="USER_GUIDE.fr.html">🇫🇷 Guide FR</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <div>
+      صُنع بـ 🛠️ و 🤖 من قبل <a href="https://github.com/abourdim" target="_blank" rel="noopener">@abourdim</a>.
+      الآن اذهب وابن شيئاً — <span style="color:var(--accent);">المستقبل لا يبرمج نفسه.</span> 🚀
+    </div>
+    <div style="opacity:0.6; font-family:var(--mono); font-size:11px; direction: ltr;">
+      v0.1.54 · 2026
+    </div>
+  </div>
+</footer>
+
+<a href="#" class="back-top" aria-label="أعلى الصفحة">↑ أعلى</a>
+
+</body>
+</html>

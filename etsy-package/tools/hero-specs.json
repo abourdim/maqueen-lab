@@ -1,0 +1,126 @@
+{
+  "_comment": "A/B hero image specs. Each produces a 1500x1500 Etsy thumbnail. Ship 2-5 variants — Etsy's own image-order experiment picks the winner. Screenshots reference output/screenshots/<file>.",
+
+  "heroes": [
+    {
+      "name": "hero-teacher",
+      "theme": "arctic",
+      "accentColor": "#0077cc",
+      "screenshots": ["screenshot-audience-teacher-sensors.png", "screenshot-audience-teacher-graph.png"],
+      "title": "Every Sensor,\nLive in Every Browser",
+      "subtitle": "Built for STEM classrooms · 30 laptops, zero install",
+      "badge": "Chrome / Edge",
+      "footerLeft": "Lifetime updates · Site license available",
+      "footerRight": "micro:bit V2"
+    },
+    {
+      "name": "hero-kid",
+      "theme": "neon",
+      "accentColor": "#00ff88",
+      "screenshots": ["screenshot-audience-kid-controls.png", "screenshot-audience-kid-3d.png"],
+      "title": "Your micro:bit\nbecomes a playground",
+      "subtitle": "Sensors. Servos. 3D models. No install, no account.",
+      "badge": "Works offline",
+      "footerLeft": "Kid-safe · No cloud",
+      "footerRight": "60-sec setup"
+    },
+    {
+      "name": "hero-maker",
+      "theme": "blaze",
+      "accentColor": "#ff6b35",
+      "screenshots": ["screenshot-audience-maker-motors.png", "screenshot-audience-maker-3d.png"],
+      "title": "BLE Control Panel\nfor Makers",
+      "subtitle": "Live motors · 3D mirrors · CSV export · open firmware",
+      "badge": "Web Bluetooth",
+      "footerLeft": "MakeCode firmware · Open source friendly",
+      "footerRight": "Hack it"
+    },
+    {
+      "name": "hero-laptop",
+      "theme": "stealth",
+      "accentColor": "#00ff88",
+      "frame": "laptop",
+      "screenshots": ["screenshot-audience-kid-3d.png"],
+      "title": "Your micro:bit,\non your laptop.",
+      "subtitle": "One browser tab. Live 3D. Zero install.",
+      "badge": "Chrome / Edge",
+      "footerLeft": "No cloud · No account",
+      "footerRight": "maqueen-lab"
+    },
+    {
+      "name": "hero-fr-teacher",
+      "theme": "arctic",
+      "accentColor": "#e63946",
+      "lang": "fr",
+      "screenshots": ["screenshot-audience-teacher-sensors.png", "screenshot-audience-teacher-graph.png"],
+      "title": "Chaque capteur,\nen direct, dans le navigateur",
+      "subtitle": "Conçu pour les salles de STEM · 30 ordinateurs, zéro installation",
+      "badge": "Chrome / Edge",
+      "footerLeft": "Mises à jour à vie · Licence école disponible",
+      "footerRight": "micro:bit V2"
+    },
+    {
+      "name": "hero-fr-kid",
+      "theme": "neon",
+      "accentColor": "#00ff88",
+      "lang": "fr",
+      "screenshots": ["screenshot-audience-kid-controls.png", "screenshot-audience-kid-3d.png"],
+      "title": "Ton micro:bit\ndevient un cabine de pilotage",
+      "subtitle": "Capteurs. Servos. Obstacles SLAM. Rien à installer, aucun compte.",
+      "badge": "Fonctionne hors ligne",
+      "footerLeft": "Sûr pour les enfants · Pas de cloud",
+      "footerRight": "60 sec · c'est prêt"
+    },
+    {
+      "name": "hero-fr-maker",
+      "theme": "blaze",
+      "accentColor": "#ff6b35",
+      "lang": "fr",
+      "screenshots": ["screenshot-audience-maker-motors.png", "screenshot-audience-maker-3d.png"],
+      "title": "Panneau BLE\npour makers",
+      "subtitle": "Moteurs en direct · miroir 3D · export CSV · firmware libre",
+      "badge": "Web Bluetooth",
+      "footerLeft": "Firmware MakeCode · compatible open source",
+      "footerRight": "À hacker"
+    },
+    {
+      "name": "hero-ar-teacher",
+      "theme": "arctic",
+      "accentColor": "#0077cc",
+      "lang": "ar",
+      "dir": "rtl",
+      "screenshots": ["screenshot-audience-teacher-sensors.png", "screenshot-audience-teacher-graph.png"],
+      "title": "كل حساس،\nمباشرةً في المتصفح",
+      "subtitle": "مصمم لقاعات STEM · 30 جهازاً، بدون تثبيت",
+      "badge": "Chrome / Edge",
+      "footerLeft": "تحديثات مدى الحياة · ترخيص مدرسي متاح",
+      "footerRight": "micro:bit V2"
+    },
+    {
+      "name": "hero-ar-kid",
+      "theme": "neon",
+      "accentColor": "#00ff88",
+      "lang": "ar",
+      "dir": "rtl",
+      "screenshots": ["screenshot-audience-kid-controls.png", "screenshot-audience-kid-3d.png"],
+      "title": "micro:bit الخاص بك\nيصبح ساحة لعب",
+      "subtitle": "مستشعرات، محركات، نماذج ثلاثية الأبعاد. بدون تثبيت، بدون حساب.",
+      "badge": "يعمل دون اتصال",
+      "footerLeft": "آمن للأطفال · بدون سحاب",
+      "footerRight": "60 ثانية للبدء"
+    },
+    {
+      "name": "hero-ar-maker",
+      "theme": "blaze",
+      "accentColor": "#ff6b35",
+      "lang": "ar",
+      "dir": "rtl",
+      "screenshots": ["screenshot-audience-maker-motors.png", "screenshot-audience-maker-3d.png"],
+      "title": "لوحة تحكم BLE\nللمبدعين",
+      "subtitle": "محركات حية · انعكاس ثلاثي الأبعاد · تصدير CSV · فيرموير مفتوح",
+      "badge": "Web Bluetooth",
+      "footerLeft": "فيرموير MakeCode · متوافق مع المصدر المفتوح",
+      "footerRight": "للاختراق"
+    }
+  ]
+}

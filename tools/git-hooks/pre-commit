@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# pre-commit hook — bumps firmware version ONLY when the firmware source
+# (firmware/v1-maqueen-lib.ts) actually changed in this commit, then
+# re-stages the touched files.
+#
+# Why the gate: previously this bumped on EVERY commit, which meant the
+# BUILD_VERSION label drifted from the actual binary code on the board
+# (a docs-only commit would push v0.1.50 even though the .hex on the
+# micro:bit was still v0.1.40). The label became a lie. Now: version
+# only bumps when the source genuinely changed, so the label is honest.
+#
+# Force-bump (rare — e.g. you want to mint a new version without touching
+# source):    FORCE_FW_BUMP=1 git commit -m "release: bump firmware"
+# Skip bump:  SKIP_FW_BUMP=1 git commit -m "docs: ..."
+
+set -e
+
+if [ "$SKIP_FW_BUMP" = "1" ]; then
+  exit 0
+fi
+
+if git diff --cached --quiet; then
+  exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+if [ ! -f tools/bump-firmware.py ]; then
+  echo "[pre-commit] tools/bump-firmware.py not found, skipping" >&2
+  exit 0
+fi
+
+# Did the firmware source actually change?
+FW_CHANGED=0
+if ! git diff --cached --quiet -- firmware/v1-maqueen-lib.ts; then
+  FW_CHANGED=1
+fi
+if [ "$FORCE_FW_BUMP" = "1" ]; then
+  FW_CHANGED=1
+fi
+
+if [ "$FW_CHANGED" = "1" ]; then
+  echo "[pre-commit] firmware source changed -> bumping version + refreshing embedded source..." >&2
+  python tools/bump-firmware.py >&2 || {
+    echo "[pre-commit] bump failed, aborting commit" >&2
+    exit 1
+  }
+  echo "[pre-commit] REMINDER: re-compile firmware/v1-maqueen-lib.ts in MakeCode and re-flash the .hex on the micro:bit before testing." >&2
+else
+  echo "[pre-commit] no firmware changes — version label stays put (honest)." >&2
+fi
+
+# Refresh build-info.json with current commit + UTC timestamp.
+# Use HEAD~ since this commit hasn't been created yet — but for a
+# more useful display we'll write the *latest committed* hash and let
+# the next commit overwrite it. (HEAD always points to the parent here.)
+python -c "
+import subprocess, json, datetime, re, pathlib
+commit = subprocess.run(['git','rev-parse','--short','HEAD'], capture_output=True, text=True).stdout.strip() or 'initial'
+built = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+# Read firmware BUILD_VERSION so app version mirrors firmware version
+fw = pathlib.Path('firmware/v1-maqueen-lib.ts').read_text(encoding='utf-8')
+m = re.search(r'BUILD_VERSION = \"([^\"]+)\"', fw)
+ver = m.group(1) if m else '0.0.0'
+pathlib.Path('build-info.json').write_text(json.dumps({'commit': commit, 'builtAt': built, 'version': ver}, indent=2), encoding='utf-8')
+# Sync product.json version fields
+prod_path = pathlib.Path('product.json')
+prod = json.loads(prod_path.read_text(encoding='utf-8'))
+prod['VERSION'] = 'v' + ver
+prod['VERSION_UPPER'] = 'V' + ver.upper()
+prod['VERSION_PLAIN'] = ver
+prod_path.write_text(json.dumps(prod, indent=2) + '\n', encoding='utf-8')
+print(f'[pre-commit] stamp -> v{ver}  commit={commit}  built={built}')
+" >&2 || {
+  echo "[pre-commit] build-info refresh failed, aborting commit" >&2
+  exit 1
+}
+
+# Re-stage everything the hook touched. Only stage firmware/index.html
+# if they were actually modified by the bump (avoids polluting docs-only
+# commits with whitespace-only firmware re-saves).
+if [ "$FW_CHANGED" = "1" ]; then
+  git add firmware/v1-maqueen-lib.ts index.html
+fi
+git add build-info.json product.json
+exit 0

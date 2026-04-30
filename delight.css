@@ -1,0 +1,386 @@
+/* ============================================================
+ * delight.css — Kid-first visual personality layer.
+ *
+ * Philosophy: every interactive zone has its own colour identity
+ * so a child can instantly orient themselves. Buttons feel alive
+ * with spring-physics press, coloured glow, and ripple flash.
+ * No existing layout or functionality is touched — pure cosmetics.
+ * ============================================================ */
+
+/* ----------------------------------------------------------
+ * 1. TAB IDENTITY COLOURS
+ *    Each tab glows its own colour when active. Inactive tabs
+ *    hint their colour on hover. The icon gets a matching halo.
+ * ---------------------------------------------------------- */
+
+/* Base spring transition for all tab buttons */
+.tab-btn {
+  transition:
+    background  0.2s ease,
+    color       0.2s ease,
+    border-color 0.2s ease,
+    box-shadow  0.2s ease,
+    transform   0.15s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Click spring-squish then bounce */
+.tab-btn:active { transform: scale(0.88) !important; transition-duration: 0.08s !important; }
+
+/* Per-tab colour variables — bold, tech, boys-friendly. No pink. */
+#maqueenTabBtn       { --tc: #00d4ff; --tc-a: rgba(0,212,255,0.18);   --tc-s: rgba(0,212,255,0.50); }  /* electric cyan   */
+#playgroundToggleBtn { --tc: #f97316; --tc-a: rgba(249,115,22,0.18);  --tc-s: rgba(249,115,22,0.50); } /* blazing orange   */
+#controlsTabBtn      { --tc: #facc15; --tc-a: rgba(250,204,21,0.18);  --tc-s: rgba(250,204,21,0.50); } /* game-pad gold    */
+#sensesTabBtn        { --tc: #4ade80; --tc-a: rgba(74,222,128,0.18);  --tc-s: rgba(74,222,128,0.50); } /* neon green       */
+#graphTabBtn         { --tc: #38bdf8; --tc-a: rgba(56,189,248,0.18);  --tc-s: rgba(56,189,248,0.50); } /* sky blue         */
+#board3dTabBtn       { --tc: #a3e635; --tc-a: rgba(163,230,53,0.18);  --tc-s: rgba(163,230,53,0.50); } /* acid lime        */
+#benchTabBtn         { --tc: #fb923c; --tc-a: rgba(251,146,60,0.18);  --tc-s: rgba(251,146,60,0.50); } /* hot orange       */
+#othersTabBtn        { --tc: #c084fc; --tc-a: rgba(192,132,252,0.18); --tc-s: rgba(192,132,252,0.50); }/* electric purple  */
+
+/* Active state: coloured background + glow ring */
+.tab-btn.active {
+  background:   var(--tc-a, rgba(0,212,255,0.18)) !important;
+  color:        var(--tc, #00d4ff) !important;
+  border-color: var(--tc, #00d4ff) !important;
+  box-shadow:
+    0 0 0 1.5px var(--tc, #00d4ff),
+    0 0 18px    var(--tc-s, rgba(0,212,255,0.45)),
+    0 4px 12px  rgba(0,0,0,0.45) !important;
+  transform: translateY(-2px) scale(1.04) !important;
+}
+
+/* Icon halo on active tab */
+.tab-btn.active .mode-icon {
+  filter: drop-shadow(0 0 7px var(--tc, #00d4ff)) !important;
+  transform: scale(1.15);
+  display: inline-block;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* Inactive: colour teased on hover */
+.tab-btn:not(.active):hover {
+  color: var(--tc, currentColor) !important;
+  background: var(--tc-a, transparent) !important;
+  transform: translateY(-2px) scale(1.03) !important;
+}
+.tab-btn:not(.active):hover .mode-icon {
+  filter: drop-shadow(0 0 4px var(--tc, currentColor));
+}
+
+
+/* ----------------------------------------------------------
+ * 2. SECTION CARD IDENTITY STRIPES
+ *    Inset top-border + ambient glow using box-shadow only —
+ *    zero layout impact.  Hover lifts the card.
+ * ---------------------------------------------------------- */
+
+[data-mq-sub] {
+  transition: transform 0.18s ease, box-shadow 0.2s ease;
+}
+
+[data-mq-sub="drive"]      { box-shadow: inset 0 3px 0 #fb923c, 0 0 18px rgba(251,146,60,0.08) !important; }
+[data-mq-sub="servos"]     { box-shadow: inset 0 3px 0 #00d4ff, 0 0 18px rgba(0,212,255,0.08)  !important; }
+[data-mq-sub="leds"]       { box-shadow: inset 0 3px 0 #facc15, 0 0 18px rgba(250,204,21,0.08) !important; }
+[data-mq-sub="neopixels"]  { box-shadow: inset 0 3px 0 #38bdf8, 0 0 18px rgba(56,189,248,0.08) !important; }
+[data-mq-sub="buzzer"]     { box-shadow: inset 0 3px 0 #c084fc, 0 0 18px rgba(192,132,252,0.08) !important; }
+[data-mq-sub="ultrasonic"] { box-shadow: inset 0 3px 0 #4ade80, 0 0 18px rgba(74,222,128,0.08) !important; }
+
+[data-mq-sub="drive"]:hover      { transform: translateY(-2px); box-shadow: inset 0 3px 0 #fb923c, 0 0 28px rgba(251,146,60,0.22), 0 6px 16px rgba(0,0,0,0.35) !important; }
+[data-mq-sub="servos"]:hover     { transform: translateY(-2px); box-shadow: inset 0 3px 0 #00d4ff, 0 0 28px rgba(0,212,255,0.22),  0 6px 16px rgba(0,0,0,0.35) !important; }
+[data-mq-sub="leds"]:hover       { transform: translateY(-2px); box-shadow: inset 0 3px 0 #facc15, 0 0 28px rgba(250,204,21,0.22), 0 6px 16px rgba(0,0,0,0.35) !important; }
+[data-mq-sub="neopixels"]:hover  { transform: translateY(-2px); box-shadow: inset 0 3px 0 #38bdf8, 0 0 28px rgba(56,189,248,0.22), 0 6px 16px rgba(0,0,0,0.35) !important; }
+[data-mq-sub="buzzer"]:hover     { transform: translateY(-2px); box-shadow: inset 0 3px 0 #c084fc, 0 0 28px rgba(192,132,252,0.22), 0 6px 16px rgba(0,0,0,0.35) !important; }
+[data-mq-sub="ultrasonic"]:hover { transform: translateY(-2px); box-shadow: inset 0 3px 0 #4ade80, 0 0 28px rgba(74,222,128,0.22), 0 6px 16px rgba(0,0,0,0.35) !important; }
+
+
+/* ----------------------------------------------------------
+ * 3. D-PAD BUTTONS — GAME CONTROLLER IDENTITY
+ *    ↑ green · ↓ red · ↺↻ amber · STOP crimson
+ *    "3D slab" look: gradient face + bottom shadow bar.
+ *    Pressing drives the button down into the surface.
+ * ---------------------------------------------------------- */
+
+/* Shared upgrade: bigger, bolder, spring transition */
+.mq-keypad-btn {
+  width:  58px  !important;
+  height: 58px  !important;
+  border-radius: 16px !important;
+  border-width:  2px  !important;
+  font-weight: 900 !important;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform  0.12s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.12s ease,
+    background 0.12s ease !important;
+}
+
+.mq-keypad-btn .mq-keypad-glyph {
+  font-size: 22px !important;
+  line-height: 1   !important;
+}
+.mq-keypad-btn .mq-keypad-cap {
+  font-size: 9px  !important;
+  opacity:  0.8   !important;
+  font-weight: 700 !important;
+}
+
+/* ↑ FORWARD — green */
+.mq-keypad-btn[data-key="w"] {
+  background:   linear-gradient(160deg, #22c55e 0%, #15803d 100%) !important;
+  color:        #f0fdf4 !important;
+  border-color: #4ade80 !important;
+  box-shadow:   0 5px 0 #14532d, 0 0 18px rgba(74,222,128,0.30) !important;
+}
+.mq-keypad-btn[data-key="w"]:hover {
+  transform: translateY(-4px) scale(1.08) !important;
+  box-shadow: 0 8px 0 #14532d, 0 0 28px rgba(74,222,128,0.55) !important;
+}
+.mq-keypad-btn[data-key="w"]:active,
+.mq-keypad-btn[data-key="w"].mq-keypad-flash {
+  transform: translateY(3px) scale(0.92) !important;
+  box-shadow: 0 1px 0 #14532d, 0 0 10px rgba(74,222,128,0.40) !important;
+}
+
+/* ↓ BACKWARD — red */
+.mq-keypad-btn[data-key="s"] {
+  background:   linear-gradient(160deg, #ef4444 0%, #b91c1c 100%) !important;
+  color:        #fef2f2 !important;
+  border-color: #f87171 !important;
+  box-shadow:   0 5px 0 #7f1d1d, 0 0 18px rgba(239,68,68,0.30) !important;
+}
+.mq-keypad-btn[data-key="s"]:hover {
+  transform: translateY(-4px) scale(1.08) !important;
+  box-shadow: 0 8px 0 #7f1d1d, 0 0 28px rgba(239,68,68,0.55) !important;
+}
+.mq-keypad-btn[data-key="s"]:active,
+.mq-keypad-btn[data-key="s"].mq-keypad-flash {
+  transform: translateY(3px) scale(0.92) !important;
+  box-shadow: 0 1px 0 #7f1d1d, 0 0 10px rgba(239,68,68,0.40) !important;
+}
+
+/* ↺ SPIN LEFT — amber */
+.mq-keypad-btn[data-key="a"] {
+  background:   linear-gradient(160deg, #f59e0b 0%, #b45309 100%) !important;
+  color:        #fffbeb !important;
+  border-color: #fbbf24 !important;
+  box-shadow:   0 5px 0 #78350f, 0 0 18px rgba(251,191,36,0.30) !important;
+}
+.mq-keypad-btn[data-key="a"]:hover {
+  transform: translateY(-4px) scale(1.08) !important;
+  box-shadow: 0 8px 0 #78350f, 0 0 28px rgba(251,191,36,0.55) !important;
+}
+.mq-keypad-btn[data-key="a"]:active,
+.mq-keypad-btn[data-key="a"].mq-keypad-flash {
+  transform: translateY(3px) scale(0.92) !important;
+  box-shadow: 0 1px 0 #78350f, 0 0 10px rgba(251,191,36,0.40) !important;
+}
+
+/* ↻ SPIN RIGHT — amber (mirror) */
+.mq-keypad-btn[data-key="d"] {
+  background:   linear-gradient(160deg, #f59e0b 0%, #b45309 100%) !important;
+  color:        #fffbeb !important;
+  border-color: #fbbf24 !important;
+  box-shadow:   0 5px 0 #78350f, 0 0 18px rgba(251,191,36,0.30) !important;
+}
+.mq-keypad-btn[data-key="d"]:hover {
+  transform: translateY(-4px) scale(1.08) !important;
+  box-shadow: 0 8px 0 #78350f, 0 0 28px rgba(251,191,36,0.55) !important;
+}
+.mq-keypad-btn[data-key="d"]:active,
+.mq-keypad-btn[data-key="d"].mq-keypad-flash {
+  transform: translateY(3px) scale(0.92) !important;
+  box-shadow: 0 1px 0 #78350f, 0 0 10px rgba(251,191,36,0.40) !important;
+}
+
+/* ⏹ STOP — crimson emergency */
+.mq-keypad-btn.mq-keypad-stop {
+  background:   linear-gradient(160deg, #dc2626 0%, #7f1d1d 100%) !important;
+  color:        #fef2f2 !important;
+  border-color: #ef4444 !important;
+  box-shadow:   0 5px 0 #450a0a, 0 0 22px rgba(220,38,38,0.35) !important;
+}
+.mq-keypad-btn.mq-keypad-stop .mq-keypad-glyph {
+  font-size: 11px   !important;
+  font-weight: 900  !important;
+  letter-spacing: 0.08em !important;
+}
+.mq-keypad-btn.mq-keypad-stop:hover {
+  transform: translateY(-4px) scale(1.08) !important;
+  box-shadow: 0 8px 0 #450a0a, 0 0 32px rgba(220,38,38,0.60) !important;
+}
+.mq-keypad-btn.mq-keypad-stop:active,
+.mq-keypad-btn.mq-keypad-stop.mq-keypad-flash {
+  transform: translateY(3px) scale(0.92) !important;
+  box-shadow: 0 1px 0 #450a0a, 0 0 14px rgba(220,38,38,0.50) !important;
+  background: linear-gradient(160deg, #ef4444 0%, #b91c1c 100%) !important;
+}
+
+/* Ripple flash inside every D-pad button on press */
+.mq-keypad-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.45) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.2);
+  transition: opacity 0.5s ease, transform 0.6s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.mq-keypad-btn:active::after,
+.mq-keypad-btn.mq-keypad-flash::after {
+  opacity: 1;
+  transform: scale(2.2);
+  transition: opacity 0s, transform 0s;
+}
+
+
+/* ----------------------------------------------------------
+ * 4. SERVO QUICK + MODE BUTTONS — spring pop & colour glow
+ * ---------------------------------------------------------- */
+
+.mq-servo-quick,
+.mq-servo-sweep,
+.mq-servo-mode {
+  transition:
+    transform   0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow  0.15s ease,
+    background  0.12s ease !important;
+}
+
+.mq-servo-quick:hover  { transform: translateY(-3px) scale(1.07) !important; box-shadow: 0 6px 16px rgba(0,212,255,0.30) !important; }
+.mq-servo-sweep:hover  { transform: translateY(-3px) scale(1.09) !important; box-shadow: 0 6px 20px rgba(250,204,21,0.45) !important; }
+.mq-servo-mode:hover   { transform: translateY(-2px) scale(1.05) !important; }
+
+.mq-servo-quick:active { transform: scale(0.88) !important; transition-duration: 0.06s !important; }
+.mq-servo-sweep:active { transform: scale(0.88) !important; transition-duration: 0.06s !important; }
+.mq-servo-mode:active  { transform: scale(0.88) !important; transition-duration: 0.06s !important; }
+
+
+/* ----------------------------------------------------------
+ * 5. OUTER .card HOVER — lift + accent glow
+ *    Uses the theme accent so it works across all colour themes.
+ * ---------------------------------------------------------- */
+
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+
+
+/* ----------------------------------------------------------
+ * 6. PERSONALITY BUTTONS — one bold colour per character
+ *    Override the global violet with distinct identities.
+ * ---------------------------------------------------------- */
+
+/* Wrapper bar: neutral dark instead of violet */
+#mqPersonalityBar {
+  background: rgba(30,42,64,0.6)       !important;
+  border-color: rgba(56,189,248,0.15)  !important;
+}
+#mqPersonalityBar > span:first-child { color: #38bdf8 !important; }  /* label */
+
+/* Per-character colours */
+[data-personality="speedy"]   { --pc: #f97316; --pc-a: rgba(249,115,22,0.12);  --pc-s: rgba(249,115,22,0.45); }
+[data-personality="cautious"] { --pc: #38bdf8; --pc-a: rgba(56,189,248,0.12);  --pc-s: rgba(56,189,248,0.45); }
+[data-personality="curious"]  { --pc: #4ade80; --pc-a: rgba(74,222,128,0.12);  --pc-s: rgba(74,222,128,0.45); }
+[data-personality="lazy"]     { --pc: #fbbf24; --pc-a: rgba(251,191,36,0.12);  --pc-s: rgba(251,191,36,0.45); }
+
+.mq-personality-btn {
+  color: var(--pc, #93a8c4) !important;
+  border-color: rgba(var(--pc, 148,163,184), 0.3) !important;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s,
+              transform 0.12s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.mq-personality-btn:hover {
+  background:   var(--pc-a, rgba(56,189,248,0.12)) !important;
+  border-color: var(--pc, #38bdf8)                 !important;
+  transform: translateY(-2px) scale(1.06)          !important;
+}
+.mq-personality-btn:active { transform: scale(0.90) !important; }
+.mq-personality-btn.mq-personality-active {
+  background:   var(--pc-a, rgba(56,189,248,0.12)) !important;
+  border-color: var(--pc, #38bdf8)                 !important;
+  color:        var(--pc, #38bdf8)                 !important;
+  box-shadow:   0 0 14px var(--pc-s, rgba(56,189,248,0.45)) !important;
+}
+
+
+/* ----------------------------------------------------------
+ * 7. MAQUEEN SUB-TAB STRIP — bold colour identity per section
+ * ---------------------------------------------------------- */
+
+/* Per-section colour variables */
+.mq-sub-btn[data-mq-target="drive"]      { --sc: #fb923c; --sc-a: rgba(251,146,60,0.14);  --sc-s: rgba(251,146,60,0.50); }
+.mq-sub-btn[data-mq-target="servos"]     { --sc: #00d4ff; --sc-a: rgba(0,212,255,0.14);   --sc-s: rgba(0,212,255,0.50); }
+.mq-sub-btn[data-mq-target="leds"]       { --sc: #facc15; --sc-a: rgba(250,204,21,0.14);  --sc-s: rgba(250,204,21,0.50); }
+.mq-sub-btn[data-mq-target="ultrasonic"] { --sc: #4ade80; --sc-a: rgba(74,222,128,0.14);  --sc-s: rgba(74,222,128,0.50); }
+.mq-sub-btn[data-mq-target="lines"]      { --sc: #34d399; --sc-a: rgba(52,211,153,0.14);  --sc-s: rgba(52,211,153,0.50); }
+.mq-sub-btn[data-mq-target="ir"]         { --sc: #c084fc; --sc-a: rgba(192,132,252,0.14); --sc-s: rgba(192,132,252,0.50); }
+.mq-sub-btn[data-mq-target="neopixels"]  { --sc: #38bdf8; --sc-a: rgba(56,189,248,0.14);  --sc-s: rgba(56,189,248,0.50); }
+.mq-sub-btn[data-mq-target="buzzer"]     { --sc: #fbbf24; --sc-a: rgba(251,191,36,0.14);  --sc-s: rgba(251,191,36,0.50); }
+
+/* Base: always show the section colour on the border */
+.mq-sub-btn {
+  color:        var(--sc, #93a8c4)             !important;
+  border-color: var(--sc, rgba(148,163,184,0.3)) !important;
+  border-width: 1.5px                           !important;
+  font-weight:  600                             !important;
+  transition:
+    background   0.15s ease,
+    border-color 0.15s ease,
+    box-shadow   0.18s ease,
+    transform    0.15s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+
+/* Hover: tinted background + lift */
+.mq-sub-btn:hover {
+  background:  var(--sc-a, rgba(56,189,248,0.14)) !important;
+  box-shadow:  0 0 12px var(--sc-s, rgba(56,189,248,0.35)) !important;
+  transform:   translateY(-3px) scale(1.05)        !important;
+}
+
+/* Press: spring squish */
+.mq-sub-btn:active {
+  transform: scale(0.91) !important;
+  transition-duration: 0.07s !important;
+}
+
+/* Active: glowing selected state */
+.mq-sub-btn.mq-active {
+  background:   var(--sc-a, rgba(0,212,255,0.14)) !important;
+  border-color: var(--sc, #00d4ff)                !important;
+  border-width: 2px                               !important;
+  color:        var(--sc, #00d4ff)                !important;
+  box-shadow:
+    0 0 0 1px   var(--sc, #00d4ff),
+    0 0 18px    var(--sc-s, rgba(0,212,255,0.45)),
+    0 4px 12px  rgba(0,0,0,0.4)                   !important;
+  transform: translateY(-2px)                     !important;
+}
+
+
+/* ----------------------------------------------------------
+ * 8. ICON BOUNCE — when parent card is first seen
+ *    Stagger gives a "waking up" sequence effect.
+ * ---------------------------------------------------------- */
+
+@keyframes mq-icon-drop {
+  0%   { transform: translateY(-8px) scale(1.3); opacity: 0; }
+  60%  { transform: translateY(3px)  scale(0.95); opacity: 1; }
+  80%  { transform: translateY(-2px) scale(1.03); }
+  100% { transform: translateY(0)    scale(1); }
+}
+
+[data-mq-sub] > div:first-child > span:first-child {
+  display: inline-block;
+  animation: mq-icon-drop 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+[data-mq-sub="drive"]      > div:first-child > span:first-child { animation-delay: 0.05s; }
+[data-mq-sub="servos"]     > div:first-child > span:first-child { animation-delay: 0.12s; }
+[data-mq-sub="leds"]       > div:first-child > span:first-child { animation-delay: 0.19s; }
+[data-mq-sub="neopixels"]  > div:first-child > span:first-child { animation-delay: 0.26s; }
+[data-mq-sub="buzzer"]     > div:first-child > span:first-child { animation-delay: 0.33s; }
+[data-mq-sub="ultrasonic"] > div:first-child > span:first-child { animation-delay: 0.40s; }

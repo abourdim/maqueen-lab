@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ETSY LISTING fr — maqueen-lab</title>
+
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    line-height: 1.55;
+    color: #1a1d24;
+    background: #fafbfc;
+  }
+  body[dir="rtl"] {
+    font-family: 'Tajawal', -apple-system, Segoe UI, sans-serif;
+    direction: rtl;
+    text-align: right;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0a0e12; color: #e8ecef; }
+    a { color: #00ff88; }
+    code { background: #161b22; }
+    pre { background: #161b22; border-color: #30363d; }
+    table th { background: #161b22; }
+    blockquote { border-color: #30363d; color: #9ca3af; }
+    hr { border-color: #30363d; }
+  }
+  h1 {
+    font-size: 2.2em;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #00ff88;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-top: 2.2em;
+    padding-top: 0.8em;
+    border-top: 1px solid #e1e4e8;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.15em;
+    margin-top: 1.5em;
+    color: #008855;
+  }
+  @media (prefers-color-scheme: dark) {
+    h2 { border-color: #30363d; }
+    h3 { color: #00ff88; }
+  }
+  p, li { font-size: 15px; }
+  code {
+    background: #f2f4f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e4e8;
+    vertical-align: top;
+  }
+  body[dir="rtl"] th, body[dir="rtl"] td { text-align: right; }
+  th {
+    background: #f2f4f7;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #576574;
+  }
+  @media (prefers-color-scheme: dark) {
+    td, th { border-color: #30363d; }
+    th { color: #9ca3af; }
+    code { color: #e8ecef; }
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #00884a;
+    background: rgba(0, 255, 136, 0.06);
+    color: #4a5258;
+    border-radius: 0 6px 6px 0;
+  }
+  body[dir="rtl"] blockquote {
+    border-left: 0; border-right: 4px solid #00884a;
+    border-radius: 6px 0 0 6px;
+  }
+  hr { border: 0; border-top: 2px dashed #d1d5db; margin: 3em 0; }
+  a { color: #006644; text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: currentColor; }
+
+  .toc-float {
+    position: fixed; top: 20px; right: 20px;
+    width: 260px; max-height: 80vh; overflow-y: auto;
+    background: rgba(255,255,255,0.96); border: 1px solid #d1d5db;
+    border-radius: 8px; padding: 16px 18px;
+    font-size: 12px; line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none;
+  }
+  body[dir="rtl"] .toc-float { right: auto; left: 20px; font-family: Tajawal, sans-serif; }
+  @media (min-width: 1280px) { .toc-float { display: block; } }
+  @media (prefers-color-scheme: dark) {
+    .toc-float { background: rgba(22,27,34,0.96); border-color: #30363d; }
+  }
+  .toc-float h4 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; }
+  .toc-float ol { margin: 0; padding-left: 20px; }
+  body[dir="rtl"] .toc-float ol { padding-left: 0; padding-right: 20px; }
+
+  .sibling-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+  .sibling-bar a {
+    background: rgba(0,136,85,0.08); border: 1px solid rgba(0,136,85,0.25);
+    padding: 4px 10px; border-radius: 999px;
+    font-weight: 600; letter-spacing: 0.04em;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sibling-bar a { background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.25); }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; max-width: none; padding: 10mm; font-size: 11pt; }
+    h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+    tr, pre, blockquote { page-break-inside: avoid; break-inside: avoid; }
+    .toc-float, .sibling-bar { display: none; }
+    a { color: #000; border-bottom: none; }
+  }
+</style>
+</head>
+<body dir="ltr">
+<nav class="sibling-bar">
+  <a href="ETSY_LISTING-en.html">EN</a>
+  <a href="ETSY_LISTING-fr.html">FR</a>
+  <a href="ETSY_LISTING-ar.html">AR</a>
+</nav>
+
+<nav class="toc-float" aria-label="Quick contents">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#contenu">Contenu</a></li>
+    <li><a href="#titre-140-caractères-max">Titre (140 caractères max)</a></li>
+    <li><a href="#catégorie">Catégorie</a></li>
+    <li><a href="#tags-13-max">Tags (13 max)</a></li>
+    <li><a href="#description-de-lannonce">Description de l'annonce</a></li>
+    <li><a href="#faq-à-ajouter-à-lannonce">FAQ à ajouter à l'annonce</a></li>
+    <li><a href="#garantie-à-coller-sous-la-faq">Garantie (à coller sous la
+FAQ)</a></li>
+    <li><a href="#annonce-de-boutique">Annonce de boutique</a></li>
+    <li><a href="#message-de-remerciement--demande-davis">Message de remerciement
+— demande d'avis</a></li>
+    <li><a href="#message-auto-aux-acheteurs">Message auto aux acheteurs</a></li>
+    <li><a href="#réponse-avant-achat">Réponse avant achat</a></li>
+    <li><a href="#suivi-post-vente">Suivi post-vente</a></li>
+  </ol>
+</nav>
+<main>
+<h1 id="annonce-etsy--micromaqueen-lab-fr">Annonce Etsy — micro:bit
+Playground (FR)</h1>
+<blockquote>
+<p><strong>Destiné à l'audience francophone.</strong> Contient
+uniquement le texte visible par l'acheteur (titre, tags, description,
+FAQ, messages). La stratégie vendeur (prix, UTM, Pinterest, plan de
+lancement) reste dans <code>ETSY_LISTING.md</code> en anglais.</p>
+<p>Créer une <strong>annonce séparée</strong> en français — ne pas
+mélanger avec l'annonce anglaise. Etsy privilégie les annonces
+mono-langue pour la recherche.</p>
+</blockquote>
+<h2 id="contenu">Contenu</h2>
+<ul>
+<li><a href="#titre-140-caractères-max">Titre</a></li>
+<li><a href="#catégorie">Catégorie</a></li>
+<li><a href="#tags-13-max">Tags</a></li>
+<li><a href="#description-de-lannonce">Description de l'annonce</a></li>
+<li><a href="#faq-à-ajouter-à-lannonce">FAQ</a></li>
+<li><a href="#garantie-à-coller-sous-la-faq">Garantie</a></li>
+<li><a href="#annonce-de-boutique">Annonce de boutique</a></li>
+<li><a href="#message-de-remerciement--demande-davis">Message de
+remerciement — demande d'avis</a></li>
+<li><a href="#message-auto-aux-acheteurs">Message auto aux
+acheteurs</a></li>
+<li><a href="#réponse-avant-achat">Réponse avant achat</a></li>
+<li><a href="#suivi-post-vente">Suivi post-vente</a></li>
+</ul>
+<hr />
+<h2 id="titre-140-caractères-max">Titre (140 caractères max)</h2>
+<p>Application Bluetooth Web pour BBC micro:bit V2 + Guide Illustré | 8
+Onglets, 5 Robots, Graphiques en Direct | STEM École | Téléchargement
+Numérique</p>
+<blockquote>
+<p>Nom produit sur la boutique Etsy : <strong>« Maqueen Lab
+»</strong>. Utilisez la formulation <strong>« pour le BBC micro:bit V2
+»</strong> partout afin de respecter les règles de marque de la
+Micro:bit Educational Foundation.</p>
+</blockquote>
+<h2 id="catégorie">Catégorie</h2>
+<p>Fournitures créatives &amp; outils → Patrons &amp; tutoriels →
+Tutoriels <em>(ou)</em> Téléchargements numériques → Ressources
+éducatives</p>
+<h2 id="tags-13-max">Tags (13 max)</h2>
+<p>micro:bit, microbit v2, STEM, codage enfants, BBC microbit,
+application bluetooth, MakeCode, ressource classe, école maison,
+robotique, web bluetooth, club codage, chromebook éducation</p>
+<h2 id="description-de-lannonce">Description de l'annonce</h2>
+<blockquote>
+<p><strong>Panneau de contrôle Bluetooth basé navigateur pour le BBC
+micro:bit V2. Rien à installer. Fonctionne sur Chromebook. Nécessite
+Chrome ou Edge — pas iPhone / iPad / Safari.</strong></p>
+<p>✅ <strong>Testé sur Chromebook</strong> — appareil cible principal
+pour les écoles. S'installe comme une PWA, fonctionne hors ligne après
+le premier chargement.</p>
+<p>🎮 <strong>Maqueen Lab</strong> transforme votre micro:bit
+en laboratoire STEM interactif — rien à installer, aucun compte, aucun
+cloud. Ouvrez-le dans votre navigateur et connectez-vous.</p>
+<p>🔒 <strong>Aucun compte. Aucune connexion. Aucune donnée collectée.
+Sûr pour les élèves de moins de 13 ans — conforme RGPD par
+conception.</strong></p>
+<p>🧪 <strong>Essayez maintenant</strong> (mode Simulation, sans
+micro:bit) : <a
+href="https://abourdim.github.io/maqueen-lab/#lang=fr">https://abourdim.github.io/maqueen-lab/#lang=fr</a></p>
+<p>✨ <strong>Ce que vous obtenez</strong> (téléchargement instantané) :
+• Une application web complète (HTML, CSS, JS) exécutable localement en
+Chrome ou Edge • Firmware micro:bit prêt à flasher
+(<code>makecode.ts</code>) • <strong>Guide utilisateur illustré
+trilingue (EN/FR/AR) avec diagrammes intégrés :</strong> — schéma
+d'architecture • brochage du micro:bit V2 • storyboard du flux firmware
+— cabine de pilotage LED interactif dans le guide (cliquez les cellules,
+copiez les commandes hex) — dépannage visuel : arbre de décision,
+sélecteur de symptôme, galerie d'icônes, recette de réinitialisation •
+Guide de démarrage imprimable (<code>SETUP.md</code>) • 4 thèmes
+(Workshop, Sky, Mint, Forest, Cosmos, Night) • 8 onglets : Matrice LED, Capteurs,
+Servos, Manette, Graphique, Carte 3D, Banc, Paramètres • 5 obstacles SLAM
+interactifs (micro:bit, Maqueen, Bras robot, Jeu d'équilibre, Station
+météo) • Enregistrement de sessions, graphiques en direct, annotations,
+export JSON • Modes Débutant &amp; Expert — évolue avec l'apprenant</p>
+<p>🧒 <strong>Idéal pour</strong> : salles de classe, école à la maison,
+clubs périscolaires, fablabs, camps STEM, passionnés de robotique,
+parents qui initient leurs enfants au code.</p>
+<p>⚙️ <strong>Nécessite</strong> : • BBC micro:bit V2 (vendu séparément)
+• Navigateur Chrome ou Edge sur ordinateur de bureau, portable ou
+tablette Android • Bluetooth activé</p>
+<p>❌ <strong>Ne fonctionne PAS sur</strong> : Safari, Firefox, iPhone,
+iPad. (Limitation de Web Bluetooth — pas de l'application.)</p>
+<p>♿ <strong>Accessibilité</strong> : descriptions audio (voix Hortense
+fr-FR), transcriptions texte pour lecteurs DAISY, Braille Unicode Grade
+1 français. Conforme aux exigences procurement des académies françaises
+(RGAA 4).</p>
+</blockquote>
+<hr />
+<h2 id="faq-à-ajouter-à-lannonce">FAQ à ajouter à l'annonce</h2>
+<p><strong>Q : Dois-je savoir coder ?</strong> Non — il suffit de
+flasher le firmware une fois et de cliquer Connecter.</p>
+<p><strong>Q : Est-ce que ça fonctionne sur mon iPad ?</strong> Non.
+Apple n'autorise pas Web Bluetooth dans les navigateurs iOS. Utilisez un
+ordinateur portable, un Chromebook ou une tablette Android.</p>
+<p><strong>Q : Puis-je l'utiliser dans ma classe de 30 élèves ?</strong>
+Oui — un seul enseignant, une seule école, élèves illimités. Pour
+plusieurs enseignants ou une licence académique, contactez-moi.</p>
+<p><strong>Q : Proposez-vous des remboursements ?</strong> Comme il
+s'agit d'un téléchargement instantané, je ne peux pas offrir de
+remboursement une fois le ZIP livré — vérifiez donc la compatibilité
+(Chrome ou Edge, ordinateur, BBC micro:bit V2) avant l'achat. Si le
+produit ne fonctionne pas comme décrit sur un navigateur pris en charge,
+contactez-moi sous 14 jours et je vous rembourserai personnellement.</p>
+<p><strong>Q : Est-ce sûr pour les élèves de moins de 13 ans (RGPD)
+?</strong> Oui. Tout s'exécute localement dans le navigateur — aucun
+compte, aucune connexion, aucune collecte de données, aucun cloud,
+aucune télémétrie. Rien ne quitte l'appareil. Conforme RGPD par
+conception.</p>
+<p><strong>Q : Y aura-t-il des mises à jour ?</strong> Oui — mises à
+jour gratuites dans la ligne v1.x (nouvelles fonctionnalités et
+corrections de bogues), plus correctifs garantis pendant 12 mois après
+votre achat. Une future version majeure v2.x serait une annonce
+distincte avec une remise de mise à niveau pour les acheteurs
+existants.</p>
+<hr />
+<h2 id="garantie-à-coller-sous-la-faq">Garantie (à coller sous la
+FAQ)</h2>
+<blockquote>
+<p>✅ <strong>Ma garantie personnelle</strong></p>
+<p><strong>Si l'appairage ne fonctionne pas sur un Chromebook en moins
+de 5 minutes sur un navigateur pris en charge (Chrome ou Edge),
+contactez-moi et je vous rembourse personnellement.</strong></p>
+<p>Ce n'est pas un remboursement selon la politique Etsy, c'est un
+remboursement-moi. Je préfère perdre 12,99 € plutôt que de laisser un
+enseignant bloqué avant la première heure de cours.</p>
+</blockquote>
+<hr />
+<h2 id="annonce-de-boutique">Annonce de boutique</h2>
+<blockquote>
+<p>🎮 <strong>Maqueen Lab</strong> — panneau de contrôle
+Bluetooth + guide illustré pour le BBC micro:bit V2. Rien à installer.
+Fonctionne sur Chromebook. Conçu pour les salles STEM.</p>
+<p>Sortie v1.2.0 : guide illustré trilingue (EN/FR/AR), aire de jeu LED
+interactive, modes Débutant/Expert. Ouvrez-le dans Chrome ou Edge,
+cliquez Connecter — vos capteurs s'animent.</p>
+<p>♿ Pack accessibilité inclus (voix Hortense, Braille FR, conformité
+RGAA).</p>
+</blockquote>
+<hr />
+<h2 id="message-de-remerciement--demande-davis">Message de remerciement
+— demande d'avis</h2>
+<p>Message à envoyer dans Etsy <strong>« Contacter l'acheteur »</strong>
+une fois la livraison confirmée.</p>
+<pre><code>Bonjour {{BUYER_FIRST_NAME}} — merci beaucoup d&#39;avoir pris Maqueen Lab ! 🎮
+
+Petite question : est-ce que l&#39;appairage s&#39;est bien passé sur votre Chromebook (ou l&#39;ordinateur que vous avez utilisé) ?
+Si quoi que ce soit coince, répondez ici — je corrige le jour même.
+
+Si tout a fonctionné et que vous avez 30 secondes, un avis ⭐⭐⭐⭐⭐ ferait vraiment la différence pour une toute petite boutique d&#39;une personne.
+Lien direct : {{ETSY_REVIEW_URL}}
+
+Bon codage en classe,
+— {{YOUR_NAME}}</code></pre>
+<hr />
+<h2 id="message-auto-aux-acheteurs">Message auto aux acheteurs</h2>
+<p>Message envoyé automatiquement dès l'achat.</p>
+<blockquote>
+<p>Merci énormément pour votre commande ! 🎉</p>
+<p>Votre téléchargement est prêt maintenant — Etsy vous a envoyé le lien
+par email, vous pouvez aussi le récupérer depuis <strong>Vous → Achats
+&amp; avis</strong>.</p>
+<p>📘 <strong>Commencez ici :</strong> décompressez le fichier et ouvrez
+<strong>SETUP.md</strong> (guide de 5 minutes). Il vous faut un BBC
+micro:bit V2 et Chrome ou Edge — Safari et iPhones ne fonctionnent pas
+(limitation de Web Bluetooth, pas de l'application).</p>
+<p>💬 <strong>Bloqué ?</strong> Répondez à ce message avec votre numéro
+de commande Etsy et une capture d'écran — je réponds sous 24 heures.</p>
+<p>📜 <strong>Petite demande :</strong> c'est une licence
+mono-utilisateur. Utilisez-la librement dans votre classe ou à la
+maison, mais ne la revendez pas et ne la remettez pas en ligne. Les
+conditions complètes sont dans le fichier LICENSE du ZIP.</p>
+<p>⭐ Si ça vous rend service, un petit avis m'aiderait beaucoup — les
+petites boutiques vivent grâce à ça.</p>
+<p>Bon hacking ! — <em>[Votre nom]</em></p>
+</blockquote>
+<hr />
+<h2 id="réponse-avant-achat">Réponse avant achat</h2>
+<p>À utiliser quand un acheteur vous contacte <em>avant</em> l'achat
+avec une question de compatibilité.</p>
+<blockquote>
+<p>Bonjour ! Excellente question — vérification rapide avant d'acheter
+:</p>
+<ol type="1">
+<li>Avez-vous un <strong>BBC micro:bit V2</strong> (celui avec le
+microphone doré) ? Le V1 n'a pas le capteur de son ni quelques
+fonctionnalités.</li>
+<li>Quel navigateur utiliserez-vous ? Il faut <strong>Chrome ou
+Edge</strong> sur un ordinateur de bureau, portable, Chromebook ou
+tablette Android. Safari, Firefox, iPhone et iPad ne sont pas pris en
+charge (limitation de Web Bluetooth).</li>
+</ol>
+<p>Si les deux sont OK, vous êtes bon. Dites-moi si vous voulez que je
+vous envoie une vidéo de démo de 30 secondes avant de décider.</p>
+</blockquote>
+<hr />
+<h2 id="suivi-post-vente">Suivi post-vente</h2>
+<p>À envoyer 7 jours après l'achat (facultatif).</p>
+<blockquote>
+<p>Bonjour ! Petit suivi — avez-vous réussi à faire fonctionner
+Maqueen Lab cette semaine ? Si vous avez rencontré un souci,
+répondez ici et je le règle. Si tout a bien fonctionné, une note sur
+l'annonce m'aide à continuer à créer ce genre d'outils. Dans tous les
+cas, merci pour votre soutien !</p>
+</blockquote>
+
+</main>
+</body>
+</html>

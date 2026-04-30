@@ -1,0 +1,354 @@
+<!doctype html>
+<!-- REWRITE PER PRODUCT — DO NOT SHIP AS-IS · TRANSLATE TO FRENCH -->
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Maqueen Lab — Playbook Etsy 1 minute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020617; --panel: #0b1226; --panel2: #101a33;
+    --ink: #e2e8f0; --muted: #94a3b8;
+    --accent: #22c55e; --accent2: #22d3ee; --hook: #f59e0b;
+    --demo: #22d3ee; --payoff: #22c55e; --cta: #ef4444;
+    --border: rgba(34,197,94,.18);
+    --shadow: 0 4px 24px rgba(0,0,0,.5);
+    --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    --sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --display: 'Orbitron', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
+  body { max-width: 1080px; margin: 0 auto; padding: 24px 18px 80px; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed rgba(34,197,94,.4); }
+  a:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
+
+  .slate {
+    background:
+      radial-gradient(ellipse at top right, rgba(34,211,238,.14), transparent 60%),
+      linear-gradient(180deg, var(--panel2), var(--panel));
+    border: 2px solid var(--border);
+    border-radius: 18px; padding: 36px 28px 28px;
+    text-align: center; margin-bottom: 22px; box-shadow: var(--shadow);
+  }
+  .slate-clap { font-size: 56px; line-height: 1; margin-bottom: 8px; filter: drop-shadow(0 0 18px rgba(34,197,94,.5)); }
+  .slate h1 { font-family: var(--display); font-size: 2rem; letter-spacing: 1.4px; margin: 6px 0 4px; color: var(--accent); font-weight: 900; }
+  .slate h1 span { color: var(--accent2); }
+  .slate .tag { color: var(--muted); font-size: .92rem; letter-spacing: .8px; text-transform: uppercase; }
+  .slate .meta { display: flex; justify-content: center; gap: 24px; margin-top: 16px; font-size: .82rem; color: var(--muted); flex-wrap: wrap; }
+  .slate .meta b { color: var(--ink); font-weight: 700; }
+
+  .toc {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11,18,38,.93); backdrop-filter: blur(8px);
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 8px 12px; margin-bottom: 22px;
+    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  }
+  .toc a {
+    background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.25);
+    border-radius: 10px; padding: 6px 12px; font-size: .82rem; font-weight: 600;
+    border-bottom: none;
+  }
+  .toc a:hover { background: rgba(34,197,94,.2); color: var(--accent); }
+
+  .slug {
+    font-family: var(--mono); text-transform: uppercase; letter-spacing: 1.3px;
+    font-size: .78rem; color: var(--accent);
+    background: linear-gradient(90deg, rgba(34,197,94,.15), transparent);
+    border-left: 4px solid var(--accent); padding: 8px 12px;
+    margin: 28px 0 14px; border-radius: 0 8px 8px 0;
+  }
+  h2 { font-family: var(--display); letter-spacing: 1px; color: var(--accent); margin: 8px 0 12px; font-size: 1.5rem; }
+  h3 { color: var(--ink); margin-top: 18px; font-size: 1.12rem; }
+  h4 { color: var(--accent2); font-size: 1rem; margin: 14px 0 6px; font-family: var(--display); }
+  p { margin: 8px 0; }
+
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+
+  .checklist { list-style: none; padding: 0; margin: 0; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: 8px; transition: background .15s; cursor: pointer; user-select: none; }
+  .checklist li:hover { background: rgba(34,197,94,.07); }
+  .checklist input[type=checkbox] { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+  .checklist li.checked label { color: var(--muted); text-decoration: line-through; opacity: .65; }
+  .checklist label { cursor: pointer; flex: 1; }
+  .where { color: var(--muted); font-size: .82rem; display: block; margin-top: 2px; }
+
+  .scene { background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--border); border-radius: 14px; margin: 14px 0; overflow: hidden; }
+  .scene-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(0,0,0,.3); border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: .78rem; text-transform: uppercase; letter-spacing: 1.3px; }
+  .scene-time { color: var(--accent); font-weight: 700; font-size: 1.05rem; }
+  .scene-phase { padding: 3px 10px; border-radius: 999px; font-size: .68rem; font-weight: 800; }
+  .phase-hook { background: rgba(245,158,11,.18); color: var(--hook); border: 1px solid rgba(245,158,11,.4); }
+  .phase-demo { background: rgba(34,211,238,.18); color: var(--demo); border: 1px solid rgba(34,211,238,.4); }
+  .phase-payoff { background: rgba(34,197,94,.18); color: var(--payoff); border: 1px solid rgba(34,197,94,.4); }
+  .phase-cta { background: rgba(239,68,68,.18); color: var(--cta); border: 1px solid rgba(239,68,68,.4); }
+  .scene-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .say { background: rgba(0,0,0,.3); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 12px 14px; }
+  .say-label { font-family: var(--mono); font-size: .68rem; letter-spacing: 1.4px; color: var(--accent); font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .do { background: rgba(34,211,238,.08); border-left: 3px solid var(--accent2); border-radius: 0 10px 10px 0; padding: 12px 14px; font-family: var(--mono); font-size: .85rem; color: var(--ink); }
+  .do-label { font-size: .68rem; letter-spacing: 1.4px; color: var(--accent2); font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+
+  .copybox { position: relative; background: #050b18; border: 1px solid var(--border); border-radius: 10px; padding: 12px 44px 12px 14px; font-family: var(--mono); font-size: .86rem; color: var(--accent); white-space: pre-wrap; margin: 8px 0; }
+  .copybtn { position: absolute; top: 6px; right: 6px; background: var(--accent); color: #05140a; border: none; border-radius: 6px; padding: 4px 10px; font-size: .7rem; font-weight: 800; cursor: pointer; font-family: var(--display); letter-spacing: .5px; }
+  .copybtn:hover { background: var(--accent2); color: #03141a; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th, td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: left; font-size: .9rem; }
+  th { color: var(--accent2); font-family: var(--display); font-size: .82rem; text-transform: uppercase; letter-spacing: .8px; }
+  tr:hover td { background: rgba(34,197,94,.04); }
+
+  code { background: rgba(34,197,94,.12); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-family: var(--mono); font-size: .88em; }
+  kbd { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; font-family: var(--mono); font-size: .82em; color: var(--accent); }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .pill { background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.3); color: var(--accent2); padding: 4px 10px; border-radius: 999px; font-size: .78rem; font-weight: 600; font-family: var(--mono); }
+
+  @media (max-width: 640px) { body { padding: 14px 10px; } .slate h1 { font-size: 1.5rem; } h2 { font-size: 1.2rem; } }
+
+  .lang-strip { display: flex; justify-content: center; gap: 8px; margin: 0 0 14px; font-family: var(--mono); font-size: .78rem; }
+  .lang-strip a { background: rgba(34,211,238,.08); border: 1px solid rgba(34,211,238,.28); border-radius: 8px; padding: 4px 12px; color: var(--accent2); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; border-bottom: 1px solid rgba(34,211,238,.28); }
+  .lang-strip a.active { background: rgba(34,197,94,.18); border-color: var(--accent); color: var(--accent); }
+  .lang-strip a:hover { background: rgba(34,211,238,.22); color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="lang-strip">
+  <a href="etsy-playbook.html">EN</a>
+  <a href="etsy-playbook-fr.html" class="active">FR</a>
+  <a href="etsy-playbook-ar.html">AR</a>
+</div>
+
+<div class="slate">
+  <div class="slate-clap">🎬</div>
+  <div class="tag">— PLAYBOOK ETSY · v0.1.54 —</div>
+  <h1>Maqueen Lab</h1>
+  <div class="tag">La démo d'annonce en 1 minute · extraits prêts à copier</div>
+  <div class="meta"><span><b>Format :</b> portrait 9:16</span><span><b>Durée :</b> ≤ 60 s</span><span><b>Objectif :</b> transformer les curieux en acheteurs</span></div>
+</div>
+
+<div class="toc">
+  <a href="#preflight">✅ Préparation</a>
+  <a href="#arc">🎬 Arc 60 s</a>
+  <a href="#script">📜 Script</a>
+  <a href="#listing">🛒 Texte d'annonce</a>
+  <a href="#tags">🏷 Étiquettes</a>
+  <a href="#images">📸 Images</a>
+  <a href="#mistakes">⚠️ Erreurs</a>
+</div>
+
+<!-- ═══════════ PRÉPARATION ═══════════ -->
+<div class="slug" id="preflight">SLUG — CHECKLIST DE PRÉPARATION · UNE FOIS PAR TOURNAGE</div>
+<h2>Avant d'appuyer sur Rec</h2>
+<div class="card">
+  <ul class="checklist" onclick="var li=event.target.closest('li');if(li)li.classList.toggle('checked')">
+    <li><input type="checkbox"><label>micro:bit V2 allumé, icône <kbd>X</kbd> affichée<span class="where">Sinon → reflasher <code>makecode.ts</code></span></label></li>
+    <li><input type="checkbox"><label>Chrome ou Edge ouvert, <code>index.html</code> chargé<span class="where">Safari/Firefox/iOS ne fonctionneront pas</span></label></li>
+    <li><input type="checkbox"><label>BLE connecté — la puce d'état est <strong>verte</strong><span class="where">Cliquez sur 🔗 Connecter, choisissez BBC micro:bit dans la fenêtre</span></label></li>
+    <li><input type="checkbox"><label>Thème choisi — <strong>Neon</strong> rend le mieux à la caméra<span class="where">En-tête → menu rouleau de peinture</span></label></li>
+    <li><input type="checkbox"><label>Servo branché sur P1 (pour Bras Robot / Maqueen)</label></li>
+    <li><input type="checkbox"><label>Onglet SLAM map ouvert, Buggy ou Bras Robot sélectionné<span class="where">Onglet 6 → menu des modèles</span></label></li>
+    <li><input type="checkbox"><label>Téléphone en 9:16 sur trépied, éclairé de face</label></li>
+    <li><input type="checkbox"><label>Bureau dégagé — uniquement la carte et un accessoire dans le cadre</label></li>
+    <li><input type="checkbox"><label>Script lu à voix haute une fois — chronométré sous 55 s</label></li>
+  </ul>
+</div>
+
+<!-- ═══════════ ARC ═══════════ -->
+<div class="slug" id="arc">SLUG — L'ARC DE 60 SECONDES</div>
+<h2>Structure</h2>
+<div class="card">
+  <pre style="color:var(--accent2);font-family:var(--mono);font-size:.9rem;line-height:1.7;margin:0">
+ 0–3 s   ACCROCHE    « Regardez ce que ce micro:bit fait en 60 secondes. »
+ 3–10 s  CONTEXTE    Carte à l'écran, icône X → le statut passe au vert.
+10–35 s  DÉMO        Inclinez → le obstacle SLAM suit. Appuyez sur A → cœur NeoPixel. Le servo bouge.
+35–50 s  RÉCOMPENSE  Zoom sur le graphique en direct + obstacle SLAM qui reflète la carte réelle.
+50–55 s  CTA         « Kit complet dans ma boutique — lien ci-dessous. »
+55–60 s  IMAGE FIN   Logo + pseudo figé pour l'aperçu en boucle.</pre>
+</div>
+
+<!-- ═══════════ SCRIPT ═══════════ -->
+<div class="slug" id="script">SLUG — SCRIPT SCÈNE PAR SCÈNE</div>
+<!-- REWRITE PER PRODUCT — LE SCRIPT CI-DESSOUS DOIT ÊTRE RÉÉCRIT POUR CHAQUE PRODUIT.
+     Les 6 scènes sont des coquilles. Remplacez chaque `DIRE` par une phrase-clé
+     spécifique à votre produit et chaque `FAIRE` par une action filmable.
+     Ne laissez JAMAIS ce fichier partir en production avec les coquilles. -->
+
+<h2>Modèle 6 scènes — Maqueen Lab</h2>
+<p class="aka" style="color:#f59e0b;font-weight:700;">⚠️ Les 6 scènes ci-dessous sont des coquilles. Réécrivez chacune avec une action filmable propre à Maqueen Lab avant de tourner.</p>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:00–00:03</span><span class="scene-phase phase-hook">ACCROCHE</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 DIRE</div><em>[Phrase d'accroche — 1 seconde, promesse claire du produit, pourquoi scroller s'arrête]</em></div>
+    <div class="do"><div class="do-label">🎬 FAIRE</div><em>[Le plan d'accroche — ce qu'on voit à l'écran pendant la phrase]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:03–00:10</span><span class="scene-phase phase-demo">CONTEXTE</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 DIRE</div><em>[Phrase qui situe : à qui c'est destiné, quel problème c'est résolu]</em></div>
+    <div class="do"><div class="do-label">🎬 FAIRE</div><em>[Action à l'écran — setup, connexion, premier affichage utile]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:10–00:25</span><span class="scene-phase phase-demo">DÉMO 1</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 DIRE</div><em>[Premier wow-moment — une fonctionnalité phare de Maqueen Lab]</em></div>
+    <div class="do"><div class="do-label">🎬 FAIRE</div><em>[L'action visible — 15 secondes, mouvement à l'écran]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:25–00:40</span><span class="scene-phase phase-demo">DÉMO 2</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 DIRE</div><em>[Second wow-moment — une deuxième fonctionnalité / cas d'usage]</em></div>
+    <div class="do"><div class="do-label">🎬 FAIRE</div><em>[L'action visible — 15 secondes]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:40–00:50</span><span class="scene-phase phase-payoff">RÉCOMPENSE</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 DIRE</div><em>[Le « pourquoi c'est utile » — bénéfice concret : temps gagné, sécurité, compétence acquise]</em></div>
+    <div class="do"><div class="do-label">🎬 FAIRE</div><em>[L'écran qui porte le message — export, capture, résultat visible]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:50–00:60</span><span class="scene-phase phase-cta">CTA + IMAGE DE FIN</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 DIRE</div><em>[Appel à l'action — kit complet + lien en description]</em></div>
+    <div class="do"><div class="do-label">🎬 FAIRE</div><em>[Overlay logo + image de fin, 3 secondes immobile]</em></div>
+  </div>
+</div>
+
+<!-- ═══════════ TEXTE D'ANNONCE ═══════════ -->
+<div class="slug" id="listing">SLUG — TEXTE D'ANNONCE PRÊT À COPIER</div>
+<h2>Titre Etsy (140 caractères max)</h2>
+<div class="copybox">[TODO — titre Etsy 140 caractères, voir ETSY_LISTING-fr.md]<button class="copybtn" onclick="navigator.clipboard.writeText(this.previousSibling.textContent.trim())">COPIER</button></div>
+
+<h2>Description courte (160 premiers caractères — affichés en recherche)</h2>
+<div class="copybox">[TODO — description courte 160 caractères, voir ETSY_LISTING-fr.md]<button class="copybtn" onclick="navigator.clipboard.writeText(this.previousSibling.textContent.trim())">COPIER</button></div>
+
+<h2>Description complète</h2>
+<div class="copybox">🎮 Maqueen Lab — un panneau de contrôle BLE dans le navigateur pour le DFRobot Maqueen Lite v4 (micro:bit V2).
+
+[TODO — 1-phrase pitch de ce que le produit fait quand on ouvre le fichier]
+CE QUE VOUS OBTENEZ
+• [TODO — product-specific feature 1]• [TODO — your live signal list]• [TODO — your control surface if any]• [TODO — your interactive surface]
+• [TODO — your record/replay/export feature]• [TODO — your visualization feature if any]• [TODO — your themes / UI variety + languages]• 📱 PWA — installable, utilisable hors ligne
+• [TODO — learning modes if any]
+
+CONTENU DU TÉLÉCHARGEMENT
+• index.html — l'application complète
+• makecode.ts — firmware micro:bit (à flasher une fois depuis MakeCode)
+• SETUP.md — démarrage rapide en 5 minutes
+• docs/ — guide illustré, aide-mémoire, FAQ, playbook Etsy
+• LICENSE — licence mono-utilisateur personnelle / classe
+
+PRÉREQUIS
+• DFRobot Maqueen Lite v4 (micro:bit V2) (V1 fonctionne mais sans capteur de son)
+• Chrome ou Edge sur ordinateur (ou Chrome sur Android)
+• Bluetooth activé
+• HTTPS ou file:// — un double-clic sur le HTML suffit
+
+POUR QUI
+Enseignants animant des ateliers STEM · familles en école à la maison · clubs de robotique · makers prototypant des projets BLE · toute personne curieuse du micro:bit.
+
+CONFIDENTIALITÉ D'ABORD
+Rien ne quitte votre ordinateur. Pas d'analytique, pas de connexion, pas de cloud. Tous les calibrages, enregistrements et préréglages restent dans le localStorage du navigateur et sur votre disque.
+
+MISES À JOUR À VIE
+Chaque version publiée depuis cette annonce est à vous pour toujours. Retéléchargez le dernier ZIP à tout moment depuis votre page Achats Etsy.
+
+Bon hacking ! 🚀🎮🤖<button class="copybtn" onclick="navigator.clipboard.writeText(this.previousSibling.textContent.trim())">COPIER</button></div>
+
+<h2>Tarifs</h2>
+<table>
+  <tr><th>Niveau</th><th>Pour qui</th><th>Prix</th></tr>
+  <tr><td>Mono-utilisateur</td><td>Un enseignant / famille / maker</td><td><code>{{PRICE}}</code></td></tr>
+  <tr><td>Classe / Site</td><td>Jusqu'à 30 enseignants dans une école, élèves illimités</td><td><code>{{PRICE}}</code></td></tr>
+  <tr><td>District / OEM</td><td>Plusieurs sites — MP via la commande Etsy</td><td>Sur devis</td></tr>
+</table>
+
+<!-- ═══════════ ÉTIQUETTES ═══════════ -->
+<div class="slug" id="tags">SLUG — ÉTIQUETTES + MATÉRIAUX</div>
+<h2>13 étiquettes Etsy (20 caractères chacune)</h2>
+<div class="pills">
+  <span class="pill">micro:bit</span>
+  <span class="pill">BLE</span>
+  <span class="pill">bluetooth</span>
+  <span class="pill">éducation</span>
+  <span class="pill">STEM</span>
+  <span class="pill">robotique</span>
+  <span class="pill">code enfants</span>
+  <span class="pill">ressource prof</span>
+  <span class="pill">capteurs</span>
+  <span class="pill">[product tag]</span>
+  <span class="pill">classe</span>
+  <span class="pill">école maison</span>
+  <span class="pill">makerspace</span>
+</div>
+
+<h2>Matériaux (ce qui le fait tourner)</h2>
+<div class="pills">
+  <span class="pill">HTML5</span>
+  <span class="pill">JavaScript</span>
+  <span class="pill">Web Bluetooth</span>
+  <span class="pill">[render lib]</span>
+  <span class="pill">[3D lib if any]</span>
+  <span class="pill">PWA</span>
+  <span class="pill">MakeCode</span>
+  <span class="pill">TypeScript</span>
+</div>
+
+<h2>Mots-clés SEO</h2>
+<p><code>dans-le-navigateur</code> · <code>sans-installation</code> · <code>respect-vie-privée</code> · <code>hors-ligne</code> · <code>web bluetooth</code> · <code>ressource enseignant</code> · <code>atelier STEM</code> · <code>micro:bit V2</code></p>
+
+<!-- ═══════════ IMAGES ═══════════ -->
+<div class="slug" id="images">SLUG — ORDRE DES 7 IMAGES</div>
+<h2>Séquence d'images (Etsy affiche 1 &amp; 2 en plus grand)</h2>
+<div class="card">
+  <ol style="padding-left:22px;line-height:2">
+    <li><strong>[TODO — Hero shot: hardware + computer screen showing the marquee product state]</strong></li>
+    <li><strong>[TODO — grille des écrans ou fonctionnalités du produit]</strong></li>
+    <li><strong>[TODO — plan serré sur votre feature phare]</strong></li>
+    <li><strong>[TODO — split screen of two headline product features]</strong> — capture partagée montrant deux des cinq modèles Three.js.</li>
+    <li><strong>[TODO — plan main-sur-carte ou démo terrain]</strong></li>
+    <li><strong>[TODO — styling / variety grid].</li>
+    <li><strong>Carte texte</strong> — « Licence mono-utilisateur · Mises à jour à vie · Pas de cloud · Chrome / Edge » sur dégradé sombre.</li>
+  </ol>
+</div>
+
+<!-- ═══════════ ERREURS ═══════════ -->
+<div class="slug" id="mistakes">SLUG — À ÉVITER</div>
+<h2>Erreurs fréquentes</h2>
+<table>
+  <tr><th>❌ À éviter</th><th>✅ À faire</th></tr>
+  <tr><td>Commencer par « Bonjour, je suis… » + 10 s d'intro</td><td>Ouvrir avec une action produit visible dans les 3 premières secondes</td></tr>
+  <tr><td>Filmer en paysage (16:9)</td><td>Portrait 9:16 — Etsy lit en auto sur mobile</td></tr>
+  <tr><td>Parler par-dessus une animation chargée</td><td>Laisser le visuel respirer 1 s, puis expliquer</td></tr>
+  <tr><td>Oublier les sous-titres (Etsy joue muet)</td><td>Incruster des sous-titres ou ajouter un texte à chaque scène</td></tr>
+  <tr><td>Montrer iOS / Safari dans la vidéo</td><td>Toujours démontrer sur Chrome/Edge — les utilisateurs iPhone achèteront puis rendront</td></tr>
+  <tr><td>Sauter le CTA</td><td>Dire « lien ci-dessous » dans les 5 dernières secondes à chaque fois</td></tr>
+</table>
+
+<!-- ═══════════ CARTE RAPIDE ═══════════ -->
+<div class="slug">SLUG — AIDE-MÉMOIRE DE POCHE</div>
+<div class="copybox">PRÉ     V2 allumé (icône X) · Chrome ouvert · BLE vert · téléphone 9:16
+TOURNE  Accroche en 3 s · [TODO — 3 key verbs for your product] · CTA
+POST    Coupez à 55 s · sous-titres incrustés · première image = miniature
+ANNONCE Titre · desc 160 car. · 13 étiquettes · 7 images · tarifs</div>
+
+<p style="text-align:center;margin-top:40px;color:var(--muted);font-size:.85rem">
+  Maqueen Lab v0.1.54 — Playbook Etsy 1 minute · imprimer en A4 · plastifier · à garder à côté de votre matériel de tournage
+</p>
+
+</body>
+</html>

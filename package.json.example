@@ -1,0 +1,17 @@
+{
+  "name": "maqueen-lab",
+  "version": "0.1.54",
+  "private": true,
+  "type": "module",
+  "description": "Maqueen Lab — Every component, live in your browser",
+  "scripts": {
+    "build:etsy": "node etsy-package/build-package.js",
+    "build:localized": "node etsy-package/tools/build-localized.mjs",
+    "verify:clean": "node etsy-package/verify-clean.mjs",
+    "docs:html": "node etsy-package/tools/build-docs-html.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.0",
+    "qrcode": "^1.5.4"
+  }
+}

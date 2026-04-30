@@ -1,0 +1,37 @@
+1
+00:00:00,000 --> 00:00:03,000
+Your micro:bit becomes a playground —
+in the browser, in 60 seconds.
+
+2
+00:00:03,000 --> 00:00:10,000
+One page, one click, paired.
+
+3
+00:00:10,000 --> 00:00:20,000
+Sensors live — tilt it,
+the 3D model tilts too.
+
+4
+00:00:20,000 --> 00:00:30,000
+Press A — the LEDs react.
+Drag a slider — the servo swings.
+
+5
+00:00:30,000 --> 00:00:40,000
+Live graph with record, replay, CSV.
+A lab in a browser tab.
+
+6
+00:00:40,000 --> 00:00:50,000
+4 themes, 3 languages,
+works offline, no install, no account.
+
+7
+00:00:50,000 --> 00:00:55,000
+Link below — lifetime updates,
+teachers and kids welcome.
+
+8
+00:00:55,000 --> 00:01:00,000
+Happy hacking.

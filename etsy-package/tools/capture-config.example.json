@@ -1,0 +1,145 @@
+{
+  "_comment": "Product-specific config for capture-screenshots.mjs. Edit this file, not the script. Missing keys disable the related feature (e.g. omit 'variants.themes' if your product has no themes).",
+
+  "productName": "Maqueen Lab",
+  "appContainer": ".app",
+  "toastContainer": ".toast-container",
+
+  "onboarding": {
+    "localStorageKey": "mb_onboarded",
+    "closeSelectors": [".ob-close", "[data-close-onboarding]", "button:has-text(\"Start\")"]
+  },
+
+  "theme": {
+    "storageKey": "mb_theme",
+    "default": "neon",
+    "attr": "data-theme",
+    "attrTarget": "html"
+  },
+
+  "tabs": [
+    { "slug": "controls", "selector": ".tab-btn[data-page=\"controls\"]", "settle": 500 },
+    { "slug": "sensors",  "selector": ".tab-btn[data-page=\"senses\"]",   "settle": 1000 },
+    { "slug": "motors",   "selector": ".tab-btn[data-page=\"servos\"]",   "settle": 800 },
+    { "slug": "joystick",  "selector": ".tab-btn[data-page=\"joystick\"]",  "settle": 600 },
+    { "slug": "graph",    "selector": ".tab-btn[data-page=\"graph\"]",    "settle": 1500,
+      "prep": { "action": "click", "selector": "button:has-text(\"Simulate\"),button:has-text(\"🎲 Simulate\")", "wait": 2000 } },
+    { "slug": "3d",       "selector": ".tab-btn[data-page=\"board3d\"]",  "settle": 2000 },
+    { "slug": "bench",    "selector": ".tab-btn[data-page=\"bench\"]",    "settle": 500, "requiresExpert": true },
+    { "slug": "more",     "selector": ".tab-btn[data-page=\"others\"]",   "settle": 500 }
+  ],
+
+  "expertMode": { "toggleSelector": "#expertModeBtn" },
+
+  "synthetic": {
+    "silenceToastsGlobal": "window.showToast = () => {};",
+    "connect": {
+      "globalCall": "setConnectionStatus(true)",
+      "pillSelector": "#connectionStatus",
+      "pillAddClass": "connected",
+      "pillRemoveClass": "disconnected",
+      "pillTextSelector": "span:last-child",
+      "pillText": { "en": "Connected", "fr": "Connecté", "ar": "متصل" },
+      "disableConnectSelector": "#connectBtn",
+      "enableDisconnectSelector": "#disconnectBtn"
+    },
+    "sensors": [
+      { "selector": "#tempValue",   "value": "22"   },
+      { "selector": "#lightValue",  "value": "148"  },
+      { "selector": "#soundValue",  "value": "42"   },
+      { "selector": "#accelXValue", "value": "48"   },
+      { "selector": "#accelYValue", "value": "-12"  },
+      { "selector": "#accelZValue", "value": "1016" },
+      { "selector": "#compassValue","value": "174"  }
+    ],
+    "pills": [
+      { "selector": "#btnAState",    "textSelector": ".pill-text", "text": { "en": "Pressed",     "fr": "Appuyé",     "ar": "مضغوط" },    "active": true  },
+      { "selector": "#btnBState",    "textSelector": ".pill-text", "text": { "en": "Released",    "fr": "Relâché",    "ar": "محرر" },     "active": false },
+      { "selector": "#touchP0State", "textSelector": ".pill-text", "text": { "en": "Not touched", "fr": "Non touché", "ar": "لم يُلمس" }, "active": false }
+    ],
+    "activityFeed": {
+      "selector": "#activity",
+      "entryClass": "activity-item",
+      "entries": {
+        "en": [
+          "[10:42:03] 🔗 Paired with BBC micro:bit [JqXtP]",
+          "[10:42:04] 📡 Sensor stream active (10 Hz)",
+          "[10:42:09] 🌡️ Temperature: 22°C",
+          "[10:42:14] 🔘 Button A pressed"
+        ],
+        "fr": [
+          "[10:42:03] 🔗 Appairé avec BBC micro:bit [JqXtP]",
+          "[10:42:04] 📡 Flux de capteurs actif (10 Hz)",
+          "[10:42:09] 🌡️ Température : 22°C",
+          "[10:42:14] 🔘 Bouton A appuyé"
+        ],
+        "ar": [
+          "[10:42:03] 🔗 متصل بـ BBC micro:bit [JqXtP]",
+          "[10:42:04] 📡 بث المستشعرات نشط (10 هرتز)",
+          "[10:42:09] 🌡️ درجة الحرارة: 22°م",
+          "[10:42:14] 🔘 الزر A مضغوط"
+        ]
+      }
+    }
+  },
+
+  "variants": {
+    "themes": {
+      "tabSlug": "controls",
+      "values": ["stealth", "neon", "arctic", "blaze"]
+    },
+    "models": {
+      "tabSlug": "3d",
+      "selector": "#board3dModel",
+      "type": "select",
+      "values": ["microbit", "buggy", "arm", "balance", "weather"]
+    }
+  },
+
+  "pairs": {
+    "connect": { "tabSlug": "controls" },
+    "graph":   { "tabSlug": "graph",
+                 "activate": { "selector": "button:has-text(\"Simulate\"),button:has-text(\"🎲 Simulate\")", "wait": 2500 } },
+    "3d":      { "tabSlug": "3d",
+                 "tiltExpression": "(() => { try { const m = window.microbitModel || window.boardGroup; if (m?.rotation) m.rotation.x = 30*Math.PI/180; } catch {} })()",
+                 "wait": 600 },
+    "leds":    { "tabSlug": "controls",
+                 "matrixCellSelector": ".led-cell, [data-led-row][data-led-col]",
+                 "rowAttr": "data-led-row",
+                 "colAttr": "data-led-col",
+                 "onClass": "on",
+                 "pattern": [[0,1,0,1,0],[1,1,1,1,1],[1,1,1,1,1],[0,1,1,1,0],[0,0,1,0,0]] }
+  },
+
+  "annotations": [
+    { "sceneName": "graph",   "tabSlug": "graph",
+      "prep": { "selector": "button:has-text(\"Simulate\"),button:has-text(\"🎲 Simulate\")", "wait": 2000 },
+      "target": "#graphRecordBtn",  "text": "One click to save data",    "side": "right" },
+    { "sceneName": "3d",      "tabSlug": "3d",
+      "target": "#board3dContainer","text": "Tilt yours — this follows", "side": "top" },
+    { "sceneName": "sensors", "tabSlug": "sensors",
+      "target": "#tempValue",       "text": "Live from micro:bit",       "side": "left" }
+  ],
+
+  "heroTabs": ["controls", "3d", "graph"],
+
+  "audiences": [
+    { "name": "teacher-sensors", "theme": "arctic", "tabSlug": "sensors",  "synthetic": true },
+    { "name": "teacher-graph",   "theme": "arctic", "tabSlug": "graph",    "synthetic": true },
+    { "name": "teacher-more",    "theme": "arctic", "tabSlug": "more",     "synthetic": true },
+    { "name": "kid-controls",    "theme": "neon",   "tabSlug": "controls", "drawHeart": true, "synthetic": true },
+    { "name": "kid-joystick",     "theme": "neon",   "tabSlug": "joystick",  "synthetic": true },
+    { "name": "kid-3d",          "theme": "neon",   "tabSlug": "3d",       "synthetic": true },
+    { "name": "maker-motors",    "theme": "blaze",  "tabSlug": "motors",   "synthetic": true },
+    { "name": "maker-bench",     "theme": "blaze",  "tabSlug": "bench",    "synthetic": true },
+    { "name": "maker-3d",        "theme": "blaze",  "tabSlug": "3d",       "synthetic": true }
+  ],
+
+  "offlineScene": {
+    "tabSlug": "sensors",
+    "overlayTitle": "✈️ OFFLINE MODE",
+    "overlaySubtitle": "App still works · no network · no cloud"
+  },
+
+  "altTextSuffix": "browser-based BLE control panel for BBC micro:bit V2"
+}

@@ -1,0 +1,45 @@
+micro:bit Playground — Single-User License Agreement
+Copyright (c) 2026 Besma. All rights reserved.
+
+By downloading, installing, or using this software (the "Software"), you agree
+to the following terms.
+
+1. GRANT OF LICENSE
+   The author grants you, the original purchaser, a non-exclusive,
+   non-transferable license to use the Software for personal, educational, or
+   internal classroom use, on any number of devices that you personally own
+   or directly supervise (e.g. your own classroom).
+
+2. RESTRICTIONS
+   You may NOT:
+   (a) resell, redistribute, sublicense, rent, lease, or share the Software,
+       in whole or in part, in original or modified form;
+   (b) upload the Software (modified or unmodified) to any public repository,
+       file-sharing site, marketplace, or asset store;
+   (c) remove or alter copyright, trademark, or attribution notices;
+   (d) claim authorship of the Software.
+
+   You MAY:
+   (a) modify the Software for your own use;
+   (b) use it in your own classroom, workshop, or maker space;
+   (c) demonstrate it publicly, provided attribution to the original author
+       is preserved.
+
+3. THIRD-PARTY COMPONENTS
+   The Software loads Chart.js (MIT) and Three.js (MIT) from public CDNs.
+   Those libraries remain under their own licenses and are not covered by
+   this agreement.
+
+4. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+   THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING
+   FROM USE OF THE SOFTWARE.
+
+5. TERMINATION
+   This license terminates automatically if you breach any of its terms. Upon
+   termination you must delete all copies of the Software in your possession.
+
+For commercial redistribution, school-district licensing, or OEM use, contact
+the author for a separate written agreement.

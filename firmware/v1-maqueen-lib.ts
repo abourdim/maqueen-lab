@@ -1,0 +1,790 @@
+/**
+ * =========================================================
+ *  Maqueen Lab — Firmware v1 (uses pxt-maqueen library)
+ * =========================================================
+ *
+ * Hardware: DFRobot Maqueen Lite v4 (ROB0148)
+ * Extensions required (add in MakeCode → Extensions):
+ *   • pxt-maqueen     (https://github.com/DFRobot/pxt-maqueen)
+ *
+ * OPTIONAL — 4× RGB ambient LEDs:
+ *   The standard 'neopixel' extension CONFLICTS with 'bluetooth' on
+ *   micro:bit; MakeCode blocks adding both. By default this firmware
+ *   ships WITHOUT the neopixel call — RGB:i,r,g,b commands are
+ *   accepted and echoed but only logged to USB serial (no visible
+ *   effect on the strip).
+ *
+ *   To enable real RGB output:
+ *     1. Try a BLE-safe NeoPixel fork in Extensions, e.g.:
+ *          https://github.com/Bohwaz/pxt-neopixel
+ *          https://github.com/openblockcc/pxt-neopixel-ble
+ *     2. Uncomment the 'NEOPIXEL BLOCK' below.
+ *     3. Re-flash.
+ *
+ * BLE UART wire protocol — sequence-numbered, echo-confirmed.
+ *
+ * COMMANDS (browser → micro:bit):
+ *   #N M:L,R                 motors, signed -255..+255 each
+ *   #N STOP                  motor brake
+ *   #N LED:i,s               i=0|1 (left|right), s=0|1
+ *   #N RGB:i,r,g,b           i=0..3 or *  (4 RGB ambient LEDs)
+ *   #N SRV:i,a               i=1|2, a=0..180
+ *   #N BUZZ:f,ms             f=Hz (0 = off), ms=duration
+ *   #N LINE?                 → reply LINE:l,r
+ *   #N DIST?                 → reply DIST:cm
+ *   #N IR?                   → reply IR:code
+ *   #N LOG:level             0=silent, 1=rx/tx, 2=+exec, 3=+sensor polls
+ *   #N BENCH:PING            → reply BENCH:PONG (latency check)
+ *   #N BENCH:RESET           reset bench counters
+ *   #N ADDON:LIST            → reply ADDON:none (stubbed)
+ *   #N ADDON:READ:<port>     → reply ADDON:<port>:0 (stubbed)
+ *   #N I2C:SCAN              → reply I2C:0x10 (stubbed — only motor driver)
+ *   #N HELLO                 connection check, replies HELLO:<ver>
+ *
+ * REPLIES (micro:bit → browser):
+ *   ECHO:N <verb>            ack of received-and-parsed command
+ *   <reply line>             value reply (LINE:l,r, DIST:cm, IR:code, etc.)
+ *   ACC:x,y,z                accelerometer, ~20 Hz on change
+ *   IR:code                  pushed when IR remote pressed
+ *   INFO:CONNECTED           on BLE connect
+ *   INFO:DISCONNECTED        on BLE disconnect
+ *   ERR:N <reason>           command parse/exec error for seq N
+ *
+ * USB SERIAL (115200 baud) — mirrors everything for debugging.
+ *
+ * BUILD STAMP — edit these two lines before flashing:
+ */
+const BUILD_VERSION = "0.1.60"
+const BUILD_DATE = "2026-04-30 08:47 UTC"
+// Capabilities advertised on FW? verb. Comma-separated string the
+// browser uses to pick code paths (e.g. firmware-side sweep vs
+// browser-side). Same protocol as v2 bare-metal.
+const BUILD_CAPS = "sweep"
+
+// ---------- state ----------
+let btConnected = false
+let logLevel = 0                    // 0=silent (default), 1=rx/tx, 2=+exec, 3=+sensor polls
+                                    // CRITICAL: keep default 0 — serial.writeLine
+                                    // can block the BLE handler fiber when no USB
+                                    // monitor is reading, killing all echoes.
+let streamsEnabled = false          // 0 = no auto-streams (default).
+                                    // Web app sends 'STREAM:on' once it's
+                                    // ready to receive ACC/TEMP/LIGHT/etc.
+                                    // Streaming before the BLE channel is
+                                    // ready or while RX is busy starves the
+                                    // receive handler.
+let lastAcc = [0, 0, 0]
+let accDeadband = 30                // mg
+let benchSent = 0
+let benchEcho = 0
+
+// ---------- utility: log to USB serial ----------
+function slog(msg: string) {
+    serial.writeLine(msg)
+}
+
+function rxlog(line: string) {
+    if (logLevel >= 1) slog("[rx]   " + line)
+}
+
+function txlog(line: string) {
+    if (logLevel >= 1) slog("[tx]   " + line)
+}
+
+function execlog(msg: string) {
+    if (logLevel >= 2) slog("[exec] " + msg)
+}
+
+// ---------- send line on BLE only (USB log via txlog at logLevel >= 1) ----------
+// IMPORTANT: serial.writeLine can BLOCK the calling fiber when the USB
+// output buffer is full and no host monitor is reading it. Calling it on
+// every BLE TX freezes the receive handler → 0 echoes ever return.
+// txlog is gated on logLevel which defaults to 0 (silent).
+function send(line: string) {
+    if (btConnected) bluetooth.uartWriteLine(line)
+    if (logLevel >= 1) txlog(line)
+}
+
+// ---------- boot banner (only emits if user enabled USB logs via LOG:n) ----------
+function bootBanner() {
+    if (logLevel < 1) return
+    slog("")
+    slog("=========================================================")
+    slog("[boot] Maqueen Lab firmware v" + BUILD_VERSION + " built " + BUILD_DATE)
+    slog("[boot] hardware: Maqueen Lite v4 (ROB0148)")
+    slog("[boot] BLE UART ready — waiting for connection")
+    slog("=========================================================")
+}
+
+// ---------- BLE connection state ----------
+bluetooth.onBluetoothConnected(function () {
+    btConnected = true
+    basic.showIcon(IconNames.Yes)
+    bluetooth.uartWriteLine("INFO:CONNECTED")
+    if (logLevel >= 1) slog("[ble]  connected")
+})
+
+bluetooth.onBluetoothDisconnected(function () {
+    btConnected = false
+    basic.showIcon(IconNames.No)
+    maqueen.motorStop(maqueen.Motors.All)  // safety: kill drive on link loss
+    sweepStop(1)                           // safety: stop any active servo sweep
+    sweepStop(2)
+    if (logLevel >= 1) slog("[ble]  disconnected")
+})
+
+// ---------- command parser ----------
+// Parses optional leading "#N " sequence number, returns [seq, verb] or [-1, full]
+function parseSeq(line: string): { seq: number, verb: string } {
+    if (line.length > 0 && line.charAt(0) == "#") {
+        let sp = line.indexOf(" ")
+        if (sp > 1) {
+            let seqStr = line.substr(1, sp - 1)
+            let seq = parseInt(seqStr)
+            if (!isNaN(seq)) {
+                return { seq: seq, verb: line.substr(sp + 1) }
+            }
+        }
+    }
+    return { seq: -1, verb: line }
+}
+
+// ---------- send echo for a sequence ----------
+function echo(seq: number, verb: string) {
+    if (seq >= 0) send("ECHO:" + seq + " " + verb)
+    else send("ECHO " + verb)
+}
+
+function err(seq: number, reason: string) {
+    if (seq >= 0) send("ERR:" + seq + " " + reason)
+    else send("ERR " + reason)
+}
+
+// ---------- helpers: parse comma-separated ints ----------
+function splitInts(s: string): number[] {
+    let parts = s.split(",")
+    let out: number[] = []
+    for (let i = 0; i < parts.length; i++) {
+        out.push(parseInt(parts[i].trim()))
+    }
+    return out
+}
+
+// ---------- verb handlers ----------
+// M:L,R — motors signed -255..255
+function handleMotor(arg: string) {
+    let v = splitInts(arg)
+    if (v.length < 2) return
+    let L = Math.constrain(v[0], -255, 255)
+    let R = Math.constrain(v[1], -255, 255)
+    let dirL = L >= 0 ? maqueen.Dir.CW : maqueen.Dir.CCW
+    let dirR = R >= 0 ? maqueen.Dir.CW : maqueen.Dir.CCW
+    maqueen.motorRun(maqueen.Motors.M1, dirL, Math.abs(L))
+    maqueen.motorRun(maqueen.Motors.M2, dirR, Math.abs(R))
+    execlog("motors L=" + L + " R=" + R)
+}
+
+function handleStop() {
+    maqueen.motorStop(maqueen.Motors.All)
+    execlog("motors STOP")
+}
+
+// LED:i,s
+function handleLED(arg: string) {
+    let v = splitInts(arg)
+    if (v.length < 2) return
+    let led = v[0] == 0 ? maqueen.LED.LEDLeft : maqueen.LED.LEDRight
+    let sw = v[1] == 0 ? maqueen.LEDswitch.turnOff : maqueen.LEDswitch.turnOn
+    maqueen.writeLED(led, sw)
+    execlog("LED " + v[0] + "=" + v[1])
+}
+
+// RGB:i,r,g,b — i=0..3 or * for all
+// DEFAULT: stub (logs to serial only) — no neopixel dependency so the
+// firmware compiles without the neopixel extension. See file header for
+// how to enable real RGB output.
+function handleRGB(arg: string) {
+    let parts = arg.split(",")
+    if (parts.length < 4) return
+    let r = parseInt(parts[1])
+    let g = parseInt(parts[2])
+    let b = parseInt(parts[3])
+    execlog("RGB " + parts[0] + " = " + r + "," + g + "," + b + "  (stub — no neopixel)")
+}
+
+// ============================================================
+// NEOPIXEL BLOCK — uncomment ONLY if you have a BLE-safe neopixel
+// extension installed (e.g. Bohwaz/pxt-neopixel). Then DELETE the stub
+// handleRGB above so this version is used instead.
+// ============================================================
+// let rgbStrip: neopixel.Strip = null
+// function rgbInit() {
+//     if (rgbStrip == null) {
+//         rgbStrip = neopixel.create(DigitalPin.P15, 4, NeoPixelMode.RGB)
+//         rgbStrip.setBrightness(80)
+//     }
+// }
+// function handleRGB(arg: string) {
+//     let parts = arg.split(",")
+//     if (parts.length < 4) return
+//     rgbInit()
+//     let r = Math.constrain(parseInt(parts[1]), 0, 255)
+//     let g = Math.constrain(parseInt(parts[2]), 0, 255)
+//     let b = Math.constrain(parseInt(parts[3]), 0, 255)
+//     let color = neopixel.rgb(r, g, b)
+//     if (parts[0] == "*") {
+//         for (let i = 0; i < 4; i++) rgbStrip.setPixelColor(i, color)
+//     } else {
+//         let idx = Math.constrain(parseInt(parts[0]), 0, 3)
+//         rgbStrip.setPixelColor(idx, color)
+//     }
+//     rgbStrip.show()
+//     execlog("RGB " + parts[0] + " = " + r + "," + g + "," + b)
+// }
+
+// SRV:i,a
+function handleServo(arg: string) {
+    let v = splitInts(arg)
+    if (v.length < 2) return
+    // Direct SRV: cancels any active sweep on that port (user grabbed the wheel).
+    sweepStop(v[0])
+    let port = v[0] == 1 ? maqueen.Servos.S1 : maqueen.Servos.S2
+    let angle = Math.constrain(v[1], 0, 180)
+    maqueen.servoRun(port, angle)
+    // Broadcast position so bit-playground's servo gauges + 3D arm reflect it
+    if (v[0] == 1) send("SERVO1_POS:" + angle)
+    else send("SERVO2_POS:" + angle)
+    execlog("SRV " + v[0] + "=" + angle)
+}
+
+// ============================================================
+//  AUTONOMOUS SWEEP — same protocol as v2-bare-metal.
+//  SWEEP:port,from,to,period[,ease]    start
+//  SWEEP:port,STOP                     stop
+//  Pushes 'SWP:port,angle' at ~20 Hz so browser visuals follow.
+// ============================================================
+class SweepState {
+    active: boolean
+    fromDeg: number
+    toDeg: number
+    periodMs: number
+    ease: number
+    startMs: number
+    lastEmitMs: number
+    lastEmitAngle: number
+    // MakeCode TS subset doesn't accept inline class field initializers —
+    // it requires an explicit constructor. Same logic, just hoisted.
+    constructor() {
+        this.active = false
+        this.fromDeg = 0
+        this.toDeg = 180
+        this.periodMs = 2000
+        this.ease = 1
+        this.startMs = 0
+        this.lastEmitMs = 0
+        this.lastEmitAngle = -1
+    }
+}
+const sweep1 = new SweepState()
+const sweep2 = new SweepState()
+
+function getSweepState(p: number): SweepState { return p == 1 ? sweep1 : sweep2 }
+
+function sweepAngleAt(s: SweepState, t: number): number {
+    const D = 8                                    // 8% endpoint dwell, integer math
+    const tx = Math.idiv(t * 1000, 10)             // 0..100
+    if (tx < D) return s.fromDeg
+    if (tx > 100 - D) return s.fromDeg
+    if (tx >= 50 - D && tx <= 50 + D) return s.toDeg
+    let u: number
+    if (tx < 50) u = (tx - D) / (50 - 2 * D)
+    else         u = (tx - (50 + D)) / (50 - 2 * D)
+    if (u < 0) u = 0
+    if (u > 1) u = 1
+    let e = s.ease == 0 ? u : u * u * u * (u * (u * 6 - 15) + 10)
+    if (tx < 50) return Math.round(s.fromDeg + (s.toDeg - s.fromDeg) * e)
+    return Math.round(s.toDeg - (s.toDeg - s.fromDeg) * e)
+}
+
+function sweepStop(port: number) {
+    let s = getSweepState(port)
+    s.active = false
+    s.lastEmitAngle = -1
+}
+
+function sweepStart(port: number, from: number, to: number, periodMs: number, ease: number) {
+    let s = getSweepState(port)
+    s.fromDeg = Math.constrain(from, 0, 180)
+    s.toDeg = Math.constrain(to, 0, 180)
+    s.periodMs = Math.max(300, Math.min(20000, periodMs))
+    s.ease = ease == 0 ? 0 : 1
+    s.startMs = control.millis()
+    s.lastEmitMs = 0
+    s.lastEmitAngle = -1
+    s.active = true
+}
+
+// SWEEP:port,from,to,period[,ease] | SWEEP:port,STOP
+function handleSweep(arg: string) {
+    let firstComma = arg.indexOf(",")
+    if (firstComma < 1) return
+    let port = parseInt(arg.substr(0, firstComma))
+    if (port != 1 && port != 2) return
+    let rest = arg.substr(firstComma + 1)
+    if (rest == "STOP") {
+        sweepStop(port)
+        execlog("SWEEP " + port + " STOP")
+        return
+    }
+    let v = splitInts(rest)
+    if (v.length < 3) return
+    let ease = v.length >= 4 ? v[3] : 1
+    sweepStart(port, v[0], v[1], v[2], ease)
+    execlog("SWEEP " + port + " " + v[0] + "-" + v[1] + " in " + v[2] + "ms ease=" + ease)
+}
+
+// 50 Hz sweep loop — runs both ports' state machines, drives the
+// servos via maqueen.servoRun (uses pxt-maqueen extension under the
+// hood; same hardware result as v2's direct pins.servoWritePin).
+// Pushes SWP: at most every 50 ms per port and only on integer change.
+function startSweepFiber() {
+    control.inBackground(function () {
+        while (true) {
+            let now = control.millis()
+            for (let port = 1; port <= 2; port++) {
+                let s = getSweepState(port)
+                if (!s.active) continue
+                let elapsed = now - s.startMs
+                let t = (elapsed % s.periodMs) / s.periodMs
+                let angle = sweepAngleAt(s, t)
+                let servo = port == 1 ? maqueen.Servos.S1 : maqueen.Servos.S2
+                maqueen.servoRun(servo, angle)
+                if (angle != s.lastEmitAngle && (now - s.lastEmitMs) >= 50) {
+                    if (btConnected) bluetooth.uartWriteLine("SWP:" + port + "," + angle)
+                    s.lastEmitAngle = angle
+                    s.lastEmitMs = now
+                }
+            }
+            basic.pause(20)
+        }
+    })
+}
+
+// BUZZ:f,ms
+function handleBuzz(arg: string) {
+    let v = splitInts(arg)
+    if (v.length < 1) return
+    let freq = v[0]
+    let ms = v.length > 1 ? v[1] : 200
+    if (freq <= 0) {
+        music.stopAllSounds()
+        execlog("BUZZ off")
+    } else {
+        music.playTone(freq, ms)
+        execlog("BUZZ " + freq + "Hz " + ms + "ms")
+    }
+}
+
+// LINE?
+function handleLineQuery() {
+    let l = maqueen.readPatrol(maqueen.Patrol.PatrolLeft)
+    let r = maqueen.readPatrol(maqueen.Patrol.PatrolRight)
+    send("LINE:" + l + "," + r)
+    if (logLevel >= 3) execlog("LINE l=" + l + " r=" + r)
+}
+
+// DIST?
+function handleDistQuery() {
+    // pxt-maqueen v1.7.16: Ultrasonic() takes no args, returns cm directly
+    let cm = maqueen.Ultrasonic()
+    // 500 is pxt-maqueen's "no echo / out of range" sentinel; 0 is a bad read.
+    // Translate to "-" so the log line "DIST:-" is self-explanatory instead
+    // of the confusing "DIST:500". App side already treats both as "no reading".
+    if (cm <= 0 || cm >= 500) {
+        send("DIST:-")
+    } else {
+        send("DIST:" + cm)
+    }
+    if (logLevel >= 3) execlog("DIST cm=" + cm)
+}
+
+// IR? — STUBBED (see setupIR comment below for re-enabling)
+let lastIRCode = 0
+function handleIRQuery() {
+    send("IR:" + lastIRCode)
+    if (logLevel >= 3) execlog("IR code=" + lastIRCode + "  (stub)")
+}
+
+// IR setup — STUBBED to avoid extension conflicts.
+//
+// The `IR` namespace is provided by BOTH:
+//   • `pxt-dfrobot_newir` v0.0.4 (auto-pulled by pxt-maqueen v1.7.16)
+//   • Some standalone `ir` extensions (e.g. v0.0.2)
+// When both are loaded MakeCode hits an internal '!!proc || !bin.finalPass'
+// assertion failure during finalPass.
+//
+// To enable real IR support:
+//   1. Open MakeCode → Extensions
+//   2. REMOVE any standalone 'ir' extension (only maqueen + bluetooth +
+//      microphone + core + radio should be listed)
+//   3. Uncomment the 'IR BLOCK' below + delete the empty setupIR stub
+//   4. Re-flash
+function setupIR() {
+    // no-op
+}
+
+// ============================================================
+// IR BLOCK — uncomment after removing any standalone 'ir' extension
+// (see comment above). Replaces the stub setupIR() above.
+// ============================================================
+// function setupIR() {
+//     IR.IR_init()
+//     IR.IR_callbackUser(function () {
+//         let code = IR.IR_read()
+//         if (code != 0) {
+//             lastIRCode = code
+//             if (btConnected) send("IR:" + code)
+//             execlog("IR press code=" + code)
+//         }
+//     })
+// }
+
+// LOG:n
+function handleLog(arg: string) {
+    let n = parseInt(arg)
+    if (!isNaN(n)) {
+        logLevel = Math.constrain(n, 0, 3)
+        execlog("logLevel=" + logLevel)
+    }
+}
+
+// BENCH:PING / BENCH:RESET
+function handleBench(arg: string) {
+    if (arg == "PING") {
+        send("BENCH:PONG")
+    } else if (arg == "RESET") {
+        benchSent = 0
+        benchEcho = 0
+        send("BENCH:RESET")
+    }
+}
+
+// ADDON stubs (v0.1.0 reserves the verb namespace)
+function handleAddon(arg: string) {
+    if (arg == "LIST") send("ADDON:none")
+    else if (arg.substr(0, 5) == "READ:") {
+        let port = arg.substr(5)
+        send("ADDON:" + port + ":0")
+    }
+}
+
+// I2C stubs
+function handleI2C(arg: string) {
+    if (arg == "SCAN") send("I2C:0x10")
+    else send("I2C:NOT_IMPL")
+}
+
+// ---------- main UART RX ----------
+bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () {
+    let raw = bluetooth.uartReadUntil(serial.delimiters(Delimiters.NewLine))
+    raw = raw.trim()
+    rxlog(raw)
+
+    let p = parseSeq(raw)
+    let seq = p.seq
+    let verb = p.verb
+
+    // every received command gets echoed first
+    echo(seq, verb)
+
+    // dispatch
+    if (verb.substr(0, 2) == "M:") {
+        handleMotor(verb.substr(2))
+    } else if (verb == "STOP") {
+        handleStop()
+    } else if (verb.substr(0, 4) == "LED:") {
+        handleLED(verb.substr(4))
+    } else if (verb.substr(0, 4) == "RGB:") {
+        handleRGB(verb.substr(4))
+    } else if (verb.substr(0, 4) == "SRV:") {
+        handleServo(verb.substr(4))
+    } else if (verb.substr(0, 6) == "SWEEP:") {
+        handleSweep(verb.substr(6))
+    } else if (verb.substr(0, 5) == "BUZZ:") {
+        handleBuzz(verb.substr(5))
+    } else if (verb == "LINE?") {
+        handleLineQuery()
+    } else if (verb == "DIST?") {
+        handleDistQuery()
+    } else if (verb == "IR?") {
+        handleIRQuery()
+    } else if (verb.substr(0, 4) == "LOG:") {
+        handleLog(verb.substr(4))
+    } else if (verb.substr(0, 6) == "BENCH:") {
+        handleBench(verb.substr(6))
+    } else if (verb.substr(0, 6) == "ADDON:") {
+        handleAddon(verb.substr(6))
+    } else if (verb.substr(0, 4) == "I2C:") {
+        handleI2C(verb.substr(4))
+    } else if (verb == "HELLO") {
+        send("HELLO:" + BUILD_VERSION)
+    } else if (verb == "FW?") {
+        send("FW:" + BUILD_VERSION + "," + BUILD_CAPS)
+    } else if (verb == "STREAM:on") {
+        streamsEnabled = true
+        send("STREAM:on")
+    } else if (verb == "STREAM:off") {
+        streamsEnabled = false
+        send("STREAM:off")
+    }
+    // ---- bit-playground bridge verbs (so existing UI tabs work) ----
+    else if (verb.substr(0, 5) == "TEXT:") {
+        let msg = verb.substr(5)
+        if (msg.length > 0) basic.showString(msg)
+        execlog("TEXT " + msg)
+    } else if (verb.substr(0, 4) == "CMD:") {
+        handleIcon(verb.substr(4))
+    } else if (verb.substr(0, 7) == "SERVO1:") {
+        handleServo("1," + verb.substr(7))
+    } else if (verb.substr(0, 7) == "SERVO2:") {
+        handleServo("2," + verb.substr(7))
+    } else if (verb.substr(0, 4) == "TAB:") {
+        // tab-change notification — silent ack
+        execlog("tab=" + verb.substr(4))
+    } else if (verb.substr(0, 9) == "SIMULATE:") {
+        // ignore — bit-playground simulator (graph demo data)
+    } else if (verb.substr(0, 4) == "CAL:") {
+        // calibration request (e.g. CAL:COMPASS) — minimal ack
+        send("CAL:" + verb.substr(4) + ":DONE")
+    } else if (verb.substr(0, 6) == "OTHER:") {
+        // bit-playground "Others" tab — give the most-used ones visible
+        // feedback on the 5x5 LED matrix so the More tab is more than a
+        // silent ack. Everything still gets the OTHER:ACK:... reply.
+        let payload = verb.substr(6)
+        handleOther(payload)
+        send("OTHER:ACK:" + payload)
+    } else if (verb.substr(0, 3) == "LM:") {
+        // 5x5 LED matrix hex — 10 hex chars, 2 per row, bit `col` set = LED on.
+        handleLM(verb.substr(3))
+    } else {
+        err(seq, "UNKNOWN_VERB")
+    }
+})
+
+// ---------- OTHER:* — visible feedback for the More tab ----------
+// Maps the most common bit-playground "Others" verbs to micro:bit
+// screen actions so users see something happen. Anything we don't
+// recognise still gets the OTHER:ACK reply by the caller.
+function handleOther(payload: string) {
+    // KEY:n — show the digit on the 5x5 matrix
+    if (payload.substr(0, 4) == "KEY:") {
+        let s = payload.substr(4)
+        let n = parseInt(s)
+        if (!isNaN(n)) basic.showNumber(n)
+        else basic.showString(s)
+        return
+    }
+    // BTN:PRESS — show heart
+    if (payload == "BTN:PRESS") {
+        basic.showIcon(IconNames.Heart)
+        return
+    }
+    // SWITCH:on / SWITCH:off — check / x
+    if (payload == "SWITCH:on" || payload == "SWITCH:1") {
+        basic.showIcon(IconNames.Yes)
+        return
+    }
+    if (payload == "SWITCH:off" || payload == "SWITCH:0") {
+        basic.showIcon(IconNames.No)
+        return
+    }
+    // SLIDER:n — bar from 0..100
+    if (payload.substr(0, 7) == "SLIDER:") {
+        let v = parseInt(payload.substr(7))
+        if (isNaN(v)) v = 0
+        let bars = Math.floor(v / 20)         // 0..5
+        if (bars < 0) bars = 0
+        if (bars > 5) bars = 5
+        basic.clearScreen()
+        for (let c = 0; c < bars; c++) {
+            for (let r = 4; r >= 4 - c; r--) led.plot(c, r)
+        }
+        return
+    }
+    // TEXT:msg — scroll on the matrix
+    if (payload.substr(0, 5) == "TEXT:") {
+        basic.showString(payload.substr(5))
+        return
+    }
+    // JOY:UP/DOWN/LEFT/RIGHT — arrow icons
+    if (payload == "JOY:UP")    { basic.showArrow(ArrowNames.North); return }
+    if (payload == "JOY:DOWN")  { basic.showArrow(ArrowNames.South); return }
+    if (payload == "JOY:LEFT")  { basic.showArrow(ArrowNames.West);  return }
+    if (payload == "JOY:RIGHT") { basic.showArrow(ArrowNames.East);  return }
+}
+
+// ---------- LM: 5x5 LED matrix hex (bit-playground bridge) ----------
+// hex string is 10 chars: 5 rows, 2 hex chars (1 byte) each.
+// In each row byte, bit `col` set = LED at (row, col) is on.
+function handleLM(hex: string) {
+    if (hex.length < 10) return
+    basic.clearScreen()
+    for (let r = 0; r < 5; r++) {
+        let byteHex = hex.substr(r * 2, 2)
+        let val = parseInt(byteHex, 16)
+        if (isNaN(val)) val = 0
+        for (let c = 0; c < 5; c++) {
+            if ((val & (1 << c)) != 0) led.plot(c, r)
+        }
+    }
+    execlog("LM " + hex)
+}
+
+// ---------- icon dispatch (bit-playground CMD: bridge) ----------
+function handleIcon(name: string) {
+    if (name == "HEART") basic.showIcon(IconNames.Heart)
+    else if (name == "SMILE") basic.showIcon(IconNames.Happy)
+    else if (name == "SAD") basic.showIcon(IconNames.Sad)
+    else if (name == "FIRE") basic.showIcon(IconNames.Fabulous)
+    else if (name == "UP") basic.showArrow(ArrowNames.North)
+    else if (name == "DOWN") basic.showArrow(ArrowNames.South)
+    else if (name == "LEFT") basic.showArrow(ArrowNames.West)
+    else if (name == "RIGHT") basic.showArrow(ArrowNames.East)
+    else if (name == "CLEAR") basic.clearScreen()
+    execlog("icon=" + name)
+}
+
+// ---------- accelerometer streaming ----------
+// Sends ACC at up to ~20 Hz when moving (delta > deadband), and
+// at least once every HEARTBEAT_MS even when stationary, so the
+// Graph / 3D tabs always show fresh data instead of looking frozen.
+let lastAccSentAt = 0
+const ACC_HEARTBEAT_MS = 500
+basic.forever(function () {
+    if (btConnected && streamsEnabled) {
+        let x = input.acceleration(Dimension.X)
+        let y = input.acceleration(Dimension.Y)
+        let z = input.acceleration(Dimension.Z)
+        let dx = Math.abs(x - lastAcc[0])
+        let dy = Math.abs(y - lastAcc[1])
+        let dz = Math.abs(z - lastAcc[2])
+        let now = input.runningTime()
+        let moved = (dx > accDeadband || dy > accDeadband || dz > accDeadband)
+        let stale = (now - lastAccSentAt) >= ACC_HEARTBEAT_MS
+        if (moved || stale) {
+            lastAcc = [x, y, z]
+            lastAccSentAt = now
+            send("ACC:" + x + "," + y + "," + z)
+        }
+    }
+    basic.pause(50)
+})
+
+// ---------- temperature streaming (~1 Hz, on change) ----------
+let lastTemp = -999
+basic.forever(function () {
+    if (btConnected && streamsEnabled) {
+        let t = input.temperature()
+        if (t != lastTemp) {
+            lastTemp = t
+            send("TEMP:" + t)
+        }
+    }
+    basic.pause(1000)
+})
+
+// ---------- sound streaming (V2 only) ----------
+// V2 micro:bits expose input.soundLevel(). On V1, this call doesn't
+// exist and MakeCode used to assert at compile time when the target
+// version resolution drifted — but for the v0.1.x line we're locked
+// to V2 (Maqueen Lite v4 ships with V2 boards), so this compiles.
+// Heartbeat pattern matches ACC: send if delta > deadband OR every 750 ms.
+let lastSound = 0
+let lastSoundSentAt = 0
+const SOUND_DEADBAND = 4
+const SOUND_HEARTBEAT_MS = 750
+basic.forever(function () {
+    if (btConnected && streamsEnabled) {
+        let s = input.soundLevel()
+        let now = input.runningTime()
+        let moved = Math.abs(s - lastSound) > SOUND_DEADBAND
+        let stale = (now - lastSoundSentAt) >= SOUND_HEARTBEAT_MS
+        if (moved || stale) {
+            lastSound = s
+            lastSoundSentAt = now
+            send("SOUND:" + s)
+        }
+    }
+    basic.pause(150)
+})
+
+// ---------- light streaming (~3 Hz, on change) ----------
+// CRITICAL: do NOT call input.compassHeading() in any auto-loop.
+// In CODAL / pxt-microbit, the FIRST call to compassHeading() on an
+// uncalibrated compass auto-triggers the tilt-game calibration, which
+// BLOCKS the calling fiber for ~30 seconds. Since this loop runs in
+// the same fiber context as the BLE handler resources, that block
+// looks identical to a dead firmware: connect succeeds, but every
+// command times out without an echo.
+//
+// soundLevel + onLogoEvent are V2-only — they sometimes trigger
+// MakeCode's '!!proc || !bin.finalPass' assertion when target version
+// resolution drifts. Also removed for stability.
+//
+// To get a compass reading, use the CAL:COMPASS verb (which can opt
+// the user into calibration on demand) or expose a COMPASS? query
+// that calls compassHeading() only after a user gesture confirms
+// they're ready to do the tilt-game.
+let lastLight = -1
+let lastLightSentAt = 0
+const LIGHT_DEADBAND = 4
+const LIGHT_HEARTBEAT_MS = 1000
+basic.forever(function () {
+    if (btConnected && streamsEnabled) {
+        let l = input.lightLevel()
+        let now = input.runningTime()
+        let moved = Math.abs(l - lastLight) > LIGHT_DEADBAND
+        let stale = (now - lastLightSentAt) >= LIGHT_HEARTBEAT_MS
+        if (moved || stale) {
+            lastLight = l
+            lastLightSentAt = now
+            send("LIGHT:" + l)
+        }
+    }
+    basic.pause(300)
+})
+
+// ---------- buttons (poll for press/release; onButtonReleased is not in pxt-microbit) ----------
+let lastBtnA = false
+let lastBtnB = false
+basic.forever(function () {
+    if (btConnected && streamsEnabled) {
+        let a = input.buttonIsPressed(Button.A)
+        let b = input.buttonIsPressed(Button.B)
+        if (a != lastBtnA) {
+            lastBtnA = a
+            send("BTN:A:" + (a ? 1 : 0))
+        }
+        if (b != lastBtnB) {
+            lastBtnB = b
+            send("BTN:B:" + (b ? 1 : 0))
+        }
+    }
+    basic.pause(50)
+})
+
+// ---------- start ----------
+// Only start UART — accelerometer/temp/etc. are streamed manually via
+// uartWriteLine, no need for the heavyweight BLE characteristic services
+// (which compound with maqueen + microphone + IR libs to overflow
+// micro:bit V1's RAM and trigger MakeCode's '!!proc || !bin.finalPass'
+// assertion).
+bluetooth.startUartService()
+basic.showIcon(IconNames.No)
+setupIR()
+startSweepFiber()                      // 50 Hz autonomous sweep loop
+// Center both servos to 90° at boot so heads/arms start in a known
+// neutral pose rather than wherever the gear was last left.
+maqueen.servoRun(maqueen.Servos.S1, 90)
+maqueen.servoRun(maqueen.Servos.S2, 90)
+bootBanner()

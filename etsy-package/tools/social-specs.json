@@ -1,0 +1,40 @@
+{
+  "_comment": "Social media kit specs — 4 aspect ratios per language, driven by generate-social.mjs. Screenshots resolved from output/<lang>/screenshots/.",
+
+  "formats": [
+    { "name": "ig-post",    "w": 1080, "h": 1080, "label": "Instagram feed",   "layout": "square" },
+    { "name": "ig-story",   "w": 1080, "h": 1920, "label": "Instagram story",  "layout": "portrait" },
+    { "name": "twitter",    "w": 1200, "h": 675,  "label": "Twitter / X",      "layout": "landscape" },
+    { "name": "linkedin",   "w": 1200, "h": 627,  "label": "LinkedIn",         "layout": "landscape" }
+  ],
+
+  "screenshot": "screenshot-audience-teacher-sensors.png",
+
+  "en": {
+    "brand": "maqueen-lab",
+    "kicker": "MICRO:BIT · WEB BLUETOOTH",
+    "title": "Every sensor.\nLive in the browser.",
+    "subtitle": "Chrome / Edge · Zero install · Works offline",
+    "cta": "Try the demo →",
+    "url": "abourdim.github.io/maqueen-lab",
+    "hashtags": "#microbit  #STEM  #EdTech"
+  },
+  "fr": {
+    "brand": "maqueen-lab",
+    "kicker": "MICRO:BIT · WEB BLUETOOTH",
+    "title": "Chaque capteur,\nen direct dans le navigateur.",
+    "subtitle": "Chrome / Edge · Zéro installation · Hors ligne",
+    "cta": "Essayer la démo →",
+    "url": "abourdim.github.io/maqueen-lab",
+    "hashtags": "#microbit  #STEM  #EdTech"
+  },
+  "ar": {
+    "brand": "maqueen-lab",
+    "kicker": "MICRO:BIT · WEB BLUETOOTH",
+    "title": "كل حساس،\nمباشرةً في المتصفح.",
+    "subtitle": "Chrome / Edge · بدون تثبيت · يعمل دون اتصال",
+    "cta": "← جرّب العرض التوضيحي",
+    "url": "abourdim.github.io/maqueen-lab",
+    "hashtags": "#microbit  #STEM  #EdTech"
+  }
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--
+  ═══════════════════════════════════════════════════════════════════════
+  ⚠️  REWRITE PER PRODUCT — DO NOT SHIP AS-IS
+  ───────────────────────────────────────────────────────────────────────
+  apply-template.mjs substituted Maqueen Lab / v0.1.54 only.
+  The content below was inherited from maqueen-lab and references
+  product-specific things: BBC micro:bit V2, X icon, BLE, P1, servos,
+  Tab 3/5/6, SVG gauges, Neon/Arctic themes, etc.
+
+  Before printing:
+    1. Delete this banner.
+    2. Rewrite the Pre-flight checklist (left column) for YOUR product.
+    3. Rewrite the 8-row arc (Say + Do columns) — keep the time
+       boundaries (0-3 / 3-10 / 10-20 / 20-30 / 30-40 / 40-50 / 50-55
+       / 55-60); they are proven pacing.
+    4. Rewrite the Cheat card monospace block (bottom right) as 4 lines:
+       PRE / LAUNCH / DURING / AFTER / UPLOAD.
+    5. Keep the specs table (right column, top) — Etsy specs don't
+       change per product.
+  ═══════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Maqueen Lab — Etsy 60-sec Shoot Card (A4)</title>
+<style>
+  @page { size: A4; margin: 10mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #0a0e12;
+    background: #f5f7f5;
+    padding: 10mm;
+    font-size: 10pt;
+    line-height: 1.35;
+  }
+  h1 {
+    font-size: 20pt;
+    font-weight: 900;
+    color: #00884a;
+    border-bottom: 3px solid #00884a;
+    padding-bottom: 2mm;
+    margin-bottom: 4mm;
+    letter-spacing: 0.02em;
+  }
+  h1 small {
+    font-size: 10pt;
+    font-weight: 400;
+    color: #6b7a85;
+    float: right;
+    margin-top: 10pt;
+  }
+  h2 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #00884a;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 4mm 0 2mm;
+    padding: 1mm 2mm;
+    background: #e0f0e5;
+    border-left: 3px solid #00884a;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+  ul { list-style: none; }
+  li { padding: 0.8mm 0; padding-left: 6mm; position: relative; }
+  li::before {
+    content: '☐';
+    position: absolute;
+    left: 0;
+    color: #6b7a85;
+    font-size: 11pt;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  th, td { text-align: left; padding: 1.5mm 2mm; border-bottom: 1px solid #d0d8d2; vertical-align: top; }
+  th { background: #0a0e12; color: #00ff88; font-weight: 700; text-transform: uppercase; font-size: 8pt; letter-spacing: 0.1em; }
+  td.t { font-family: 'Courier New', monospace; font-weight: 700; color: #00884a; white-space: nowrap; width: 14mm; }
+  td.say { font-style: italic; color: #0a0e12; }
+  td.do { color: #3a4a45; font-size: 8.5pt; }
+  .tight td { padding: 1mm 2mm; }
+  .cheat {
+    font-family: 'Courier New', monospace;
+    background: #0a0e12;
+    color: #00ff88;
+    padding: 3mm;
+    font-size: 9pt;
+    line-height: 1.5;
+    border-radius: 2mm;
+    white-space: pre;
+  }
+  .warn { color: #c44; font-weight: 700; }
+  .ok { color: #00884a; font-weight: 700; }
+  .footer { margin-top: 5mm; font-size: 8pt; color: #6b7a85; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>Etsy 60-sec Video Shoot Card <small>Maqueen Lab · Script A</small></h1>
+
+<div class="row">
+  <div>
+    <h2>Pre-flight (90s)</h2>
+    <ul>
+      <li>BBC micro:bit V2 on, X icon showing</li>
+      <li>Chrome/Edge open, <code>index.html</code> loaded</li>
+      <li>BLE paired — chip is <span class="ok">green</span></li>
+      <li>Theme: <strong>Neon</strong> (or Arctic for daylight)</li>
+      <li>Language matches voiceover (EN / FR / AR)</li>
+      <li>Servo plugged into <strong>P1</strong></li>
+      <li>Tab 6 (3D) on Buggy or Robot Arm</li>
+      <li>Phone in 9:16 on tripod, front-lit</li>
+      <li>Desk cleared — board + one prop only</li>
+      <li>Captions app ready OR overlay plan</li>
+      <li>Script read once, under 55s</li>
+      <li>Phone silenced, kids/dogs warned</li>
+    </ul>
+  </div>
+
+  <div>
+    <h2>Specs (memorise)</h2>
+    <table class="tight">
+      <tr><td><strong>Length</strong></td><td>≤ 60s (aim 55s)</td></tr>
+      <tr><td><strong>Aspect</strong></td><td><strong>9:16 portrait</strong></td></tr>
+      <tr><td><strong>Res</strong></td><td>1080 × 1920 min</td></tr>
+      <tr><td><strong>Codec</strong></td><td>MP4 / H.264 + AAC</td></tr>
+      <tr><td><strong>Size</strong></td><td>&lt; 100 MB</td></tr>
+      <tr><td><strong>Audio</strong></td><td>Muted by default → <span class="warn">captions mandatory</span></td></tr>
+      <tr><td><strong>Cover</strong></td><td>First frame = thumbnail</td></tr>
+      <tr><td><strong>Hook</strong></td><td>First 3s decides the scroll</td></tr>
+    </table>
+
+    <h2>During recording</h2>
+    <ul>
+      <li>One scene per phase — don't cut every 2s</li>
+      <li>Switch on words, not mid-sentence</li>
+      <li>1s pause on Record button</li>
+      <li>Eye contact with lens on CTA</li>
+      <li>Smile for final 3s — loop frame</li>
+      <li>If &gt; 55s, re-cut</li>
+    </ul>
+  </div>
+</div>
+
+<h2>The 60-second arc — Script A</h2>
+<table>
+  <thead>
+    <tr><th>Time</th><th>Say</th><th>Do / Click</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="t">0–3s</td>   <td class="say">"Your micro:bit becomes a playground — in the browser, in 60 seconds."</td> <td class="do">Close-up real board with X icon. Hand holds it.</td></tr>
+    <tr><td class="t">3–10s</td>  <td class="say">"One page, one click, paired."</td>                                          <td class="do">Cut to laptop. Click Connect → pick board → chip <span class="ok">green</span>.</td></tr>
+    <tr><td class="t">10–20s</td> <td class="say">"Sensors live — tilt it, the 3D model tilts too."</td>                      <td class="do">Tab 6 · SLAM map. Tilt real board. Virtual mirrors.</td></tr>
+    <tr><td class="t">20–30s</td> <td class="say">"Press A — the LEDs react. Drag a slider — the servo swings."</td>          <td class="do">Press A. Tab 3 · Motors. Drag Servo 1. Real servo swings.</td></tr>
+    <tr><td class="t">30–40s</td> <td class="say">"Live graph with record, replay, CSV. A lab in a browser tab."</td>         <td class="do">Tab 5 · Graph → Simulate → hover Record and CSV.</td></tr>
+    <tr><td class="t">40–50s</td> <td class="say">"4 themes, 3 languages, works offline, no install, no account."</td>        <td class="do">Theme dropdown → Neon → Arctic. Quick swap.</td></tr>
+    <tr><td class="t">50–55s</td> <td class="say">"Link below — lifetime updates, teachers and kids welcome."</td>            <td class="do">Face-cam. Eye contact with lens.</td></tr>
+    <tr><td class="t">55–60s</td> <td class="say">"Happy hacking."</td>                                                       <td class="do">Hold still. Logo + handle freeze. Loop frame.</td></tr>
+  </tbody>
+</table>
+
+<div class="row" style="margin-top: 4mm;">
+  <div>
+    <h2>After Stop</h2>
+    <ul>
+      <li>Watch once, eyes off script</li>
+      <li>Trim to 55s (iMovie / CapCut / DaVinci)</li>
+      <li>Burn in captions — centered below subject</li>
+      <li>Set first frame = strong still visual</li>
+      <li>Export MP4/H.264, &lt; 100 MB</li>
+      <li>Upload · verify autoplay · phone + sound off</li>
+    </ul>
+  </div>
+  <div>
+    <h2>Cheat card</h2>
+<div class="cheat">PRE     V2=X · Chrome · BLE green
+        9:16 phone · Neon · desk clean
+LAUNCH  first words land in first 3s
+DURING  tilt→3D · A→LED · slider→servo
+        Simulate→graph
+AFTER   Stop → trim 55s → captions
+        first frame = thumbnail
+UPLOAD  echo first words in title</div>
+  </div>
+</div>
+
+<div class="footer">Maqueen Lab v0.1.54 · Print A4 · Tape next to shoot rig · Companion to video-teleprompter.html</div>
+
+</body>
+</html>

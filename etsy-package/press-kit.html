@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>maqueen-lab — Press kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020617;
+    --panel: rgba(15,23,42,.65);
+    --accent: #22c55e;
+    --accent-dim: #22c55e33;
+    --cyan: #22d3ee;
+    --text: #e8ffe8;
+    --dim: #94a3b8;
+    --fade: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; line-height: 1.55; }
+  body[data-lang="ar"] { font-family: Tajawal, Inter, sans-serif; direction: rtl; }
+  body[data-lang="ar"] .title, body[data-lang="ar"] h1, body[data-lang="ar"] h2 { font-family: Tajawal, Orbitron, sans-serif; }
+
+  .hero {
+    padding: 60px 40px 40px;
+    max-width: 1200px; margin: 0 auto;
+    position: relative;
+    background:
+      radial-gradient(circle at 85% 10%, rgba(34,211,238,.12) 0%, transparent 45%),
+      radial-gradient(circle at 10% 90%, rgba(34,197,94,.10) 0%, transparent 55%);
+  }
+  .kicker {
+    font-family: 'Orbitron', monospace; font-size: 13px;
+    color: var(--cyan); letter-spacing: 0.25em; margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Orbitron', 'Inter', sans-serif;
+    font-size: 48px; font-weight: 700; color: var(--accent);
+    line-height: 1.05; letter-spacing: -0.02em;
+    text-shadow: 0 0 40px rgba(34,197,94,.3);
+    margin-bottom: 16px;
+  }
+  .lead { font-size: 18px; color: var(--dim); max-width: 780px; font-weight: 500; }
+
+  .lang-toggle {
+    position: absolute; top: 24px; right: 40px;
+    display: flex; gap: 4px;
+    background: var(--panel); border: 1px solid var(--accent-dim);
+    border-radius: 999px; padding: 4px;
+  }
+  body[data-lang="ar"] .lang-toggle { right: auto; left: 40px; }
+  .lang-toggle button {
+    background: transparent; border: none; color: var(--dim);
+    font-family: Inter, sans-serif; font-weight: 700; font-size: 12px;
+    padding: 8px 16px; border-radius: 999px; cursor: pointer;
+    letter-spacing: 0.08em;
+  }
+  .lang-toggle button.active { background: var(--accent); color: var(--bg); }
+
+  main { max-width: 1200px; margin: 0 auto; padding: 20px 40px 80px; }
+
+  section { margin-top: 48px; }
+  h2 {
+    font-family: 'Orbitron', 'Inter', sans-serif;
+    font-size: 22px; color: var(--accent); font-weight: 700;
+    letter-spacing: 0.04em; margin-bottom: 20px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--accent-dim);
+  }
+
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .fact {
+    background: var(--panel); border: 1px solid var(--accent-dim);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .fact .label { font-family: 'Orbitron', monospace; font-size: 11px; color: var(--cyan); letter-spacing: 0.15em; margin-bottom: 8px; }
+  .fact .value { font-size: 15px; color: var(--text); font-weight: 600; }
+
+  .boilerplate-block {
+    background: var(--panel); border: 1px solid var(--accent-dim);
+    border-radius: 10px; padding: 22px 26px; margin-bottom: 16px;
+  }
+  .boilerplate-block .bp-label {
+    font-family: 'Orbitron', monospace; font-size: 11px; color: var(--cyan);
+    letter-spacing: 0.15em; margin-bottom: 10px; text-transform: uppercase;
+  }
+  .boilerplate-block p { font-size: 15px; color: var(--text); margin-bottom: 10px; }
+  .boilerplate-block p:last-child { margin-bottom: 0; }
+
+  .asset-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .asset {
+    background: var(--panel); border: 1px solid var(--accent-dim);
+    border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .asset img {
+    width: 100%; aspect-ratio: 16/9; object-fit: cover;
+    background: #000;
+  }
+  .asset-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; }
+  .asset-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .asset-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--fade); margin-bottom: 10px; }
+  .asset-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+  .asset-links a {
+    background: var(--accent); color: var(--bg);
+    padding: 6px 12px; border-radius: 4px;
+    font-size: 12px; font-weight: 700; text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+  .asset-links a.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+  .contact-block {
+    background: linear-gradient(135deg, rgba(34,197,94,.08), rgba(34,211,238,.04));
+    border: 1px solid var(--accent-dim);
+    border-radius: 10px; padding: 24px 28px;
+  }
+  .contact-block a { color: var(--accent); text-decoration: none; font-weight: 700; }
+
+  footer {
+    max-width: 1200px; margin: 0 auto; padding: 40px;
+    border-top: 1px solid var(--accent-dim);
+    color: var(--fade); font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px 20px; }
+    h1 { font-size: 32px; }
+    .lang-toggle { top: 16px; right: 20px; }
+    body[data-lang="ar"] .lang-toggle { left: 20px; }
+    main { padding: 10px 20px 40px; }
+  }
+</style>
+</head>
+<body data-lang="en">
+
+<div class="hero">
+  <div class="lang-toggle" role="tablist">
+    <button data-lang="en" class="active">EN</button>
+    <button data-lang="fr">FR</button>
+    <button data-lang="ar">AR</button>
+  </div>
+
+  <!-- EN -->
+  <div class="pane active" id="pane-en" lang="en">
+    <div class="kicker">PRESS KIT · MAQUEEN LAB</div>
+    <h1>Every sensor,<br>live in every browser.</h1>
+    <p class="lead">A browser-based Bluetooth control panel for the BBC micro:bit V2. Built for classrooms — no install, no accounts, no cloud. Open in Chrome or Edge, click Connect, every sensor streams live.</p>
+  </div>
+  <!-- FR -->
+  <div class="pane" id="pane-fr" lang="fr">
+    <div class="kicker">DOSSIER DE PRESSE · MAQUEEN LAB</div>
+    <h1>Chaque capteur,<br>en direct dans le navigateur.</h1>
+    <p class="lead">Un panneau de contrôle Bluetooth basé navigateur pour le BBC micro:bit V2. Conçu pour la salle de classe — rien à installer, aucun compte, aucun cloud. Ouvrez dans Chrome ou Edge, cliquez Connecter, et chaque capteur diffuse en direct.</p>
+  </div>
+  <!-- AR -->
+  <div class="pane" id="pane-ar" lang="ar" dir="rtl">
+    <div class="kicker">الحزمة الصحفية · MAQUEEN LAB</div>
+    <h1>كل حساس،<br>مباشرةً في المتصفح.</h1>
+    <p class="lead">لوحة تحكم Bluetooth تعتمد على المتصفح لـ BBC micro:bit V2. مصممة للقاعات الدراسية — بدون تثبيت، بدون حسابات، بدون سحاب. افتحها في Chrome أو Edge، اضغط Connect، وكل حساس يُبث مباشرة.</p>
+  </div>
+</div>
+
+<main>
+
+<!-- FACT SHEET -->
+<section>
+  <h2 data-i18n-en="Fact sheet" data-i18n-fr="Fiche signalétique" data-i18n-ar="بطاقة المنتج">Fact sheet</h2>
+  <div class="facts">
+    <div class="fact"><div class="label">Product</div><div class="value">Maqueen Lab</div></div>
+    <div class="fact"><div class="label">Category</div><div class="value">STEM / EdTech digital download</div></div>
+    <div class="fact"><div class="label">Compatibility</div><div class="value">Chrome / Edge · Chromebook · Windows · macOS · Android</div></div>
+    <div class="fact"><div class="label">Hardware</div><div class="value">BBC micro:bit V2 (required)</div></div>
+    <div class="fact"><div class="label">Price</div><div class="value">$12.99 · School site license $199</div></div>
+    <div class="fact"><div class="label">Languages</div><div class="value">English · Français · العربية</div></div>
+    <div class="fact"><div class="label">Privacy</div><div class="value">Local-only · COPPA / GDPR compliant · no accounts</div></div>
+    <div class="fact"><div class="label">Accessibility</div><div class="value">Audio descriptions · EN Braille · RTL support</div></div>
+    <div class="fact"><div class="label">License</div><div class="value">Single-user commercial · open firmware</div></div>
+    <div class="fact"><div class="label">Live demo</div><div class="value">abourdim.github.io/maqueen-lab</div></div>
+  </div>
+</section>
+
+<!-- BOILERPLATES -->
+<section>
+  <h2 data-i18n-en="Boilerplate (copy-paste)" data-i18n-fr="Texte prêt à coller" data-i18n-ar="نصوص جاهزة للنسخ">Boilerplate (copy-paste)</h2>
+
+  <div class="pane active" id="bp-en">
+    <div class="boilerplate-block">
+      <div class="bp-label">One-liner (280 chars)</div>
+      <p>Maqueen Lab is a browser-based Bluetooth control panel for the BBC micro:bit V2. Every sensor streams live, LEDs animate in real time, 3D mirrors tilt with the board. No install, no accounts — works on Chromebooks. Built for classrooms.</p>
+    </div>
+    <div class="boilerplate-block">
+      <div class="bp-label">Short paragraph</div>
+      <p>Maqueen Lab turns any Chromebook into a live STEM lab. Open it in the browser, click Connect, and every sensor on the BBC micro:bit V2 — distance, line, accelerometer, accelerometer, compass — streams directly on screen. Students paint the LED matrix, graph sensor data, spin servos, and watch a 3D mirror of the board tilt with the real one. No installs, no accounts, no cloud. It's the pairing ceremony that went from a 45-minute setup headache to a 3-second connect.</p>
+    </div>
+    <div class="boilerplate-block">
+      <div class="bp-label">Long paragraph</div>
+      <p>Maqueen Lab is a one-tab control panel for the BBC micro:bit V2 — the tiny classroom microcontroller from the Micro:bit Educational Foundation. Traditional micro:bit workflows require an IDE install, a code flash for every experiment, and a teacher fluent in JavaScript or Python. Playground collapses that workflow: the firmware flashes once, then the rest lives in a single browser tab. Web Bluetooth pairs the board in three seconds; sensors stream live; kids drive motors, paint LEDs, and watch a photoreal 3D mirror of the board tilt with every physical movement. Built entirely client-side — no cloud, no accounts, no telemetry — it meets COPPA, GDPR, and typical school-district privacy-vendor reviews out of the box. The illustrated guide ships trilingual (English, French, Arabic) and includes an accessibility pack with audio descriptions and Braille transcripts, making it one of the few STEM tools on Etsy designed for special-education procurement compliance.</p>
+    </div>
+  </div>
+
+  <div class="pane" id="bp-fr">
+    <div class="boilerplate-block">
+      <div class="bp-label">Ligne courte (280 caractères)</div>
+      <p>Maqueen Lab est un panneau de contrôle Bluetooth basé navigateur pour le BBC micro:bit V2. Chaque capteur diffuse en direct, les LEDs s'animent, un miroir 3D s'incline avec la carte. Rien à installer, aucun compte — fonctionne sur Chromebook. Pour les salles STEM.</p>
+    </div>
+    <div class="boilerplate-block">
+      <div class="bp-label">Paragraphe court</div>
+      <p>Maqueen Lab transforme tout Chromebook en laboratoire STEM vivant. Ouvrez-le dans le navigateur, cliquez Connecter, et chaque capteur du BBC micro:bit V2 — température, son, lumière, accéléromètre, boussole — s'affiche à l'écran en direct. Les élèves peignent la matrice LED, tracent les données, pilotent des servos et voient un miroir 3D de la carte s'incliner avec la vraie. Rien à installer, aucun compte, aucun cloud. La cérémonie d'appairage est passée d'un casse-tête de 45 minutes à une connexion de 3 secondes.</p>
+    </div>
+    <div class="boilerplate-block">
+      <div class="bp-label">Paragraphe long</div>
+      <p>Maqueen Lab est un panneau de contrôle mono-onglet pour le BBC micro:bit V2 — le microcontrôleur pédagogique de la Micro:bit Educational Foundation. Les flux de travail classiques avec le micro:bit imposent l'installation d'un IDE, un flash de code pour chaque expérience et un enseignant à l'aise en JavaScript ou Python. Playground aplatit ce parcours : le firmware se flashe une fois, puis tout vit dans un onglet de navigateur. Web Bluetooth appaire la carte en trois secondes ; les capteurs diffusent en direct ; les enfants pilotent des moteurs, peignent les LEDs, et regardent un miroir 3D photoréaliste de la carte s'incliner à chaque mouvement physique. Entièrement côté client — pas de cloud, pas de compte, pas de télémétrie — il respecte le RGPD, la conformité COPPA et les revues de confidentialité typiques d'une académie dès le départ. Le guide illustré est trilingue (anglais, français, arabe) et inclut un pack accessibilité avec descriptions audio et transcriptions Braille, ce qui en fait l'un des rares outils STEM sur Etsy conçu pour la conformité aux marchés publics de l'enseignement adapté.</p>
+    </div>
+  </div>
+
+  <div class="pane" id="bp-ar" dir="rtl">
+    <div class="boilerplate-block">
+      <div class="bp-label">سطر واحد (280 حرف)</div>
+      <p>Maqueen Lab لوحة تحكم Bluetooth تعتمد على المتصفح لـ BBC micro:bit V2. كل حساس يُبث مباشرة، المصابيح تنبض في الوقت الحقيقي، ومرآة ثلاثية الأبعاد تميل مع اللوحة. بدون تثبيت، بدون حسابات — تعمل على Chromebook. مصممة لقاعات STEM.</p>
+    </div>
+    <div class="boilerplate-block">
+      <div class="bp-label">فقرة قصيرة</div>
+      <p>تحوّل Maqueen Lab أي Chromebook إلى مختبر STEM حي. افتحها في المتصفح، اضغط Connect، وكل حساس في BBC micro:bit V2 — الحرارة والصوت والضوء والتسارع والبوصلة — يُبث مباشرة على الشاشة. يرسم الطلاب على مصفوفة LED، ويرسمون بيانات الحساسات بيانياً، ويشغّلون السيرفو، ويشاهدون مرآة ثلاثية الأبعاد للوحة تميل مع الحقيقية. بدون تثبيت، بدون حسابات، بدون سحاب. تحوّلت طقوس الإقران من معاناة 45 دقيقة إلى اتصال في 3 ثوانٍ.</p>
+    </div>
+    <div class="boilerplate-block">
+      <div class="bp-label">فقرة طويلة</div>
+      <p>Maqueen Lab لوحة تحكم بعلامة تبويب واحدة لـ BBC micro:bit V2 — المتحكم الدقيق التعليمي من مؤسسة Micro:bit Educational Foundation. تتطلب تدفقات العمل التقليدية مع micro:bit تثبيت IDE، وبرمجة شفرة لكل تجربة، ومعلماً ضليعاً في JavaScript أو Python. تُبسّط Playground هذا المسار: يُبرمج الفيرموير مرة واحدة، ثم يعيش الباقي كله في علامة تبويب متصفح واحدة. يُقرن Web Bluetooth اللوحة في ثلاث ثوانٍ؛ والحساسات تُبث مباشرة؛ ويشغّل الأطفال المحركات، ويرسمون على المصابيح، ويشاهدون مرآة ثلاثية الأبعاد واقعية للوحة تميل مع كل حركة فيزيائية. كل شيء يعمل جانب العميل — بدون سحاب، بدون حسابات، بدون تتبع — ويتوافق مع COPPA وGDPR ومراجعات خصوصية موردي المدارس النموذجية من البداية. يأتي الدليل المصوّر ثلاثي اللغة (الإنجليزية والفرنسية والعربية) ويشمل حزمة إمكانية الوصول مع أوصاف صوتية ونصوص Braille مكتوبة، مما يجعلها إحدى أدوات STEM القليلة على Etsy المصممة للامتثال لمشتريات التعليم الخاص.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ASSETS -->
+<section>
+  <h2 data-i18n-en="Downloadable assets (press-grade)" data-i18n-fr="Assets téléchargeables (qualité presse)" data-i18n-ar="أصول قابلة للتنزيل (جودة صحفية)">Downloadable assets (press-grade)</h2>
+
+  <div class="asset-grid">
+    <div class="asset">
+      <img src="output/en/heroes/hero-teacher.png" alt="Teacher hero" loading="lazy">
+      <div class="asset-body">
+        <div class="asset-title" data-i18n-en="Teacher hero (1500×1500)" data-i18n-fr="Hero enseignant (1500×1500)" data-i18n-ar="بطل المعلم (1500×1500)">Teacher hero (1500×1500)</div>
+        <div class="asset-meta">PNG · 1.5 MB</div>
+        <div class="asset-links">
+          <a href="output/en/heroes/hero-teacher.png" download>EN</a>
+          <a href="output/fr/heroes/hero-fr-teacher.png" download>FR</a>
+          <a href="output/ar/heroes/hero-ar-teacher.png" download>AR</a>
+        </div>
+      </div>
+    </div>
+    <div class="asset">
+      <img src="output/en/heroes/hero-kid.png" alt="Kid hero" loading="lazy">
+      <div class="asset-body">
+        <div class="asset-title" data-i18n-en="Kid hero (1500×1500)" data-i18n-fr="Hero enfant (1500×1500)" data-i18n-ar="بطل الطفل (1500×1500)">Kid hero (1500×1500)</div>
+        <div class="asset-meta">PNG · 1.5 MB</div>
+        <div class="asset-links">
+          <a href="output/en/heroes/hero-kid.png" download>EN</a>
+          <a href="output/fr/heroes/hero-fr-kid.png" download>FR</a>
+          <a href="output/ar/heroes/hero-ar-kid.png" download>AR</a>
+        </div>
+      </div>
+    </div>
+    <div class="asset">
+      <img src="output/en/heroes/hero-maker.png" alt="Maker hero" loading="lazy">
+      <div class="asset-body">
+        <div class="asset-title" data-i18n-en="Maker hero (1500×1500)" data-i18n-fr="Hero maker (1500×1500)" data-i18n-ar="بطل المبدع (1500×1500)">Maker hero (1500×1500)</div>
+        <div class="asset-meta">PNG · 1.5 MB</div>
+        <div class="asset-links">
+          <a href="output/en/heroes/hero-maker.png" download>EN</a>
+          <a href="output/fr/heroes/hero-fr-maker.png" download>FR</a>
+          <a href="output/ar/heroes/hero-ar-maker.png" download>AR</a>
+        </div>
+      </div>
+    </div>
+    <div class="asset">
+      <img src="output/shared/photoreal/microbit-hero.png" alt="Photoreal board" loading="lazy">
+      <div class="asset-body">
+        <div class="asset-title" data-i18n-en="Photoreal board render" data-i18n-fr="Rendu 3D photoréaliste" data-i18n-ar="تصيير ثلاثي الأبعاد واقعي">Photoreal board render</div>
+        <div class="asset-meta">PNG · language-agnostic</div>
+        <div class="asset-links">
+          <a href="output/shared/photoreal/microbit-hero.png" download data-i18n-en="Download" data-i18n-fr="Télécharger" data-i18n-ar="تنزيل">Download</a>
+        </div>
+      </div>
+    </div>
+    <div class="asset">
+      <img src="output/en/print/poster-a3.png" alt="A3 poster" loading="lazy">
+      <div class="asset-body">
+        <div class="asset-title" data-i18n-en="A3 classroom poster" data-i18n-fr="Affiche A3 classe" data-i18n-ar="ملصق A3 للفصل">A3 classroom poster</div>
+        <div class="asset-meta">PDF + PNG · 250 DPI</div>
+        <div class="asset-links">
+          <a href="output/en/print/poster-a3.pdf" download>EN</a>
+          <a href="output/fr/print/poster-a3.pdf" download>FR</a>
+          <a href="output/ar/print/poster-a3.pdf" download>AR</a>
+        </div>
+      </div>
+    </div>
+    <div class="asset">
+      <img src="output/en/speed-test/speed-test.gif" alt="Speed test clip" loading="lazy">
+      <div class="asset-body">
+        <div class="asset-title" data-i18n-en="3.2-second speed-test clip" data-i18n-fr="Clip test de rapidité 3,2s" data-i18n-ar="مقطع اختبار السرعة 3.2 ثانية">3.2-second speed-test clip</div>
+        <div class="asset-meta">MP4 + GIF</div>
+        <div class="asset-links">
+          <a href="output/en/speed-test/speed-test.mp4" download>MP4</a>
+          <a href="output/en/speed-test/speed-test.gif" download class="secondary">GIF</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section>
+  <h2 data-i18n-en="Contact / interviews" data-i18n-fr="Contact / entretiens" data-i18n-ar="للتواصل / المقابلات">Contact / interviews</h2>
+  <div class="contact-block">
+    <p class="pane active" id="ct-en">Available for product demos, technical interviews, and classroom case studies. Reply time under 24h for press enquiries. Contact via Etsy shop message or <a href="https://github.com/abourdim/maqueen-lab/issues">GitHub issues</a>.</p>
+    <p class="pane" id="ct-fr">Disponible pour démos produit, interviews techniques et études de cas en classe. Temps de réponse sous 24h pour les demandes presse. Contact via message Etsy ou <a href="https://github.com/abourdim/maqueen-lab/issues">issues GitHub</a>.</p>
+    <p class="pane" id="ct-ar" dir="rtl">متاح لعروض المنتج والمقابلات التقنية ودراسات حالات الفصول الدراسية. وقت الرد أقل من 24 ساعة لطلبات الصحافة. التواصل عبر رسالة متجر Etsy أو <a href="https://github.com/abourdim/maqueen-lab/issues">إصدارات GitHub</a>.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span data-i18n-en="Press kit · maqueen-lab · abourdim.github.io/maqueen-lab" data-i18n-fr="Dossier de presse · maqueen-lab · abourdim.github.io/maqueen-lab" data-i18n-ar="الحزمة الصحفية · maqueen-lab · abourdim.github.io/maqueen-lab">Press kit · maqueen-lab · abourdim.github.io/maqueen-lab</span>
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('.lang-toggle button');
+  const panes = document.querySelectorAll('.pane');
+  const body = document.body;
+
+  function setLang(lang) {
+    body.setAttribute('data-lang', lang);
+    document.documentElement.setAttribute('lang', lang);
+    document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    buttons.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+    // Show pane suffixed with -<lang>; hide siblings. Elements without sibs stay as-is.
+    document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('[id$="-' + lang + '"]').forEach(p => p.classList.add('active'));
+    // Translate data-i18n-* labels.
+    document.querySelectorAll('[data-i18n-' + lang + ']').forEach(el => {
+      el.textContent = el.getAttribute('data-i18n-' + lang);
+    });
+  }
+
+  buttons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+
+  // Support ?lang=fr deep link.
+  const p = new URLSearchParams(location.search);
+  if (p.get('lang') && ['en','fr','ar'].includes(p.get('lang'))) setLang(p.get('lang'));
+</script>
+
+</body>
+</html>

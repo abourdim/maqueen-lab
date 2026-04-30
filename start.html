@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maqueen Lab — Premiers pas 🚀</title>
+<style>
+  :root {
+    --bg:     #050e1f;
+    --card:   #0b1a33;
+    --card2:  #0f2040;
+    --border: rgba(56,189,248,0.18);
+    --accent: #38bdf8;
+    --green:  #4ade80;
+    --yellow: #facc15;
+    --red:    #f87171;
+    --teal:   #2dd4bf;
+    --purple: #c084fc;
+    --muted:  #7a9bbf;
+    --text:   #e2eaf5;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: radial-gradient(ellipse at 50% -20%, #0d3a72 0%, #050e1f 65%);
+    text-align: center;
+    padding: 56px 20px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-robot { font-size: 72px; display: block; margin-bottom: 16px;
+    animation: bob 3s ease-in-out infinite; }
+  @keyframes bob {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+  .hero h1 {
+    font-size: clamp(26px, 6vw, 48px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero p { color: var(--muted); font-size: 17px; max-width: 500px; margin: 0 auto 20px; }
+  .hero-time {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(250,204,21,0.1); border: 1px solid rgba(250,204,21,0.3);
+    border-radius: 20px; padding: 6px 16px; color: var(--yellow);
+    font-size: 14px; font-weight: 600;
+  }
+
+  /* ── LAYOUT ── */
+  .wrapper { max-width: 740px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    display: flex; gap: 0;
+    margin: 32px 0 48px;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .pb-step {
+    flex: 1; padding: 10px 4px;
+    text-align: center; font-size: 11px; font-weight: 700;
+    color: var(--muted); background: var(--card2);
+    border-right: 1px solid var(--border);
+    cursor: pointer; transition: background 0.2s, color 0.2s;
+    line-height: 1.3;
+  }
+  .pb-step:last-child { border-right: none; }
+  .pb-step .pb-num { font-size: 16px; display: block; }
+  .pb-step.done   { background: rgba(74,222,128,0.12); color: var(--green); }
+  .pb-step.active { background: rgba(56,189,248,0.15); color: var(--accent); }
+
+  /* ── STEP CARD ── */
+  .step-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .step-card.active { border-color: var(--accent); }
+  .step-card.done   { border-color: rgba(74,222,128,0.4); }
+
+  .step-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 22px 24px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .step-number {
+    width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900;
+    background: linear-gradient(135deg, var(--card2), var(--bg));
+    border: 2px solid var(--border);
+    color: var(--muted);
+    transition: all 0.3s;
+  }
+  .step-card.active .step-number {
+    background: linear-gradient(135deg, #0369a1, #7c3aed);
+    border-color: var(--accent); color: #fff;
+    box-shadow: 0 0 20px rgba(56,189,248,0.4);
+  }
+  .step-card.done .step-number {
+    background: linear-gradient(135deg, #15803d, #166534);
+    border-color: var(--green); color: #fff;
+    box-shadow: 0 0 16px rgba(74,222,128,0.35);
+  }
+  .step-title-block .step-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--muted); margin-bottom: 3px;
+  }
+  .step-card.active .step-title-block .step-label { color: var(--accent); }
+  .step-card.done   .step-title-block .step-label { color: var(--green); }
+  .step-title { font-size: 20px; font-weight: 800; }
+  .step-badge {
+    margin-left: auto; flex-shrink: 0;
+    font-size: 22px; width: 40px; text-align: center;
+  }
+
+  /* ── STEP BODY ── */
+  .step-body {
+    padding: 0 24px 24px;
+    display: none;
+  }
+  .step-card.active .step-body,
+  .step-card.done .step-body { display: block; }
+
+  /* ── SUB-STEPS ── */
+  .sub-steps { display: flex; flex-direction: column; gap: 16px; }
+  .sub-step {
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .sub-num {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3);
+    color: var(--accent); font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .sub-text { font-size: 15px; color: #c8daf0; }
+  .sub-text strong { color: var(--text); }
+  .sub-text em { color: var(--muted); font-style: normal; font-size: 13px; display: block; margin-top: 4px; }
+
+  /* ── VISUAL DEMOS ── */
+  .demo-box {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+    margin: 16px 0; text-align: center;
+  }
+  .demo-box.blue-glow { border-color: rgba(56,189,248,0.4);
+    box-shadow: 0 0 24px rgba(56,189,248,0.1); }
+  .demo-box.green-glow { border-color: rgba(74,222,128,0.4);
+    box-shadow: 0 0 24px rgba(74,222,128,0.1); }
+  .demo-box.red-glow   { border-color: rgba(248,113,113,0.4);
+    box-shadow: 0 0 24px rgba(248,113,113,0.1); }
+
+  /* FAB replicas */
+  .fab-row { display: flex; justify-content: center; gap: 30px; margin: 8px 0; flex-wrap: wrap; }
+  .fab {
+    width: 84px; height: 84px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-weight: 900; font-family: monospace; color: #fff;
+    border: 3px solid rgba(255,255,255,0.8); gap: 2px;
+    font-size: 11px; letter-spacing: 0.08em;
+  }
+  .fab .fab-i { font-size: 26px; }
+  .fab.connect { background: radial-gradient(circle at 30% 30%, #67e8f9, #0284c7 60%, #0c4a6e);
+    box-shadow: 0 6px 24px rgba(2,132,199,0.55);
+    animation: fpulse 1.8s ease-in-out infinite; }
+  .fab.stop { background: radial-gradient(circle at 30% 30%, #fca5a5, #dc2626 60%, #7f1d1d);
+    box-shadow: 0 6px 24px rgba(220,38,38,0.55);
+    animation: fpulse 2.4s ease-in-out infinite; }
+  @keyframes fpulse {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.05); }
+  }
+
+  /* keypad replica */
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 56px);
+    grid-template-rows: repeat(3, 56px);
+    gap: 8px; margin: 0 auto; width: fit-content;
+  }
+  .kbtn {
+    width: 56px; height: 56px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; border: 1px solid var(--border);
+    background: var(--card2); color: var(--accent);
+  }
+  .kbtn.stop { background: rgba(220,38,38,0.15);
+    border-color: rgba(220,38,38,0.5); color: var(--red); }
+  .kbtn.empty { background: none; border: none; }
+
+  /* speed slider replica */
+  .speed-demo {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .speed-label { font-size: 12px; color: var(--muted); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; min-width: 56px; }
+  .speed-track {
+    flex: 1; height: 8px; background: #0a1628; border-radius: 4px;
+    position: relative; overflow: visible;
+  }
+  .speed-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #16a34a, #facc15, #ef4444);
+  }
+  .speed-thumb {
+    width: 20px; height: 20px; background: #fff; border-radius: 50%;
+    position: absolute; top: 50%; transform: translateY(-50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .speed-val { font-size: 14px; font-weight: 800; min-width: 30px; text-align: right; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 10px; padding: 14px 16px;
+    margin: 14px 0; font-size: 14px; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout.tip  { background: rgba(250,204,21,0.07); border: 1px solid rgba(250,204,21,0.25);
+    color: #dcc87a; border-left: 3px solid var(--yellow); }
+  .callout.good { background: rgba(74,222,128,0.07);  border: 1px solid rgba(74,222,128,0.25);
+    color: #86efac; border-left: 3px solid var(--green); }
+  .callout.warn { background: rgba(248,113,113,0.07); border: 1px solid rgba(248,113,113,0.25);
+    color: #fca5a5; border-left: 3px solid var(--red); }
+  .callout.info { background: rgba(56,189,248,0.07);  border: 1px solid rgba(56,189,248,0.25);
+    color: #93c5fd; border-left: 3px solid var(--accent); }
+  .callout strong { color: inherit; font-weight: 800; }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; margin: 12px 0; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid rgba(56,189,248,0.06);
+    font-size: 14px; color: #c8daf0; cursor: pointer;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li .ck { width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid rgba(56,189,248,0.3); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 13px; transition: all 0.2s; }
+  .checklist li.checked .ck { background: var(--green); border-color: var(--green); }
+  .checklist li.checked .ck::after { content: '✓'; color: #fff; font-weight: 900; }
+  .checklist li.checked span { text-decoration: line-through; color: var(--muted); }
+
+  /* ── NEXT BTN ── */
+  .next-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #0369a1, #7c3aed);
+    color: #fff; border: none; border-radius: 12px;
+    padding: 14px 28px; font-size: 16px; font-weight: 800;
+    cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 18px rgba(56,189,248,0.3);
+  }
+  .next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(56,189,248,0.4); }
+  .next-btn:active { transform: scale(0.97); }
+  .next-btn.green {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    box-shadow: 0 4px 18px rgba(74,222,128,0.3);
+  }
+
+  kbd {
+    display: inline-block; background: #1a2d4f;
+    border: 1px solid rgba(56,189,248,0.35); border-radius: 6px;
+    padding: 2px 8px; font-family: monospace; font-size: 12px;
+    color: var(--accent); box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+  }
+
+  /* ── FINAL ── */
+  .final-card {
+    background: radial-gradient(circle at 50% 0%, #0a3a1a, #050e1f);
+    border: 2px solid rgba(74,222,128,0.4);
+    border-radius: 20px; padding: 40px 30px;
+    text-align: center; margin-top: 48px;
+  }
+  .final-card .trophy { font-size: 72px; display: block; margin-bottom: 16px;
+    animation: bob 2s ease-in-out infinite; }
+  .final-card h2 { font-size: 28px; font-weight: 900; color: var(--green); margin-bottom: 12px; }
+  .final-card p  { color: #a7f3d0; font-size: 16px; max-width: 420px; margin: 0 auto 24px; }
+  .guide-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.4);
+    border-radius: 10px; padding: 12px 20px; color: var(--accent);
+    text-decoration: none; font-weight: 700; font-size: 15px;
+    transition: background 0.2s;
+  }
+  .guide-link:hover { background: rgba(56,189,248,0.2); }
+
+  /* ── FOOTER ── */
+  footer { text-align: center; padding: 28px 20px;
+    border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+
+  /* ── SCREEN SIZE NOTE ── */
+  @media (max-width: 460px) {
+    .step-title { font-size: 17px; }
+    .fab { width: 70px; height: 70px; }
+    .fab .fab-i { font-size: 22px; }
+  }
+
+  /* ── POSITION LABELS ── */
+  .pos-label {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; margin: 2px;
+  }
+  .pos-left  { background:rgba(2,132,199,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); }
+  .pos-right { background:rgba(220,38,38,0.15);  color:#f87171; border:1px solid rgba(248,113,113,0.3); }
+
+  /* ── GAME GRID ── */
+  .game-picks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .game-pick {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .game-pick:hover { border-color: rgba(56,189,248,0.5); transform: translateY(-2px); }
+  .game-pick .gp-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+  .game-pick .gp-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .game-pick .gp-desc { font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-robot">🤖</span>
+  <h1>Premiers pas avec Maqueen Lab</h1>
+  <p>Suis ces étapes une par une — dans 10 minutes ton robot roule, joue et dessine ses trajets !</p>
+  <span class="hero-time">⏱️ Environ 10 minutes</span>
+</div>
+
+<div class="wrapper">
+
+<!-- PROGRESS -->
+<div class="progress-bar" id="progressBar">
+  <div class="pb-step active" onclick="goTo(0)"><span class="pb-num">🔧</span>Prépare</div>
+  <div class="pb-step" onclick="goTo(1)"><span class="pb-num">🔗</span>Connecte</div>
+  <div class="pb-step" onclick="goTo(2)"><span class="pb-num">⏹</span>Sécurité</div>
+  <div class="pb-step" onclick="goTo(3)"><span class="pb-num">🕹️</span>Pilote</div>
+  <div class="pb-step" onclick="goTo(4)"><span class="pb-num">🚦</span>Wander</div>
+  <div class="pb-step" onclick="goTo(5)"><span class="pb-num">🖍️</span>Dessine</div>
+  <div class="pb-step" onclick="goTo(6)"><span class="pb-num">🎮</span>Joue</div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ÉTAPE 0 — PRÉPARE
+════════════════════════════════════════════════════════ -->
+<div class="step-card active" id="step-0">
+  <div class="step-header" onclick="toggle(0)">
+    <div class="step-number">0</div>
+    <div class="step-title-block">
+      <div class="step-label">Étape 0 — Avant de commencer</div>
+      <div class="step-title">Prépare le matériel 🔧</div>
+    </div>
+    <div class="step-badge">🔧</div>
+  </div>
+  <div class="step-body">
+
+    <div class="demo-box">
+      <div style="font-size:48px; margin-bottom:12px">🤖 + 📱</div>
+      <div style="font-size:15px; color:#c8daf0">Tu as besoin de : <strong>ton robot Maqueen</strong> + <strong>un téléphone ou ordinateur</strong></div>
+    </div>
+
+    <div class="sub-steps">
+      <div class="sub-step">
+        <div class="sub-num">A</div>
+        <div class="sub-text">
+          <strong>Vérifie que le micro:bit est bien enfoncé</strong> dans le port du Maqueen (les connecteurs dorés en bas).
+          <em>Le LED rouge sur le micro:bit doit s'allumer quand tu branches les piles.</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">B</div>
+        <div class="sub-text">
+          <strong>Mets des piles neuves</strong> (ou branche le câble USB si tu utilises la batterie LiPo).
+          <em>Un robot à piles faibles a une conduite imprévisible — piles neuves = conduite parfaite.</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">C</div>
+        <div class="sub-text">
+          <strong>Allume le robot</strong> avec l'interrupteur sous le châssis (glisse-le vers ON).
+          <em>Le micro:bit affiche une icône ou un texte — ça veut dire que le firmware est prêt.</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">D</div>
+        <div class="sub-text">
+          <strong>Ouvre Chrome ou Edge</strong> sur ton téléphone / ordinateur.
+          <em>⚠️ Pas Firefox, pas Safari iPhone — ils ne supportent pas Bluetooth Web.</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:20px">
+      <div class="callout-icon">⚠️</div>
+      <div><strong>Firmware requis :</strong> Le micro:bit doit avoir le firmware Maqueen Lab flashé. Si le robot ne répond pas du tout, va dans l'onglet <strong>Plus → Firmware</strong> pour reflasher.</div>
+    </div>
+
+    <ul class="checklist" id="ck-0">
+      <li onclick="check(this)"><div class="ck"></div><span>Piles en place et robot allumé</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>Micro:bit visible et allumé dans le Maqueen</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>Application ouverte dans Chrome ou Edge</span></li>
+    </ul>
+
+    <button class="next-btn" onclick="next(0)">Tout est prêt — on connecte ! 🔗</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ÉTAPE 1 — CONNEXION
+════════════════════════════════════════════════════════ -->
+<div class="step-card" id="step-1">
+  <div class="step-header" onclick="toggle(1)">
+    <div class="step-number">1</div>
+    <div class="step-title-block">
+      <div class="step-label">Étape 1 — Connexion Bluetooth</div>
+      <div class="step-title">Connecte le robot 🔗</div>
+    </div>
+    <div class="step-badge">🔗</div>
+  </div>
+  <div class="step-body">
+
+    <p style="color:#c8daf0; margin-bottom:16px">
+      L'application se connecte à ton micro:bit via <strong>Bluetooth</strong> directement depuis le navigateur — sans câble, sans installation.
+    </p>
+
+    <div class="demo-box blue-glow">
+      <div style="margin-bottom:12px; font-size:13px; color:var(--muted)">
+        Ce bouton clignote en bleu en <span class="pos-label pos-left">bas à gauche</span> de l'écran quand le robot est déconnecté
+      </div>
+      <div class="fab-row">
+        <div class="fab connect">
+          <span class="fab-i">🔗</span>
+          CONNECT
+        </div>
+      </div>
+      <div style="margin-top:12px; font-size:13px; color:#93c5fd">
+        👆 Clique / tape dessus pour lancer la connexion
+      </div>
+    </div>
+
+    <div class="sub-steps">
+      <div class="sub-step">
+        <div class="sub-num">1</div>
+        <div class="sub-text">
+          <strong>Tape le bouton bleu 🔗 CONNECT</strong> en bas à gauche de l'écran.
+          <em>Il clignote doucement — tu ne peux pas le rater !</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">2</div>
+        <div class="sub-text">
+          <strong>Une boîte de dialogue s'ouvre</strong> : elle liste les appareils Bluetooth à proximité.
+          <em>Si rien n'apparaît, vérifie que le Bluetooth est activé sur ton téléphone/ordinateur.</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">3</div>
+        <div class="sub-text">
+          <strong>Sélectionne "BBC micro:bit"</strong> dans la liste, puis clique <strong>Jumeler</strong> (ou Pair / Connect).
+          <em>Si plusieurs appareils apparaissent, cherche celui qui s'appelle "maqueen" ou "BBC micro:bit [XXXXX]".</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">4</div>
+        <div class="sub-text">
+          <strong>Le bouton bleu disparaît</strong> — c'est bon ! Le robot est connecté. 🎉
+          <em>La batterie s'affiche en haut, les jauges de vitesse et de sonar deviennent actives.</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div><strong>Problème ?</strong> Si le micro:bit n'apparaît pas : appuie sur le bouton <strong>Reset</strong> au dos du micro:bit → attends 3 secondes → réessaie. Le micro:bit doit se rallumer avec l'écran LED.</div>
+    </div>
+
+    <div class="callout good">
+      <div class="callout-icon">✅</div>
+      <div><strong>Connecté avec succès quand :</strong> le bouton 🔗 CONNECT disparaît et le niveau de batterie s'affiche dans l'en-tête.</div>
+    </div>
+
+    <ul class="checklist" id="ck-1">
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai vu la liste Bluetooth s'ouvrir</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai sélectionné "BBC micro:bit" et cliqué Jumeler</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>Le bouton bleu a disparu — robot connecté !</span></li>
+    </ul>
+
+    <button class="next-btn" onclick="next(1)">Connecté ! Découvrons le bouton STOP 🛡️</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ÉTAPE 2 — SÉCURITÉ
+════════════════════════════════════════════════════════ -->
+<div class="step-card" id="step-2">
+  <div class="step-header" onclick="toggle(2)">
+    <div class="step-number">2</div>
+    <div class="step-title-block">
+      <div class="step-label">Étape 2 — La règle n°1</div>
+      <div class="step-title">Le bouton STOP d'urgence ⏹</div>
+    </div>
+    <div class="step-badge">⏹</div>
+  </div>
+  <div class="step-body">
+
+    <div class="callout warn">
+      <div class="callout-icon">🚨</div>
+      <div><strong>À lire en premier !</strong> Avant de faire bouger le robot, sache toujours comment l'arrêter. C'est la règle n°1 de la robotique.</div>
+    </div>
+
+    <div class="demo-box red-glow" style="margin-top:16px">
+      <div style="margin-bottom:12px; font-size:13px; color:var(--muted)">
+        Ce bouton est <strong>toujours visible</strong> en <span class="pos-label pos-right">bas à droite</span>, même quand tu scrolles
+      </div>
+      <div class="fab-row">
+        <div class="fab stop">
+          <span class="fab-i">⏹</span>
+          STOP
+        </div>
+      </div>
+      <div style="margin-top:12px; font-size:13px; color:#fca5a5">
+        👆 Un seul clic = le robot s'arrête immédiatement, quel que soit le mode actif
+      </div>
+    </div>
+
+    <div class="sub-steps" style="margin-top:16px">
+      <div class="sub-step">
+        <div class="sub-num">🖱️</div>
+        <div class="sub-text">
+          <strong>Sur écran</strong> : tape le gros bouton rouge ⏹ STOP en bas à droite.
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">⌨️</div>
+        <div class="sub-text">
+          <strong>Au clavier</strong> : appuie sur <kbd>Échap</kbd> (Escape) — même résultat, encore plus rapide !
+        </div>
+      </div>
+    </div>
+
+    <div class="callout good" style="margin-top:16px">
+      <div class="callout-icon">✅</div>
+      <div>Le bouton STOP <strong>arrête tout</strong> : moteurs, auto-wander, autopilot, macro, tilt, voix… Tout d'un seul coup.</div>
+    </div>
+
+    <div style="background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:18px; margin-top:16px; text-align:center;">
+      <div style="font-size:14px; font-weight:700; color:var(--yellow); margin-bottom:10px">🎯 Exercice — Fais-le maintenant :</div>
+      <div style="font-size:14px; color:#c8daf0;">Appuie sur le bouton rouge ⏹ STOP en bas à droite de l'app.<br>
+      <span style="color:var(--muted); font-size:13px;">Tu dois voir un flash rouge — c'est la confirmation que l'ordre a bien été envoyé.</span></div>
+    </div>
+
+    <ul class="checklist" id="ck-2">
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai trouvé le bouton rouge ⏹ STOP en bas à droite</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai appuyé dessus et vu le flash rouge</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai testé la touche <kbd>Échap</kbd> sur le clavier</span></li>
+    </ul>
+
+    <button class="next-btn" onclick="next(2)">Je sais stopper — maintenant on conduit ! 🕹️</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ÉTAPE 3 — PILOTAGE
+════════════════════════════════════════════════════════ -->
+<div class="step-card" id="step-3">
+  <div class="step-header" onclick="toggle(3)">
+    <div class="step-number">3</div>
+    <div class="step-title-block">
+      <div class="step-label">Étape 3 — Pilotage manuel</div>
+      <div class="step-title">Conduis le robot ! 🕹️</div>
+    </div>
+    <div class="step-badge">🕹️</div>
+  </div>
+  <div class="step-body">
+
+    <p style="color:#c8daf0; margin-bottom:16px">Mets le robot <strong>par terre dans un espace dégagé</strong> avant de continuer.</p>
+
+    <div class="demo-box" style="margin-bottom:20px">
+      <div style="font-size:13px; color:var(--muted); margin-bottom:14px">Le pavé directionnel — dans l'onglet 🤖 Maqueen</div>
+      <div class="keypad">
+        <div class="kbtn empty"></div>
+        <div class="kbtn">⬆️</div>
+        <div class="kbtn empty"></div>
+        <div class="kbtn">⬅️</div>
+        <div class="kbtn stop">■</div>
+        <div class="kbtn">➡️</div>
+        <div class="kbtn empty"></div>
+        <div class="kbtn">⬇️</div>
+        <div class="kbtn empty"></div>
+      </div>
+      <div style="margin-top:14px; font-size:13px; color:#93c5fd">
+        Clique/tape une flèche → le robot bouge. Relâche → il s'arrête.
+      </div>
+    </div>
+
+    <div class="sub-steps">
+      <div class="sub-step">
+        <div class="sub-num">1</div>
+        <div class="sub-text">
+          <strong>Règle la vitesse d'abord</strong> — commence à <strong>100</strong> pour débutant.
+        </div>
+      </div>
+    </div>
+
+    <div class="speed-demo">
+      <div class="speed-label">SPEED</div>
+      <div class="speed-track">
+        <div class="speed-fill" style="width:40%"></div>
+        <div class="speed-thumb" style="left:calc(40% - 10px)"></div>
+      </div>
+      <div class="speed-val" style="color:var(--green)">100</div>
+    </div>
+
+    <div class="sub-steps" style="margin-top:4px">
+      <div class="sub-step">
+        <div class="sub-num">2</div>
+        <div class="sub-text">
+          <strong>Tap ⬆️</strong> — le robot avance. Relâche — il s'arrête.
+          <em>Si le robot tourne au lieu d'aller droit, c'est normal : les moteurs ont de légères différences.</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">3</div>
+        <div class="sub-text">
+          <strong>Essaie ⬅️ et ➡️</strong> pour tourner à gauche et à droite.
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">4</div>
+        <div class="sub-text">
+          <strong>Essaie ⬇️</strong> pour reculer.
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">5</div>
+        <div class="sub-text">
+          <strong>Au clavier ?</strong> Utilise les touches fléchées <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> — même effet, plus fluide !
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">6</div>
+        <div class="sub-text">
+          <strong>Monte la vitesse à 200</strong> quand tu es à l'aise — le robot est nettement plus rapide !
+          <em>⚠️ Vérifie qu'il y a assez d'espace autour.</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div><strong>Carte en direct :</strong> Fais défiler la page jusqu'à la carte SLAM — tu verras le trajet du robot s'afficher en vert en temps réel !</div>
+    </div>
+
+    <ul class="checklist" id="ck-3">
+      <li onclick="check(this)"><div class="ck"></div><span>Robot posé par terre, espace dégagé</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai réglé la vitesse à 100</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai fait avancer, reculer et tourner le robot</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai essayé les touches fléchées au clavier</span></li>
+    </ul>
+
+    <button class="next-btn" onclick="next(3)">Je conduis — on active le mode automatique ! 🚦</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ÉTAPE 4 — AUTO-WANDER
+════════════════════════════════════════════════════════ -->
+<div class="step-card" id="step-4">
+  <div class="step-header" onclick="toggle(4)">
+    <div class="step-number">4</div>
+    <div class="step-title-block">
+      <div class="step-label">Étape 4 — Mode autonome</div>
+      <div class="step-title">Auto-Wander — il roule tout seul ! 🚦</div>
+    </div>
+    <div class="step-badge">🚦</div>
+  </div>
+  <div class="step-body">
+
+    <p style="color:#c8daf0; margin-bottom:16px">
+      En mode <strong>Auto-Wander</strong>, le robot explore tout seul : il avance, détecte les murs et les objets avec son sonar, et tourne pour les éviter.
+    </p>
+
+    <div class="demo-box green-glow">
+      <div style="font-size:42px; margin-bottom:12px">🚦</div>
+      <div style="font-size:15px; font-weight:700; color:var(--green)">Bouton "Auto wander"</div>
+      <div style="font-size:13px; color:var(--muted); margin-top:6px">Dans l'onglet 🤖 Maqueen, section "Drive"</div>
+    </div>
+
+    <div class="sub-steps" style="margin-top:16px">
+      <div class="sub-step">
+        <div class="sub-num">1</div>
+        <div class="sub-text">
+          <strong>Baisse la vitesse à 120</strong> pour commencer — un wander calme est plus impressionnant à regarder.
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">2</div>
+        <div class="sub-text">
+          <strong>Règle "obstacle ≤ 20 cm"</strong> — le robot virera quand un obstacle est à moins de 20 cm.
+          <em>Plus le chiffre est grand, plus le robot vire tôt.</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">3</div>
+        <div class="sub-text">
+          <strong>Clique sur "🚦 Auto wander"</strong> — le robot démarre et explore tout seul !
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">4</div>
+        <div class="sub-text">
+          <strong>Regarde la jauge SONAR</strong> sur le tableau de bord — tu vois la distance à l'obstacle changer en temps réel.
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">5</div>
+        <div class="sub-text">
+          <strong>Pour arrêter</strong> : tap ⏹ STOP ou clique à nouveau sur "Auto wander".
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:16px; margin-top:16px;">
+      <div style="font-size:13px; font-weight:700; color:var(--purple); margin-bottom:10px">🎭 Essaie les personnalités !</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:6px 12px; font-size:13px; color:#fca5a5">⚡ Rapide — fonce et vire vite</span>
+        <span style="background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); border-radius:8px; padding:6px 12px; font-size:13px; color:#93c5fd">🐢 Prudent — lent et doux</span>
+        <span style="background:rgba(192,132,252,0.15); border:1px solid rgba(192,132,252,0.3); border-radius:8px; padding:6px 12px; font-size:13px; color:var(--purple)">🔍 Curieux — balayage large</span>
+        <span style="background:rgba(250,204,21,0.15); border:1px solid rgba(250,204,21,0.3); border-radius:8px; padding:6px 12px; font-size:13px; color:var(--yellow)">😴 Fainéant — s'arrête souvent</span>
+      </div>
+    </div>
+
+    <div class="callout info" style="margin-top:14px">
+      <div class="callout-icon">🗺️</div>
+      <div>Pendant le wander, regarde la <strong>carte SLAM</strong> se remplir en temps réel — le trajet vert s'étend et les obstacles jaunes apparaissent là où le sonar a détecté des murs !</div>
+    </div>
+
+    <ul class="checklist" id="ck-4">
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai activé Auto-Wander et le robot roule seul</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai vu le robot éviter un obstacle</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai essayé au moins 2 personnalités différentes</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai arrêté proprement avec ⏹ STOP</span></li>
+    </ul>
+
+    <button class="next-btn" onclick="next(4)">Impressionnant ! Maintenant je trace mon chemin 🖍️</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ÉTAPE 5 — DESSINE & ROULE
+════════════════════════════════════════════════════════ -->
+<div class="step-card" id="step-5">
+  <div class="step-header" onclick="toggle(5)">
+    <div class="step-number">5</div>
+    <div class="step-title-block">
+      <div class="step-label">Étape 5 — Autopilot</div>
+      <div class="step-title">Dessine &amp; Roule 🖍️</div>
+    </div>
+    <div class="step-badge">🖍️</div>
+  </div>
+  <div class="step-body">
+
+    <p style="color:#c8daf0; margin-bottom:16px">
+      Tu peux <strong>dessiner un chemin</strong> du doigt directement sur la carte — et le robot le suit exactement !
+    </p>
+
+    <div class="demo-box blue-glow">
+      <div style="font-size:13px; color:var(--muted); margin-bottom:10px">Dans la barre de boutons de la carte</div>
+      <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; align-items:center;">
+        <div style="width:46px;height:46px;border-radius:50%;background:rgba(45,212,191,0.15);border:2px solid rgba(45,212,191,0.5);display:flex;align-items:center;justify-content:center;font-size:22px;">🖍️</div>
+        <div style="font-size:13px; color:#c8daf0; text-align:left; max-width:200px">Ce bouton active le mode dessin. Tape dessus, puis trace ton chemin sur la carte.</div>
+      </div>
+    </div>
+
+    <div class="sub-steps" style="margin-top:16px">
+      <div class="sub-step">
+        <div class="sub-num">1</div>
+        <div class="sub-text">
+          <strong>Efface d'abord la carte</strong> (bouton ↺ à droite de la barre) pour repartir de zéro.
+          <em>Le robot revient aussi à la position 0,0.</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">2</div>
+        <div class="sub-text">
+          <strong>Clique sur le bouton 🖍️</strong> dans la barre de la carte — le curseur se transforme en croix.
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">3</div>
+        <div class="sub-text">
+          <strong>Maintiens ton doigt/la souris appuyé·e</strong> sur la carte et <strong>trace une courbe douce</strong> — un grand S ou un arc de cercle.
+          <em>Évite les angles droits très serrés — le robot préfère les courbes !</em>
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">4</div>
+        <div class="sub-text">
+          <strong>Relâche</strong> — le robot démarre immédiatement et suit le tracé violet en pointillés.
+        </div>
+      </div>
+      <div class="sub-step">
+        <div class="sub-num">5</div>
+        <div class="sub-text">
+          <strong>Quand il arrive au bout</strong>, il s'arrête tout seul. Sinon, <kbd>Échap</kbd> pour arrêter.
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--card2); border:1px solid rgba(45,212,191,0.3); border-radius:12px; padding:16px; margin-top:16px;">
+      <div style="font-size:13px; font-weight:700; color:var(--teal); margin-bottom:10px">💾 Sauvegarde et rejoue ton chemin</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:120px; background:var(--card); border-radius:8px; padding:10px; text-align:center;">
+          <div style="font-size:22px; margin-bottom:4px">💾</div>
+          <div style="font-size:12px; color:#c8daf0; font-weight:700">Enregistrer</div>
+          <div style="font-size:11px; color:var(--muted)">Télécharge un fichier .json</div>
+        </div>
+        <div style="flex:1; min-width:120px; background:var(--card); border-radius:8px; padding:10px; text-align:center;">
+          <div style="font-size:22px; margin-bottom:4px">🔁</div>
+          <div style="font-size:12px; color:#c8daf0; font-weight:700">Rejouer</div>
+          <div style="font-size:11px; color:var(--muted)">Relance le même chemin</div>
+        </div>
+        <div style="flex:1; min-width:120px; background:var(--card); border-radius:8px; padding:10px; text-align:center;">
+          <div style="font-size:22px; margin-bottom:4px">📂</div>
+          <div style="font-size:12px; color:#c8daf0; font-weight:700">Charger</div>
+          <div style="font-size:11px; color:var(--muted)">Ouvre un fichier sauvegardé</div>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--muted); margin-top:10px">Ces 3 boutons apparaissent automatiquement après avoir dessiné un chemin.</div>
+    </div>
+
+    <div class="callout tip" style="margin-top:14px">
+      <div class="callout-icon">💡</div>
+      <div><strong>Astuce pro :</strong> Dessine une grande spirale — le robot suit la courbe de l'extérieur vers l'intérieur. C'est impressionnant à filmer !</div>
+    </div>
+
+    <ul class="checklist" id="ck-5">
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai effacé la carte avec ↺</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai dessiné un chemin sur la carte</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>Le robot a suivi le tracé violet</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai sauvegardé le chemin avec 💾</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai rejoué le chemin avec 🔁</span></li>
+    </ul>
+
+    <button class="next-btn" onclick="next(5)">Génial ! On joue maintenant 🎮</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     ÉTAPE 6 — JEUX
+════════════════════════════════════════════════════════ -->
+<div class="step-card" id="step-6">
+  <div class="step-header" onclick="toggle(6)">
+    <div class="step-number">6</div>
+    <div class="step-title-block">
+      <div class="step-label">Étape 6 — Mini-jeux</div>
+      <div class="step-title">Joue et défie tes amis ! 🎮</div>
+    </div>
+    <div class="step-badge">🎮</div>
+  </div>
+  <div class="step-body">
+
+    <p style="color:#c8daf0; margin-bottom:16px">Tu maîtrises les bases — voici les <strong>jeux à essayer en premier</strong>. Ils sont dans l'onglet 🤖 Maqueen, section "Jeux".</p>
+
+    <div class="game-picks">
+
+      <div class="game-pick">
+        <span class="gp-icon">🛰️</span>
+        <div class="gp-name">SLAM the Room</div>
+        <div class="gp-desc">Explore un maximum de cases en 60 secondes. Plus tu couvres de terrain, plus ton score est élevé.</div>
+      </div>
+
+      <div class="game-pick">
+        <span class="gp-icon">🎯</span>
+        <div class="gp-name">Drift Champion</div>
+        <div class="gp-desc">Conduis le plus droit possible. La boussole mesure ton écart — score max = 100 !</div>
+      </div>
+
+      <div class="game-pick">
+        <span class="gp-icon">⚽</span>
+        <div class="gp-name">Robot Soccer</div>
+        <div class="gp-desc">2 équipes, le robot pousse une balle. Compte les buts sur le scoreboard !</div>
+      </div>
+
+      <div class="game-pick">
+        <span class="gp-icon">📐</span>
+        <div class="gp-name">Math the Distance</div>
+        <div class="gp-desc">Calcule d = v × t avant de faire rouler le robot pour vérifier ta réponse. Science + robot !</div>
+      </div>
+
+      <div class="game-pick">
+        <span class="gp-icon">👯</span>
+        <div class="gp-name">Co-Pilot 2 joueurs</div>
+        <div class="gp-desc">Un enfant accélère avec W/S, l'autre tourne avec J/L. Obligés de coopérer !</div>
+      </div>
+
+      <div class="game-pick">
+        <span class="gp-icon">🏁</span>
+        <div class="gp-name">Line Race</div>
+        <div class="gp-desc">Fais des tours de circuit et bats ton meilleur temps. Construis une piste avec du scotch !</div>
+      </div>
+
+    </div>
+
+    <div class="callout info" style="margin-top:16px">
+      <div class="callout-icon">💡</div>
+      <div>Chaque jeu sauvegarde ton <strong>meilleur score</strong> automatiquement — reviens le lendemain pour le battre !</div>
+    </div>
+
+    <ul class="checklist" id="ck-6">
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai joué à SLAM the Room</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai joué à au moins un autre jeu</span></li>
+      <li onclick="check(this)"><div class="ck"></div><span>J'ai battu un score ou défié quelqu'un !</span></li>
+    </ul>
+
+    <button class="next-btn green" onclick="finish()">J'ai tout fait — voir le récapitulatif 🏆</button>
+  </div>
+</div>
+
+<!-- ════════════ FINAL ════════════ -->
+<div class="final-card" id="final" style="display:none">
+  <span class="trophy">🏆</span>
+  <h2>Mission accomplie !</h2>
+  <p>Tu sais maintenant connecter le robot, le piloter, le faire rouler tout seul, dessiner ses trajets et jouer. Tu es un vrai pilote Maqueen !</p>
+
+  <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:24px;">
+    <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:10px 16px; font-size:13px; color:var(--green);">✅ Connexion Bluetooth</div>
+    <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:10px 16px; font-size:13px; color:var(--green);">✅ Bouton STOP</div>
+    <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:10px 16px; font-size:13px; color:var(--green);">✅ Pilotage manuel</div>
+    <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:10px 16px; font-size:13px; color:var(--green);">✅ Auto-Wander</div>
+    <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:10px 16px; font-size:13px; color:var(--green);">✅ Dessine &amp; Roule</div>
+    <div style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:10px; padding:10px 16px; font-size:13px; color:var(--green);">✅ Mini-jeux</div>
+  </div>
+
+  <div style="margin-bottom:16px; font-size:15px; color:#a7f3d0; font-weight:700">Et maintenant ?</div>
+  <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+    <a href="guide.html" target="_blank" class="guide-link">📖 Guide complet — toutes les fonctions</a>
+    <a href="index.html" class="guide-link" style="background:rgba(74,222,128,0.12); border-color:rgba(74,222,128,0.4); color:var(--green)">🤖 Retour à l'application</a>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+
+<footer>
+  <p>🤖 <strong>Maqueen Lab</strong> — Guide premiers pas</p>
+  <p style="margin-top:6px; font-size:12px; color:#4a6a8a">Robot DFRobot Maqueen + BBC micro:bit · Utilise Chrome ou Edge</p>
+</footer>
+
+<script>
+  const TOTAL = 7;
+  let current = 0;
+
+  function toggle(n) {
+    const card = document.getElementById('step-'+n);
+    if (card.classList.contains('done') || card.classList.contains('active')) {
+      // collapse if already open and not current
+    }
+  }
+
+  function goTo(n) {
+    // Allow jumping back to any step
+    for (let i = 0; i < TOTAL; i++) {
+      const card = document.getElementById('step-'+i);
+      if (!card) continue;
+      if (i === n) {
+        card.classList.add('active');
+        card.classList.remove('done');
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (i < n) {
+        card.classList.remove('active');
+        card.classList.add('done');
+      } else {
+        card.classList.remove('active', 'done');
+      }
+    }
+    current = n;
+    updateProgress();
+  }
+
+  function next(n) {
+    // Mark current as done
+    const card = document.getElementById('step-'+n);
+    card.classList.remove('active');
+    card.classList.add('done');
+
+    const nextCard = document.getElementById('step-'+(n+1));
+    if (nextCard) {
+      nextCard.classList.add('active');
+      nextCard.classList.remove('done');
+      setTimeout(() => nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+      current = n + 1;
+    }
+    updateProgress();
+  }
+
+  function finish() {
+    const card = document.getElementById('step-6');
+    card.classList.remove('active');
+    card.classList.add('done');
+    const fin = document.getElementById('final');
+    fin.style.display = '';
+    setTimeout(() => fin.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const steps = document.querySelectorAll('.pb-step');
+    steps.forEach((s, i) => {
+      s.classList.remove('done', 'active');
+      const card = document.getElementById('step-'+i);
+      if (!card) return;
+      if (card.classList.contains('done')) s.classList.add('done');
+      else if (card.classList.contains('active')) s.classList.add('active');
+    });
+  }
+
+  function check(li) {
+    li.classList.toggle('checked');
+  }
+
+  // Save checklist state across page reloads (optional nice touch)
+  updateProgress();
+</script>
+
+</body>
+</html>

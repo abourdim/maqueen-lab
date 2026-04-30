@@ -1,0 +1,361 @@
+<!doctype html>
+<!-- REWRITE PER PRODUCT — DO NOT SHIP AS-IS · TRANSLATE TO ARABIC -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Maqueen Lab — دليل Etsy في دقيقة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Tajawal:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020617; --panel: #0b1226; --panel2: #101a33;
+    --ink: #e2e8f0; --muted: #94a3b8;
+    --accent: #22c55e; --accent2: #22d3ee; --hook: #f59e0b;
+    --demo: #22d3ee; --payoff: #22c55e; --cta: #ef4444;
+    --border: rgba(34,197,94,.18);
+    --shadow: 0 4px 24px rgba(0,0,0,.5);
+    --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    --sans: 'Tajawal', ui-sans-serif, system-ui, sans-serif;
+    --display: 'Orbitron', 'Tajawal', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; }
+  body { max-width: 1080px; margin: 0 auto; padding: 24px 18px 80px; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed rgba(34,197,94,.4); }
+  a:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
+
+  .slate {
+    background:
+      radial-gradient(ellipse at top left, rgba(34,211,238,.14), transparent 60%),
+      linear-gradient(180deg, var(--panel2), var(--panel));
+    border: 2px solid var(--border);
+    border-radius: 18px; padding: 36px 28px 28px;
+    text-align: center; margin-bottom: 22px; box-shadow: var(--shadow);
+  }
+  .slate-clap { font-size: 56px; line-height: 1; margin-bottom: 8px; filter: drop-shadow(0 0 18px rgba(34,197,94,.5)); }
+  .slate h1 { font-family: var(--display); font-size: 2rem; letter-spacing: 1.4px; margin: 6px 0 4px; color: var(--accent); font-weight: 900; }
+  .slate h1 span { color: var(--accent2); }
+  .slate .tag { color: var(--muted); font-size: .92rem; letter-spacing: .8px; }
+  .slate .meta { display: flex; justify-content: center; gap: 24px; margin-top: 16px; font-size: .82rem; color: var(--muted); flex-wrap: wrap; }
+  .slate .meta b { color: var(--ink); font-weight: 700; }
+
+  .toc {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11,18,38,.93); backdrop-filter: blur(8px);
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 8px 12px; margin-bottom: 22px;
+    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  }
+  .toc a {
+    background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.25);
+    border-radius: 10px; padding: 6px 12px; font-size: .82rem; font-weight: 600;
+    border-bottom: none;
+  }
+  .toc a:hover { background: rgba(34,197,94,.2); color: var(--accent); }
+
+  .slug {
+    font-family: var(--mono); letter-spacing: 1.3px;
+    font-size: .82rem; color: var(--accent);
+    background: linear-gradient(270deg, rgba(34,197,94,.15), transparent);
+    border-right: 4px solid var(--accent); padding: 8px 12px;
+    margin: 28px 0 14px; border-radius: 8px 0 0 8px;
+  }
+  h2 { font-family: var(--display); letter-spacing: 1px; color: var(--accent); margin: 8px 0 12px; font-size: 1.5rem; }
+  h3 { color: var(--ink); margin-top: 18px; font-size: 1.12rem; }
+  h4 { color: var(--accent2); font-size: 1rem; margin: 14px 0 6px; font-family: var(--display); }
+  p { margin: 8px 0; }
+
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+
+  .checklist { list-style: none; padding: 0; margin: 0; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: 8px; transition: background .15s; cursor: pointer; user-select: none; }
+  .checklist li:hover { background: rgba(34,197,94,.07); }
+  .checklist input[type=checkbox] { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+  .checklist li.checked label { color: var(--muted); text-decoration: line-through; opacity: .65; }
+  .checklist label { cursor: pointer; flex: 1; }
+  .where { color: var(--muted); font-size: .82rem; display: block; margin-top: 2px; }
+
+  .scene { background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--border); border-radius: 14px; margin: 14px 0; overflow: hidden; }
+  .scene-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(0,0,0,.3); border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: .82rem; letter-spacing: 1.3px; }
+  .scene-time { color: var(--accent); font-weight: 700; font-size: 1.05rem; }
+  .scene-phase { padding: 3px 10px; border-radius: 999px; font-size: .72rem; font-weight: 800; }
+  .phase-hook { background: rgba(245,158,11,.18); color: var(--hook); border: 1px solid rgba(245,158,11,.4); }
+  .phase-demo { background: rgba(34,211,238,.18); color: var(--demo); border: 1px solid rgba(34,211,238,.4); }
+  .phase-payoff { background: rgba(34,197,94,.18); color: var(--payoff); border: 1px solid rgba(34,197,94,.4); }
+  .phase-cta { background: rgba(239,68,68,.18); color: var(--cta); border: 1px solid rgba(239,68,68,.4); }
+  .scene-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .say { background: rgba(0,0,0,.3); border-right: 3px solid var(--accent); border-radius: 10px 0 0 10px; padding: 12px 14px; }
+  .say-label { font-family: var(--mono); font-size: .72rem; letter-spacing: 1.4px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+  .do { background: rgba(34,211,238,.08); border-right: 3px solid var(--accent2); border-radius: 10px 0 0 10px; padding: 12px 14px; font-family: var(--sans); font-size: .92rem; color: var(--ink); }
+  .do-label { font-size: .72rem; letter-spacing: 1.4px; color: var(--accent2); font-weight: 700; margin-bottom: 6px; }
+
+  .copybox { position: relative; background: #050b18; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px 12px 54px; font-family: var(--sans); font-size: .95rem; color: var(--accent); white-space: pre-wrap; margin: 8px 0; }
+  .copybtn { position: absolute; top: 6px; left: 6px; background: var(--accent); color: #05140a; border: none; border-radius: 6px; padding: 4px 10px; font-size: .72rem; font-weight: 800; cursor: pointer; font-family: var(--display); letter-spacing: .5px; }
+  .copybtn:hover { background: var(--accent2); color: #03141a; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th, td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: right; font-size: .95rem; }
+  th { color: var(--accent2); font-family: var(--display); font-size: .82rem; letter-spacing: .8px; }
+  tr:hover td { background: rgba(34,197,94,.04); }
+
+  code { background: rgba(34,197,94,.12); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-family: var(--mono); font-size: .88em; direction: ltr; display: inline-block; }
+  kbd { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; font-family: var(--mono); font-size: .82em; color: var(--accent); direction: ltr; display: inline-block; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .pill { background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.3); color: var(--accent2); padding: 4px 10px; border-radius: 999px; font-size: .85rem; font-weight: 600; font-family: var(--sans); }
+
+  pre { direction: ltr; text-align: left; }
+
+  @media (max-width: 640px) { body { padding: 14px 10px; } .slate h1 { font-size: 1.5rem; } h2 { font-size: 1.2rem; } }
+
+  .lang-strip { display: flex; justify-content: center; gap: 8px; margin: 0 0 14px; font-family: var(--mono); font-size: .78rem; }
+  .lang-strip a { background: rgba(34,211,238,.08); border: 1px solid rgba(34,211,238,.28); border-radius: 8px; padding: 4px 12px; color: var(--accent2); letter-spacing: 1.2px; font-weight: 700; border-bottom: 1px solid rgba(34,211,238,.28); }
+  .lang-strip a.active { background: rgba(34,197,94,.18); border-color: var(--accent); color: var(--accent); }
+  .lang-strip a:hover { background: rgba(34,211,238,.22); color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="lang-strip">
+  <a href="etsy-playbook.html">EN</a>
+  <a href="etsy-playbook-fr.html">FR</a>
+  <a href="etsy-playbook-ar.html" class="active">AR</a>
+</div>
+
+<div class="slate">
+  <div class="slate-clap">🎬</div>
+  <div class="tag">— دليل Etsy · الإصدار 1.0.2 —</div>
+  <h1>Maqueen Lab</h1>
+  <div class="tag">عرض المنتج في دقيقة واحدة · مقتطفات جاهزة للنسخ</div>
+  <div class="meta"><span><b>الصيغة:</b> عمودي 9:16</span><span><b>المدة:</b> ≤ 60 ثانية</span><span><b>الهدف:</b> تحويل المتصفحين إلى مشترين</span></div>
+</div>
+
+<div class="toc">
+  <a href="#preflight">✅ التحضير</a>
+  <a href="#arc">🎬 قوس 60 ثانية</a>
+  <a href="#script">📜 النص</a>
+  <a href="#listing">🛒 نص الإعلان</a>
+  <a href="#tags">🏷 الوسوم</a>
+  <a href="#images">📸 الصور</a>
+  <a href="#mistakes">⚠️ الأخطاء</a>
+</div>
+
+<!-- ═══════════ التحضير ═══════════ -->
+<div class="slug" id="preflight">قائمة التحقق قبل التصوير · مرة واحدة لكل جلسة</div>
+<h2>قبل الضغط على تسجيل</h2>
+<div class="card">
+  <ul class="checklist" onclick="var li=event.target.closest('li');if(li)li.classList.toggle('checked')">
+    <li><input type="checkbox"><label>جهاز micro:bit V2 يعمل ويعرض أيقونة <kbd>X</kbd><span class="where">إن لم يكن كذلك ← أعد تحميل <code>makecode.ts</code></span></label></li>
+    <li><input type="checkbox"><label>Chrome أو Edge مفتوح، وملف <code>index.html</code> محمَّل<span class="where">Safari وFirefox وiOS لن تعمل</span></label></li>
+    <li><input type="checkbox"><label>BLE متصل — شارة الحالة <strong>خضراء</strong><span class="where">اضغط 🔗 اتصال، ثم اختر BBC micro:bit من النافذة</span></label></li>
+    <li><input type="checkbox"><label>تم اختيار السمة — <strong>Neon</strong> تبدو الأفضل أمام الكاميرا<span class="where">الرأس ← قائمة رولر الطلاء</span></label></li>
+    <li><input type="checkbox"><label>المحرِّك موصول بـ P1 (عند عرض الذراع الروبوتية أو العربة)</label></li>
+    <li><input type="checkbox"><label>علامة تبويب SLAM map مفتوحة، مع اختيار العربة أو الذراع<span class="where">علامة التبويب 6 ← قائمة النماذج</span></label></li>
+    <li><input type="checkbox"><label>الهاتف بوضع 9:16 على ترايبود، مضاء من الأمام</label></li>
+    <li><input type="checkbox"><label>المكتب مرتَّب — اللوحة وقطعة واحدة فقط في الإطار</label></li>
+    <li><input type="checkbox"><label>قراءة النص بصوت عالٍ مرة واحدة — بزمن أقل من 55 ثانية</label></li>
+  </ul>
+</div>
+
+<!-- ═══════════ القوس ═══════════ -->
+<div class="slug" id="arc">قوس الستين ثانية</div>
+<h2>البنية</h2>
+<div class="card">
+  <pre style="color:var(--accent2);font-family:var(--mono);font-size:.9rem;line-height:1.7;margin:0">
+ 0–3 s   HOOK        «Watch what this micro:bit does in 60 seconds.»
+ 3–10 s  CONTEXT     Board on-screen, X icon → status turns green.
+10–35 s  DEMO        Tilt → 3D model follows. Press A → LED heart. Servo swings.
+35–50 s  PAYOFF      Zoom on live graph + 3D model mirroring real board.
+50–55 s  CTA         «Full kit in my shop — link below.»
+55–60 s  END FRAME   Logo + handle frozen for the loop preview.</pre>
+</div>
+
+<!-- ═══════════ النص ═══════════ -->
+<div class="slug" id="script">النص مشهدًا مشهدًا</div>
+<!-- REWRITE PER PRODUCT — المشاهد الستة أدناه هي قوالب فارغة.
+     املأ كل سطر DIRE/FAIRE بنص خاص بـ Maqueen Lab قبل التصوير.
+     لا تُرسل هذا الملف إلى الإنتاج مع النصوص المائلة كما هي. -->
+
+<h2>قالب 6 مشاهد — Maqueen Lab</h2>
+<p class="aka" style="color:#f59e0b;font-weight:700;">⚠️ المشاهد الستة أدناه قوالب فارغة. استبدل كل سطر بفعلٍ قابلٍ للتصوير خاصٍ بـ Maqueen Lab قبل تسجيل الفيديو.</p>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:00–00:03</span><span class="scene-phase phase-hook">الخطاف</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 قل</div><em>[جملة الجذب — ثانية واحدة، وعد واضح يوقف التمرير]</em></div>
+    <div class="do"><div class="do-label">🎬 افعل</div><em>[لقطة الجذب — ما يظهر على الشاشة أثناء الجملة]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:03–00:10</span><span class="scene-phase phase-demo">السياق</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 قل</div><em>[لمن هذا المنتج، ما المشكلة التي يحلّها]</em></div>
+    <div class="do"><div class="do-label">🎬 افعل</div><em>[لقطة الإعداد — الاتصال، أول شاشة مفيدة]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:10–00:25</span><span class="scene-phase phase-demo">العرض 1</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 قل</div><em>[لحظة الإبهار الأولى — ميزة رئيسية لـ Maqueen Lab]</em></div>
+    <div class="do"><div class="do-label">🎬 افعل</div><em>[لقطة الفعل — 15 ثانية من الحركة المرئية]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:25–00:40</span><span class="scene-phase phase-demo">العرض 2</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 قل</div><em>[لحظة الإبهار الثانية — ميزة/حالة استخدام ثانية]</em></div>
+    <div class="do"><div class="do-label">🎬 افعل</div><em>[لقطة الفعل — 15 ثانية]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:40–00:50</span><span class="scene-phase phase-payoff">المكافأة</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 قل</div><em>[لماذا هذا مهم — الوقت الموفّر، المهارة المكتسبة، الأمان]</em></div>
+    <div class="do"><div class="do-label">🎬 افعل</div><em>[الشاشة التي تحمل الرسالة — تصدير، التقاط، نتيجة مرئية]</em></div>
+  </div>
+</div>
+
+<div class="scene">
+  <div class="scene-head"><span class="scene-time">00:50–00:60</span><span class="scene-phase phase-cta">CTA + إطار الختام</span></div>
+  <div class="scene-body">
+    <div class="say"><div class="say-label">🎙 قل</div><em>[الدعوة للشراء — الطقم الكامل + الرابط في الوصف]</em></div>
+    <div class="do"><div class="do-label">🎬 افعل</div><em>[طبقة الشعار، إطار ختام ثابت لـ 3 ثوانٍ]</em></div>
+  </div>
+</div>
+
+<!-- ═══════════ نص الإعلان ═══════════ -->
+<div class="slug" id="listing">نص إعلان جاهز للنسخ</div>
+<h2>عنوان Etsy (140 حرفًا كحد أقصى)</h2>
+<div class="copybox">Maqueen Lab — لوحة تحكم BLE للمعلمين والأطفال · حساسات · محركات · مخطط حي · نماذج 3D · بلا تثبيت · Chrome / Edge<button class="copybtn" onclick="navigator.clipboard.writeText(this.previousSibling.textContent.trim())">نسخ</button></div>
+
+<h2>الوصف المختصر (أول 160 حرفًا — تظهر في البحث)</h2>
+<div class="copybox">لوحة تحكم BLE داخل المتصفح للوحة DFRobot Maqueen Lite v4 (micro:bit V2). حساسات ومحركات ومخططات حية ونماذج ثلاثية الأبعاد ويد تحكم — كلها من Chrome. بلا تثبيت وبلا حساب.<button class="copybtn" onclick="navigator.clipboard.writeText(this.previousSibling.textContent.trim())">نسخ</button></div>
+
+<h2>الوصف الكامل</h2>
+<div class="copybox">🎮 Maqueen Lab — لوحة تحكم BLE تعمل داخل المتصفح للوحة DFRobot Maqueen Lite v4 (micro:bit V2).
+
+افتح ملف HTML واحدًا في Chrome أو Edge، واقترن عبر Bluetooth، وافتح 8 علامات تبويب من المرح التعليمي (STEM) التفاعلي — بلا تثبيت، بلا حساب، بلا خادم خلفي، بلا تتبع.
+
+ما ستحصل عليه
+• 🎛 شبكة LED + أيقونات جاهزة + نص متحرك
+• 📡 حساسات مباشرة: الحرارة، الإضاءة، الصوت، مقياس التسارع، البوصلة، اللمس
+• ⚙️ محركان (P1 + P2) مع منزلقات ومؤشرات وضبط وأزرار إيقاف
+• 🎮 يد تحكم D-pad للروبوتات والألعاب
+• 📈 [TODO — ميزة منتجك الرئيسية]• 🎲 20 ميزة تفاعلية (Three.js): micro:bit، العربة، الذراع، التوازن، الطقس
+• 🎨 4 سمات (Stealth · Neon · Arctic · Blaze) + 3 لغات (EN · FR · AR مع دعم RTL كامل)
+• 📱 PWA — قابل للتثبيت ويعمل بدون إنترنت
+• 👶 وضع المبتدئ + 🧙 وضع الخبير
+
+محتويات التنزيل
+• index.html — التطبيق الكامل
+• makecode.ts — برنامج micro:bit الثابت (تُحمَّل مرة واحدة من MakeCode)
+• SETUP.md — بداية سريعة في 5 دقائق
+• docs/ — دليل مصور، ومرجع سريع، وأسئلة شائعة، ودليل Etsy
+• LICENSE — رخصة مستخدم وحيد للاستخدام الشخصي / الصفي
+
+المتطلبات
+• DFRobot Maqueen Lite v4 (micro:bit V2) (V1 يعمل لكن بدون حساس صوت)
+• Chrome أو Edge على سطح المكتب (أو Chrome على أندرويد)
+• تفعيل Bluetooth
+• HTTPS أو file:// — النقر المزدوج على HTML يكفي
+
+لمن هو موجَّه
+المعلمون الذين يديرون ورش STEM · الأسر التي تدرّس منزليًا · نوادي الروبوتات · صانعو النماذج الأولية لمشاريع BLE · كل مهتم بـ micro:bit.
+
+الخصوصية أولًا
+لا شيء يغادر جهازك. بلا تتبع، بلا تسجيل دخول، بلا سحابة. جميع المعايرات والتسجيلات والإعدادات المسبقة تبقى في localStorage للمتصفح وعلى قرصك.
+
+تحديثات مدى الحياة
+كل إصدار يُطرح من هذا الإعلان هو ملكك للأبد. أعد تنزيل أحدث ZIP في أي وقت من صفحة مشترياتك في Etsy.
+
+قرصنة سعيدة! 🚀🎮🤖<button class="copybtn" onclick="navigator.clipboard.writeText(this.previousSibling.textContent.trim())">نسخ</button></div>
+
+<h2>فئات الأسعار</h2>
+<table>
+  <tr><th>الفئة</th><th>لمن</th><th>السعر</th></tr>
+  <tr><td>مستخدم وحيد</td><td>معلم / عائلة / صانع واحد</td><td><code>{{PRICE}}</code></td></tr>
+  <tr><td>صف / موقع</td><td>حتى 30 معلمًا في مدرسة واحدة، طلاب بلا حدود</td><td><code>{{PRICE}}</code></td></tr>
+  <tr><td>منطقة / OEM</td><td>مواقع متعددة — تواصل عبر طلب Etsy</td><td>حسب الطلب</td></tr>
+</table>
+
+<!-- ═══════════ الوسوم ═══════════ -->
+<div class="slug" id="tags">الوسوم والمواد</div>
+<h2>13 وسمًا لـ Etsy (20 حرفًا لكل وسم)</h2>
+<div class="pills">
+  <span class="pill">micro:bit</span>
+  <span class="pill">BLE</span>
+  <span class="pill">bluetooth</span>
+  <span class="pill">تعليم</span>
+  <span class="pill">STEM</span>
+  <span class="pill">روبوتات</span>
+  <span class="pill">برمجة أطفال</span>
+  <span class="pill">مورد للمعلم</span>
+  <span class="pill">حساسات</span>
+  <span class="pill">محركات</span>
+  <span class="pill">غرفة صف</span>
+  <span class="pill">تعليم منزلي</span>
+  <span class="pill">ميكرسبيس</span>
+</div>
+
+<h2>المواد (ما الذي يشغّله)</h2>
+<div class="pills">
+  <span class="pill">HTML5</span>
+  <span class="pill">JavaScript</span>
+  <span class="pill">Web Bluetooth</span>
+  <span class="pill">[render lib]</span>
+  <span class="pill">[3D lib if any]</span>
+  <span class="pill">PWA</span>
+  <span class="pill">MakeCode</span>
+  <span class="pill">TypeScript</span>
+</div>
+
+<h2>كلمات SEO</h2>
+<p><code>browser-based</code> · <code>no-install</code> · <code>privacy-first</code> · <code>offline-capable</code> · <code>web bluetooth</code> · <code>teacher resource</code> · <code>STEM workshop</code> · <code>micro:bit V2</code></p>
+
+<!-- ═══════════ الصور ═══════════ -->
+<div class="slug" id="images">ترتيب الصور السبع للإعلان</div>
+<h2>تسلسل الصور (Etsy يعرض 1 و 2 بأكبر حجم)</h2>
+<div class="card">
+  <ol style="padding-right:22px;line-height:2">
+    <li><strong>الصورة البطل</strong> — micro:bit حقيقي + لقطة شاشة مقسومة للحاسوب تُظهر النموذج ثلاثي الأبعاد وهو يعكس ميل اللوحة. عنوان بخط Orbitron فوقها.</li>
+    <li><strong>نظرة عامة على الألسنة</strong> — لقطة شبكية لجميع الألسنة الثماني مع رموزها.</li>
+    <li><strong>[TODO — لقطة قريبة لأهم ميزة]</strong></li>
+    <li><strong>[TODO — لقطة مقسومة تُظهر ميزتين رئيسيتين]</strong></li>
+    <li><strong>يد تمسك اللوحة</strong> — محرك حقيقي موصول بـ P1، والمنزلقات على الشاشة في الخلفية.</li>
+    <li><strong>عيّنة السمات</strong> — شبكة 2×2: Stealth · Neon · Arctic · Blaze.</li>
+    <li><strong>بطاقة نصية</strong> — «رخصة مستخدم وحيد · تحديثات مدى الحياة · بلا سحابة · Chrome / Edge» على تدرج داكن.</li>
+  </ol>
+</div>
+
+<!-- ═══════════ الأخطاء ═══════════ -->
+<div class="slug" id="mistakes">تجنَّب ذلك</div>
+<h2>أخطاء شائعة</h2>
+<table>
+  <tr><th>❌ لا تفعل</th><th>✅ افعل</th></tr>
+  <tr><td>ابدأ بـ «مرحبًا، أنا…» مع 10 ثوانٍ من المقدمة</td><td>افتح باللوحة الحقيقية وهي تُميل نموذجًا ثلاثي الأبعاد في أول 3 ثوانٍ</td></tr>
+  <tr><td>التصوير بالوضع الأفقي (16:9)</td><td>عمودي 9:16 — Etsy يشغّل تلقائيًا على الجوال</td></tr>
+  <tr><td>التحدث فوق رسوم متحركة مزدحمة</td><td>اترك الصورة تتنفس لثانية، ثم اشرح</td></tr>
+  <tr><td>نسيان الترجمة (Etsy يشغّل كتم الصوت)</td><td>ادمج الترجمة أو أضف نصًا في كل مشهد</td></tr>
+  <tr><td>عرض iOS / Safari في الفيديو</td><td>اعرض دائمًا على Chrome/Edge — مستخدمو iPhone سيشترون ثم يطلبون استرجاع المبلغ</td></tr>
+  <tr><td>تخطي CTA</td><td>قل «الرابط في الأسفل» في آخر 5 ثوانٍ في كل مرة</td></tr>
+</table>
+
+<!-- ═══════════ بطاقة سريعة ═══════════ -->
+<div class="slug">بطاقة الجيب المرجعية</div>
+<div class="copybox">قبل     V2 يعمل (أيقونة X) · Chrome مفتوح · BLE أخضر · هاتف 9:16
+صوِّر   خطاف في 3 ثوانٍ · إمالة ← انعكاس 3D · محرك يتحرك · محاكاة مخطط · CTA
+بعد     قصّ إلى 55 ثانية · ترجمة مدمجة · أول إطار = المصغَّرة
+أعلن    عنوان · وصف 160 حرفًا · 13 وسمًا · 7 صور · فئات الأسعار</div>
+
+<p style="text-align:center;margin-top:40px;color:var(--muted);font-size:.85rem">
+  Maqueen Lab v0.1.54 — دليل Etsy في دقيقة · اطبع بحجم A4 · غلّفه · واحتفظ به بجانب معدات التصوير
+</p>
+
+</body>
+</html>

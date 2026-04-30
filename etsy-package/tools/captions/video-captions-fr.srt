@@ -1,0 +1,37 @@
+1
+00:00:00,000 --> 00:00:03,000
+Votre micro:bit devient un terrain de jeu —
+dans le navigateur, en 60 secondes.
+
+2
+00:00:03,000 --> 00:00:10,000
+Une page, un clic, connecté.
+
+3
+00:00:10,000 --> 00:00:20,000
+Capteurs en direct — inclinez-le,
+le modèle 3D s'incline aussi.
+
+4
+00:00:20,000 --> 00:00:30,000
+Appuyez sur A — les LEDs réagissent.
+Glissez un curseur — le servo bouge.
+
+5
+00:00:30,000 --> 00:00:40,000
+Graphique en direct avec enregistrement,
+rejeu, CSV. Un labo dans un onglet.
+
+6
+00:00:40,000 --> 00:00:50,000
+4 thèmes, 3 langues, fonctionne hors ligne,
+sans installation, sans compte.
+
+7
+00:00:50,000 --> 00:00:55,000
+Lien ci-dessous — mises à jour à vie,
+enseignants et enfants bienvenus.
+
+8
+00:00:55,000 --> 00:01:00,000
+Bon hacking.

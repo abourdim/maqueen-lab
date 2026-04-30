@@ -1,0 +1,91 @@
+{
+  "_comment": "Per-language strings for the poster (A3 portrait) and flyer (A4 portrait). Used by generate-print.mjs. Screenshots referenced are resolved from output/<lang>/screenshots/.",
+
+  "common": {
+    "url": "abourdim.github.io/maqueen-lab",
+    "qrUrl": "https://abourdim.github.io/maqueen-lab/?utm_source=etsy&utm_medium=print&utm_campaign=poster",
+    "screenshots": {
+      "teacher": "screenshot-audience-teacher-sensors.png",
+      "kid": "screenshot-audience-kid-3d.png",
+      "maker": "screenshot-audience-maker-3d.png"
+    }
+  },
+
+  "en": {
+    "brand": "maqueen-lab",
+    "posterTitle": "Every sensor.\nLive in every browser.",
+    "posterKicker": "WEB BLUETOOTH · MICRO:BIT V2",
+    "posterSubtitle": "Classroom-ready control panel. 30 laptops. Zero install.",
+    "features": [
+      { "icon": "⚡", "h": "Live sensors", "p": "Temperature, sound, light, accelerometer, compass — all streaming in real time." },
+      { "icon": "🎛️", "h": "Full control", "p": "Paint LEDs, spin servos, drive motors. Record CSV sessions for lessons." },
+      { "icon": "🧊", "h": "Live 3D mirror", "p": "A photoreal board tilts with your micro:bit. Kids see the physics click." }
+    ],
+    "steps": [
+      "Plug in the micro:bit (USB or battery).",
+      "Open Chrome or Edge on any laptop.",
+      "Visit the URL below — no install.",
+      "Click Connect, pick your board.",
+      "Dot goes green. You're live."
+    ],
+    "stepsHeader": "Get started in 60 seconds",
+    "qrCaption": "Scan to try the live demo",
+    "audienceLine": "For teachers, kids, and makers.",
+    "footerLeft": "Chrome / Edge · Works offline · No account",
+    "footerRight": "MakeCode firmware · Open source friendly",
+    "flyerTagline": "The browser IS the IDE.",
+    "motto": "Every scientist started by asking \"what happens if I press this?\""
+  },
+
+  "fr": {
+    "brand": "maqueen-lab",
+    "posterTitle": "Chaque capteur,\nen direct dans le navigateur.",
+    "posterKicker": "WEB BLUETOOTH · MICRO:BIT V2",
+    "posterSubtitle": "Panneau de contrôle prêt pour la classe. 30 ordinateurs. Zéro installation.",
+    "features": [
+      { "icon": "⚡", "h": "Capteurs en direct", "p": "Température, son, lumière, accéléromètre, boussole — tout en temps réel." },
+      { "icon": "🎛️", "h": "Contrôle complet", "p": "Peindre les LEDs, faire tourner les servos, piloter les moteurs. Export CSV." },
+      { "icon": "🧊", "h": "Miroir 3D", "p": "Une carte photoréaliste s'incline avec votre micro:bit. La physique prend vie." }
+    ],
+    "steps": [
+      "Branchez le micro:bit (USB ou pile).",
+      "Ouvrez Chrome ou Edge.",
+      "Visitez l'URL ci-dessous — rien à installer.",
+      "Cliquez Connecter, choisissez votre carte.",
+      "Le point passe au vert. C'est parti."
+    ],
+    "stepsHeader": "Démarrez en 60 secondes",
+    "qrCaption": "Scannez pour la démo en direct",
+    "audienceLine": "Pour les enseignants, les enfants et les makers.",
+    "footerLeft": "Chrome / Edge · Hors ligne · Sans compte",
+    "footerRight": "Firmware MakeCode · Compatible open source",
+    "flyerTagline": "Le navigateur EST l'IDE.",
+    "motto": "Chaque scientifique a commencé par demander « que se passe-t-il si j'appuie ici ? »"
+  },
+
+  "ar": {
+    "brand": "maqueen-lab",
+    "posterTitle": "كل حساس،\nمباشرةً في المتصفح.",
+    "posterKicker": "WEB BLUETOOTH · MICRO:BIT V2",
+    "posterSubtitle": "لوحة تحكم جاهزة للقاعة الدراسية. 30 جهازاً. بدون تثبيت.",
+    "features": [
+      { "icon": "⚡", "h": "مستشعرات حية", "p": "الحرارة، الصوت، الضوء، التسارع، البوصلة — كلها في الوقت الحقيقي." },
+      { "icon": "🎛️", "h": "تحكم كامل", "p": "ارسم على مصفوفة LED، أدِر السيرفو، قُد المحركات. تصدير CSV للدروس." },
+      { "icon": "🧊", "h": "مرآة ثلاثية الأبعاد", "p": "لوحة واقعية تميل مع micro:bit الفعلي. الفيزياء تصبح مرئية." }
+    ],
+    "steps": [
+      "وصّل micro:bit (USB أو بطارية).",
+      "افتح Chrome أو Edge.",
+      "زُر الرابط أدناه — بدون تثبيت.",
+      "اضغط Connect واختر لوحتك.",
+      "تتحول النقطة إلى الأخضر. جاهز."
+    ],
+    "stepsHeader": "ابدأ خلال 60 ثانية",
+    "qrCaption": "امسح لتجربة العرض المباشر",
+    "audienceLine": "للمعلمين والأطفال والمبدعين.",
+    "footerLeft": "Chrome / Edge · يعمل دون اتصال · بدون حساب",
+    "footerRight": "فيرموير MakeCode · متوافق مع المصدر المفتوح",
+    "flyerTagline": "المتصفح هو بيئة التطوير.",
+    "motto": "كل عالِم بدأ بسؤال: «ماذا يحدث لو ضغطت هنا؟»"
+  }
+}

@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Etsy Publishing Guide — Maqueen Lab</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#161a22; --panel2:#1b2030; --text:#e7ecf3; --muted:#8a93a6;
+    --accent:#5fb1ff; --accent2:#7af0c7; --warn:#ffb84d; --danger:#ff6b7a;
+    --border:#252b39; --code-bg:#0b0e14; --hl:#2a3346;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;background:var(--hl);padding:1px 6px;border-radius:4px}
+  pre{margin:0}
+  /* layout */
+  .wrap{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:260px 1fr;gap:32px;padding:24px}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr;padding:16px}.toc{position:static!important;max-height:none!important}}
+  /* header */
+  header.hero{padding:48px 24px 32px;background:linear-gradient(135deg,#1a2238 0%,#0f1115 100%);border-bottom:1px solid var(--border)}
+  header.hero .inner{max-width:1200px;margin:0 auto}
+  header.hero h1{margin:0 0 8px;font-size:32px;letter-spacing:-0.5px}
+  header.hero .sub{color:var(--muted);font-size:16px;max-width:720px}
+  header.hero .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--panel2);color:var(--accent2);font-size:12px;font-weight:600;margin-bottom:12px;letter-spacing:0.4px;text-transform:uppercase}
+  /* TOC */
+  .toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .toc h3{margin:0 0 8px;font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+  .toc ol{list-style:none;padding:0;margin:0;counter-reset:t}
+  .toc li{counter-increment:t;margin:2px 0}
+  .toc li a{display:block;padding:6px 8px;border-radius:6px;color:var(--text);font-size:13px}
+  .toc li a:before{content:counter(t,decimal-leading-zero) " — ";color:var(--muted);font-variant-numeric:tabular-nums}
+  .toc li a:hover{background:var(--hl);text-decoration:none}
+  .toc .progress{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+  .toc .progress b{color:var(--accent2)}
+  /* sections */
+  main{min-width:0}
+  section{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+  section h2{margin:0 0 4px;font-size:22px;letter-spacing:-0.3px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  section h2 .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:var(--accent);color:#0f1115;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+  .pill-status{margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;letter-spacing:0.3px;text-transform:uppercase;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+  .pill-status.started{color:var(--warn);border-color:var(--warn)}
+  .pill-status.done{color:var(--accent2);border-color:var(--accent2);background:rgba(122,240,199,0.08)}
+  .pill-status .dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+  section.done{border-color:rgba(122,240,199,0.35)}
+  section.done h2 .num{background:var(--accent2)}
+  section .intro{color:var(--muted);margin:6px 0 18px}
+  section h3{margin:24px 0 10px;font-size:16px;color:var(--accent2)}
+  section ul,section ol{padding-left:22px}
+  section li{margin:4px 0}
+  /* checklist */
+  .check{list-style:none;padding:0;margin:8px 0}
+  .check li{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:8px;margin:2px 0;cursor:pointer;border:1px solid transparent}
+  .check li:hover{background:var(--hl)}
+  .check input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent2);cursor:pointer}
+  .check li.done label{color:var(--muted);text-decoration:line-through}
+  /* copy block */
+  .copy{position:relative;background:var(--code-bg);border:1px solid var(--border);border-radius:10px;margin:10px 0}
+  .copy .label{position:absolute;top:8px;left:12px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+  .copy pre{padding:32px 14px 14px;overflow:auto;color:#dce4ef;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+  .copy.long pre{max-height:360px;overflow-y:auto}
+  .copy .btn{position:absolute;top:8px;right:8px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;font-weight:500;transition:all 0.15s}
+  .copy .btn:hover{background:var(--accent);color:#0f1115;border-color:var(--accent)}
+  .copy .btn.copied{background:var(--accent2);color:#0f1115;border-color:var(--accent2)}
+  /* callout */
+  .callout{padding:12px 14px;border-radius:8px;border-left:3px solid var(--accent);background:var(--panel2);margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.warn::before{content:"⚠️  "}
+  .callout.tip{border-left-color:var(--accent2)}
+  .callout.tip::before{content:"💡  "}
+  .callout.danger{border-left-color:var(--danger)}
+  .callout.danger::before{content:"🚫  "}
+  /* table */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);font-weight:600}
+  tbody tr:hover{background:var(--hl)}
+  /* misc */
+  kbd{font-family:"SF Mono",Menlo,monospace;background:var(--hl);border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:1px 6px;font-size:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr}}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:32px 16px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent2);color:#0f1115;padding:10px 18px;border-radius:999px;font-weight:600;font-size:13px;transition:transform 0.3s ease;z-index:100;box-shadow:0 6px 20px rgba(0,0,0,0.4)}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .reset-btn{background:transparent;color:var(--muted);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;margin-top:8px}
+  .reset-btn:hover{color:var(--danger);border-color:var(--danger)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <span class="pill">Seller workflow • Internal use only</span>
+    <h1>Publish Maqueen Lab on Etsy</h1>
+    <p class="sub">Step-by-step launch guide. Click any <b>Copy</b> button to grab text ready to paste into Etsy. Tick boxes to track progress — saved automatically in your browser.</p>
+    <p style="margin-top:18px">
+      <a href="https://www.etsy.com/your/shops/me/listing-editor/create" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:10px;background:#f56400;color:#fff;padding:14px 24px;border-radius:10px;font-weight:700;font-size:15px;box-shadow:0 4px 18px rgba(245,100,0,.35)">
+        🛒 Open Etsy “Create a Listing” →
+      </a>
+    </p>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="toc">
+    <h3>Steps</h3>
+    <ol>
+      <li><a href="#s1">Pre-flight checklist</a></li>
+      <li><a href="#s2">Etsy account setup</a></li>
+      <li><a href="#s3">Take the 10 photos</a></li>
+      <li><a href="#s4">Record the listing video</a></li>
+      <li><a href="#s5">Create the listing</a></li>
+      <li><a href="#s6">Pricing strategy</a></li>
+      <li><a href="#s7">Auto-reply &amp; messages</a></li>
+      <li><a href="#s8">Publish &amp; first-day actions</a></li>
+      <li><a href="#s9">Free-traffic playbook</a></li>
+      <li><a href="#s10">Scale: Teachers Pay Teachers</a></li>
+      <li><a href="#s11">Common pitfalls</a></li>
+      <li><a href="#s12">Resources &amp; links</a></li>
+      <li><a href="#s13">Second listing: Site License</a></li>
+      <li><a href="#s14">Third listing: Arabic</a></li>
+      <li><a href="#s15">Per-sale certificate workflow</a></li>
+      <li><a href="#s16">New sell ideas (V0.1.54 guide)</a></li>
+    </ol>
+    <div class="progress">
+      Progress: <b><span id="prog">0</span>%</b>
+      <div><button class="reset-btn" onclick="resetProgress()">Reset checklist</button></div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- 1 -->
+    <section id="s1">
+      <h2><span class="num">1</span> Pre-flight checklist <span class="pill-status">Not started</span></h2>
+      <p class="intro">Before you open Etsy, make sure these are done.</p>
+      <ul class="check" data-key="preflight">
+        <li><input type="checkbox" id="p1"><label for="p1">Replaced <code>Besma</code> in <code>LICENSE</code> with your shop's legal name.</label></li>
+        <li><input type="checkbox" id="p2"><label for="p2">Replaced <code>[Your name]</code> in the auto-reply template.</label></li>
+        <li><input type="checkbox" id="p3"><label for="p3">Confirmed <code>~/Desktop/micromaqueen-lab-v1.0.zip</code> exists (155 KB) and contains <code>SETUP.md</code>, <code>LICENSE</code>, <code>index.html</code>.</label></li>
+        <li><input type="checkbox" id="p4"><label for="p4">Tested the ZIP on a clean folder: unzipped, opened <code>index.html</code> in Chrome, connected to a real micro:bit V2 successfully.</label></li>
+        <li><input type="checkbox" id="p5"><label for="p5">PayPal or bank payout method connected to your Etsy account.</label></li>
+        <li><input type="checkbox" id="p6"><label for="p6">Decided on shop name (if creating a new shop).</label></li>
+      </ul>
+      <div class="callout warn">If the ZIP test fails on a clean folder, do <b>not</b> publish. Buyers will leave 1-star reviews you can't remove.</div>
+    </section>
+
+    <!-- 2 -->
+    <section id="s2">
+      <h2><span class="num">2</span> Etsy account setup <span class="pill-status">Not started</span></h2>
+      <p class="intro">One-time. Skip the whole section if your shop is already live — or tick each item as you confirm it's configured.</p>
+      <ul class="check" data-key="acct">
+        <li><input type="checkbox" id="a1"><label for="a1">Signed in at <a href="https://www.etsy.com" target="_blank" rel="noopener">etsy.com</a> → opened <a href="https://www.etsy.com/sell" target="_blank" rel="noopener">Open Your Etsy Shop</a>.</label></li>
+        <li><input type="checkbox" id="a2"><label for="a2">Shop <b>language</b> set to English.</label></li>
+        <li><input type="checkbox" id="a3"><label for="a3">Shop <b>country</b> set to France.</label></li>
+        <li><input type="checkbox" id="a4"><label for="a4">Shop <b>currency</b> set to USD (more buyers) or EUR (no conversion fee).</label></li>
+        <li><input type="checkbox" id="a5"><label for="a5">Shop <b>name</b> chosen: 4–20 chars, letters/numbers only, memorable + STEM-adjacent, no "store"/"shop".</label></li>
+        <li><input type="checkbox" id="a6"><label for="a6">Payment / payout method connected (PayPal or bank).</label></li>
+        <li><input type="checkbox" id="a7"><label for="a7">Listed at least one digital item draft (Etsy auto-enables digital downloads as soon as you do).</label></li>
+        <li><input type="checkbox" id="a8"><label for="a8"><b>Shop banner</b> uploaded — 1200×300 px (design in <a href="https://www.canva.com/create/etsy-shop/" target="_blank" rel="noopener">Canva</a>).</label></li>
+        <li><input type="checkbox" id="a9"><label for="a9"><b>Shop icon</b> uploaded — 500×500 px (square).</label></li>
+        <li><input type="checkbox" id="a10"><label for="a10"><b>About</b> section written — 1–2 paragraphs explaining you build STEM tools.</label></li>
+        <li><input type="checkbox" id="a11"><label for="a11">Shop <b>policies</b> filled in: payments, delivery (instant for digital), returns ("All sales final on instant downloads — message me for help instead").</label></li>
+        <li><input type="checkbox" id="a12"><label for="a12">Tax info entered (French SIRET if applicable) — required before first payout.</label></li>
+      </ul>
+      <div class="callout tip">First listing has a $0.20 fee waived if you use a referral link. Ask a friend who already has Etsy, or skip — it's only $0.20.</div>
+    </section>
+
+    <!-- 3 -->
+    <section id="s3">
+      <h2><span class="num">3</span> Take the 10 photos <span class="pill-status">Not started</span></h2>
+      <p class="intro">Photos sell digital products. Bad photos = no clicks, no matter how good the product is.</p>
+
+      <h3>Capture setup</h3>
+      <ul>
+        <li>Open <code>index.html</code> in a fresh Chrome window at <b>1440×900</b>. Hide the bookmarks bar (<kbd>⌘⇧B</kbd>).</li>
+        <li>Connect a real micro:bit V2 — empty/disconnected screens look unfinished.</li>
+        <li>Toggle <b>Simulate Mode</b> ON before screenshotting graphs so the lines look alive.</li>
+        <li>Use <kbd>⌘⇧4</kbd> then <kbd>Space</kbd> then click the window for clean shadow-included PNGs.</li>
+        <li>Save to <code>~/Desktop/etsy-photos/</code> as <code>01-hero.png</code> through <code>10-setup-preview.png</code>.</li>
+      </ul>
+
+      <h3>Photo plan</h3>
+      <table>
+        <thead><tr><th>#</th><th>Subject</th><th>Theme</th><th>Overlay text</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Hero — LED Matrix tab + real micro:bit next to laptop (square crop)</td><td>Stealth</td><td>"micro:bit V2 Playground" + "Instant download"</td></tr>
+          <tr><td>2</td><td>Drive tab, all sparklines populated, board in motion</td><td>Stealth</td><td>"Live sensor dashboard"</td></tr>
+          <tr><td>3</td><td>Distance tab in fullscreen, ~3 datasets plotting</td><td>Neon</td><td>"Real-time charts • record • export"</td></tr>
+          <tr><td>4</td><td>SLAM map tab, Buggy model at 3/4 angle</td><td>Stealth</td><td>"20 features"</td></tr>
+          <tr><td>5</td><td>2×2 grid — same tab in each of the 4 themes</td><td>All four</td><td>"4 themes — pick your vibe"</td></tr>
+          <tr><td>6</td><td>Mobile width (414×896 in Chrome DevTools)</td><td>Stealth</td><td>"Works on Chromebooks &amp; Android"</td></tr>
+          <tr><td>7</td><td>Onboarding overlay (run <code>localStorage.clear()</code> first)</td><td>Stealth</td><td>"Friendly first-run guide"</td></tr>
+          <tr><td>8</td><td>Compatibility infographic (made in Canva)</td><td>—</td><td>"✅ Chrome / Edge / Android &nbsp; ❌ Safari / iPhone / iPad"</td></tr>
+          <tr><td>9</td><td>Feature wall — text-on-image of top 8 features</td><td>—</td><td>Bullet list of features</td></tr>
+          <tr><td>10</td><td><code>SETUP.md</code> rendered in a browser or PDF mockup</td><td>—</td><td>"Step-by-step setup included"</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">Compress all photos at <a href="https://tinypng.com" target="_blank" rel="noopener">tinypng.com</a> before uploading. Etsy caps each photo at 5 MB.</div>
+      <div class="callout danger">Never include in a photo: macOS menu bar with your name, other browser tabs, or any reference to GitHub / "open source" / "source code".</div>
+
+      <h3>Per-photo checklist</h3>
+      <ul class="check" data-key="photos">
+        <li><input type="checkbox" id="ph_a"><label for="ph_a"><code>~/Desktop/etsy-photos/</code> folder created</label></li>
+        <li><input type="checkbox" id="ph_b"><label for="ph_b">Chrome opened at 1440×900, bookmarks bar hidden, bookmark bar cleared</label></li>
+        <li><input type="checkbox" id="ph_c"><label for="ph_c">Real micro:bit V2 connected, Simulate Mode ON</label></li>
+        <li><input type="checkbox" id="ph_1"><label for="ph_1"><b>01-hero.png</b> — LED Matrix tab + real micro:bit next to laptop, <i>square crop</i></label></li>
+        <li><input type="checkbox" id="ph_2"><label for="ph_2"><b>02-sensors.png</b> — Drive tab with all sparklines populated, board in motion</label></li>
+        <li><input type="checkbox" id="ph_3"><label for="ph_3"><b>03-graph.png</b> — Distance tab in fullscreen, Cosmos theme, ~3 datasets plotting</label></li>
+        <li><input type="checkbox" id="ph_4"><label for="ph_4"><b>04-3d.png</b> — SLAM map tab, Buggy model at 3/4 angle</label></li>
+        <li><input type="checkbox" id="ph_5"><label for="ph_5"><b>05-themes.png</b> — 2×2 grid showing all four themes</label></li>
+        <li><input type="checkbox" id="ph_6"><label for="ph_6"><b>06-mobile.png</b> — Mobile width (414×896 via Chrome DevTools)</label></li>
+        <li><input type="checkbox" id="ph_7"><label for="ph_7"><b>07-onboarding.png</b> — Onboarding overlay visible (run <code>localStorage.clear()</code> first)</label></li>
+        <li><input type="checkbox" id="ph_8"><label for="ph_8"><b>08-compatibility.png</b> — Compatibility infographic (designed in <a href="https://www.canva.com" target="_blank" rel="noopener">Canva</a>)</label></li>
+        <li><input type="checkbox" id="ph_9"><label for="ph_9"><b>09-features.png</b> — Feature wall text-on-image (Canva)</label></li>
+        <li><input type="checkbox" id="ph_10"><label for="ph_10"><b>10-setup-preview.png</b> — SETUP.md rendered in a browser or PDF mockup</label></li>
+        <li><input type="checkbox" id="ph_z1"><label for="ph_z1">All 10 compressed via <a href="https://tinypng.com" target="_blank" rel="noopener">TinyPNG</a> (each &lt; 5 MB)</label></li>
+        <li><input type="checkbox" id="ph_z2"><label for="ph_z2">Photo #1 final crop is exactly square (2000×2000 recommended)</label></li>
+      </ul>
+    </section>
+
+    <!-- 4 -->
+    <section id="s4">
+      <h2><span class="num">4</span> Record the listing video (15 seconds, silent) <span class="pill-status">Not started</span></h2>
+      <p class="intro">Etsy plays the listing video <b>muted on loop</b>. Design it like a GIF — strong visuals every 2–3 seconds, no narration, no text-heavy slides.</p>
+
+      <h3>Storyboard (reference)</h3>
+      <table>
+        <thead><tr><th>Time</th><th>Shot</th></tr></thead>
+        <tbody>
+          <tr><td>0:00–0:02</td><td>App home, "Connect" button pulsing → click → green "Connected" chip appears.</td></tr>
+          <tr><td>0:02–0:04</td><td>Finger draws on the 5×5 LED grid → cut to micro:bit hardware lighting up the same pattern.</td></tr>
+          <tr><td>0:04–0:06</td><td>Tilt the physical board → Maqueen robot on screen tilts in sync.</td></tr>
+          <tr><td>0:06–0:09</td><td>Live graph drawing a sine wave in fullscreen, Cosmos theme.</td></tr>
+          <tr><td>0:09–0:12</td><td>Cycle the 4 themes (Stealth → Neon → Arctic → Blaze, ~700ms each).</td></tr>
+          <tr><td>0:12–0:15</td><td>End card: logo + "Maqueen Lab — works in Chrome / Edge". This is the loop seam.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Workflow checklist</h3>
+      <ul class="check" data-key="video">
+        <li><input type="checkbox" id="v1"><label for="v1">Screen recorder installed — <a href="https://obsproject.com" target="_blank" rel="noopener">OBS</a> or QuickTime (built-in on macOS)</label></li>
+        <li><input type="checkbox" id="v2"><label for="v2">Video editor installed — <a href="https://www.capcut.com" target="_blank" rel="noopener">CapCut</a> or iMovie</label></li>
+        <li><input type="checkbox" id="v3"><label for="v3">Clip A recorded: Connect button pulse → click → green "Connected" chip</label></li>
+        <li><input type="checkbox" id="v4"><label for="v4">Clip B recorded: LED grid drawing → micro:bit mirrors the pattern (split screen if possible)</label></li>
+        <li><input type="checkbox" id="v5"><label for="v5">Clip C recorded: tilt physical board → Maqueen robot tilts on screen</label></li>
+        <li><input type="checkbox" id="v6"><label for="v6">Clip D recorded: Graph in fullscreen, Cosmos theme, sine wave plotting</label></li>
+        <li><input type="checkbox" id="v7"><label for="v7">Clip E recorded: cycle all 4 themes (~700ms each)</label></li>
+        <li><input type="checkbox" id="v8"><label for="v8">End-card designed in Canva (logo + "works in Chrome / Edge")</label></li>
+        <li><input type="checkbox" id="v9"><label for="v9">All clips assembled in CapCut/iMovie, total runtime 15 seconds</label></li>
+        <li><input type="checkbox" id="v10"><label for="v10">Audio stripped (Etsy plays muted — no point)</label></li>
+        <li><input type="checkbox" id="v11"><label for="v11">Exported as <b>1:1 1080×1080</b> or <b>16:9 1920×1080</b> MP4</label></li>
+        <li><input type="checkbox" id="v12"><label for="v12">Saved as <code>~/Desktop/etsy-photos/listing-video.mp4</code></label></li>
+        <li><input type="checkbox" id="v13"><label for="v13">Previewed on a phone screen (looks fine without sound?)</label></li>
+        <li><input type="checkbox" id="v14"><label for="v14">Re-uploaded to TikTok / Instagram Reels with a hook caption</label></li>
+      </ul>
+      <div class="callout tip">Re-use the same video on TikTok / Instagram Reels with a hook caption. Free distribution.</div>
+    </section>
+
+    <!-- 5 -->
+    <section id="s5">
+      <h2><span class="num">5</span> Create the listing <span class="pill-status">Not started</span></h2>
+      <p class="intro">Open <a href="https://www.etsy.com/your/shops/me/listing-editor/create" target="_blank" rel="noopener">Etsy's "Create a listing" page</a> and fill in each field. Use the Copy buttons below.</p>
+
+      <h3>About this listing</h3>
+      <ul>
+        <li><b>Who made it:</b> I did</li>
+        <li><b>What is it:</b> A finished product</li>
+        <li><b>When was it made:</b> Made to order</li>
+      </ul>
+
+      <h3>Listing type</h3>
+      <p><b>Digital</b> — an instant download.</p>
+
+      <h3>Title (140 char max)</h3>
+      <div class="copy">
+        <span class="label">Title</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>micro:bit V2 Playground — Bluetooth Web App + Illustrated Guide | 8 Sub-tabs, 20 Features, 10 Games | STEM Classroom | Digital Download</pre>
+      </div>
+
+      <h3>Category</h3>
+      <p>Type <code>Tutorials</code> in the search box → pick <b>Craft Supplies &amp; Tools → Patterns &amp; How To → Tutorials</b>.</p>
+
+      <h3>Description</h3>
+      <div class="copy long">
+        <span class="label">Description</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>🎮 Maqueen Lab — the all-in-one Bluetooth control panel for the DFRobot Maqueen Lite v4 (micro:bit V2)
+
+Turn your micro:bit into an interactive STEM lab — no installs, no accounts, no cloud. Just open it in your browser and connect.
+
+✨ What you get (instant download):
+• A complete web app (HTML, CSS, JS) you run locally in Chrome or Edge
+• Ready-to-flash micro:bit firmware (makecode.ts)
+• ILLUSTRATED trilingual user guide (EN/FR/AR) with built-in diagrams:
+  — architecture diagram • micro:bit V2 pin-out • firmware flow storyboard
+  — interactive LED playground (click cells, copy hex commands)
+  — visual troubleshooting: decision tree, symptom picker, icon gallery, reset recipe
+• A printable Quick Setup guide (SETUP.md)
+• 4 themes (Workshop, Sky, Mint, Forest, Cosmos, Night)
+• 8 tabs: LED Matrix, Sensors, Servos, Joystick, Graph, SLAM map, Bench, Settings
+• 20 features (micro:bit, Maqueen, Robot Arm, Balance Game, Weather Station)
+• Session recording, live graphs, annotations, JSON export
+• Beginner &amp; Expert modes — grows with the learner
+
+🧒 Perfect for: classrooms, homeschool, after-school clubs, makerspaces, STEM camps, robotics enthusiasts, parents teaching kids to code.
+
+⚙️ Requires:
+• DFRobot Maqueen Lite v4 (micro:bit V2) (sold separately)
+• Chrome or Edge browser on a desktop, laptop, or Android device
+• Bluetooth enabled
+
+❌ Does NOT work on: Safari, Firefox, iPhone, iPad. (Web Bluetooth limitation — not the app.)
+
+📦 Delivery: Instant download after purchase — a single ZIP file.
+
+📜 License: Single-teacher / single-family use. Use it in your own classroom or home as much as you like. You may NOT resell, redistribute, or upload it elsewhere.
+
+💬 Questions? Message me before buying — happy to help.</pre>
+      </div>
+
+      <h3>Tags (13 — copy as a list, paste one at a time)</h3>
+      <div class="copy">
+        <span class="label">Tags</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>microbit
+microbit v2
+stem
+coding for kids
+bbc microbit
+bluetooth app
+makecode
+classroom resource
+homeschool stem
+robotics
+web bluetooth
+edtech
+sensor playground</pre>
+      </div>
+
+      <h3>Materials (13 — boosts SEO)</h3>
+      <div class="copy">
+        <span class="label">Materials</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>html
+css
+javascript
+web bluetooth
+chartjs
+threejs
+makecode
+typescript
+pwa
+digital download
+zip file
+instant download
+source code</pre>
+      </div>
+
+      <h3>Files</h3>
+      <p>Upload <code>~/Desktop/micromaqueen-lab-v1.0.zip</code> in the <b>Digital files</b> section. (155 KB, well under Etsy's 20 MB per file / 5 files limit.)</p>
+
+      <h3>Inventory &amp; pricing</h3>
+      <ul>
+        <li><b>Price:</b> see <a href="#s6">step 6</a></li>
+        <li><b>Quantity:</b> <code>999</code> (digital, never runs out)</li>
+        <li><b>SKU:</b> <code>MBP-V1</code></li>
+        <li><b>Personalization:</b> Off</li>
+      </ul>
+
+      <ul class="check" data-key="listing">
+        <li><input type="checkbox" id="l1"><label for="l1">All 10 photos uploaded in order</label></li>
+        <li><input type="checkbox" id="l2"><label for="l2">Listing video uploaded</label></li>
+        <li><input type="checkbox" id="l3"><label for="l3">Title pasted</label></li>
+        <li><input type="checkbox" id="l4"><label for="l4">Category set</label></li>
+        <li><input type="checkbox" id="l5"><label for="l5">Description pasted (line breaks preserved)</label></li>
+        <li><input type="checkbox" id="l6"><label for="l6">All 13 tags entered</label></li>
+        <li><input type="checkbox" id="l7"><label for="l7">All 13 materials entered</label></li>
+        <li><input type="checkbox" id="l8"><label for="l8">ZIP file uploaded</label></li>
+        <li><input type="checkbox" id="l9"><label for="l9">Price &amp; SKU set</label></li>
+      </ul>
+    </section>
+
+    <!-- 6 -->
+    <section id="s6">
+      <h2><span class="num">6</span> Pricing strategy <span class="pill-status">Not started</span></h2>
+      <p class="intro">Pick a launch price. Adjust based on real data, not guesses.</p>
+      <table>
+        <thead><tr><th>Tier</th><th>Price</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td>Launch (post-V0.1.54)</td><td>$12.99</td><td>First 30 days. The illustrated guide justifies the bump vs a plain ZIP. Gather reviews fast.</td></tr>
+          <tr><td>Standard</td><td>$17.99</td><td>After 5+ five-star reviews, or after 30 days regardless.</td></tr>
+          <tr><td>With lesson plan</td><td>$29.99</td><td>Add a 1-page printable lesson plan PDF bundle.</td></tr>
+          <tr><td>Teacher's First-Workshop Pack</td><td>$29.99</td><td>App + 4 printable posters + lesson plan + workshop timing + parent handout. Same files, wrapped.</td></tr>
+          <tr><td>School Site License</td><td>$149 → $499 district</td><td>Separate listing (see step 13).</td></tr>
+        </tbody>
+      </table>
+      <ul class="check" data-key="price">
+        <li><input type="checkbox" id="pr1"><label for="pr1">Launch price set to <b>$12.99</b> on the draft listing</label></li>
+        <li><input type="checkbox" id="pr2"><label for="pr2">Calendar reminder set for <b>30 days from now</b> to review price / raise to $17.99</label></li>
+        <li><input type="checkbox" id="pr3"><label for="pr3">Understood fee math: $0.20 listing + 6.5% transaction + ~3% processing → ~$11.00 net on $12.99</label></li>
+        <li><input type="checkbox" id="pr4"><label for="pr4">Bundle upsell plan decided (Workshop Pack or lesson plan to add later — optional)</label></li>
+      </ul>
+      <div class="callout tip">Etsy fees: $0.20 listing + 6.5% transaction + ~3% payment processing. On a $12.99 sale you net ~$11.00.</div>
+    </section>
+
+    <!-- 7 -->
+    <section id="s7">
+      <h2><span class="num">7</span> Auto-reply &amp; messages <span class="pill-status">Not started</span></h2>
+      <p class="intro">Set these once. They run on autopilot.</p>
+
+      <h3>Shop announcement</h3>
+      <p>Paste in <b>Shop Manager → Info &amp; Appearance → Announcement</b>.</p>
+      <div class="copy">
+        <span class="label">Shop announcement</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>🎮 STEM tools for makers, teachers, and curious kids — instant digital downloads you can use the same day. Built and tested by a working educator. Questions before buying? Message me anytime — I usually reply within a few hours.</pre>
+      </div>
+
+      <h3>Message to buyers (auto-sent on payment)</h3>
+      <p>Paste in <b>Shop Manager → Settings → Info &amp; Appearance → Message to buyers</b>. Replace <code>[Your name]</code> first.</p>
+      <div class="copy long">
+        <span class="label">Auto-reply</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>Thank you so much for your order! 🎉
+
+Your download is ready right now — Etsy has emailed you the link, and you can also grab it from You → Purchases &amp; Reviews.
+
+📘 Start here: unzip the file and open SETUP.md (5-minute guide). You'll need a DFRobot Maqueen Lite v4 (micro:bit V2) and Chrome or Edge — Safari and iPhones won't work (that's a Web Bluetooth limitation, not the app).
+
+💬 Stuck? Reply to this message with your Etsy order number and a screenshot — I'll get back to you within 24 hours.
+
+📜 A small ask: this is a single-user license. Please use it freely in your own classroom or home, but don't resell or re-upload it. Full terms are in the LICENSE file inside the ZIP.
+
+⭐ If it works well for you, a quick review would mean a lot — small shops live and die by them.
+
+Happy hacking!
+— [Your name]</pre>
+      </div>
+
+      <h3>Pre-purchase reply (manual, for compatibility questions)</h3>
+      <div class="copy long">
+        <span class="label">Pre-purchase</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>Hi! Great question — quick check before you buy:
+
+1. Do you have a DFRobot Maqueen Lite v4 (micro:bit V2) (the one with the gold microphone)? V1 is missing the sound sensor and a couple of features.
+2. What browser will you be using? It must be Chrome or Edge on a desktop, laptop, Chromebook, or Android tablet. Safari, Firefox, iPhone, and iPad are not supported (Web Bluetooth limitation).
+
+If both are a yes, you're good to go. Let me know if you'd like me to send a 30-second demo video before you decide.</pre>
+      </div>
+
+      <h3>7-day follow-up (manual or via Etsy filters)</h3>
+      <div class="copy long">
+        <span class="label">Follow-up</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>Hi! Just checking in — were you able to get the Maqueen Lab running this week? If you ran into anything, reply here and I'll sort it out. If it worked smoothly, a star rating on the listing helps me keep building tools like this. Either way, thanks for the support!</pre>
+      </div>
+
+      <ul class="check" data-key="messages">
+        <li><input type="checkbox" id="m1"><label for="m1">Shop announcement saved</label></li>
+        <li><input type="checkbox" id="m2"><label for="m2">Auto-reply saved (with your name filled in)</label></li>
+        <li><input type="checkbox" id="m3"><label for="m3">Pre-purchase reply saved as a draft / canned response</label></li>
+      </ul>
+    </section>
+
+    <!-- 8 -->
+    <section id="s8">
+      <h2><span class="num">8</span> Publish &amp; first-day actions <span class="pill-status">Not started</span></h2>
+      <p class="intro">Small, specific actions on day one compound more than any marketing spend.</p>
+      <ul class="check" data-key="launch">
+        <li><input type="checkbox" id="lp1"><label for="lp1">Clicked <b>Publish</b> — listing is live</label></li>
+        <li><input type="checkbox" id="lp2"><label for="lp2">Opened the live listing in an incognito window and proofread it top to bottom</label></li>
+        <li><input type="checkbox" id="lp3"><label for="lp3">Verified all 10 photos appear in the right order</label></li>
+        <li><input type="checkbox" id="lp4"><label for="lp4">Verified the video autoplays without sound</label></li>
+        <li><input type="checkbox" id="lp5"><label for="lp5">Bought my own listing from a second account (or asked a friend) — download worked end-to-end</label></li>
+        <li><input type="checkbox" id="lp6"><label for="lp6">Unzipped the test download on a clean folder and opened <code>index.html</code> — app works</label></li>
+        <li><input type="checkbox" id="lp7"><label for="lp7">Shared the listing URL with 3 trusted people for honest feedback</label></li>
+        <li><input type="checkbox" id="lp8"><label for="lp8">Saved the listing URL to a safe note — you'll paste it everywhere</label></li>
+        <li><input type="checkbox" id="lp9"><label for="lp9">Posted <b>1 Pinterest pin</b> (see <a href="#s9">step 9</a>)</label></li>
+        <li><input type="checkbox" id="lp10"><label for="lp10">Posted in <b>1 Facebook group</b> (rules read first)</label></li>
+        <li><input type="checkbox" id="lp11"><label for="lp11">Saved the listing to my Pinterest, personal FB, and LinkedIn (soft share, no hard sell)</label></li>
+        <li><input type="checkbox" id="lp12"><label for="lp12">Set a reminder for 48 hours from now to check stats and respond to any messages</label></li>
+      </ul>
+      <div class="callout warn">Don't run Etsy Ads on day one. Without organic data, ads burn money on bad keywords. Wait until you have at least 10 favorites or 1 sale.</div>
+    </section>
+
+    <!-- 9 -->
+    <section id="s9">
+      <h2><span class="num">9</span> Free-traffic playbook <span class="pill-status">Not started</span></h2>
+
+      <h3>Pinterest (biggest free channel for STEM / homeschool)</h3>
+      <p>Make 3–5 pins per listing, all linking to your Etsy URL. Pins index for years.</p>
+
+      <p><b>Sizes:</b> Standard pin 1000×1500 (2:3). Idea pin 1080×1920 (9:16, no outbound link — put shop URL on last frame).</p>
+
+      <p><b>Pin titles (rotate):</b></p>
+      <div class="copy">
+        <span class="label">Pin titles</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>Turn a micro:bit into a STEM lab — works in any browser
+The micro:bit Bluetooth app every STEM teacher wishes existed
+Homeschool STEM: 8 tabs, 5 robots, zero installs
+micro:bit V2 + Chrome = a $10 robotics classroom
+From "what's a micro:bit" to "I built a robot" in 5 minutes</pre>
+      </div>
+
+      <p><b>Pin description (500 chars):</b></p>
+      <div class="copy long">
+        <span class="label">Pin description</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>Looking for a micro:bit project that works straight from the browser? Maqueen Lab gives you 8 tabs of live control — LED matrix, sensors, servos, joystick, real-time graphs, and 20 features — all over Bluetooth. Perfect for STEM teachers, homeschool parents, and after-school clubs. No installs, no accounts. Works on Chrome and Edge. One-time download. #microbit #STEM #homeschool #coding #edtech</pre>
+      </div>
+
+      <p><b>Hashtag bank (rotate, don't reuse the same set):</b></p>
+      <div class="copy">
+        <span class="label">Hashtags</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>#microbit #microbitV2 #STEM #STEAM #STEMforkids #STEMteacher #homeschoolSTEM #classroomresources #edtech #makered #codingforkids #learntoprogram #robotics #BBCmicrobit #chromebookclassroom #afterschoolclub</pre>
+      </div>
+
+      <h3>Other channels</h3>
+      <table>
+        <thead><tr><th>Channel</th><th>Approach</th></tr></thead>
+        <tbody>
+          <tr><td>TikTok / Reels</td><td>Reuse the 15-sec demo video. Hook in the first 1.5 seconds: tilt the board → Maqueen robot tilts. Caption: <i>"Bought my class a $20 STEM lab"</i>. Drop the Etsy link in bio.</td></tr>
+          <tr><td>Reddit</td><td>Build karma in <a href="https://reddit.com/r/microbit" target="_blank" rel="noopener">r/microbit</a>, <a href="https://reddit.com/r/edtech" target="_blank" rel="noopener">r/edtech</a>, <a href="https://reddit.com/r/homeschool" target="_blank" rel="noopener">r/homeschool</a> for 2–3 weeks first. Then post a demo (no Etsy link). Say "DM me if you want it." Send the link privately.</td></tr>
+          <tr><td>Facebook groups</td><td>Highest conversion of all free channels. Search for: "micro:bit teachers", "BBC micro:bit Educators", "Homeschool STEM", "Coding with Kids". Most groups allow self-promo on Friday — read pinned rules.</td></tr>
+          <tr><td>YouTube</td><td>Long-term play. Weekly 5-minute "what you can build with Maqueen Lab" videos. Compounds over 6+ months.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout danger">Do NOT cold-DM teachers on LinkedIn. Do NOT buy "Etsy SEO course" upsells (Etsy's <a href="https://www.etsy.com/seller-handbook" target="_blank" rel="noopener">Seller Handbook</a> is free and better).</div>
+
+      <h3>Weekly traffic habit</h3>
+      <ul class="check" data-key="traffic">
+        <li><input type="checkbox" id="tr1"><label for="tr1">Pinterest business account created + linked to Etsy</label></li>
+        <li><input type="checkbox" id="tr2"><label for="tr2">3 Pinterest boards created (STEM Activities, Homeschool Resources, micro:bit Projects)</label></li>
+        <li><input type="checkbox" id="tr3"><label for="tr3">First 3 pins designed in Canva (1000×1500)</label></li>
+        <li><input type="checkbox" id="tr4"><label for="tr4">Pin #1 published with keyword title + 500-char description</label></li>
+        <li><input type="checkbox" id="tr5"><label for="tr5">Pin #2 published (different angle, different hashtag set)</label></li>
+        <li><input type="checkbox" id="tr6"><label for="tr6">Pin #3 published (different angle, different hashtag set)</label></li>
+        <li><input type="checkbox" id="tr7"><label for="tr7">Joined 3 relevant Facebook groups (read pinned rules)</label></li>
+        <li><input type="checkbox" id="tr8"><label for="tr8">Posted in 1 FB group (on allowed promo day)</label></li>
+        <li><input type="checkbox" id="tr9"><label for="tr9">TikTok / Reels account created, bio link set</label></li>
+        <li><input type="checkbox" id="tr10"><label for="tr10">First demo clip posted on TikTok / Reels</label></li>
+        <li><input type="checkbox" id="tr11"><label for="tr11">Subscribed to 3 subreddits (r/microbit, r/edtech, r/homeschool) — start building karma</label></li>
+        <li><input type="checkbox" id="tr12"><label for="tr12">Daily habit set: 1 pin/day, answer 1 Reddit question/day</label></li>
+      </ul>
+    </section>
+
+    <!-- 10 -->
+    <section id="s10">
+      <h2><span class="num">10</span> Scale: list on Teachers Pay Teachers <span class="pill-status">Not started</span></h2>
+      <p class="intro">TpT is bigger than Etsy for K–12 buyers. Same product, second listing — they don't conflict. Wait 1–2 weeks after your Etsy launch so you can reuse your best-performing photos.</p>
+      <ul class="check" data-key="tpt">
+        <li><input type="checkbox" id="tp1"><label for="tp1">Signed up at <a href="https://www.teacherspayteachers.com/Open-A-Store" target="_blank" rel="noopener">TpT</a> (Basic is free; Premium gives higher rev share — worth it once you sell 10+/month)</label></li>
+        <li><input type="checkbox" id="tp2"><label for="tp2">Store name + avatar + bio filled in</label></li>
+        <li><input type="checkbox" id="tp3"><label for="tp3">Payout method connected</label></li>
+        <li><input type="checkbox" id="tp4"><label for="tp4">Renamed <code>SETUP.md</code> to "Teacher Setup Guide" inside a TpT-specific ZIP</label></li>
+        <li><input type="checkbox" id="tp5"><label for="tp5">Added a 1-page "Lesson Plan Idea" PDF to the TpT ZIP</label></li>
+        <li><input type="checkbox" id="tp6"><label for="tp6">New TpT ZIP built and saved as <code>~/Desktop/micromaqueen-lab-tpt.zip</code></label></li>
+        <li><input type="checkbox" id="tp7"><label for="tp7">TpT listing created — title includes "Grades 4-8", "No Prep", keywords teachers search for</label></li>
+        <li><input type="checkbox" id="tp8"><label for="tp8">Priced at <b>2× the Etsy price</b> ($19.99)</label></li>
+        <li><input type="checkbox" id="tp9"><label for="tp9">Reused top 6 Etsy photos (TpT has a 6-image limit on some listing types)</label></li>
+        <li><input type="checkbox" id="tp10"><label for="tp10">Preview PDF generated + uploaded (TpT requires this — buyers see it before purchase)</label></li>
+        <li><input type="checkbox" id="tp11"><label for="tp11">TpT listing published</label></li>
+        <li><input type="checkbox" id="tp12"><label for="tp12">Pinned new pin to TpT-specific Pinterest boards ("TpT Resources", "Teaching Tools")</label></li>
+      </ul>
+      <div class="callout tip">TpT's search algorithm favors listings with a <b>free preview</b>. Upload a 2-page sample of the Lesson Plan PDF as the free preview — drives conversions hard.</div>
+    </section>
+
+    <!-- 11 -->
+    <section id="s11">
+      <h2><span class="num">11</span> Common pitfalls — tick to confirm you've read &amp; planned for each <span class="pill-status">Not started</span></h2>
+      <p class="intro">Reading these once now saves hours of scrambling later. Tick each as you actively plan for it.</p>
+      <ul class="check" data-key="pitfalls">
+        <li><input type="checkbox" id="pt1"><label for="pt1"><b>Refund requests from iPhone/Safari users</b> — I will refer them to the description (I warned them). Etsy doesn't require refunds on instant downloads.</label></li>
+        <li><input type="checkbox" id="pt2"><label for="pt2"><b>Bad first review</b> — I will reply publicly, calmly, with the fix. Future buyers read the reply more than the review itself.</label></li>
+        <li><input type="checkbox" id="pt3"><label for="pt3"><b>Tag-stuffing</b> — my 13 tags don't repeat the same word (no "microbit / microbit v2 / microbit playground" combo).</label></li>
+        <li><input type="checkbox" id="pt4"><label for="pt4"><b>Pricing too low forever</b> — $9.99 is a launch tactic. Calendar reminder is set to raise after 5 reviews or 30 days.</label></li>
+        <li><input type="checkbox" id="pt5"><label for="pt5"><b>ZIP backup</b> — a copy is saved on Google Drive / Dropbox / external disk outside this Mac.</label></li>
+        <li><input type="checkbox" id="pt6"><label for="pt6"><b>Response time</b> — Etsy ranks shops on this. I aim for &lt;24h, ideally &lt;4h on weekdays. Etsy notifications enabled on phone.</label></li>
+        <li><input type="checkbox" id="pt7"><label for="pt7"><b>Copycat listings</b> — if someone clones the title/photos, I'll report via <a href="https://www.etsy.com/legal/ip/" target="_blank" rel="noopener">Etsy IP claim</a> (not argue in reviews).</label></li>
+        <li><input type="checkbox" id="pt8"><label for="pt8"><b>Tax obligations</b> — French SIRET / auto-entrepreneur status checked; VAT threshold understood.</label></li>
+      </ul>
+    </section>
+
+    <!-- 12 -->
+    <section id="s12">
+      <h2><span class="num">12</span> Resources &amp; links <span class="pill-status">Info</span></h2>
+      <ul>
+        <li><a href="https://www.etsy.com/your/shops/me/listing-editor/create" target="_blank" rel="noopener">Etsy — Create a listing</a></li>
+        <li><a href="https://www.etsy.com/your/shops/me/dashboard" target="_blank" rel="noopener">Etsy — Shop Manager dashboard</a></li>
+        <li><a href="https://www.etsy.com/seller-handbook" target="_blank" rel="noopener">Etsy Seller Handbook</a> (official, free, comprehensive)</li>
+        <li><a href="https://help.etsy.com/hc/en-us/articles/115015628367" target="_blank" rel="noopener">Etsy — Selling digital downloads</a></li>
+        <li><a href="https://help.etsy.com/hc/en-us/articles/360000343287" target="_blank" rel="noopener">Etsy — Fees &amp; payments</a></li>
+        <li><a href="https://www.canva.com/create/etsy-shop/" target="_blank" rel="noopener">Canva — Etsy shop templates</a> (banners, photo overlays, infographics)</li>
+        <li><a href="https://tinypng.com" target="_blank" rel="noopener">TinyPNG</a> — compress photos before upload</li>
+        <li><a href="https://www.capcut.com" target="_blank" rel="noopener">CapCut</a> — free video editor for the listing video</li>
+        <li><a href="https://obsproject.com" target="_blank" rel="noopener">OBS</a> — free screen recorder</li>
+        <li><a href="https://erank.com" target="_blank" rel="noopener">eRank</a> — Etsy SEO research (free tier available)</li>
+        <li><a href="https://www.teacherspayteachers.com/Open-A-Store" target="_blank" rel="noopener">Teachers Pay Teachers — open a store</a></li>
+        <li>Internal: <code>ETSY_LISTING.md</code> in this folder — original full playbook</li>
+        <li>Internal: <code>SETUP.md</code> — buyer-facing guide</li>
+        <li>Internal: <code>LICENSE</code> — single-user license terms</li>
+      </ul>
+    </section>
+
+    <!-- 13 -->
+    <section id="s13">
+      <h2><span class="num">13</span> Second listing: School Site License ($149) <span class="pill-status">Not started</span></h2>
+      <p class="intro">One site-license sale ≈ 15 individual sales. Same ZIP contents — different LICENSE file. File is already built: <code>~/Desktop/micromaqueen-lab-v1.0-site-license.zip</code>.</p>
+
+      <h3>Title</h3>
+      <div class="copy">
+        <span class="label">Site-license title</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>micro:bit V2 Playground — SCHOOL SITE LICENSE | Up to 30 Teachers, Unlimited Students | STEM Classroom App | Instant Digital Download</pre>
+      </div>
+
+      <h3>Pricing ladder</h3>
+      <table>
+        <thead><tr><th>Tier</th><th>Price</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td>Launch</td><td>$149</td><td>First 2 sales</td></tr>
+          <tr><td>Standard</td><td>$199</td><td>After 2 sales</td></tr>
+          <tr><td>District (3+ sites)</td><td>$499+</td><td>Quote via Etsy message</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Description</h3>
+      <div class="copy long">
+        <span class="label">Site-license description</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>🏫 School Site License — micro:bit V2 Playground
+
+The browser-based micro:bit control panel, licensed for your whole school.
+
+✅ What the license covers:
+• Up to 30 teachers / instructors at ONE physical school, library, or learning center
+• Unlimited students — no per-seat fees, no activation keys, no headaches
+• On-site, remote, and after-school program use
+• Free bug-fix updates for 12 months
+• Internal modification and distribution among staff
+
+🛠️ What you get (instant download):
+• The full Maqueen Lab web app (runs locally in any Chromebook / laptop)
+• Ready-to-flash firmware (makecode.ts) for DFRobot Maqueen Lite v4 (micro:bit V2)
+• Printable setup guide
+• Signed Site License certificate (fill in your school name and keep on file)
+
+👩‍🏫 Perfect for: STEM departments, robotics clubs, library maker corners, summer camps, after-school coding programs.
+
+⚙️ Requires: DFRobot Maqueen Lite v4 (micro:bit V2) (sold separately) + Chrome or Edge. Not supported: Safari, Firefox, iPhone, iPad (Web Bluetooth limitation).
+
+🏢 Need more than one site? Message me before buying — I offer discounted multi-site and district licenses.
+
+📜 You may use and modify internally, but may not redistribute outside your school. Full terms in the LICENSE file.</pre>
+      </div>
+
+      <h3>Tags</h3>
+      <div class="copy">
+        <span class="label">Site-license tags</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>microbit
+school license
+site license
+stem classroom
+bulk license
+district license
+teacher resource
+classroom software
+microbit v2
+coding curriculum
+robotics club
+bbc microbit
+edtech bulk</pre>
+      </div>
+
+      <h3>Files to upload</h3>
+      <p>Upload <code>~/Desktop/micromaqueen-lab-v1.0-site-license.zip</code>. Re-use photos 1–10 from the single-user listing. Add <b>photo #11</b>: a filled-in preview of the <a href="SITE_LICENSE_CERTIFICATE.html" target="_blank" rel="noopener">Site License Certificate</a> — signals legitimacy to procurement officers.</p>
+
+      <h3>Auto-reply (override the standard one for this listing)</h3>
+      <div class="copy long">
+        <span class="label">Site-license auto-reply</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>Thank you for licensing Maqueen Lab for your school! 🏫
+
+Your download is in You → Purchases &amp; Reviews. Inside the ZIP you'll find a LICENSE file — please fill in your school name, address, your email, and this Etsy order number, and keep it on file.
+
+I'll email you a personalized Site License Certificate (PDF) within 24 hours.
+
+📘 Start with SETUP.md. A good first step is to flash the firmware on 2–3 staff micro:bits, then share the unzipped folder on your school's shared drive.
+
+🏢 Multiple sites? Reply here with how many — I offer a district discount starting at 3 sites.
+
+💬 For support, include your Etsy order number and the school name. I reply within 24h on weekdays.</pre>
+      </div>
+
+      <ul class="check" data-key="sitelisting">
+        <li><input type="checkbox" id="sl1"><label for="sl1">Site-license listing published</label></li>
+        <li><input type="checkbox" id="sl2"><label for="sl2">Photo #11 (certificate preview) added</label></li>
+        <li><input type="checkbox" id="sl3"><label for="sl3">Override auto-reply saved for site-license listing</label></li>
+      </ul>
+    </section>
+
+    <!-- 14 -->
+    <section id="s14">
+      <h2><span class="num">14</span> Third listing: Arabic market (uncontested) <span class="pill-status">Not started</span></h2>
+      <p class="intro">V8.2 already ships full Arabic UI with RTL. Almost no Arabic STEM on Etsy. Target: homeschool families in MENA + Arabic-speaking diaspora. Same ZIP as the single-user listing.</p>
+
+      <h3>Title (Arabic + transliteration)</h3>
+      <div class="copy">
+        <span class="label">Arabic title</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>لوحة تحكم مايكروبت V2 عبر البلوتوث — تطبيق STEM للمعلمين والأطفال | تحميل فوري | Maqueen Lab Arabic</pre>
+      </div>
+
+      <h3>Description (Arabic)</h3>
+      <div class="copy long">
+        <span class="label">Arabic description</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>🎮 لوحة تحكم مايكروبت — تطبيق متكامل عبر البلوتوث للوحة DFRobot Maqueen Lite v4 (micro:bit V2)
+
+حوّل المايكروبت إلى مختبر STEM تفاعلي — بدون تثبيت، بدون حساب، بدون إنترنت. فقط افتح المتصفح واتصل.
+
+✨ ما ستحصل عليه (تحميل فوري):
+• تطبيق ويب كامل (HTML, CSS, JS) يعمل محلياً في متصفح Chrome أو Edge
+• برنامج جاهز للمايكروبت (makecode.ts)
+• دليل إعداد مطبوع
+• 4 ثيمات (ستيلث، نيون، أركتيك، بليز)
+• 8 تبويبات فرعية: مصفوفة LED، المستشعرات، المحركات، جويباد، الرسم البياني، عرض ثلاثي الأبعاد، البنش، الإعدادات
+• 20 ميزة تفاعلية (مايكروبت، روبوت، ذراع روبوتي، لعبة توازن، محطة طقس)
+• تسجيل الجلسات، رسوم بيانية حية، تصدير JSON
+• وضع المبتدئ ووضع الخبير — يتطور مع المتعلم
+• واجهة عربية كاملة مع دعم RTL (اليمين إلى اليسار)
+
+🧒 مناسب لـ: الفصول الدراسية، التعليم المنزلي، النوادي المدرسية، ورش الصنع، معسكرات STEM، الأطفال المهتمين بالبرمجة والروبوتات.
+
+⚙️ يتطلب:
+• لوحة DFRobot Maqueen Lite v4 (micro:bit V2) (تُشترى بشكل منفصل)
+• متصفح Chrome أو Edge على كمبيوتر أو لابتوب أو جهاز أندرويد
+• تفعيل البلوتوث
+
+❌ لا يعمل على: Safari، Firefox، iPhone، iPad (قيود Web Bluetooth).
+
+📦 التسليم: تحميل فوري بعد الشراء — ملف ZIP واحد.
+
+📜 الترخيص: استخدام شخصي وتعليمي. لا يجوز إعادة البيع أو إعادة النشر.
+
+💬 هل لديك سؤال قبل الشراء؟ راسلني وسأجيبك بالعربية في غضون ساعات.</pre>
+      </div>
+
+      <h3>Tags (Arabic + English mix — Etsy indexes both)</h3>
+      <div class="copy">
+        <span class="label">Arabic tags</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>مايكروبت
+STEM أطفال
+تعليم البرمجة
+روبوت للأطفال
+تحميل رقمي
+تعليم منزلي
+microbit arabic
+arabic stem
+homeschool arabic
+coding arabic
+برمجة للأطفال
+علوم stem
+microbit v2</pre>
+      </div>
+
+      <h3>Auto-reply (Arabic)</h3>
+      <div class="copy long">
+        <span class="label">Arabic auto-reply</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>شكراً جزيلاً على طلبك! 🎉
+
+تم تجهيز التحميل فوراً — ستجد الرابط في بريدك الإلكتروني ومن خلال حسابك في Etsy → Purchases &amp; Reviews.
+
+📘 ابدأ من هنا: فك ضغط الملف وافتح SETUP.md (دليل 5 دقائق). تحتاج لوحة DFRobot Maqueen Lite v4 (micro:bit V2) ومتصفح Chrome أو Edge — لا يعمل على Safari أو iPhone (قيود Web Bluetooth).
+
+💬 واجهت مشكلة؟ راسلني برقم الطلب وصورة من الشاشة — سأرد خلال 24 ساعة.
+
+📜 الترخيص: استخدام شخصي / فصل دراسي واحد. يُرجى عدم إعادة البيع.
+
+⭐ إذا أعجبك التطبيق، تقييم بنجوم يعني الكثير — المتاجر الصغيرة تعيش على التقييمات.
+
+برمجة ممتعة!
+— [اسمك]</pre>
+      </div>
+
+      <h3>MENA-specific channels</h3>
+      <ul>
+        <li><b>Facebook groups:</b> "تعليم البرمجة للأطفال", "التعليم المنزلي", "ستيم للأطفال", "Algeria Homeschool Network"</li>
+        <li><b>Telegram channels:</b> many Arabic homeschool communities live on Telegram, not Facebook. One post in a 5k-member channel = 30–50 visits.</li>
+        <li><b>TikTok:</b> Arabic-language micro:bit demos have near-zero saturation. Post 15-sec clips with Arabic on-screen text.</li>
+        <li><b>Instagram:</b> tag Arabic STEM influencers.</li>
+      </ul>
+      <div class="callout tip">Price at <b>$9.99 USD</b>, same as English. Diaspora buyers pay in USD comfortably; MENA buyers expect foreign digital goods to be priced internationally.</div>
+
+      <ul class="check" data-key="arabiclisting">
+        <li><input type="checkbox" id="ar1"><label for="ar1">Arabic listing published</label></li>
+        <li><input type="checkbox" id="ar2"><label for="ar2">At least one Facebook/Telegram post in an Arabic STEM group</label></li>
+        <li><input type="checkbox" id="ar3"><label for="ar3">One TikTok clip in Arabic</label></li>
+      </ul>
+    </section>
+
+    <!-- 15 -->
+    <section id="s15">
+      <h2><span class="num">15</span> Per-sale workflow — issuing the Site License Certificate <span class="pill-status">Not started</span></h2>
+      <p class="intro">Every time a site license sells, send the buyer a personalized PDF within 24 hours. Takes 3 minutes. Signals professionalism, justifies the $149 price, and unlocks procurement-department approval at larger schools.</p>
+
+      <h3>One-time setup</h3>
+      <ul class="check" data-key="cert-setup">
+        <li><input type="checkbox" id="cs1"><label for="cs1">Created folder <code>~/Dropbox/Workshop-DIY/Certificates/</code> for archived copies</label></li>
+        <li><input type="checkbox" id="cs2"><label for="cs2">Created a running log <code>~/Dropbox/Workshop-DIY/Certificates/log.csv</code> with columns: CertID, OrderID, School, Date, Email</label></li>
+        <li><input type="checkbox" id="cs3"><label for="cs3">Bookmarked <a href="SITE_LICENSE_CERTIFICATE.html" target="_blank" rel="noopener">SITE_LICENSE_CERTIFICATE.html</a> in the browser</label></li>
+      </ul>
+
+      <h3>Per-sale workflow</h3>
+      <ul class="check" data-key="cert-sale">
+        <li><input type="checkbox" id="cw1"><label for="cw1">Opened the Etsy order to collect: school name, address, order #, buyer email, date</label></li>
+        <li><input type="checkbox" id="cw2"><label for="cw2">If school name / address missing: sent buyer a friendly message asking for them</label></li>
+        <li><input type="checkbox" id="cw3"><label for="cw3">Opened <a href="SITE_LICENSE_CERTIFICATE.html" target="_blank" rel="noopener">SITE_LICENSE_CERTIFICATE.html</a> and clicked <b>Reset fields</b> to clear prior data</label></li>
+        <li><input type="checkbox" id="cw4"><label for="cw4">Filled <b>School Name</b></label></li>
+        <li><input type="checkbox" id="cw5"><label for="cw5">Filled <b>Address</b></label></li>
+        <li><input type="checkbox" id="cw6"><label for="cw6">Filled <b>Authorized Signatory</b> (principal / IT admin — ask if unknown)</label></li>
+        <li><input type="checkbox" id="cw7"><label for="cw7">Filled <b>Order #</b></label></li>
+        <li><input type="checkbox" id="cw8"><label for="cw8">Filled <b>Purchaser Email</b></label></li>
+        <li><input type="checkbox" id="cw9"><label for="cw9">Filled <b>Date of Purchase</b> (YYYY-MM-DD)</label></li>
+        <li><input type="checkbox" id="cw10"><label for="cw10">Set <b>Certificate ID</b> — next in sequence (<code>MBP-SITE-0001</code>, <code>-0002</code>, …)</label></li>
+        <li><input type="checkbox" id="cw11"><label for="cw11">Previewed — all fields correct, no typos, no leftover placeholders</label></li>
+        <li><input type="checkbox" id="cw12"><label for="cw12">Saved as PDF: File → Print → Save as PDF → A4 → filename <code>MBP-SITE-[ID]-[school-slug].pdf</code></label></li>
+        <li><input type="checkbox" id="cw13"><label for="cw13">Archived the PDF to <code>~/Dropbox/Workshop-DIY/Certificates/</code></label></li>
+        <li><input type="checkbox" id="cw14"><label for="cw14">Appended a new row to <code>log.csv</code></label></li>
+        <li><input type="checkbox" id="cw15"><label for="cw15">On Etsy: replied to the buyer's order message with PDF attached + the template below</label></li>
+        <li><input type="checkbox" id="cw16"><label for="cw16">Clicked <b>Reset fields</b> in the certificate template — ready for the next sale</label></li>
+      </ul>
+
+      <h3>Email / Etsy message template</h3>
+      <div class="copy long">
+        <span class="label">Certificate delivery message</span>
+        <button class="btn" data-copy>Copy</button>
+        <pre>Hi [Principal / Teacher Name],
+
+Attached is your personalized School Site License Certificate for Maqueen Lab — thank you for choosing us for your STEM program!
+
+📎 [Certificate PDF attached]
+
+Please keep this PDF together with your Etsy order confirmation. It serves as visual proof of license for your procurement office and any future audits.
+
+A quick checklist for your team:
+✓ Unzip the download and open SETUP.md first
+✓ Flash makecode.ts on 2–3 staff micro:bits before rolling out to students
+✓ Share the unzipped folder on your school's shared drive (Google Drive, OneDrive, etc.) — internal distribution is covered by your license
+✓ Need a starter lesson plan? Reply here and I'll send one
+
+If you have multiple sites or expect to expand beyond 30 teachers, let me know — I offer district pricing starting at 3 sites.
+
+Happy teaching!
+— [Your name]
+Workshop·DIY</pre>
+      </div>
+
+      <div class="callout tip">The certificate template stores your inputs in browser localStorage. Use <b>Reset fields</b> before starting the next certificate so nothing carries over.</div>
+    </section>
+
+    <!-- 16 -->
+    <section id="s16">
+      <h2><span class="num">16</span> New sell ideas unlocked by V0.1.54's illustrated guide <span class="pill-status">Not started</span></h2>
+      <p class="intro">The visual helpers added in V0.1.54 (architecture SVG, pin-out, symptom picker, icon gallery, interactive LED) open product angles that weren't viable before. Pick the top 3 and you double your revenue without writing more code.</p>
+
+      <h3>Ideas ranked by payoff ÷ effort</h3>
+      <table>
+        <thead><tr><th>#</th><th>Idea</th><th>Effort</th><th>Launch price</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><b>Printable classroom poster pack</b> — extract 4 SVGs (pin-out, architecture, symptom chart, firmware storyboard) as standalone PDFs. New Etsy + TpT listings.</td><td>~3h</td><td>$14.99 (Etsy) / $24.99 (TpT)</td></tr>
+          <tr><td>2</td><td><b>Teacher's First-Workshop Pack</b> — app + 4 posters + lesson plan + workshop timing + parent handout. Same files, premium wrapper.</td><td>~2h</td><td>$29.99</td></tr>
+          <tr><td>3</td><td><b>"No-Tech-Anxiety" marketing pitch</b> — re-target FB groups with the illustrated-guide angle. Designed for non-technical teachers.</td><td>~1h</td><td>Free (traffic)</td></tr>
+          <tr><td>4</td><td><b>TikTok / Reels cut</b> using the firmware storyboard SVG — 15s, "literally all you need to get started".</td><td>~1h</td><td>Free (traffic)</td></tr>
+          <tr><td>5</td><td><b>Pinterest pin: "The pin-out every teacher should save"</b> — infographics save at ~4× the rate of photos.</td><td>~30min</td><td>Free (traffic)</td></tr>
+          <tr><td>6</td><td><b>Custom firmware add-on</b> — 1-hour paid firmware tweak ("I need a moisture sensor on P0"). Made-to-order digital service.</td><td>variable</td><td>$49/job</td></tr>
+          <tr><td>7</td><td><b>TpT "Interactive resource" badge</b> — the LED playground + symptom picker qualify. TpT surfaces interactive listings above static PDFs.</td><td>~10min</td><td>$24.99</td></tr>
+          <tr><td>8</td><td><b>Pre-order v9 "Lesson Book"</b> — announce now, deliver in a few months. Builds anticipation and cashflow.</td><td>~1h to launch</td><td>$39</td></tr>
+          <tr><td>9</td><td><b>Affiliate swap</b> with 3–5 non-competing STEM shops — "I link to you, you link to me."</td><td>~2h outreach</td><td>Free (traffic)</td></tr>
+          <tr><td>10</td><td><b>Spanish listing</b> — architecture is ready for i18n. ~3h translation for ~50% the Arabic market size.</td><td>~3h</td><td>$12.99</td></tr>
+        </tbody>
+      </table>
+
+      <h3>This week — pick three</h3>
+      <ul class="check" data-key="sellideas">
+        <li><input type="checkbox" id="si1"><label for="si1">Extracted <b>micro:bit V2 pin-out</b> SVG as a standalone 1-page PDF (Canva or print-to-PDF from guide.html)</label></li>
+        <li><input type="checkbox" id="si2"><label for="si2">Extracted the <b>architecture diagram</b> as a 1-page PDF</label></li>
+        <li><input type="checkbox" id="si3"><label for="si3">Extracted the <b>symptom-picker chart</b> as a 1-page PDF (laminatable)</label></li>
+        <li><input type="checkbox" id="si4"><label for="si4">Extracted the <b>firmware-flash storyboard</b> as a 1-page PDF</label></li>
+        <li><input type="checkbox" id="si5"><label for="si5">4-poster pack listed on Etsy ($14.99)</label></li>
+        <li><input type="checkbox" id="si6"><label for="si6">4-poster pack listed on Teachers Pay Teachers ($24.99)</label></li>
+        <li><input type="checkbox" id="si7"><label for="si7">Pinned the pin-out infographic to Pinterest</label></li>
+        <li><input type="checkbox" id="si8"><label for="si8">Recorded a 15-sec Reel showing the firmware-flash storyboard</label></li>
+        <li><input type="checkbox" id="si9"><label for="si9">Rewrote one FB group post with the <b>"No-Tech-Anxiety"</b> angle</label></li>
+        <li><input type="checkbox" id="si10"><label for="si10">Identified 3 non-competing STEM shops for an affiliate swap</label></li>
+        <li><input type="checkbox" id="si11"><label for="si11">Decided whether to add the Spanish listing this month</label></li>
+      </ul>
+
+      <h3>Print-to-PDF recipe for poster extraction</h3>
+      <ol>
+        <li>Open <a href="../../docs/guide.html" target="_blank" rel="noopener">docs/guide.html</a> in Chrome.</li>
+        <li>Right-click the target SVG → <b>Inspect</b> → find the <code>&lt;svg&gt;</code> element.</li>
+        <li>Copy the SVG markup, paste into a new blank HTML file with a white background and a title. Open it in Chrome.</li>
+        <li><kbd>⌘P</kbd> → <b>Save as PDF</b> → A4 or US Letter, margins None, background graphics ON.</li>
+        <li>Drop the PDF into Canva if you want to add a header/footer with your shop URL — optional but adds polish.</li>
+      </ol>
+      <div class="callout tip">Same extraction works on the <b>symptom picker</b> — expand all items first (<kbd>⌘F</kbd> "open", or in DevTools run <code>document.querySelectorAll('.symptom').forEach(d=&gt;d.open=true)</code>) and then print.</div>
+    </section>
+
+    <footer>Seller-only document — do not include in the buyer ZIP. Last updated 2026-04-18 (V0.1.54).</footer>
+  </main>
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+(function(){
+  // copy buttons
+  document.querySelectorAll('button[data-copy]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentElement.querySelector('pre');
+      var text = pre.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.classList.add('copied');
+        btn.textContent = 'Copied ✓';
+        showToast('Copied to clipboard');
+        setTimeout(function(){
+          btn.classList.remove('copied');
+          btn.textContent = 'Copy';
+        }, 1800);
+      }).catch(function(){
+        // fallback
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); showToast('Copied'); } catch(e){ showToast('Copy failed — select manually'); }
+        document.body.removeChild(ta);
+      });
+    });
+  });
+
+  // checkboxes — persist in localStorage, update progress
+  var STORAGE_KEY = 'etsy_guide_checks_v1';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e){ state = {}; }
+
+  document.querySelectorAll('.check input[type=checkbox]').forEach(function(cb){
+    if (state[cb.id]) {
+      cb.checked = true;
+      cb.closest('li').classList.add('done');
+    }
+    cb.addEventListener('change', function(){
+      state[cb.id] = cb.checked;
+      cb.closest('li').classList.toggle('done', cb.checked);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      updateProgress();
+    });
+  });
+
+  function updateProgress(){
+    var all = document.querySelectorAll('.check input[type=checkbox]');
+    var done = document.querySelectorAll('.check input[type=checkbox]:checked');
+    var pct = all.length ? Math.round(done.length / all.length * 100) : 0;
+    document.getElementById('prog').textContent = pct;
+    // per-section pill
+    document.querySelectorAll('section').forEach(function(sec){
+      var pill = sec.querySelector('.pill-status');
+      if (!pill) return;
+      var boxes = sec.querySelectorAll('.check input[type=checkbox]');
+      var dones = sec.querySelectorAll('.check input[type=checkbox]:checked');
+      if (!boxes.length){ pill.textContent = 'Info'; return; }
+      pill.innerHTML = '<span class="dot"></span>' + dones.length + '/' + boxes.length + ' done';
+      pill.classList.remove('started','done');
+      sec.classList.remove('done');
+      if (dones.length === boxes.length){
+        pill.classList.add('done');
+        sec.classList.add('done');
+        pill.innerHTML = '<span class="dot"></span>✓ Complete';
+      } else if (dones.length > 0){
+        pill.classList.add('started');
+      }
+    });
+    // celebrate at 100%
+    if (pct === 100 && !window._celebrated){
+      window._celebrated = true;
+      showToast('🎉 Launch checklist complete!');
+    }
+  }
+  updateProgress();
+
+  // toast
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1800);
+  }
+
+  // reset
+  window.resetProgress = function(){
+    if (!confirm('Reset all checkboxes? This cannot be undone.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    document.querySelectorAll('.check input[type=checkbox]').forEach(function(cb){
+      cb.checked = false;
+      cb.closest('li').classList.remove('done');
+    });
+    updateProgress();
+    showToast('Checklist reset');
+  };
+
+  // smooth scroll for TOC
+  document.querySelectorAll('.toc a').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var href = a.getAttribute('href');
+      if (href && href.indexOf('#') === 0) {
+        e.preventDefault();
+        var el = document.querySelector(href);
+        if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
