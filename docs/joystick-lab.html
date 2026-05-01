@@ -263,13 +263,16 @@
   }
 
   // Serialize writes (Web Bluetooth's GATT allows only one in-flight).
-  // micro:bit Nordic UART RX advertises WRITE_WITHOUT_RESPONSE — using the
-  // explicit writeValueWithoutResponse avoids the silent-failure mode some
-  // browsers fall into when given the deprecated writeValue() catch-all.
-  // We surface errors via the verb log + console so future bugs are visible.
+  // CRITICAL: firmware expects every command prefixed with '#N ' where
+  // N is an incrementing sequence number — that's the contract documented
+  // in firmware/v1-maqueen-lib.ts and implemented by js/ble-scheduler.js.
+  // Without the prefix the parser rejects the line and motors stay still.
+  let nextSeq = 1;
   function writeRaw(verb) {
     if (!rxChar) return Promise.resolve();
-    const data = new TextEncoder().encode(verb + '\n');
+    const seq = nextSeq++;
+    const line = `#${seq} ${verb}`;
+    const data = new TextEncoder().encode(line + '\n');
     writeChain = writeChain.then(async () => {
       try {
         if (typeof rxChar.writeValueWithoutResponse === 'function') {
@@ -278,11 +281,11 @@
           await rxChar.writeValue(data);
         }
       } catch (e) {
-        console.error('writeValue failed', verb, e);
-        const line = document.createElement('div');
-        line.style.color = 'var(--danger)';
-        line.textContent = '✗ ' + verb + ' — ' + e.message;
-        verbLog.appendChild(line);
+        console.error('writeValue failed', line, e);
+        const el = document.createElement('div');
+        el.style.color = 'var(--danger)';
+        el.textContent = '✗ ' + line + ' — ' + e.message;
+        verbLog.appendChild(el);
         verbLog.scrollTop = verbLog.scrollHeight;
       }
     });
