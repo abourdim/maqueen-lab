@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="carbon">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maqueen Lite v4 — مرجع المنافذ · Robi-9 Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<link rel="stylesheet" href="doc-shell.css">
+<script src="../workshops/newtab.js" defer></script>
+</head>
+<body class="rtl">
+
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1>Robi-9 Lab // المنافذ</h1>
+      <div class="subtitle">المرجع · Maqueen Lite v4</div>
+    </div>
+  </div>
+  <div class="wd-header-right">
+    <select class="wd-select" id="themeSelect" aria-label="السمة">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;">🤖 تطبيق الروبوت</a>
+  </div>
+</header>
+
+<div class="doc-wrap">
+
+<div class="langbar">
+  <a href="pinout.html">🇬🇧 EN</a>
+  <a href="pinout.fr.html">🇫🇷 FR</a>
+  <a href="pinout.ar.html" class="active">🇩🇿 AR</a>
+</div>
+
+<h1>Maqueen Lite v4 — مرجع المنافذ</h1>
+<div class="subtitle">مصدر الحقيقة لكل منفذ يستخدمه firmware Maqueen Lab وامتداد <code>pxt-maqueen</code> الكامن وراءه.</div>
+
+<h2>المراجع</h2>
+<ul class="ref-list">
+  <li><strong>امتداد DFRobot pxt-maqueen</strong> — <a href="https://github.com/DFRobot/pxt-maqueen" target="_blank" rel="noopener">github.com/DFRobot/pxt-maqueen</a> — مكتبة MakeCode الرسمية ؛ المصدر الموثوق الوحيد لمعرفة أيّ منفذ micro:bit يقود أيّ مكوّن على Maqueen Lite v4. كلّ تخصيصات المنافذ أدناه مستخرجة من هذا المستودع.</li>
+  <li><strong>pxt-maqueen <code>maqueen.ts</code></strong> — <a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts" target="_blank" rel="noopener">maqueen.ts</a> — مراجع <code>DigitalPin.PXX</code> و I2C <code>0x10</code> سطراً بسطر، مذكورة في قسم « كيف نعرف » أدناه.</li>
+  <li><strong>pxt-maqueen <code>maqueenIR.cpp</code></strong> — <a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueenIR.cpp" target="_blank" rel="noopener">maqueenIR.cpp</a> — وسيط C++ لمستقبل الأشعّة تحت الحمراء. المنفذ <strong>قابل للتخصيص من المستخدم</strong> عبر <code>maqueenIR.initIR(pin)</code> ؛ على Maqueen Lite v4 المستقبل المدمج موصول بـ <strong>P16</strong>.</li>
+  <li><strong>صفحة منتج DFRobot Maqueen Lite</strong> — <a href="https://www.dfrobot.com/product-1783.html" target="_blank" rel="noopener">dfrobot.com/product-1783.html</a> — قائمة عالية المستوى للمكوّنات (4× RGB محيطية، LED ×2، حسّاسا خط، أمواج فوق صوتية، IR، صفّارة، servos S1/S2، منافذ Gravity P0/P1/P2، I2C). <strong>لا تنشر</strong> مخطّط المنافذ نصّياً.</li>
+  <li><strong>ويكي DFRobot Maqueen Lite</strong> — <a href="https://wiki.dfrobot.com/rob0148-en/" target="_blank" rel="noopener">wiki.dfrobot.com/rob0148-en</a> — دليل التركيب، مخطّط وظيفيّ (صورة فقط)، أمثلة كود.</li>
+  <li><strong>مرجع منافذ micro:bit</strong> — <a href="https://tech.microbit.org/hardware/edgeconnector/" target="_blank" rel="noopener">tech.microbit.org/hardware/edgeconnector</a> — لمعرفة أيّ <code>DigitalPin.PXX</code> يطابق أيّ pad فيزيائيّ على موصل الحافّة، وأيّ pads مشتركة مع مصفوفة LED.</li>
+</ul>
+
+<h2>عن مكتبة pxt-maqueen</h2>
+<div class="lib-desc">
+  <p><code>pxt-maqueen</code> هو امتداد MakeCode الرسميّ من DFRobot لعائلة روبوتات Maqueen التعليميّة (بما فيها Maqueen Lite v4). أَضِفه في MakeCode عبر <em>Extensions ← بحث « maqueen »</em> أو الصق <a href="https://github.com/DFRobot/pxt-maqueen" target="_blank" rel="noopener">رابط GitHub</a>. يُتيح namespace باسم <code>maqueen</code> يُغلِّف عمليّات المنافذ و I2C منخفضة المستوى خلف blocks ودودة للأطفال:</p>
+  <ul>
+    <li><code>maqueen.motorRun(motor, dir, speed)</code> — يقود متحكّم المحرّك I2C على العنوان <code>0x10</code>.</li>
+    <li><code>maqueen.motorStop(motor)</code> — مكبح.</li>
+    <li><code>maqueen.servoRun(servo, angle)</code> — يكتب في سجلّات I2C <code>0x14</code> (S1) و <code>0x15</code> (S2).</li>
+    <li><code>maqueen.writeLED(led, switch)</code> — يبدّل LEDs البسيطة على <code>P8</code> (يسار) و <code>P12</code> (يمين).</li>
+    <li><code>maqueen.readPatrol(sensor)</code> — يقرأ حسّاسات تتبّع الخط على <code>P13</code> (يسار) و <code>P14</code> (يمين).</li>
+    <li><code>maqueen.Ultrasonic(unit)</code> — يقود <code>P1</code> (trig) / <code>P2</code> (echo) لـ SR04.</li>
+    <li><code>maqueen.IR_read()</code> — يقرأ رموز NEC من مستقبل IR المدمج عبر وسيط C++ <code>maqueenIR.cpp</code>.</li>
+    <li>LEDs RGB مُتحكّم بها عبر I2C (4 بكسل محيطيّ) في السجلّ <code>0x32</code> من نفس الشريحة <code>0x10</code> — <strong>ليست</strong> NeoPixels قياسيّة.</li>
+  </ul>
+  <p>firmware v1 الخاصّ بـ Maqueen Lab (<code>firmware/v1-maqueen-lib.ts</code>) يستخدم استدعاءات <code>maqueen.*</code> هذه مباشرةً. firmware v2 المستقبليّ سيستبدلها باستدعاءات <code>pins.*</code> و I2C خامة — نفس البروتوكول السلكيّ، نفس تطبيق الويب، كود منخفض المستوى يُعرَض جنباً إلى جنب في كلّ Component Explorer للتقدّم التعليميّ.</p>
+</div>
+
+<div class="legend">
+  <span><i class="dot used"></i> مستخدم بواسطة عتاد Maqueen</span>
+  <span><i class="dot conflict"></i> تعارض مع منفذ Gravity</span>
+  <span><i class="dot free"></i> حرّ لإضافات المستخدم</span>
+</div>
+
+<h2>استخدام منافذ micro:bit</h2>
+<table>
+  <tr><th>المنفذ</th><th>مستخدم بواسطة</th><th>الاتجاه</th><th>ملاحظات</th></tr>
+  <tr><td class="pin-conflict">P0</td><td>صفّارة</td><td>خرج (PWM)</td><td>منفذ <code>music</code> الافتراضيّ ؛ كذلك منفذ Gravity — تعارض عند إعادة التخصيص</td></tr>
+  <tr><td class="pin-conflict">P1</td><td>أمواج فوق صوتيّة TRIG</td><td>خرج</td><td>كذلك منفذ Gravity — تعارض مع حسّاس خارجيّ</td></tr>
+  <tr><td class="pin-conflict">P2</td><td>أمواج فوق صوتيّة ECHO</td><td>دخل</td><td>كذلك منفذ Gravity — تعارض مع حسّاس خارجيّ</td></tr>
+  <tr><td class="pin-free">P3</td><td>—</td><td>حرّ</td><td>مشترك مع col1 من مصفوفة LED (تجنّب استخدامه كخرج رقميّ)</td></tr>
+  <tr><td class="pin-free">P4</td><td>—</td><td>حرّ</td><td>مصفوفة LED col2</td></tr>
+  <tr><td class="pin-used">P5</td><td>الزرّ A</td><td>دخل</td><td>مدمج في micro:bit</td></tr>
+  <tr><td class="pin-free">P6</td><td>—</td><td>حرّ</td><td>مصفوفة LED col9</td></tr>
+  <tr><td class="pin-free">P7</td><td>—</td><td>حرّ</td><td>مصفوفة LED col8</td></tr>
+  <tr><td class="pin-used">P8</td><td>LED اليسار (بسيط)</td><td>خرج</td><td>رقميّ ON/OFF</td></tr>
+  <tr><td class="pin-free">P9</td><td>—</td><td>حرّ</td><td>مصفوفة LED col7</td></tr>
+  <tr><td class="pin-free">P10</td><td>—</td><td>حرّ</td><td>مصفوفة LED col3</td></tr>
+  <tr><td class="pin-used">P11</td><td>الزرّ B</td><td>دخل</td><td>مدمج في micro:bit</td></tr>
+  <tr><td class="pin-used">P12</td><td>LED اليمين (بسيط)</td><td>خرج</td><td>رقميّ ON/OFF</td></tr>
+  <tr><td class="pin-used">P13</td><td>حسّاس خط اليسار</td><td>دخل</td><td>رقميّ 0/1</td></tr>
+  <tr><td class="pin-used">P14</td><td>حسّاس خط اليمين</td><td>دخل</td><td>رقميّ 0/1</td></tr>
+  <tr><td class="pin-free">P15</td><td>—</td><td>حرّ</td><td>—</td></tr>
+  <tr><td class="pin-free">P16</td><td>—</td><td>حرّ</td><td>—</td></tr>
+  <tr><td class="pin-used">P19</td><td>I2C SCL</td><td>—</td><td>متحكّم المحرّك + 4× RGB + servos S1/S2 (العنوان <strong>0x10</strong>)</td></tr>
+  <tr><td class="pin-used">P20</td><td>I2C SDA</td><td>—</td><td>نفس ناقل I2C</td></tr>
+</table>
+
+<h2>خريطة المكوّنات</h2>
+<table>
+  <tr><th>المكوّن</th><th>المنفذ / العنوان</th><th>ملاحظات</th></tr>
+  <tr><td>متحكّم المحرّك</td><td>I2C <code>0x10</code></td><td>السجلّ <code>0x00</code> = M1، <code>0x02</code> = M2 (الاتجاه + السرعة)</td></tr>
+  <tr><td>4× RGB محيطيّة</td><td>I2C <code>0x10</code>، السجلّ <code>0x32</code></td><td><strong>ليست NeoPixel قياسيّة</strong> — مُتحكّم بها عبر شريحة متحكّم المحرّك</td></tr>
+  <tr><td>LED اليسار (بسيط)</td><td><code>P8</code> رقميّ</td><td>ON/OFF</td></tr>
+  <tr><td>LED اليمين (بسيط)</td><td><code>P12</code> رقميّ</td><td>ON/OFF</td></tr>
+  <tr><td>حسّاس خط اليسار</td><td><code>P13</code> رقميّ</td><td>0 / 1</td></tr>
+  <tr><td>حسّاس خط اليمين</td><td><code>P14</code> رقميّ</td><td>0 / 1</td></tr>
+  <tr><td>أمواج فوق صوتيّة TRIG</td><td><code>P1</code></td><td>SR04 / SR04P</td></tr>
+  <tr><td>أمواج فوق صوتيّة ECHO</td><td><code>P2</code></td><td>SR04 / SR04P</td></tr>
+  <tr><td>صفّارة</td><td><code>P0</code></td><td>الخرج الافتراضيّ لمكتبة <code>music</code> في micro:bit</td></tr>
+  <tr><td>servos S1 / S2</td><td>I2C <code>0x10</code> (عبر الامتداد)</td><td>استخدم <code>maqueen.servoRun(S1|S2, angle)</code></td></tr>
+  <tr><td>مستقبل IR</td><td><code>P16</code> (افتراضيّ Maqueen Lite v4)</td><td><code>maqueenIR.initIR(Pins.P16)</code> + <code>onPressEvent(...)</code> لكلّ زرّ</td></tr>
+</table>
+
+<h2>خريطة سجلّات I2C 0x10 (شريحة متحكّم المحرّك)</h2>
+<table>
+  <tr><th>السجلّ</th><th>الوظيفة</th></tr>
+  <tr><td><code>0x00</code></td><td>المحرّك M1 (يسار): الاتجاه + السرعة</td></tr>
+  <tr><td><code>0x02</code></td><td>المحرّك M2 (يمين): الاتجاه + السرعة</td></tr>
+  <tr><td><code>0x14</code></td><td>زاوية servo S1</td></tr>
+  <tr><td><code>0x15</code></td><td>زاوية servo S2</td></tr>
+  <tr><td><code>0x32</code></td><td>بيانات 4× LED RGB (16 مليون لون لكلّ منها)</td></tr>
+</table>
+
+<h2>حرّة لإضافات الأطفال</h2>
+<p><strong>P3, P4, P6, P7, P9, P10, P15, P16</strong></p>
+<p>P3/P4/P6/P7/P9/P10 تشترك مع مصفوفة عرض LED — عطّل العرض أوّلاً قبل استخدامها كخروج رقميّ:</p>
+<pre><code>led.enable(false)</code></pre>
+
+<h2>تحذيرات التعارض</h2>
+<div class="warn">
+<p><strong>P0 = صفّارة.</strong> توصيل أيّ شيء آخر بمنفذ Gravity P0 يُسكت الصفّارة (والعكس صحيح).</p>
+<p><strong>P1 / P2 = أمواج فوق صوتيّة.</strong> توصيل حسّاس Gravity على P1 أو P2 يعطّل الأمواج فوق الصوتيّة. التطبيق يُحذّر عند استخدام الاثنين معاً.</p>
+<p><strong>ناقل I2C</strong> (P19/P20) مشترك. الإضافات على عناوين غير <code>0x10</code> آمنة ؛ تصادم العناوين مميت.</p>
+</div>
+
+<h2>كيف نعرف — تخصيصات المنافذ متتبَّعة إلى المصدر</h2>
+<p>كلّ تخصيص منفذ أدناه مستخرج من <a href="https://github.com/DFRobot/pxt-maqueen" target="_blank" rel="noopener">شفرة امتداد pxt-maqueen</a>. أرقام السطور تشير إلى <a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts" target="_blank" rel="noopener"><code>maqueen.ts</code></a> وقت الكتابة.</p>
+<table class="source-table">
+  <tr><th>المنفذ / العنوان</th><th>المكوّن</th><th>الدليل</th></tr>
+  <tr><td><code>P1</code></td><td>أمواج فوق صوتيّة TRIG</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L164" target="_blank" rel="noopener">maqueen.ts:164</a> — <code>pins.digitalWritePin(DigitalPin.P1, 1)</code> داخل <code>Ultrasonic()</code></td></tr>
+  <tr><td><code>P2</code></td><td>أمواج فوق صوتيّة ECHO</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L172" target="_blank" rel="noopener">maqueen.ts:172</a> — <code>d = pins.pulseIn(DigitalPin.P2, PulseValue.High, 500 * 58)</code></td></tr>
+  <tr><td><code>P8</code></td><td>LED اليسار (بسيط)</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L287" target="_blank" rel="noopener">maqueen.ts:287</a> — <code>pins.digitalWritePin(DigitalPin.P8, ledswitch)</code> داخل <code>writeLED(LEDLeft, ...)</code></td></tr>
+  <tr><td><code>P12</code></td><td>LED اليمين (بسيط)</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L289" target="_blank" rel="noopener">maqueen.ts:289</a> — <code>pins.digitalWritePin(DigitalPin.P12, ledswitch)</code> داخل <code>writeLED(LEDRight, ...)</code></td></tr>
+  <tr><td><code>P13</code></td><td>حسّاس خط اليسار</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L267" target="_blank" rel="noopener">maqueen.ts:267</a> — <code>return pins.digitalReadPin(DigitalPin.P13)</code> داخل <code>readPatrol(PatrolLeft)</code></td></tr>
+  <tr><td><code>P14</code></td><td>حسّاس خط اليمين</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L269" target="_blank" rel="noopener">maqueen.ts:269</a> — <code>return pins.digitalReadPin(DigitalPin.P14)</code> داخل <code>readPatrol(PatrolRight)</code></td></tr>
+  <tr><td>I2C <code>0x10</code></td><td>شريحة المحرّك + RGB + servos</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L19" target="_blank" rel="noopener">maqueen.ts:19</a> — <code>const MOTER_ADDRESSS = 0x10</code>، تستخدمه <code>pins.i2cWriteBuffer(0x10, buf)</code> في كلّ مكان</td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x14</code></td><td>زاوية servo S1</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L308" target="_blank" rel="noopener">maqueen.ts:308</a> — <code>buf[0] = 0x14</code> ثم <code>pins.i2cWriteBuffer(0x10, buf)</code> داخل <code>servoRun(S1, angle)</code></td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x15</code></td><td>زاوية servo S2</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L311" target="_blank" rel="noopener">maqueen.ts:311</a> — <code>buf[0] = 0x15</code> لـ S2</td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x00</code></td><td>المحرّك M1</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L202" target="_blank" rel="noopener">maqueen.ts:202–205</a> — <code>buf[0] = 0x00; ...; pins.i2cWriteBuffer(0x10, buf)</code> داخل <code>motorRun(M1, ...)</code></td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x02</code></td><td>المحرّك M2</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L208" target="_blank" rel="noopener">maqueen.ts:208–211</a> — <code>buf[0] = 0x02</code> لـ M2</td></tr>
+  <tr><td>I2C <code>0x10</code> reg <code>0x32</code></td><td>4× LEDs RGB محيطيّة</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueen.ts#L659" target="_blank" rel="noopener">maqueen.ts:659</a> — <code>pins.i2cWriteNumber(I2CADDR, 0x32, NumberFormat.Int8LE)</code> داخل block كتابة RGB</td></tr>
+  <tr><td>مستقبل IR (P16)</td><td>NEC IR</td><td><a href="https://github.com/DFRobot/pxt-maqueen/blob/master/maqueenIR.cpp" target="_blank" rel="noopener">maqueenIR.cpp</a> يُعرّف الـ API لكنّه <strong>لا يكتب منفذاً ثابتاً</strong> — على المستخدم استدعاء <code>maqueenIR.initIR(maqueenIR.Pins.P16)</code>. <strong>P16</strong> هو الاتفاق على Maqueen Lite v4.</td></tr>
+  <tr><td><code>P0</code></td><td>صفّارة</td><td><strong>ليست في pxt-maqueen.</strong> Maqueen Lite v4 توصل الصفّارة المدمجة بـ <code>P0</code>، الخرج الافتراضيّ لمكتبة <code>music</code> في micro:bit. مُؤكَّد عبر أمثلة DFRobot على <a href="https://wiki.dfrobot.com/rob0148-en/" target="_blank" rel="noopener">الويكي</a>، ومتوافق مع السمّاعة المدمجة في micro:bit V2.</td></tr>
+  <tr><td><code>P19</code> / <code>P20</code></td><td>I2C SCL / SDA</td><td><strong>ليست في pxt-maqueen.</strong> منافذ I2C القياسيّة لموصل حافّة micro:bit حسب <a href="https://tech.microbit.org/hardware/edgeconnector/" target="_blank" rel="noopener">tech.microbit.org/hardware/edgeconnector</a> ؛ استدعاءات <code>pins.i2c*</code> في pxt-maqueen تستخدمها افتراضيّاً.</td></tr>
+  <tr><td><code>P5</code> / <code>P11</code></td><td>الزرّ A / B</td><td><strong>ليست في pxt-maqueen.</strong> مدمجة في لوحة micro:bit نفسها، ليس في حامل Maqueen.</td></tr>
+  <tr><td><code>P3, P4, P6, P7, P9, P10</code></td><td>أعمدة مصفوفة LED</td><td><strong>ليست في pxt-maqueen.</strong> تنتمي لعرض LED 5×5 المدمج في micro:bit ؛ صالحة كدخل/خرج رقميّ فقط بعد <code>led.enable(false)</code>.</td></tr>
+</table>
+
+<p><strong>لإعادة التحقّق:</strong> استنسخ المستودع و grep عن <code>DigitalPin.P</code> و <code>0x10</code>:</p>
+<pre><code>git clone https://github.com/DFRobot/pxt-maqueen
+grep -nE "DigitalPin\.|0x10|0x14|0x15|0x32" pxt-maqueen/maqueen.ts</code></pre>
+
+<h2>كيف يستخدمها firmware Maqueen Lab</h2>
+<table>
+  <tr><th>الفعل (عبر BLE)</th><th>كود micro:bit</th></tr>
+  <tr><td><code>M:L,R</code></td><td><code>maqueen.motorRun(M1, dir, |L|)</code> + كذلك لـ M2</td></tr>
+  <tr><td><code>STOP</code></td><td><code>maqueen.motorStop(All)</code></td></tr>
+  <tr><td><code>LED:i,s</code></td><td><code>maqueen.writeLED(i, s)</code></td></tr>
+  <tr><td><code>SRV:i,a</code></td><td><code>maqueen.servoRun(Si, a)</code></td></tr>
+  <tr><td><code>BUZZ:f,ms</code></td><td><code>music.playTone(f, ms)</code></td></tr>
+  <tr><td><code>LINE?</code></td><td><code>maqueen.readPatrol(L/R)</code> ← <code>LINE:l,r</code></td></tr>
+  <tr><td><code>DIST?</code></td><td><code>maqueen.Ultrasonic(cm)</code> ← <code>DIST:cm</code></td></tr>
+  <tr><td><code>IR?</code></td><td><code>maqueen.IR_read()</code> ← <code>IR:code</code></td></tr>
+  <tr><td><code>RGB:i,r,g,b</code></td><td>كتابة I2C على <code>0x10</code> reg <code>0x32</code></td></tr>
+  <tr><td>(تلقائي)</td><td><code>input.acceleration(X/Y/Z)</code> ← <code>ACC:x,y,z</code></td></tr>
+</table>
+
+<p>انظر <code>firmware/v1-maqueen-lib.ts</code> للتنفيذ الكامل.</p>
+
+<h2>المستقبل: firmware خام (v2)</h2>
+<p>المرحلة 2 من firmware (<code>firmware/v2-raw-pins.ts</code>) ستستبدل استدعاءات <code>maqueen.*</code> بعمليّات <code>pins.*</code> و <code>pins.i2cWriteBuffer(...)</code> مباشرة — نفس البروتوكول السلكيّ، كود منخفض المستوى للمتعلّمين المتقدّمين. Component Explorers ستعرض الإصدارَين جنباً إلى جنب في لوحة الكود.</p>
+
+<a class="back-link" href="../index.html">← رجوع إلى تطبيق الروبوت</a>
+
+</div>
+
+<div class="wd-band wd-band-bottom"></div>
+<footer class="wd-footer">
+  <span>مدعوم من <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
+  <span class="sep">·</span>
+  <span>Robi-9 Lab · المنافذ</span>
+</footer>
+
+<script>
+  (function () {
+    const sel = document.getElementById('themeSelect');
+    function apply(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      if (sel) sel.value = t;
+      try { localStorage.setItem('robi.theme', t); } catch (e) {}
+    }
+    try {
+      const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme');
+      if (t) apply(t);
+    } catch (e) {}
+    if (sel) sel.addEventListener('change', e => apply(e.target.value));
+  })();
+</script>
+
+</body>
+</html>

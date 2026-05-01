@@ -1,83 +1,42 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="carbon">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Maqueen Lite v4 — Référence des broches</title>
-<style>
-  :root {
-    --bg: #0a1628;
-    --bg-elev: #0f1e35;
-    --bg-card: #122844;
-    --border: #1d3556;
-    --text: #e6eef9;
-    --text-dim: #93a8c4;
-    --accent: #00d4ff;
-    --accent-glow: #00d4ff66;
-    --green: #4ade80;
-    --amber: #fbbf24;
-    --red: #f87171;
-    --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-  }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-    line-height: 1.6;
-    font-size: 15px;
-  }
-  body { max-width: 980px; margin: 0 auto; padding: 48px 32px 96px; }
-  h1 {
-    font-size: 38px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px;
-    background: linear-gradient(135deg, #fff, var(--accent));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .subtitle { color: var(--text-dim); font-size: 16px; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
-  h2 { font-size: 24px; margin-top: 56px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
-  h3 { font-size: 18px; margin-top: 32px; margin-bottom: 12px; color: var(--accent); }
-  p { margin: 12px 0; }
-  ul { padding-left: 24px; } li { margin: 6px 0; }
-  code { font-family: var(--mono); font-size: 13px; background: var(--bg-elev); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--accent); }
-  pre { background: var(--bg-elev); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 14px 18px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
-  pre code { background: transparent; border: none; padding: 0; color: var(--text); }
-  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
-  th { background: var(--bg-elev); font-weight: 600; color: var(--accent); font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(0, 212, 255, 0.04); }
-  td code { font-size: 12px; }
-  strong { color: #fff; }
-  blockquote, .warn { border-left: 3px solid var(--amber); background: rgba(251, 191, 36, 0.08); padding: 12px 18px; margin: 16px 0; border-radius: 0 6px 6px 0; color: var(--text); }
-  .warn strong { color: var(--amber); }
-  .pin-used { color: var(--accent); font-weight: 600; }
-  .pin-free { color: var(--green); }
-  .pin-conflict { color: var(--amber); font-weight: 600; }
-  .legend { display: flex; gap: 24px; margin: 16px 0 24px; font-size: 13px; flex-wrap: wrap; }
-  .legend span { display: inline-flex; align-items: center; gap: 8px; }
-  .legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-  .legend .dot.used { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
-  .legend .dot.free { background: var(--green); }
-  .legend .dot.conflict { background: var(--amber); }
-  a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted rgba(0, 212, 255, 0.4); }
-  a:hover { border-bottom-color: var(--accent); text-shadow: 0 0 6px var(--accent-glow); }
-  .ref-list li { margin: 8px 0; } .ref-list li code { font-size: 12px; }
-  .lib-desc { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 18px 24px; margin: 16px 0; }
-  .lib-desc h3 { margin-top: 0; }
-  .source-table td:nth-child(3) { font-size: 12.5px; color: var(--text-dim); }
-  .source-table td:nth-child(3) code { font-size: 11.5px; }
-  .langbar { display: flex; gap: 6px; justify-content: flex-end; margin-bottom: 18px; }
-  .langbar a { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); border-bottom: 1px solid var(--border); }
-  .langbar a.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-</style>
+<title>Maqueen Lite v4 — Référence des broches · Robi-9 Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<link rel="stylesheet" href="doc-shell.css">
+<script src="../workshops/newtab.js" defer></script>
 </head>
 <body>
 
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1>Robi-9 Lab // Broches</h1>
+      <div class="subtitle">Référence · Maqueen Lite v4</div>
+    </div>
+  </div>
+  <div class="wd-header-right">
+    <select class="wd-select" id="themeSelect" aria-label="Thème">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;">🤖 App Robot</a>
+  </div>
+</header>
+
+<div class="doc-wrap">
+
 <div class="langbar">
-  <a href="pinout.html">EN</a>
-  <a href="pinout.fr.html" class="active">FR</a>
-  <a href="pinout.ar.html" title="bientôt — non disponible" style="opacity:0.4;">AR</a>
+  <a href="pinout.html">🇬🇧 EN</a>
+  <a href="pinout.fr.html" class="active">🇫🇷 FR</a>
+  <a href="pinout.ar.html">🇩🇿 AR</a>
 </div>
 
 <h1>Maqueen Lite v4 — Référence des broches</h1>
@@ -223,6 +182,33 @@ grep -nE "DigitalPin\.|0x10|0x14|0x15|0x32" pxt-maqueen/maqueen.ts</code></pre>
 
 <h2>Futur : firmware brut (v2)</h2>
 <p>La phase 2 du firmware (<code>firmware/v2-raw-pins.ts</code>) remplacera les appels <code>maqueen.*</code> par des opérations directes <code>pins.*</code> et <code>pins.i2cWriteBuffer(...)</code> — même protocole filaire, code bas-niveau pour apprenants avancés. Les Component Explorers afficheront les deux versions côte à côte dans le panneau de code.</p>
+
+<a class="back-link" href="../index.html">← Retour à l'App Robot</a>
+
+</div>
+
+<div class="wd-band wd-band-bottom"></div>
+<footer class="wd-footer">
+  <span>propulsé par <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
+  <span class="sep">·</span>
+  <span>Robi-9 Lab · Broches</span>
+</footer>
+
+<script>
+  (function () {
+    const sel = document.getElementById('themeSelect');
+    function apply(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      if (sel) sel.value = t;
+      try { localStorage.setItem('robi.theme', t); } catch (e) {}
+    }
+    try {
+      const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme');
+      if (t) apply(t);
+    } catch (e) {}
+    if (sel) sel.addEventListener('change', e => apply(e.target.value));
+  })();
+</script>
 
 </body>
 </html>

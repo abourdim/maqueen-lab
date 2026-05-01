@@ -1,0 +1,254 @@
+/* ═══════════════════════════════════════════════════════════════════
+   ROBI-9 LAB · DOC SHELL · prose typography + langbar + tables
+   Layered on top of workshops/theme.css. All colors via CSS vars
+   so the 5 themes (Carbon · Forest · Steel · Paper · Pearl) work
+   uniformly across every doc page (pinout · plan · schematics ·
+   schematics-kids · guide).
+   ═══════════════════════════════════════════════════════════════════ */
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  font-size: 15px;
+}
+body {
+  background:
+    radial-gradient(ellipse at 12% -8%, var(--hero-glow), transparent 55%),
+    radial-gradient(ellipse at 92% 108%, var(--hero-glow), transparent 60%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+/* ── Reading column ─────────────────────────────────────────────── */
+.doc-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 28px 60px;
+}
+
+/* ── Lang switcher pills (EN · FR · AR) ─────────────────────────── */
+.langbar {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 22px;
+  font-size: 13px;
+}
+.langbar a {
+  padding: 5px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  color: var(--steel);
+  text-decoration: none;
+  background: var(--bg-card);
+  font-weight: 600;
+  font-family: var(--font-body);
+  transition: border-color 0.15s, color 0.15s;
+}
+.langbar a:hover { border-color: var(--neon); color: var(--text); }
+.langbar a.active {
+  color: var(--ink);
+  background: var(--neon);
+  border-color: var(--neon);
+}
+
+/* ── Doc hero (title + subtitle, replaces gradient h1) ──────────── */
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 2.6rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin: 0 0 8px;
+  color: var(--neon);
+  line-height: 1.15;
+}
+.subtitle, .doc-subtitle {
+  color: var(--steel);
+  font-size: 16px;
+  margin-bottom: 36px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 22px;
+  font-family: var(--font-body);
+}
+
+/* ── Section headings ───────────────────────────────────────────── */
+h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin-top: 50px;
+  margin-bottom: 14px;
+  padding: 6px 14px 8px 0;
+  border-bottom: 2px solid var(--neon);
+  display: inline-block;
+  color: var(--text);
+}
+h2::before { content: "▸ "; color: var(--amber); }
+h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  margin-top: 28px;
+  margin-bottom: 10px;
+  color: var(--cyan);
+}
+
+/* ── Prose ──────────────────────────────────────────────────────── */
+p { margin: 12px 0; }
+ul, ol { padding-left: 24px; }
+ul li, ol li { margin: 6px 0; }
+strong, b { color: var(--text); font-weight: 700; }
+em, i { color: var(--steel); }
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--cyan);
+}
+a:hover { color: var(--neon); border-bottom-color: var(--neon); }
+
+/* ── Code ───────────────────────────────────────────────────────── */
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 13px;
+  background: var(--bg-card);
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  color: var(--neon);
+}
+pre {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--neon);
+  border-radius: 8px;
+  padding: 14px 18px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 14px 0;
+}
+pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--text);
+}
+
+/* ── Tables ─────────────────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  font-size: 14px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+th, td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  background: var(--bg-soft);
+  font-family: var(--font-tech);
+  font-weight: 700;
+  color: var(--cyan);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg-soft); }
+td code { font-size: 12px; }
+
+/* ── Callouts (warning, tip, info) ──────────────────────────────── */
+blockquote, .warn, .tip, .note {
+  border-left: 4px solid var(--amber);
+  background: var(--bg-card);
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 10px 10px 0;
+  color: var(--text);
+}
+.warn  { border-left-color: var(--amber); }
+.tip   { border-left-color: var(--cyan); }
+.note  { border-left-color: var(--neon); }
+.warn strong { color: var(--amber); }
+.tip strong  { color: var(--cyan); }
+.note strong { color: var(--neon); }
+
+/* ── Pin status colors ──────────────────────────────────────────── */
+.pin-used     { color: var(--cyan); font-weight: 700; }
+.pin-free     { color: var(--neon); }
+.pin-conflict { color: var(--amber); font-weight: 700; }
+
+/* ── Legend (used on pinout.html) ───────────────────────────────── */
+.legend {
+  display: flex;
+  gap: 20px;
+  margin: 14px 0 22px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.legend .dot.used     { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.legend .dot.free     { background: var(--neon); }
+.legend .dot.conflict { background: var(--amber); }
+
+/* ── Description card (used for "About the library" type blocks) ── */
+.lib-desc, .info-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 24px;
+  margin: 16px 0;
+}
+.lib-desc h3, .info-card h3 { margin-top: 0; }
+
+/* ── Source-table evidence column smaller ───────────────────────── */
+.source-table td:nth-child(3) { font-size: 12.5px; color: var(--steel); }
+.source-table td:nth-child(3) code { font-size: 11.5px; }
+
+/* ── Back-link button ───────────────────────────────────────────── */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 36px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom-style: solid;
+}
+.back-link:hover { border-color: var(--neon); color: var(--neon); }
+
+/* ── RTL adjustments ────────────────────────────────────────────── */
+[dir="rtl"] .doc-wrap { text-align: right; }
+[dir="rtl"] ul, [dir="rtl"] ol { padding-left: 0; padding-right: 24px; }
+[dir="rtl"] blockquote, [dir="rtl"] .warn,
+[dir="rtl"] .tip, [dir="rtl"] .note {
+  border-left: none;
+  border-right: 4px solid var(--amber);
+  border-radius: 10px 0 0 10px;
+}
+[dir="rtl"] .tip  { border-right-color: var(--cyan); }
+[dir="rtl"] .note { border-right-color: var(--neon); }
+[dir="rtl"] pre   { border-left: 1px solid var(--border); border-right: 3px solid var(--neon); }
+[dir="rtl"] h2::before { content: "◂ "; }
+
+/* ── Print ──────────────────────────────────────────────────────── */
+@media print {
+  .langbar, .back-link { display: none; }
+  body { background: white; color: black; }
+  a { color: black; }
+}
