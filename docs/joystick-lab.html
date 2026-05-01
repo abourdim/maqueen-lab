@@ -10,6 +10,8 @@
 <!-- Reuse the main app's BLE module (ble.js) via a tiny shim. -->
 <script src="../js/ble-shim.js"></script>
 <script src="../js/ble.js"></script>
+<!-- Camera-driven input modes (10 of them). -->
+<script src="../js/camera-inputs.js" defer></script>
 <style>
   body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: var(--font-body); }
   .lab-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 22px 60px; }
@@ -31,7 +33,10 @@
   .conn-bar .verb-feed { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--cyan); padding: 4px 12px; background: var(--ink); border-radius: 6px; min-width: 160px; text-align: center; }
 
   /* MODE GRID */
-  .mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 18px 0 26px; }
+  .mode-cat { margin: 22px 0 8px; }
+  .mode-cat .cat-label { display: flex; align-items: center; gap: 8px; padding: 4px 0 6px; color: var(--cyan); font-family: var(--font-tech); font-weight: 700; letter-spacing: 0.08em; font-size: 0.76rem; text-transform: uppercase; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .mode-cat .cat-label .cat-icon { font-size: 1rem; }
+  .mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
   .mode-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 14px; padding: 14px 12px; cursor: pointer; text-align: center; transition: transform 0.12s, border-color 0.12s; user-select: none; }
   .mode-card:hover { transform: translateY(-2px); border-color: var(--cyan); }
   .mode-card.active { border-color: var(--neon); background: linear-gradient(135deg, var(--bg-card), var(--bg-soft)); box-shadow: 0 6px 18px var(--hero-glow); }
@@ -153,17 +158,45 @@
   <button id="debugBtn" style="padding:6px 12px; border-radius:8px; background:var(--bg-soft); border:1px solid var(--border); color:var(--text); cursor:pointer; font-size:12px;">🐞 Debug</button>
 </div>
 
-<div class="mode-grid" id="modeGrid">
-  <div class="mode-card" data-mode="classic"><div class="mode-icon">🕹</div><div class="mode-title">Classic Pad</div><div class="mode-sub">drag knob</div></div>
-  <div class="mode-card" data-mode="dpad"><div class="mode-icon">🎮</div><div class="mode-title">D-Pad</div><div class="mode-sub">8-dir taps</div></div>
-  <div class="mode-card" data-mode="twin"><div class="mode-icon">🎚</div><div class="mode-title">Twin Sticks</div><div class="mode-sub">tank drive</div></div>
-  <div class="mode-card" data-mode="tilt"><div class="mode-icon">📱</div><div class="mode-title">Tilt</div><div class="mode-sub">phone tip</div></div>
-  <div class="mode-card" data-mode="voice"><div class="mode-icon">🎤</div><div class="mode-title">Voice</div><div class="mode-sub">say it</div></div>
-  <div class="mode-card" data-mode="whistle"><div class="mode-icon">🎺</div><div class="mode-title">Whistle</div><div class="mode-sub">pitch → dir</div></div>
-  <div class="mode-card" data-mode="keyboard"><div class="mode-icon">⌨️</div><div class="mode-title">Keyboard</div><div class="mode-sub">WASD desktop</div></div>
-  <div class="mode-card" data-mode="painter"><div class="mode-icon">✏️</div><div class="mode-title">Path Painter</div><div class="mode-sub">draw → follow</div></div>
-  <div class="mode-card" data-mode="gamepad"><div class="mode-icon">🎮</div><div class="mode-title">Gamepad</div><div class="mode-sub">USB controller</div></div>
-  <div class="mode-card" data-mode="beat"><div class="mode-icon">🥁</div><div class="mode-title">BeatBox</div><div class="mode-sub">clap → step</div></div>
+<div class="mode-cat">
+  <div class="cat-label"><span class="cat-icon">🕹</span><span>Touch &amp; Pointer</span></div>
+  <div class="mode-grid">
+    <div class="mode-card" data-mode="classic"><div class="mode-icon">🕹</div><div class="mode-title">Classic Pad</div><div class="mode-sub">drag knob</div></div>
+    <div class="mode-card" data-mode="dpad"><div class="mode-icon">🎮</div><div class="mode-title">D-Pad</div><div class="mode-sub">8-dir taps</div></div>
+    <div class="mode-card" data-mode="twin"><div class="mode-icon">🎚</div><div class="mode-title">Twin Sticks</div><div class="mode-sub">tank drive</div></div>
+    <div class="mode-card" data-mode="painter"><div class="mode-icon">✏️</div><div class="mode-title">Path Painter</div><div class="mode-sub">draw → follow</div></div>
+  </div>
+</div>
+<div class="mode-cat">
+  <div class="cat-label"><span class="cat-icon">⌨️</span><span>Hardware</span></div>
+  <div class="mode-grid">
+    <div class="mode-card" data-mode="tilt"><div class="mode-icon">📱</div><div class="mode-title">Tilt</div><div class="mode-sub">phone tip</div></div>
+    <div class="mode-card" data-mode="keyboard"><div class="mode-icon">⌨️</div><div class="mode-title">Keyboard</div><div class="mode-sub">WASD desktop</div></div>
+    <div class="mode-card" data-mode="gamepad"><div class="mode-icon">🎮</div><div class="mode-title">Gamepad</div><div class="mode-sub">USB controller</div></div>
+  </div>
+</div>
+<div class="mode-cat">
+  <div class="cat-label"><span class="cat-icon">🎤</span><span>Audio</span></div>
+  <div class="mode-grid">
+    <div class="mode-card" data-mode="voice"><div class="mode-icon">🎤</div><div class="mode-title">Voice</div><div class="mode-sub">say it</div></div>
+    <div class="mode-card" data-mode="whistle"><div class="mode-icon">🎺</div><div class="mode-title">Whistle</div><div class="mode-sub">pitch → dir</div></div>
+    <div class="mode-card" data-mode="beat"><div class="mode-icon">🥁</div><div class="mode-title">BeatBox</div><div class="mode-sub">clap → step</div></div>
+  </div>
+</div>
+<div class="mode-cat">
+  <div class="cat-label"><span class="cat-icon">📷</span><span>Camera</span></div>
+  <div class="mode-grid">
+    <div class="mode-card" data-mode="colortrack"><div class="mode-icon">🎨</div><div class="mode-title">Color Tracker</div><div class="mode-sub">follow a color</div></div>
+    <div class="mode-card" data-mode="facesteer"><div class="mode-icon">👤</div><div class="mode-title">Face Steer</div><div class="mode-sub">head + size</div></div>
+    <div class="mode-card" data-mode="handwave"><div class="mode-icon">👋</div><div class="mode-title">Hand Wave</div><div class="mode-sub">motion blob</div></div>
+    <div class="mode-card" data-mode="light"><div class="mode-icon">💡</div><div class="mode-title">Light Sensor</div><div class="mode-sub">brightness</div></div>
+    <div class="mode-card" data-mode="cards"><div class="mode-icon">🃏</div><div class="mode-title">Card Reader</div><div class="mode-sub">show QR cards</div></div>
+    <div class="mode-card" data-mode="mirror"><div class="mode-icon">🪞</div><div class="mode-title">Mirror Mode</div><div class="mode-sub">motion echo</div></div>
+    <div class="mode-card" data-mode="twohand"><div class="mode-icon">✋</div><div class="mode-title">Two-Hand Tank</div><div class="mode-sub">L/R wheel</div></div>
+    <div class="mode-card" data-mode="pose"><div class="mode-icon">🤸</div><div class="mode-title">Pose</div><div class="mode-sub">arms up = drive</div></div>
+    <div class="mode-card" data-mode="lean"><div class="mode-icon">🫷</div><div class="mode-title">Lean Forward</div><div class="mode-sub">closer = faster</div></div>
+    <div class="mode-card" data-mode="colorwand"><div class="mode-icon">🌈</div><div class="mode-title">Color Wand</div><div class="mode-sub">trace + replay</div></div>
+  </div>
 </div>
 
 <div class="stage">
@@ -686,6 +719,23 @@
     gamepad: { title: 'Gamepad', sub: 'Plug in any USB / wireless gamepad. Use the left stick to drive.', install: installGamepad },
     beat:    { title: 'BeatBox', sub: 'Each clap or beat = a short forward pulse. Faster beats = sustained drive.', install: installBeat },
   };
+  // Camera modes are loaded from js/camera-inputs.js and merged in.
+  function mergeCameraModes() {
+    if (!window.CameraInputs) return;
+    Object.keys(window.CameraInputs).forEach(key => {
+      const m = window.CameraInputs[key];
+      MODES[key] = {
+        title: m.title,
+        sub: m.sub,
+        install: (host) => m.install(host, fireVec, stop, send),
+      };
+    });
+  }
+  // CameraInputs is loaded with `defer`, so it's ready at this point in
+  // execution if the inline <script> runs after DOMContentLoaded. But to
+  // be safe, retry if not yet defined.
+  if (window.CameraInputs) mergeCameraModes();
+  else window.addEventListener('load', mergeCameraModes);
 
   // ---- Wire it up ----------------------------------------------
   const stageBody = document.getElementById('stageBody');
