@@ -68,10 +68,11 @@
   }
   const mqAnat = {
     led(idx, on) {
+      // Maqueen Lite v4 simple LEDs are RED on the actual hardware.
       const el = document.getElementById(idx === 0 || idx === '0' ? 'mqAnatLedL' : 'mqAnatLedR');
       if (!el) return;
-      el.setAttribute('fill', on ? '#facc15' : '#0a1628');
-      el.style.filter = on ? 'drop-shadow(0 0 6px #facc15)' : '';
+      el.setAttribute('fill', on ? '#ef4444' : '#0a1628');
+      el.style.filter = on ? 'drop-shadow(0 0 6px #ef4444)' : '';
     },
     line(l, r) {
       const eL = document.getElementById('mqAnatLineL');
