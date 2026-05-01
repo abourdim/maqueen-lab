@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robi-9 Lab · Documentation Catalog</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<script src="../workshops/newtab.js" defer></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); }
+  body {
+    font-family: var(--font-body);
+    line-height: 1.55;
+    min-height: 100vh;
+    padding-bottom: 60px;
+    background:
+      radial-gradient(ellipse at 15% -10%, var(--hero-glow), transparent 55%),
+      radial-gradient(ellipse at 90% 110%, var(--hero-glow), transparent 60%),
+      var(--bg);
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 22px; }
+  .hero {
+    text-align: center;
+    padding: 50px 22px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--neon);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .hero .sub {
+    color: var(--text);
+    font-size: 1.05rem;
+    max-width: 640px;
+    margin: 0 auto 18px;
+  }
+  .toc {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .toc a {
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1.5px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  .toc a:hover { border-color: var(--neon); color: var(--neon); }
+  .toc .kids   { color: var(--cyan); border-color: rgba(56,189,248,0.45); }
+  .toc .teach  { color: var(--amber); border-color: rgba(251,191,36,0.45); }
+  .toc .ref    { color: var(--neon); border-color: rgba(74,222,128,0.45); }
+
+  /* Section heading */
+  .sec {
+    margin-top: 44px;
+    padding: 18px 22px;
+    border-radius: 16px;
+    border: 2px solid var(--border);
+    background: var(--bg-card);
+  }
+  .sec.kids  { border-color: rgba(56,189,248,0.45); background: linear-gradient(135deg, var(--bg-card), rgba(56,189,248,0.04)); }
+  .sec.teach { border-color: rgba(251,191,36,0.45); background: linear-gradient(135deg, var(--bg-card), rgba(251,191,36,0.04)); }
+  .sec.ref   { border-color: rgba(74,222,128,0.40); background: linear-gradient(135deg, var(--bg-card), rgba(74,222,128,0.04)); }
+  .sec h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+  .sec.kids h2  { color: var(--cyan); }
+  .sec.teach h2 { color: var(--amber); }
+  .sec.ref h2   { color: var(--neon); }
+  .sec .lead {
+    color: var(--text);
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    opacity: 0.85;
+  }
+  .sec .lead b { color: var(--text); }
+
+  /* Card grid */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: var(--bg-soft);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--text);
+    display: flex; flex-direction: column;
+    transition: transform 0.12s, border-color 0.12s;
+    position: relative;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .sec.kids  .card:hover { border-color: var(--cyan); box-shadow: 0 6px 18px rgba(56,189,248,0.15); }
+  .sec.teach .card:hover { border-color: var(--amber); box-shadow: 0 6px 18px rgba(251,191,36,0.15); }
+  .sec.ref   .card:hover { border-color: var(--neon); box-shadow: 0 6px 18px rgba(74,222,128,0.15); }
+  .card .top {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .card .ic {
+    font-size: 1.6rem; line-height: 1;
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+  .card .filename {
+    font-family: var(--font-tech);
+    font-size: 0.72rem;
+    color: var(--steel);
+    word-break: break-all;
+  }
+  .card p {
+    font-size: 0.92rem;
+    color: var(--text);
+    opacity: 0.85;
+    margin: 6px 0 10px;
+    line-height: 1.45;
+  }
+  .card .meta-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+    font-size: 0.74rem;
+  }
+  .card .chip {
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 600;
+  }
+  .card .chip.lang { color: var(--neon); border-color: rgba(74,222,128,0.35); }
+  .card .chip.use  { color: var(--amber); border-color: rgba(251,191,36,0.35); }
+  .card .chip.print { color: var(--cyan); border-color: rgba(56,189,248,0.35); }
+
+  /* Audience badge top-right of card */
+  .card .who {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+  .sec.kids  .card .who { color: var(--cyan); border-color: rgba(56,189,248,0.45); }
+  .sec.teach .card .who { color: var(--amber); border-color: rgba(251,191,36,0.45); }
+  .sec.ref   .card .who { color: var(--neon); border-color: rgba(74,222,128,0.40); }
+
+  /* Back link */
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 30px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .back:hover { border-color: var(--neon); color: var(--neon); }
+</style>
+</head>
+<body>
+
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1>Robi-9 Lab // Documentation</h1>
+      <div class="subtitle">Every page · who it's for · when to open it</div>
+    </div>
+  </div>
+  <div class="wd-header-right">
+    <a href="../index.html" class="wd-select" style="text-decoration:none;">🤖 Robot App</a>
+    <a href="../workshops/hub.html" class="wd-select" style="text-decoration:none;">🏠 Lab Home</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Documentation Catalog</h1>
+  <p class="sub">All Robi-9 Lab pages, sorted by audience. Pick the right entry point so a 10-year-old isn't dumped in the engineer schematic, and a teacher isn't hunting for the printable journal.</p>
+  <div class="toc">
+    <a class="kids"  href="#kids">🧑‍🚀 For Kids</a>
+    <a class="teach" href="#teachers">👨‍🏫 For Teachers / Parents</a>
+    <a class="ref"   href="#reference">📚 Reference (Everyone)</a>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <!-- ==================== FOR KIDS ==================== -->
+  <section class="sec kids" id="kids">
+    <h2>🧑‍🚀 For Kids</h2>
+    <p class="lead">Pages a child <b>opens directly</b>. Friendly tone, big buttons, illustrated mascot, age-10+ vocabulary. No engineer jargon.</p>
+    <div class="cards">
+
+      <a class="card" href="../start.html">
+        <span class="who">Kid</span>
+        <div class="top">
+          <div class="ic">🚀</div>
+          <div>
+            <h3>First Day at the Lab</h3>
+            <div class="filename">start.html</div>
+          </div>
+        </div>
+        <p>7-step setup wizard. Power check → Bluetooth pairing → STOP button → drive test → self-drive → draw a path → mini-games. Awards a "Junior Lab Inventor" certificate at the end.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN · FR · AR</span>
+          <span class="chip use">~15 min</span>
+          <span class="chip">Day 1, every kid</span>
+        </div>
+      </a>
+
+      <a class="card" href="schematics-kids.html">
+        <span class="who">Kid</span>
+        <div class="top">
+          <div class="ic">🤖</div>
+          <div>
+            <h3>Meet Your Robot</h3>
+            <div class="filename">docs/schematics-kids.html</div>
+          </div>
+        </div>
+        <p>Illustrated tour of every part on the robot — wheels, sensors, brain, eyes, buzzer — explained like it's a friendly creature, not a circuit board. No pin numbers.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN</span>
+          <span class="chip use">~5 min</span>
+          <span class="chip">Before any mission</span>
+        </div>
+      </a>
+
+      <a class="card" href="../workshops/booklet.html">
+        <span class="who">Kid</span>
+        <div class="top">
+          <div class="ic">🎒</div>
+          <div>
+            <h3>My Robot Adventure Journal</h3>
+            <div class="filename">workshops/booklet.html</div>
+          </div>
+        </div>
+        <p>17-page printable kid journal: cover, index, 12 mission spreads (one per workshop), certificate, badge wall, future-projects page. Filled in by hand during the workshops.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN · FR · AR</span>
+          <span class="chip print">📄 Print A4 booklet</span>
+          <span class="chip">One per kid</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ==================== FOR TEACHERS ==================== -->
+  <section class="sec teach" id="teachers">
+    <h2>👨‍🏫 For Teachers / Parents</h2>
+    <p class="lead">Pages for the <b>grown-up running the workshop</b>. Lesson plans, prep checklists, classroom logistics, prompts to give kids, what to do when things go wrong.</p>
+    <div class="cards">
+
+      <a class="card" href="../workshops/hub.html">
+        <span class="who">Teacher</span>
+        <div class="top">
+          <div class="ic">🏠</div>
+          <div>
+            <h3>Lab Home (Workshop Hub)</h3>
+            <div class="filename">workshops/hub.html</div>
+          </div>
+        </div>
+        <p>Workshop overview. Visual journey map of all 12 missions, quick-start checklist (what to print, what to charge, what tabs to open), FAQ for first-time facilitators.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN · FR · AR</span>
+          <span class="chip use">First read · 10 min</span>
+          <span class="chip">Read this first</span>
+        </div>
+      </a>
+
+      <a class="card" href="../workshops/manual.html">
+        <span class="who">Teacher</span>
+        <div class="top">
+          <div class="ic">📚</div>
+          <div>
+            <h3>Field Manual · 12 Missions</h3>
+            <div class="filename">workshops/manual.html</div>
+          </div>
+        </div>
+        <p>Full lesson plans for all 12 missions: objective, prep list, step-by-step script, 5 interactive demo blocks, what to say, common kid mistakes, extension challenges.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN · FR · AR</span>
+          <span class="chip use">~25 min / mission</span>
+          <span class="chip">Open during session</span>
+        </div>
+      </a>
+
+      <a class="card" href="../workshops/cheatcards.html">
+        <span class="who">Teacher</span>
+        <div class="top">
+          <div class="ic">🃏</div>
+          <div>
+            <h3>Cheat Cards (A5 pocket)</h3>
+            <div class="filename">workshops/cheatcards.html</div>
+          </div>
+        </div>
+        <p>12 A5 cards (2 per A4 sheet, 6 sheets total). One per mission. The grown-up's lap reference: objective, key prompts, expected duration, troubleshooting hints.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN</span>
+          <span class="chip print">📄 Print A4 → cut A5</span>
+          <span class="chip">Pocket reference</span>
+        </div>
+      </a>
+
+      <a class="card" href="../workshops/energizers.html">
+        <span class="who">Teacher</span>
+        <div class="top">
+          <div class="ic">⚡</div>
+          <div>
+            <h3>Quick Games (Energizers)</h3>
+            <div class="filename">workshops/energizers.html</div>
+          </div>
+        </div>
+        <p>25 quick games (1–3 min each), grouped: Wake-up · Brain · Team · Laugh · Calm-down. Slot between missions when kids get bored, wild, or stuck. Pick by symptom.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN</span>
+          <span class="chip use">1–3 min each</span>
+          <span class="chip">Between missions</span>
+        </div>
+      </a>
+
+      <a class="card" href="plan.html">
+        <span class="who">Teacher</span>
+        <div class="top">
+          <div class="ic">📋</div>
+          <div>
+            <h3>Build Plan</h3>
+            <div class="filename">docs/plan.html</div>
+          </div>
+        </div>
+        <p>How this app was made: stack, design choices, file map, deployment, what's solved vs. what's still pending. Background reading for the curious facilitator or co-maintainer.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN</span>
+          <span class="chip use">~15 min read</span>
+          <span class="chip">Background</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ==================== REFERENCE ==================== -->
+  <section class="sec ref" id="reference">
+    <h2>📚 Reference (Everyone)</h2>
+    <p class="lead">Engineering and lookup pages. Use them when you need <b>a specific answer</b> — not as a starting point. Curious kids and engineer-minded adults both end up here.</p>
+    <div class="cards">
+
+      <a class="card" href="guide.html">
+        <span class="who">All</span>
+        <div class="top">
+          <div class="ic">📖</div>
+          <div>
+            <h3>User Guide</h3>
+            <div class="filename">docs/guide.html · guide.fr.html · guide.ar.html</div>
+          </div>
+        </div>
+        <p>Full reference for the app: every screen, every button, every Settings option, BLE protocol, troubleshooting, firmware install. Kid-friendly tone but covers everything.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN · FR · AR</span>
+          <span class="chip use">Lookup / scan</span>
+          <span class="chip">When stuck</span>
+        </div>
+      </a>
+
+      <a class="card" href="schematics.html">
+        <span class="who">All</span>
+        <div class="top">
+          <div class="ic">📐</div>
+          <div>
+            <h3>Engineer Schematic</h3>
+            <div class="filename">docs/schematics.html</div>
+          </div>
+        </div>
+        <p>Full electrical view: every net, every pin, every chip. The "for grown-ups" companion to <i>Meet Your Robot</i>. Use when you're modding hardware, soldering, or debugging the firmware.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN</span>
+          <span class="chip use">Engineer lookup</span>
+          <span class="chip">Hardware mods</span>
+        </div>
+      </a>
+
+      <a class="card" href="pinout.html">
+        <span class="who">All</span>
+        <div class="top">
+          <div class="ic">📌</div>
+          <div>
+            <h3>Pinout Reference</h3>
+            <div class="filename">docs/pinout.html · pinout.fr.html</div>
+          </div>
+        </div>
+        <p>Line-by-line table: which micro:bit pin drives what on Maqueen Lite v4. Each row links to the source line in <code>pxt-maqueen</code>. The truth source for any pin question.</p>
+        <div class="meta-row">
+          <span class="chip lang">EN · FR</span>
+          <span class="chip use">Quick lookup</span>
+          <span class="chip">Firmware work</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener">
+        <span class="who">All</span>
+        <div class="top">
+          <div class="ic">⭐</div>
+          <div>
+            <h3>Source on GitHub</h3>
+            <div class="filename">github.com/abourdim/maqueen-lab</div>
+          </div>
+        </div>
+        <p>The whole repo: app, firmware, workshop materials, build scripts, change log. MIT-licensed — fork it, modify it, run your own workshop with the same tools.</p>
+        <div class="meta-row">
+          <span class="chip lang">—</span>
+          <span class="chip use">Fork / contribute</span>
+          <span class="chip">MIT license</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <a class="back" href="../index.html">← Back to Robot App</a>
+
+</div>
+
+<div class="wd-band wd-band-bottom"></div>
+<footer class="wd-footer">
+  <span>powered by <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
+  <span class="sep">·</span>
+  <span>Robi-9 Lab Documentation</span>
+</footer>
+
+<script>
+  // Theme persistence — inherit from main app
+  try {
+    const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme');
+    if (t) document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+
+</body>
+</html>
