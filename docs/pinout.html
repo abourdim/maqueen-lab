@@ -157,9 +157,18 @@
   .lib-desc h3 { margin-top: 0; }
   .source-table td:nth-child(3) { font-size: 12.5px; color: var(--text-dim); }
   .source-table td:nth-child(3) code { font-size: 11.5px; }
+  .langbar { display:flex; gap:8px; margin-bottom:18px; font-size:13px; }
+  .langbar a { padding:4px 10px; border:1px solid var(--border); border-radius:6px; color:var(--text-dim); text-decoration:none; background:var(--bg-elev); }
+  .langbar a.active { color:var(--accent); border-color:var(--accent); }
 </style>
 </head>
 <body>
+
+<div class="langbar">
+  <a href="pinout.html" class="active">EN</a>
+  <a href="pinout.fr.html">FR</a>
+  <a href="pinout.ar.html" title="coming soon" style="opacity:0.4;">AR</a>
+</div>
 
 <h1>Maqueen Lite v4 — Pinout Reference</h1>
 <div class="subtitle">Source of truth for every pin used by Maqueen Lab firmware and the underlying <code>pxt-maqueen</code> extension.</div>
