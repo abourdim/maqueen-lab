@@ -176,52 +176,12 @@
           toolsMount.appendChild(el);
         }
       });
-      // Workshop links — for kids running missions. Styled prominently
-      // with a cyan/amber gradient so they stand out from the engineer-only
-      // tools below (lab/schematic/pinout).
-      const workshopLinks = [
-        { href: 'workshops/hub.html', label: '🏠 Workshops' },
-        { href: 'start.html',         label: '🚀 First Day' },
-        { href: 'workshops/manual.html',     label: '📚 Missions' },
-        { href: 'workshops/booklet.html', label: '🎒 Journal' }
-      ];
-      workshopLinks.forEach(({ href, label }) => {
-        // Avoid duplicates if the link is already a visible header button
-        const existing = toolsMount.querySelector(`a[href="${href}"]`);
-        if (existing) return;
-        const stashed = document.querySelector(`#headerHiddenStash a[href="${href}"]`);
-        const a = stashed || document.createElement('a');
-        a.href = href;
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.textContent = label;
-        a.style.cssText = 'opacity:1; font-size:13px; padding:8px 14px; background:linear-gradient(135deg, rgba(34,197,94,0.18), rgba(56,189,248,0.18)); border:1px solid rgba(56,189,248,0.45); border-radius:8px; color:#e6eef9; text-decoration:none; font-weight:700; box-shadow:0 0 8px rgba(56,189,248,0.15);';
-        toolsMount.appendChild(a);
-      });
-      // Engineer-only nav links (kept second so workshops show first)
-      const navIds = ['lab.html','docs/schematics-kids.html','docs/schematics.html','docs/pinout.html'];
-      navIds.forEach(href => {
-        const a = document.querySelector(`a[href="${href}"]`);
-        if (a && toolsMount) {
-          a.style.opacity = '1';
-          a.style.fontSize = '13px';
-          a.style.padding = '8px 14px';
-          a.style.background = 'rgba(74,222,128,0.08)';
-          a.style.border = '1px solid rgba(74,222,128,0.25)';
-          a.style.borderRadius = '8px';
-          a.style.color = '#4ade80';
-          toolsMount.appendChild(a);
-        }
-      });
-      const userGuide = document.getElementById('userGuideLink');
-      if (userGuide && toolsMount) {
-        userGuide.style.opacity = '1';
-        userGuide.style.fontSize = '13px';
-        userGuide.style.padding = '8px 14px';
-        userGuide.style.background = 'rgba(74,222,128,0.08)';
-        userGuide.style.border = '1px solid rgba(74,222,128,0.25)';
-        userGuide.style.borderRadius = '8px';
-        userGuide.style.color = '#4ade80';
+      // Note: Workshops, reference docs (Component Lab, Meet robot, Schematic,
+      // Pinout, User Guide) used to be injected here. They are now in the Help
+      // drawer (📖 Help button), where they belong — Tools is for actions only
+      // (Share QR, Pair 2 robots, Reset).
+      // Bogus guard kept so the closing brace below still has a matching block.
+      if (false) {
         toolsMount.appendChild(userGuide);
       }
       return true;
