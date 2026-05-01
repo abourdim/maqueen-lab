@@ -42,12 +42,30 @@
   @media (max-width: 820px) { .picker { position: static; max-height: none; } }
   /* Category pills row */
   .cat-sidebar { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-  .cat-tab { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; background: transparent; border: 1.5px solid transparent; color: var(--steel); font-family: var(--font-tech); font-weight: 700; letter-spacing: 0.04em; font-size: 0.74rem; text-transform: uppercase; cursor: pointer; text-align: left; transition: all 0.12s; width: 100%; }
-  .cat-tab:hover { background: var(--bg-soft); color: var(--text); }
-  .cat-tab.active { background: linear-gradient(135deg, var(--bg-soft), var(--bg-card)); border-color: var(--neon); color: var(--neon); box-shadow: 0 4px 12px var(--hero-glow); }
-  .cat-tab .cat-icon { font-size: 1rem; }
-  .cat-tab .cat-count { margin-left: auto; font-size: 0.68rem; opacity: 0.6; font-weight: 400; }
-  .cat-tab.active .cat-count { color: var(--cyan); opacity: 0.9; }
+  /* Each category gets its own accent color so the active tab is
+     unambiguous at a glance. Picked from the Robi-9 palette only —
+     no pinks / violets / rainbows. */
+  .cat-tab { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; background: transparent; border: 2px solid transparent; color: var(--steel); font-family: var(--font-tech); font-weight: 700; letter-spacing: 0.04em; font-size: 0.78rem; text-transform: uppercase; cursor: pointer; text-align: left; transition: all 0.12s; width: 100%; --tab-color: var(--neon); position: relative; outline: none; }
+  .cat-tab[data-target="grid-touch"] { --tab-color: #4ade80; } /* neon green */
+  .cat-tab[data-target="grid-hw"]    { --tab-color: #38bdf8; } /* cyan */
+  .cat-tab[data-target="grid-audio"] { --tab-color: #fbbf24; } /* amber */
+  .cat-tab[data-target="grid-game"]  { --tab-color: #fb923c; } /* orange */
+  .cat-tab[data-target="grid-cam"]   { --tab-color: #67e8f9; } /* sky */
+  .cat-tab:hover:not(.active) { background: var(--bg-soft); color: var(--text); border-color: var(--border); }
+  .cat-tab.active {
+    background: var(--tab-color);
+    color: #0a1018;
+    border-color: var(--tab-color);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--tab-color) 45%, transparent), inset 0 0 0 1px rgba(0,0,0,0.15);
+    transform: translateX(2px);
+  }
+  .cat-tab.active::before { content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 4px; height: 70%; background: var(--tab-color); border-radius: 0 4px 4px 0; box-shadow: 0 0 8px var(--tab-color); }
+  .cat-tab .cat-icon { font-size: 1.1rem; }
+  .cat-tab .cat-count { margin-left: auto; font-size: 0.7rem; opacity: 0.7; font-weight: 600; }
+  .cat-tab.active .cat-count { opacity: 0.85; color: rgba(10,16,24,0.85); }
+  /* Override browser focus ring with one that matches the tab color
+     instead of the default cyan, so it doesn't compete with active state. */
+  .cat-tab:focus-visible { outline: 2px dashed var(--tab-color); outline-offset: 2px; }
   /* Mode cards inside the sidebar — compact horizontal list rows */
   .cat-content { min-height: 100px; }
   .mode-grid { display: none; flex-direction: column; gap: 4px; }
