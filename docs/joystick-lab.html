@@ -248,6 +248,10 @@
       }
       if (!rxChar) { alert('UART RX characteristic not found.'); return; }
       setConnected(true);
+      // Same handshake the main app does — without these, the firmware
+      // stays in idle mode and ignores M:L,R verbs.
+      writeRaw('HELLO');
+      writeRaw('TAB:maqueen');
     } catch (e) {
       console.warn('connect failed', e);
       // user cancelled the chooser is the most common case; ignore silently
