@@ -4,7 +4,7 @@
 
 Every actuator and sensor on the Maqueen Lite is reachable from a card in the **🤖 Maqueen** tab — drive the wheels, pose the servos, light the LEDs and NeoPixels, beep the buzzer, ping the ultrasonic, read the IR remote, follow a line. A second **🧪 Playground** tab keeps the legacy bit-playground sub-tabs (Controls, Sensors, Graph, 3D, Bench, More) for free-form micro:bit experiments. All control flows over BLE UART; every command is sequence-numbered and echo-confirmed.
 
-> **Status:** v0.1.55 — Maqueen tab feature-complete; live sensor strip, auto-pollers, mechanic-kit picker, follow-line, NeoPixel rainbow, LED matrix draw. See [CHANGELOG.md](CHANGELOG.md) for recent work, [plan.md](plan.md) for the original build plan.
+> **Status:** v0.1.55 — Maqueen tab feature-complete; live sensor strip, auto-pollers, mechanic-kit picker, follow-line, NeoPixel rainbow, LED matrix draw. See [CHANGELOG.md](docs/CHANGELOG.md) for recent work, [plan.md](docs/plan.md) for the original build plan.
 
 ---
 
@@ -85,7 +85,7 @@ and auto-opens your default browser unless `MAQUEEN_NO_BROWSER=1` is set.
 
 The pre-commit hook auto-bumps `BUILD_VERSION` **only** when `firmware/v1-maqueen-lib.ts` is in the staged change. Docs-only commits no longer bump the version — the stamp tracks real firmware churn. The `.hex` is **not** auto-compiled; rebuild it in MakeCode and re-flash when the version changes (see the User Guide's "Building the firmware .hex" section).
 
-See [plan.md](plan.md) for the full plan.
+See [plan.md](docs/plan.md) for the full plan.
 
 ---
 
