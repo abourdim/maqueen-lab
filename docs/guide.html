@@ -1,1339 +1,2094 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Maqueen Lab — Guide complet</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maqueen Lab — Pilot's Handbook</title>
 <style>
-:root {
-  --bg:#050e1f; --card:#0b1a33; --card2:#0f2040;
-  --border:rgba(56,189,248,0.18); --accent:#38bdf8; --accent2:#818cf8;
-  --green:#4ade80; --yellow:#facc15; --red:#f87171; --teal:#2dd4bf;
-  --purple:#c084fc; --pink:#f472b6; --orange:#fb923c; --muted:#7a9bbf;
-  --text:#e2eaf5; --font:'Segoe UI',system-ui,sans-serif;
-  --mono:'JetBrains Mono','Consolas',monospace;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.65;font-size:15px}
+  /* ============================================================
+     MAQUEEN LAB · USER GUIDE
+     Pilot's handbook — every button, every game, every hidden lever.
+     Style: kid-friendly + geeky-honest. Theme matches the app's
+     "cosmos" palette so this feels like a chapter of the app.
+     ============================================================ */
+  :root {
+    --bg:        #0a0f1a;       /* near-black navy   */
+    --bg-elev:   #0f172a;       /* engineering slate */
+    --bg-card:   #131c2e;
+    --border:    #1f2a44;
+    --text:      #e6eef9;
+    --text-dim:  #94a3b8;
+    --accent:    #38bdf8;       /* electric cyan — primary engineering blue */
+    --accent2:   #fbbf24;       /* amber           — high-contrast accent  */
+    --green:     #4ade80;
+    --amber:     #fbbf24;
+    --red:       #f87171;
+    --pink:      #f472b6;
+    --orange:    #fb923c;
+    --yellow:    #facc15;
+    --mono: 'JetBrains Mono','Fira Code',Consolas,monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    /* Subtle blueprint glow — cyan top-left, amber bottom-right.
+       No purple, no pink. Engineering dashboard aesthetic. */
+    background:
+      radial-gradient(ellipse at 15% 5%,  rgba(56,189,248,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 95%, rgba(251,191,36,0.05) 0%, transparent 50%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+    line-height: 1.65;
+    font-size: 16px;
+    min-height: 100vh;
+    scroll-behavior: smooth;
+  }
+  body { max-width: 1080px; margin: 0 auto; padding: 24px 24px 80px; }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { background: rgba(56,189,248,0.12); padding: 1px 6px; border-radius: 4px; font-family: var(--mono); font-size: 0.92em; color: #ddd6fe; }
+  kbd { background: var(--bg-elev); border: 1px solid var(--border); border-bottom-width: 2px; padding: 2px 6px; border-radius: 4px; font-family: var(--mono); font-size: 0.88em; color: var(--accent); }
 
-/* ── HERO ── */
-.hero{background:radial-gradient(ellipse at 50% -10%,#0d3a72 0%,#050e1f 65%);
-  text-align:center;padding:48px 20px 36px;border-bottom:1px solid var(--border)}
-.hero-icon{font-size:60px;display:block;margin-bottom:14px;animation:bob 3s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-.hero h1{font-size:clamp(22px,5vw,40px);font-weight:900;letter-spacing:-0.5px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
-.hero p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto}
+  /* ============== HERO ============== */
+  .hero { text-align: center; padding: 48px 16px 24px; }
+  .hero-bot { display: inline-block; animation: bob 3.4s ease-in-out infinite; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-12px) rotate(2deg); }
+  }
+  .hero h1 {
+    font-size: clamp(36px, 7vw, 64px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin: 16px 0 8px;
+    background: linear-gradient(135deg, #fff, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero .pitch { font-size: 19px; color: var(--text-dim); max-width: 640px; margin: 0 auto 28px; }
+  .cta-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: #0a1628;
+    padding: 11px 22px; border-radius: 999px;
+    font-weight: 700; font-size: 14px;
+    text-decoration: none;
+    transition: transform 0.12s, box-shadow 0.18s, background 0.15s;
+  }
+  .btn:hover { transform: scale(1.04); box-shadow: 0 0 22px rgba(56,189,248,0.55); text-decoration: none; }
+  .btn.alt   { background: var(--accent2); color: #01202b; }
+  .btn.alt:hover { box-shadow: 0 0 22px rgba(56,189,248,0.55); }
+  .btn.ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+  .btn.ghost:hover { color: var(--accent); border-color: var(--accent); }
 
-/* ── SEARCH ── */
-.search-wrap{max-width:560px;margin:20px auto 0;position:relative}
-.search-wrap input{width:100%;background:var(--card2);border:1px solid var(--border);
-  border-radius:12px;padding:12px 44px 12px 16px;color:var(--text);font-size:14px;outline:none;
-  font-family:var(--font);transition:border-color .2s}
-.search-wrap input:focus{border-color:var(--accent)}
-.search-wrap input::placeholder{color:var(--muted)}
-.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);
-  color:var(--muted);font-size:16px;pointer-events:none}
-#searchResults{position:absolute;top:calc(100%+6px);left:0;right:0;
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  max-height:320px;overflow-y:auto;z-index:200;display:none}
-.sr-item{padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);
-  font-size:13px;transition:background .15s}
-.sr-item:last-child{border-bottom:none}
-.sr-item:hover{background:var(--card2)}
-.sr-item strong{color:var(--accent);display:block;margin-bottom:2px}
-.sr-item span{color:var(--muted)}
-.sr-tag{font-size:10px;background:rgba(56,189,248,.12);color:var(--accent);
-  border-radius:10px;padding:1px 7px;margin-left:6px;font-weight:700}
+  /* ============== TOC ============== */
+  .toc {
+    background: rgba(56,189,248,0.05);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin: 24px 0 40px;
+  }
+  .toc h3 { margin: 0 0 12px; font-size: 14px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; }
+  .toc ol { columns: 2; column-gap: 32px; margin: 0; padding-left: 22px; color: var(--text-dim); }
+  .toc ol li { margin-bottom: 6px; break-inside: avoid; }
+  .toc a { color: var(--text); }
+  .toc a:hover { color: var(--accent); }
+  @media (max-width: 600px) { .toc ol { columns: 1; } }
 
-/* ── LAYOUT ── */
-.layout{display:flex;min-height:calc(100vh - 200px)}
+  /* ============== SECTIONS ============== */
+  h2 {
+    font-size: 30px; margin: 56px 0 6px;
+    letter-spacing: -0.01em; line-height: 1.2;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  h2 .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px;
+    background: var(--accent); color: #0a1628;
+    border-radius: 12px; font-size: 18px; font-weight: 900;
+  }
+  h3 { font-size: 21px; margin: 32px 0 8px; color: var(--accent); }
+  h4 { font-size: 17px; margin: 20px 0 6px; color: var(--accent2); font-weight: 700; }
+  .lede { color: var(--text-dim); margin: 0 0 22px; font-size: 16px; max-width: 720px; }
 
-/* ── SIDEBAR NAV ── */
-.sidebar{width:220px;flex-shrink:0;padding:24px 0;
-  border-right:1px solid var(--border);position:sticky;top:0;height:100vh;
-  overflow-y:auto;background:var(--bg)}
-.sidebar-title{font-size:10px;font-weight:700;text-transform:uppercase;
-  letter-spacing:1.4px;color:var(--muted);padding:0 16px 8px}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 16px;
-  cursor:pointer;font-size:13px;color:var(--muted);border-left:3px solid transparent;
-  transition:all .15s;user-select:none}
-.nav-item:hover{background:var(--card2);color:var(--text)}
-.nav-item.active{background:rgba(56,189,248,.08);color:var(--accent);
-  border-left-color:var(--accent);font-weight:700}
-.nav-item .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
-.nav-sep{height:1px;background:var(--border);margin:8px 12px}
+  /* ============== CARDS / STEPS ============== */
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); box-shadow: 0 6px 24px rgba(56,189,248,0.18); }
+  .card .ico { font-size: 28px; line-height: 1; margin-bottom: 8px; display: block; }
+  .card h3 { font-size: 18px; margin: 0 0 6px; color: var(--text); }
+  .card .why { font-size: 13px; color: var(--accent); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 6px; }
+  .card p { margin: 6px 0; color: var(--text-dim); font-size: 14.5px; }
+  .card ul { margin: 6px 0 0; padding-left: 18px; color: var(--text-dim); font-size: 14px; }
+  .card.tutor { border-left: 4px solid var(--green); }
+  .card.geek  { border-left: 4px solid var(--accent2); }
+  .card.warn  { border-left: 4px solid var(--amber); }
+  .card.danger{ border-left: 4px solid var(--red);    }
 
-/* ── CONTENT ── */
-.content{flex:1;padding:36px 40px;min-width:0;max-width:800px}
+  /* Step list (numbered) */
+  ol.steps { padding-left: 0; counter-reset: stp; list-style: none; }
+  ol.steps li {
+    counter-increment: stp;
+    background: var(--bg-card);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 16px 12px 56px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  ol.steps li::before {
+    content: counter(stp);
+    position: absolute; left: 12px; top: 12px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--accent); color: #0a1628;
+    font-weight: 900; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
 
-/* ── SECTION ── */
-.section{display:none;animation:fadeIn .25s ease}
-.section.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  /* Inline diagrams + screenshots */
+  .figure {
+    margin: 18px 0;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .figure svg { max-width: 100%; height: auto; }
+  .figure .caption {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
 
-.section-hero{display:flex;align-items:flex-start;gap:18px;margin-bottom:28px;
-  padding:22px 24px;background:var(--card);border:1px solid var(--border);border-radius:16px}
-.sh-icon{font-size:44px;flex-shrink:0;line-height:1}
-.sh-body h2{font-size:22px;font-weight:900;margin-bottom:6px}
-.sh-body p{font-size:14px;color:#c4d4e8}
+  /* Tables */
+  table {
+    width: 100%; border-collapse: collapse;
+    background: var(--bg-card);
+    border-radius: 10px; overflow: hidden;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  thead { background: rgba(56,189,248,0.18); }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  td:first-child { font-family: var(--mono); color: var(--accent); white-space: nowrap; }
 
-/* ── CARDS ── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px}
-.card h3{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.card p{font-size:13px;color:#c4d4e8;margin-bottom:8px}
-.card p:last-child{margin-bottom:0}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}.sidebar{display:none}.content{padding:20px 16px}}
+  /* "Geek box" — extra detail for curious kids */
+  .geek-box {
+    background: rgba(56,189,248,0.06);
+    border: 1px dashed rgba(56,189,248,0.4);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .geek-box::before {
+    content: "🤓 GEEKY DETAIL";
+    display: block;
+    color: var(--accent2);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .funny-box {
+    background: rgba(251,191,36,0.07);
+    border-left: 4px solid var(--amber);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+  .funny-box::before {
+    content: "🎉 FUN FACT";
+    display: block;
+    color: var(--amber);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .pro-tip {
+    background: rgba(74,222,128,0.06);
+    border-left: 4px solid var(--green);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 16px;
+    margin: 16px 0;
+  }
+  .pro-tip::before {
+    content: "💡 PRO TIP";
+    display: block;
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
 
-/* ── FEATURE ROW ── */
-.feat{display:flex;align-items:flex-start;gap:12px;padding:12px 0;
-  border-bottom:1px solid rgba(56,189,248,.07)}
-.feat:last-child{border-bottom:none}
-.feat-icon{font-size:20px;width:28px;text-align:center;flex-shrink:0;margin-top:1px}
-.feat-body strong{display:block;font-size:14px;margin-bottom:2px}
-.feat-body span{font-size:12px;color:#9ab2cc}
+  /* Animated examples */
+  .pulse-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(74,222,128,0.8);
+    animation: pulseRing 1.5s infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes pulseRing {
+    0%   { box-shadow: 0 0 0 0   rgba(74,222,128,0.8); }
+    100% { box-shadow: 0 0 0 12px rgba(74,222,128,0);   }
+  }
 
-/* ── BUTTON ANATOMY ── */
-.btn-anatomy{display:flex;align-items:center;gap:16px;margin:14px 0;
-  background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px}
-.btn-rep{width:52px;height:52px;border-radius:50%;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;flex-shrink:0;
-  border:2px solid rgba(255,255,255,.5);color:#fff;font-weight:900;gap:1px;font-size:10px;font-family:var(--mono)}
-.btn-rep .bi{font-size:22px}
-.btn-info strong{display:block;font-size:14px;margin-bottom:4px}
-.btn-info span{font-size:12px;color:#9ab2cc}
-.btn-info .bwhy{font-size:12px;color:var(--yellow);margin-top:4px}
+  /* Sweep animation for the radar diagram */
+  .sweep-beam { transform-origin: 100px 100px; animation: sweep 3s linear infinite; }
+  @keyframes sweep {
+    0%   { transform: rotate(-90deg); }
+    100% { transform: rotate(90deg); }
+  }
 
-/* ── FAB DEMO ── */
-.fab-pair{display:flex;justify-content:center;gap:28px;margin:16px 0;flex-wrap:wrap}
-.fab{width:80px;height:80px;border-radius:50%;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;font-weight:900;color:#fff;
-  border:3px solid rgba(255,255,255,.8);gap:2px;font-size:10px;font-family:var(--mono);
-  letter-spacing:.06em}
-.fab .fi{font-size:24px}
-.fab.connect{background:radial-gradient(circle at 30% 30%,#67e8f9,#0284c7 60%,#0c4a6e);
-  box-shadow:0 6px 24px rgba(2,132,199,.5);animation:pulse-b 1.8s ease-in-out infinite}
-.fab.stop{background:radial-gradient(circle at 30% 30%,#fca5a5,#dc2626 60%,#7f1d1d);
-  box-shadow:0 6px 24px rgba(220,38,38,.5);animation:pulse-r 2.4s ease-in-out infinite}
-@keyframes pulse-b{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-@keyframes pulse-r{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  /* Driving robot — rolls left to right inside its "track" */
+  @keyframes roll {
+    0%,  10%  { transform: translateX(0); }
+    50%       { transform: translateX(160px); }
+    90%, 100% { transform: translateX(0); }
+  }
+  .roll-robot { animation: roll 4s ease-in-out infinite; }
 
-/* ── KEYPAD ── */
-.keypad{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);
-  gap:7px;margin:14px auto;width:fit-content}
-.kbtn{width:52px;height:52px;border-radius:11px;display:flex;align-items:center;
-  justify-content:center;font-size:22px;border:1px solid var(--border);background:var(--card2);
-  color:var(--accent)}
-.kbtn.stop{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.5);color:var(--red)}
-.kbtn.empty{background:none;border:none}
+  /* Pulsing connection line */
+  @keyframes flowDot {
+    0%   { offset-distance: 0%;   opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
 
-/* ── SPEED SLIDER ── */
-.speed-demo{background:var(--card2);border:1px solid var(--border);border-radius:10px;
-  padding:14px 18px;margin:12px 0;display:flex;align-items:center;gap:14px}
-.sd-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;
-  letter-spacing:.8px;min-width:52px}
-.sd-track{flex:1;height:8px;background:#0a1628;border-radius:4px;position:relative}
-.sd-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#16a34a,#facc15,#ef4444)}
-.sd-thumb{width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;
-  top:50%;transform:translateY(-50%);box-shadow:0 2px 8px rgba(0,0,0,.5)}
-.sd-val{font-size:14px;font-weight:800;min-width:32px;text-align:right}
+  /* Big LED matrix typing animation */
+  .led-pixel { fill: #1d3556; transition: fill 0.1s; }
+  .led-pixel.on { fill: #fbbf24; }
+  @keyframes ledHeart {
+    0%, 24%   { /* show heart */ }
+    25%, 49%  { /* show smile */ }
+    50%, 74%  { /* show arrow */ }
+    75%, 100% { /* show heart */ }
+  }
+  .led-strip { animation: ledStrip 1.6s steps(4) infinite; }
+  @keyframes ledStrip {
+    0%   { fill: #ef4444; }
+    25%  { fill: #fbbf24; }
+    50%  { fill: #4ade80; }
+    75%  { fill: #38bdf8; }
+    100% { fill: #ef4444; }
+  }
+  .led-strip:nth-child(2) { animation-delay: 0.4s; }
+  .led-strip:nth-child(3) { animation-delay: 0.8s; }
+  .led-strip:nth-child(4) { animation-delay: 1.2s; }
 
-/* ── WANDER DIAGRAM ── */
-.wander-diag{margin:16px 0;background:var(--card2);border:1px solid var(--border);
-  border-radius:14px;padding:20px;text-align:center}
-.wd-svg{max-width:360px;margin:0 auto;display:block}
+  /* Speech bubble for fun mascots */
+  .bubble {
+    background: var(--bg-card); border: 2px solid var(--accent);
+    border-radius: 16px; padding: 14px 18px;
+    position: relative; max-width: 360px; margin: 0 auto;
+    font-size: 14px; color: var(--text);
+  }
+  .bubble::after {
+    content: ''; position: absolute; left: 50%; bottom: -10px;
+    width: 18px; height: 18px;
+    background: var(--bg-card); border-right: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: translateX(-50%) rotate(45deg);
+  }
 
-/* ── SLAM MAP VISUAL ── */
-.slam-vis{position:relative;width:100%;max-width:320px;height:200px;
-  background:#040c1e;border:1px solid var(--border);border-radius:12px;
-  margin:14px auto;overflow:hidden}
-.slam-grid-line{position:absolute;background:rgba(56,189,248,.06)}
-.slam-trail{position:absolute;bottom:40%;left:10%;width:80%;height:3px;
-  background:var(--green);border-radius:2px;box-shadow:0 0 6px var(--green)}
-.slam-dot{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--yellow);
-  box-shadow:0 0 6px var(--yellow)}
-.slam-robot{position:absolute;font-size:20px;bottom:37%;left:83%;transform:rotate(0deg);
-  animation:rbot 4s ease-in-out infinite}
-@keyframes rbot{0%,100%{transform:rotate(0deg)}50%{transform:rotate(15deg)}}
+  /* Section divider with sparkle */
+  .divider-fun {
+    text-align: center; margin: 48px 0; color: var(--text-dim);
+    font-size: 16px; letter-spacing: 0.5em;
+    opacity: 0.5;
+  }
 
-/* ── GAUGE DIAGRAM ── */
-.gauges-demo{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
-.gauge{background:var(--card2);border:1px solid var(--border);border-radius:10px;
-  padding:12px 8px;text-align:center}
-.gauge-val{font-size:18px;font-weight:900;font-family:var(--mono)}
-.gauge-label{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:4px}
+  /* Wheel-spin for hero robot */
+  .wheel { transform-origin: center; animation: spin 1.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── PERSONALITY CARDS ── */
-.personalities{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
-.pers{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:14px}
-.pers-icon{font-size:28px;margin-bottom:8px;display:block}
-.pers-name{font-weight:700;font-size:14px;margin-bottom:4px}
-.pers-desc{font-size:12px;color:var(--muted)}
-.pers-bars{margin-top:10px;display:flex;flex-direction:column;gap:5px}
-.pers-bar-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
-.pers-bar-track{flex:1;height:5px;background:#0a1628;border-radius:3px;overflow:hidden}
-.pers-bar-fill{height:100%;border-radius:3px}
+  /* Section divider */
+  hr.div {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 36px 0;
+  }
 
-/* ── AUTOPILOT PATH VIS ── */
-.ap-vis{position:relative;width:100%;max-width:300px;height:160px;
-  background:#040c1e;border:1px solid rgba(192,132,252,.3);border-radius:12px;
-  margin:14px auto;overflow:hidden}
-.ap-path{position:absolute;top:20px;left:20px;bottom:20px;right:20px}
+  /* Footer */
+  footer { text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); }
 
-/* ── CALLOUTS ── */
-.callout{border-radius:10px;padding:13px 16px;margin:12px 0;font-size:13px;
-  display:flex;gap:10px;align-items:flex-start}
-.callout .ci{font-size:17px;flex-shrink:0;margin-top:1px}
-.tip{background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.25);
-  border-left:3px solid var(--yellow);color:#dcc87a}
-.good{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.25);
-  border-left:3px solid var(--green);color:#86efac}
-.warn{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.25);
-  border-left:3px solid var(--red);color:#fca5a5}
-.info{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.25);
-  border-left:3px solid var(--accent);color:#93c5fd}
-.callout strong{color:inherit;font-weight:800}
+  /* Resource grid */
+  .res {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s, transform 0.1s;
+  }
+  .res:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+  .res-icon { font-size: 22px; }
+  .res-text strong { display: block; font-size: 14px; color: var(--accent); }
+  .res-text span { font-size: 12px; color: var(--text-dim); }
 
-/* ── STEPS ── */
-.steps{display:flex;flex-direction:column;gap:13px;margin:14px 0}
-.step{display:flex;gap:14px;align-items:flex-start}
-.sn{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;
-  justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(56,189,248,.3);margin-top:2px}
-.st{font-size:14px;color:#c4d4e8;padding-top:4px}
-.st strong{color:var(--text)}
-.st em{color:var(--muted);font-style:normal;font-size:12px;display:block;margin-top:3px}
+  /* Anchor scroll offset */
+  section[id] { scroll-margin-top: 14px; }
 
-kbd{display:inline-block;background:#1a2d4f;border:1px solid rgba(56,189,248,.35);
-  border-radius:6px;padding:2px 8px;font-family:var(--mono);font-size:12px;
-  color:var(--accent);box-shadow:0 2px 0 rgba(0,0,0,.5)}
+  /* ============== SITE HEADER ==============
+     Sticky top bar — workshop logo on the left, app name + subtitle,
+     language pills + GitHub link on the right. The whole bar has
+     a glass / blueprint feel: blurred bg, hairline cyan border. */
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 18px;
+    background: rgba(10, 15, 26, 0.78);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    border-bottom: 1px solid rgba(56,189,248,0.18);
+    margin: -24px -24px 0;
+    flex-wrap: wrap;
+  }
+  .site-header__brand {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; color: var(--text);
+  }
+  .site-header__brand:hover { text-decoration: none; }
+  .site-header__logo {
+    width: 40px; height: 40px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: 0 2px 10px rgba(56,189,248,0.25);
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .site-header__brand:hover .site-header__logo {
+    transform: rotate(-4deg) scale(1.05);
+    box-shadow: 0 4px 16px rgba(56,189,248,0.5);
+  }
+  .site-header__title {
+    font-size: 18px; font-weight: 900; letter-spacing: 0.02em;
+    background: linear-gradient(90deg, #fff, var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .site-header__sub {
+    font-size: 11px; color: var(--text-dim);
+    font-family: var(--mono); letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  .site-header__nav {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 6px;
+    flex-wrap: wrap;
+  }
+  .site-header__nav .lang-pill {
+    padding: 5px 11px;
+    background: rgba(56,189,248,0.06);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 999px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 12px;
+  }
+  .site-header__nav .lang-pill.active {
+    background: rgba(56,189,248,0.22);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 700;
+  }
+  .site-header__nav .lang-pill:hover { color: #fff; text-decoration: none; }
+  .site-header__nav .gh-link {
+    margin-left: 8px;
+    padding: 5px 11px;
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 999px;
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .site-header__nav .gh-link:hover {
+    background: rgba(251,191,36,0.18);
+    text-decoration: none;
+  }
+  @media (max-width: 700px) {
+    .site-header { gap: 10px; padding: 8px 12px; }
+    .site-header__title { font-size: 15px; }
+    .site-header__sub   { display: none; }
+    .site-header__nav   { width: 100%; justify-content: center; }
+  }
 
-/* ── GAME GRID ── */
-.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:14px 0}
-.game-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:16px;transition:border-color .2s,transform .15s}
-.game-card:hover{border-color:rgba(56,189,248,.4);transform:translateY(-2px)}
-.gc-icon{font-size:30px;margin-bottom:10px;display:block}
-.gc-name{font-weight:700;font-size:14px;margin-bottom:5px}
-.gc-where{font-size:11px;color:var(--accent);margin-bottom:6px;font-weight:700}
-.gc-desc{font-size:12px;color:#9ab2cc;margin-bottom:6px}
-.gc-rule{font-size:12px;color:var(--yellow);font-weight:600}
+  /* ============== STATS RIBBON ==============
+     A horizontal strip of three big metrics under the hero. Adds
+     a moment of "wow this is substantial" before the long sections. */
+  .stats-ribbon {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; margin: 8px 0 24px;
+  }
+  .stat {
+    background: linear-gradient(135deg, rgba(56,189,248,0.05), rgba(251,191,36,0.04));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .stat__num {
+    font-size: 36px; font-weight: 900; line-height: 1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-family: var(--mono);
+  }
+  .stat__label {
+    font-size: 11px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.12em;
+    margin-top: 6px;
+  }
 
-/* ── TABLE ── */
-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
-th{text-align:left;padding:8px 12px;background:rgba(56,189,248,.08);color:var(--muted);
-  font-weight:700;text-transform:uppercase;letter-spacing:.7px;font-size:10px}
-td{padding:9px 12px;border-bottom:1px solid rgba(56,189,248,.07);color:#c4d4e8}
-tr:last-child td{border-bottom:none}
-td:first-child{font-weight:700;color:var(--text)}
+  /* ============== SITE FOOTER ==============
+     Branded close-out. Logo, columns of links, contributor strip. */
+  .site-footer {
+    margin: 80px -24px -80px;
+    padding: 40px 32px 32px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.08) 0%, transparent 60%),
+      #060912;
+    border-top: 1px solid rgba(56,189,248,0.2);
+  }
+  .site-footer__grid {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 32px; max-width: 1080px; margin: 0 auto;
+  }
+  @media (max-width: 720px) {
+    .site-footer__grid { grid-template-columns: 1fr 1fr; gap: 22px; }
+  }
+  @media (max-width: 460px) {
+    .site-footer__grid { grid-template-columns: 1fr; }
+  }
+  .site-footer__brand {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+  }
+  .site-footer__brand img {
+    width: 44px; height: 44px;
+    background: #fff; border-radius: 8px; padding: 5px;
+  }
+  .site-footer__brand-name {
+    font-size: 18px; font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .site-footer__brand-tag {
+    font-size: 11px; color: var(--text-dim);
+    font-family: var(--mono); letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  .site-footer__about { color: var(--text-dim); font-size: 13.5px; line-height: 1.6; }
+  .site-footer h5 {
+    color: var(--accent); font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    margin: 0 0 12px; font-weight: 800;
+  }
+  .site-footer ul { list-style: none; padding: 0; margin: 0; }
+  .site-footer ul li { margin-bottom: 8px; font-size: 13px; }
+  .site-footer ul li a { color: var(--text-dim); text-decoration: none; }
+  .site-footer ul li a:hover { color: var(--accent); text-decoration: none; }
+  .site-footer__bottom {
+    max-width: 1080px; margin: 32px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(56,189,248,0.1);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+    color: var(--text-dim); font-size: 12px;
+  }
+  .site-footer__bottom a { color: var(--accent); text-decoration: none; }
+  .site-footer__chips {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .site-footer__chips span {
+    padding: 3px 10px;
+    background: rgba(56,189,248,0.08);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 999px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-dim);
+  }
 
-/* ── SECTION BADGE ── */
-.where-badge{display:inline-flex;align-items:center;gap:5px;
-  background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);
-  border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--accent);margin-bottom:12px}
-
-/* ── MODE CHIP ── */
-.chip{display:inline-flex;align-items:center;gap:5px;
-  background:var(--card2);border:1px solid var(--border);border-radius:14px;
-  padding:5px 11px;font-size:12px;margin:3px}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:rgba(56,189,248,.25);border-radius:3px}
-
-/* ── FOOTER ── */
-footer{text-align:center;padding:24px 20px;border-top:1px solid var(--border);
-  color:var(--muted);font-size:12px}
+  /* Mini back-to-top */
+  .back-top {
+    position: fixed; right: 16px; bottom: 16px;
+    background: var(--accent); color: #0a1628;
+    border-radius: 999px; padding: 10px 14px;
+    font-weight: 700; text-decoration: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+  }
+  .back-top:hover { text-decoration: none; }
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <span class="hero-icon">🤖</span>
-  <h1>Maqueen Lab — Guide complet</h1>
-  <p>Explication détaillée de chaque bouton, mode, onglet et fonctionnalité — avec schémas et animations.</p>
-  <div class="search-wrap">
-    <input type="text" id="searchInput" placeholder="🔍  Recherche — ex. wander, tilt, sonar, SLAM…" autocomplete="off">
-    <span class="search-icon">⌕</span>
-    <div id="searchResults"></div>
+<!-- ============================================================
+     STICKY HEADER — workshop logo + brand + language switcher.
+     Sticky so users can jump back home or change language while
+     scrolled deep into a section.
+     ============================================================ -->
+<header class="site-header">
+  <a href="index.html" class="site-header__brand" aria-label="Maqueen Lab home">
+    <img src="assets/workshop-diy-logo.svg" alt="Workshop DIY logo" class="site-header__logo"/>
+    <div>
+      <div class="site-header__title">MAQUEEN LAB</div>
+      <div class="site-header__sub">Pilot's Handbook</div>
+    </div>
+  </a>
+  <nav class="site-header__nav" aria-label="Language switcher">
+    <a href="USER_GUIDE.html"    class="lang-pill active">🇬🇧 EN</a>
+    <a href="USER_GUIDE.fr.html" class="lang-pill">🇫🇷 FR</a>
+    <a href="USER_GUIDE.ar.html" class="lang-pill">🇩🇿 AR</a>
+    <a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener" class="gh-link">⭐ GitHub</a>
+  </nav>
+</header>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero">
+  <span class="hero-bot" aria-hidden="true">
+    <svg width="160" height="120" viewBox="0 0 200 150">
+      <!-- chassis -->
+      <rect x="40" y="50" width="120" height="60" rx="14" fill="#1d4ed8" stroke="#3b82f6" stroke-width="2"/>
+      <!-- micro:bit screen -->
+      <rect x="70" y="68" width="60" height="28" rx="3" fill="#0a0e2e" stroke="#38bdf8" stroke-width="1.2"/>
+      <text x="100" y="86" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="9">micro:bit</text>
+      <!-- eyes / ultrasonic -->
+      <circle cx="76"  cy="60" r="4" fill="#fbbf24"/>
+      <circle cx="124" cy="60" r="4" fill="#fbbf24"/>
+      <!-- left wheel -->
+      <g transform="translate(40 110)">
+        <circle r="22" fill="#1f2937" stroke="#3b82f6" stroke-width="2"/>
+        <g class="wheel">
+          <line x1="-22" y1="0" x2="22" y2="0" stroke="#64748b" stroke-width="3"/>
+          <line x1="0" y1="-22" x2="0" y2="22" stroke="#64748b" stroke-width="3"/>
+        </g>
+      </g>
+      <!-- right wheel -->
+      <g transform="translate(160 110)">
+        <circle r="22" fill="#1f2937" stroke="#3b82f6" stroke-width="2"/>
+        <g class="wheel">
+          <line x1="-22" y1="0" x2="22" y2="0" stroke="#64748b" stroke-width="3"/>
+          <line x1="0" y1="-22" x2="0" y2="22" stroke="#64748b" stroke-width="3"/>
+        </g>
+      </g>
+      <!-- antenna spark -->
+      <line x1="100" y1="50" x2="100" y2="20" stroke="#38bdf8" stroke-width="1.5"/>
+      <circle cx="100" cy="18" r="4" fill="#38bdf8">
+        <animate attributeName="r" values="3;6;3" dur="1.4s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </span>
+  <h1>Pilot's Handbook</h1>
+  <p class="pitch">
+    Welcome aboard, <b>future roboticist</b>.
+    This is your manual for <b>Maqueen Lab</b> — the live cockpit for your DFRobot Maqueen Lite v4.
+    No prior experience needed. Just curiosity and a 🤖.
+  </p>
+  <div class="cta-row">
+    <a class="btn"       href="index.html">▶ Open the app</a>
+    <a class="btn alt"   href="schematics-kids.html">🤖 Meet your robot</a>
+    <a class="btn ghost" href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener">⭐ GitHub source</a>
   </div>
+</section>
+
+<!-- ============================================================
+     PLAYGROUND STRIP — interactive widgets right inside the guide.
+     The page becomes a toy, not a textbook. 4 mini-demos:
+       1. Live keypad (click W/A/S/D, see commands fire)
+       2. Mini radar (click any angle, beam sweeps + ping number)
+       3. NeoPixel preview (click pearls, cycle colors)
+       4. Fake terminal (types out BLE handshake animation)
+     Pure SVG + tiny JS. No BLE needed.
+     ============================================================ -->
+<style>
+  .pg-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 8px 0 24px; }
+  .pg-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; cursor: pointer; transition: border-color 0.18s, transform 0.15s, box-shadow 0.2s; }
+  .pg-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56,189,248,0.2); }
+  .pg-card h4 { margin: 0 0 8px; font-size: 13px; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 800; }
+  .pg-card .hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; min-height: 28px; font-family: var(--mono); }
+  /* Mini keypad */
+  .pg-keypad { display: grid; grid-template-columns: repeat(3, 36px); grid-template-rows: repeat(3, 36px); gap: 4px; justify-content: center; }
+  .pg-key { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 14px; color: var(--accent); cursor: pointer; user-select: none; transition: background 0.1s; }
+  .pg-key:hover, .pg-key.lit { background: var(--accent); color: var(--bg); }
+  .pg-key.center { color: var(--red); }
+  /* Mini radar */
+  .pg-radar svg { display: block; margin: 0 auto; }
+  .pg-radar-beam { transform-origin: 60px 60px; transition: transform 0.4s ease-out; }
+  /* Mini neopixel */
+  .pg-pixels { display: flex; gap: 8px; justify-content: center; padding: 12px 0; }
+  .pg-pixel { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; transition: transform 0.1s, box-shadow 0.15s; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.5), 0 0 12px currentColor; }
+  .pg-pixel:hover { transform: scale(1.15); }
+  /* Fake terminal */
+  .pg-term { background: #000; border-radius: 6px; padding: 8px 10px; font-family: var(--mono); font-size: 11px; color: #4ade80; line-height: 1.4; min-height: 110px; max-height: 110px; overflow: hidden; }
+  .pg-term .blink { animation: pgBlink 1s infinite; }
+  @keyframes pgBlink { 50% { opacity: 0; } }
+</style>
+<section style="margin: 24px 0;">
+  <h2 style="margin-bottom: 8px;"><span class="num">▶</span> Try it right here</h2>
+  <p class="lede">Four mini-demos embedded in the page. Click them. They're real, just not connected to a robot.</p>
+  <div class="pg-strip">
+    <!-- 1. KEYPAD -->
+    <div class="pg-card">
+      <h4>🛞 Live keypad</h4>
+      <div class="pg-keypad" id="pgKeypad">
+        <div></div>                                       <div class="pg-key" data-cmd="M:200,200">W</div>  <div></div>
+        <div class="pg-key" data-cmd="M:-150,150">A</div> <div class="pg-key center" data-cmd="STOP">⏹</div> <div class="pg-key" data-cmd="M:150,-150">D</div>
+        <div></div>                                       <div class="pg-key" data-cmd="M:-200,-200">S</div> <div></div>
+      </div>
+      <div class="hint" id="pgKeypadHint">click a key</div>
+    </div>
+    <!-- 2. RADAR -->
+    <div class="pg-card pg-radar">
+      <h4>📡 Mini radar</h4>
+      <svg id="pgRadarSvg" viewBox="0 0 120 120" width="120" height="120">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-dasharray="2,2"/>
+        <circle cx="60" cy="60" r="30" fill="none" stroke="var(--border)" stroke-dasharray="2,2"/>
+        <line x1="10" y1="60" x2="110" y2="60" stroke="var(--border)" stroke-dasharray="2,2"/>
+        <line x1="60" y1="10" x2="60" y2="110" stroke="var(--border)" stroke-dasharray="2,2"/>
+        <g class="pg-radar-beam" id="pgRadarBeam">
+          <path d="M 60 60 L 60 8 A 52 52 0 0 1 84 14 Z" fill="#38bdf8" opacity="0.5"/>
+        </g>
+        <circle id="pgRadarPing" cx="60" cy="20" r="3" fill="#fbbf24" opacity="0"/>
+      </svg>
+      <div class="hint" id="pgRadarHint">click circle to scan</div>
+    </div>
+    <!-- 3. NEOPIXEL -->
+    <div class="pg-card">
+      <h4>💎 NeoPixel demo</h4>
+      <div class="pg-pixels">
+        <span class="pg-pixel" data-i="0" style="background:#1f2937; color:#1f2937;"></span>
+        <span class="pg-pixel" data-i="1" style="background:#1f2937; color:#1f2937;"></span>
+        <span class="pg-pixel" data-i="2" style="background:#1f2937; color:#1f2937;"></span>
+        <span class="pg-pixel" data-i="3" style="background:#1f2937; color:#1f2937;"></span>
+      </div>
+      <div class="hint" id="pgPixelHint">click any pearl to cycle</div>
+    </div>
+    <!-- 4. TERMINAL -->
+    <div class="pg-card">
+      <h4>🔬 Live BLE wire</h4>
+      <pre class="pg-term" id="pgTerminal"></pre>
+      <div class="hint">simulated session · refresh to replay</div>
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  // KEYPAD
+  document.querySelectorAll('#pgKeypad .pg-key').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.add('lit');
+      setTimeout(() => el.classList.remove('lit'), 180);
+      const hint = document.getElementById('pgKeypadHint');
+      if (hint) hint.textContent = 'TX → ' + el.dataset.cmd;
+    });
+  });
+  // RADAR
+  const radar = document.getElementById('pgRadarSvg');
+  const beam = document.getElementById('pgRadarBeam');
+  const ping = document.getElementById('pgRadarPing');
+  if (radar) {
+    radar.addEventListener('click', (e) => {
+      const r = radar.getBoundingClientRect();
+      const cx = (e.clientX - r.left) - 60 * (r.width / 120);
+      const cy = (e.clientY - r.top)  - 60 * (r.height / 120);
+      const ang = Math.atan2(cx, -cy) * 180 / Math.PI;
+      beam.style.transform = `rotate(${ang}deg)`;
+      // Place ping at clicked spot
+      const x = 60 + Math.sin(ang * Math.PI/180) * 40;
+      const y = 60 - Math.cos(ang * Math.PI/180) * 40;
+      ping.setAttribute('cx', x);
+      ping.setAttribute('cy', y);
+      ping.setAttribute('opacity', '1');
+      ping.setAttribute('r', '3');
+      ping.animate(
+        [{ r: 3, opacity: 1 }, { r: 12, opacity: 0 }],
+        { duration: 700, fill: 'forwards' }
+      );
+      const dist = Math.round(20 + Math.random() * 60);
+      const hint = document.getElementById('pgRadarHint');
+      if (hint) hint.textContent = `RX → DIST:${dist}`;
+    });
+  }
+  // NEOPIXEL
+  const PALETTE = ['#ef4444', '#fbbf24', '#4ade80', '#38bdf8', '#22d3ee', '#f472b6', '#fb923c', '#1f2937'];
+  document.querySelectorAll('.pg-pixel').forEach(el => {
+    let idx = 7;
+    el.addEventListener('click', () => {
+      idx = (idx + 1) % PALETTE.length;
+      const c = PALETTE[idx];
+      el.style.background = c;
+      el.style.color = c;
+      const hint = document.getElementById('pgPixelHint');
+      if (hint) hint.textContent = `TX → RGB:${el.dataset.i},${parseInt(c.slice(1,3),16)},${parseInt(c.slice(3,5),16)},${parseInt(c.slice(5,7),16)}`;
+    });
+  });
+  // TERMINAL — typewrite a fake handshake
+  const lines = [
+    { t: '> connecting…',                 c: '#94a3b8' },
+    { t: '✓ paired BBC micro:bit [Bravo]', c: '#4ade80' },
+    { t: '< ECHO:1 INFO:CONNECTED',        c: '#38bdf8' },
+    { t: '> M:200,200',                    c: '#fb923c' },
+    { t: '< ECHO:2 M:200,200',             c: '#94a3b8' },
+    { t: '> SRV:1,90',                     c: '#fb923c' },
+    { t: '< ECHO:3 SRV:1,90',              c: '#94a3b8' },
+    { t: '< DIST:42',                      c: '#4ade80' },
+    { t: '> RGB:0,0,180,255',              c: '#fb923c' },
+    { t: '< ECHO:4 RGB:0,0,180,255',       c: '#94a3b8' },
+  ];
+  const term = document.getElementById('pgTerminal');
+  if (term) {
+    let i = 0, out = '';
+    function step() {
+      if (i >= lines.length) {
+        term.innerHTML = lines.map(l => `<span style="color:${l.c}">${l.t}</span>`).join('\n')
+          + '\n<span class="blink" style="color:#4ade80">_</span>';
+        return;
+      }
+      out += `<span style="color:${lines[i].c}">${lines[i].t}</span>\n`;
+      term.innerHTML = out + '<span class="blink" style="color:#4ade80">_</span>';
+      i++;
+      setTimeout(step, 280);
+    }
+    step();
+  }
+})();
+</script>
+
+<!-- ============================================================
+     STATS RIBBON — three big numbers under the hero.
+     Establishes "this is a substantial app" before the long sections.
+     ============================================================ -->
+<div class="stats-ribbon">
+  <div class="stat"><div class="stat__num">20</div><div class="stat__label">features shipped</div></div>
+  <div class="stat"><div class="stat__num">10</div><div class="stat__label">educational games</div></div>
+  <div class="stat"><div class="stat__num">8</div><div class="stat__label">onboard sensors</div></div>
+  <div class="stat"><div class="stat__num">3</div><div class="stat__label">languages</div></div>
 </div>
 
-<div class="layout">
-
-<!-- ════════════ SIDEBAR ════════════ -->
-<nav class="sidebar">
-  <div class="sidebar-title">Navigation</div>
-  <div class="nav-item active" onclick="show('connexion')"><span class="nav-icon">🔗</span>Connexion</div>
-  <div class="nav-item" onclick="show('securite')"><span class="nav-icon">⏹</span>Sécurité STOP</div>
-  <div class="nav-sep"></div>
-  <div class="sidebar-title">Onglets</div>
-  <div class="nav-item" onclick="show('tab-maqueen')"><span class="nav-icon">🤖</span>Onglet Maqueen</div>
-  <div class="nav-item" onclick="show('tab-controls')"><span class="nav-icon">🎛️</span>Onglet Controls</div>
-  <div class="nav-item" onclick="show('tab-sensors')"><span class="nav-icon">📡</span>Onglet Sensors</div>
-  <div class="nav-item" onclick="show('tab-graph')"><span class="nav-icon">📈</span>Onglet Graph</div>
-  <div class="nav-item" onclick="show('tab-3d')"><span class="nav-icon">🧊</span>Onglet 3D</div>
-  <div class="nav-sep"></div>
-  <div class="sidebar-title">Fonctions</div>
-  <div class="nav-item" onclick="show('pilotage')"><span class="nav-icon">🕹️</span>Pilotage manuel</div>
-  <div class="nav-item" onclick="show('modes')"><span class="nav-icon">🚗</span>Modes auto</div>
-  <div class="nav-item" onclick="show('autopilot')"><span class="nav-icon">🖍️</span>Dessine &amp; Roule</div>
-  <div class="nav-item" onclick="show('dashboard')"><span class="nav-icon">📊</span>Tableau de bord</div>
-  <div class="nav-item" onclick="show('slam')"><span class="nav-icon">🗺️</span>Carte SLAM</div>
-  <div class="nav-sep"></div>
-  <div class="sidebar-title">Jeux &amp; Créa</div>
-  <div class="nav-item" onclick="show('jeux')"><span class="nav-icon">🎮</span>Mini-jeux</div>
-  <div class="nav-item" onclick="show('musique')"><span class="nav-icon">🎵</span>Musique</div>
-  <div class="nav-item" onclick="show('servos')"><span class="nav-icon">🦾</span>Servos &amp; sonar</div>
-  <div class="nav-item" onclick="show('leds')"><span class="nav-icon">💡</span>LEDs &amp; buzzer</div>
-  <div class="nav-item" onclick="show('video')"><span class="nav-icon">🎬</span>Export vidéo</div>
-  <div class="nav-sep"></div>
-  <div class="nav-item" onclick="show('reglages')"><span class="nav-icon">⚙️</span>Réglages</div>
-  <div class="nav-item" onclick="show('raccourcis')"><span class="nav-icon">⌨️</span>Raccourcis</div>
-  <div class="nav-item" onclick="show('depannage')"><span class="nav-icon">🔧</span>Dépannage</div>
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<nav class="toc" aria-label="Table of contents">
+  <h3>📖 What's inside</h3>
+  <ol>
+    <li><a href="#quickstart">Quick start (90 seconds)</a></li>
+    <li><a href="#hardware">Meet your robot</a></li>
+    <li><a href="#interface">The cockpit, explained</a></li>
+    <li><a href="#connect">Connecting via Bluetooth</a></li>
+    <li><a href="#drive">Driving (sub-tab: Drive)</a></li>
+    <li><a href="#dashboard">The dashboard cluster</a></li>
+    <li><a href="#path">Path / SLAM map</a></li>
+    <li><a href="#servos">Servos &amp; PWM Lab</a></li>
+    <li><a href="#leds">Onboard LEDs</a></li>
+    <li><a href="#neopixels">NeoPixels &amp; Simon Says</a></li>
+    <li><a href="#buzzer">Buzzer &amp; Buzz the Tune</a></li>
+    <li><a href="#distance">Distance &amp; Sweep radar</a></li>
+    <li><a href="#line">Line sensors &amp; Race timer</a></li>
+    <li><a href="#ir">IR remote</a></li>
+    <li><a href="#voice">Voice commands</a></li>
+    <li><a href="#tilt">Tilt-to-drive</a></li>
+    <li><a href="#autopilot">Drag-to-trace autopilot</a></li>
+    <li><a href="#telemetry">Telemetry &amp; Recap</a></li>
+    <li><a href="#timelapse">Time-lapse export</a></li>
+    <li><a href="#ar">AR webcam overlay</a></li>
+    <li><a href="#pair">2-robot pairing</a></li>
+    <li><a href="#games">All 10 educational games</a></li>
+    <li><a href="#mobile">Phone &amp; tablet mode</a></li>
+    <li><a href="#themes">Themes &amp; languages</a></li>
+    <li><a href="#troubleshoot">Troubleshooting</a></li>
+    <li><a href="#glossary">Geeky glossary</a></li>
+    <li><a href="#parents">For parents &amp; teachers</a></li>
+  </ol>
 </nav>
 
-<!-- ════════════ CONTENT ════════════ -->
-<main class="content">
+<!-- ============================================================
+     1 · QUICK START
+     ============================================================ -->
+<section id="quickstart">
+  <h2><span class="num">1</span> Quick start <span style="font-size:14px; color:var(--text-dim); font-weight:400;">(under 90 seconds)</span></h2>
+  <p class="lede">From "what's a robot?" to driving it across the kitchen floor — fastest path.</p>
 
-<!-- ─────────────────── CONNEXION ─────────────────── -->
-<div class="section active" id="s-connexion" data-keywords="connexion bluetooth connect robot microbit pair jumeler chrome edge navigateur">
-  <div class="section-hero">
-    <span class="sh-icon">🔗</span>
-    <div class="sh-body">
-      <h2>Connexion au robot</h2>
-      <p>Maqueen Lab se connecte à ton robot via <strong>Bluetooth Low Energy (BLE)</strong> directement depuis le navigateur — pas d'installation, pas de câble.</p>
-    </div>
+  <ol class="steps">
+    <li>
+      <b>Power up the robot.</b> Flip the slide switch on the back of the Maqueen Lite to <code>ON</code>. The micro:bit screen wakes up. <span style="color:var(--green);"><span class="pulse-dot"></span>green light = healthy.</span>
+    </li>
+    <li>
+      <b>Open Maqueen Lab</b> in <b>Chrome</b> or <b>Edge</b> (Web Bluetooth doesn't work on Safari or Firefox — those browsers can't talk to the robot).
+      → <a href="index.html">Click here to launch the app.</a>
+    </li>
+    <li>
+      <b>Hit the big <kbd>🔗 Connect</kbd> button</b> on the right side. A browser pop-up appears showing nearby Bluetooth devices.
+    </li>
+    <li>
+      <b>Pick the device that starts with "BBC micro:bit"</b> (the name will show 5 random-looking letters at the end — that's your robot's serial). Tap <b>Pair</b>.
+    </li>
+    <li>
+      <b>Wait ~3 seconds</b> for the dot in the header to turn 🟢 green. The "READY" pill changes to "CONNECTED".
+    </li>
+    <li>
+      <b>Drive it!</b> Tap any of the four arrows in the keypad, or press <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> on a keyboard. Robot rolls. <kbd>Space</kbd> stops.
+    </li>
+  </ol>
+
+  <div class="pro-tip">
+    Connecting fails? Make sure the robot is <b>on</b>, the micro:bit is <b>v2</b> (v1 has too little memory for BLE + radar), and you're not already connected from another tab. <a href="#troubleshoot">Full troubleshooting →</a>
   </div>
 
-  <div class="where-badge">📍 Bouton bleu en bas à gauche de l'écran</div>
-
-  <div class="fab-pair" style="margin:20px 0">
-    <div>
-      <div class="fab connect"><span class="fi">🔗</span>CONNECT</div>
-      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:8px">Non connecté</div>
-    </div>
-    <div style="font-size:13px;color:var(--muted);align-self:center;text-align:center;line-height:2">
-      cligne en bleu →<br>clique dessus →<br>sélectionne micro:bit →<br>disparaît = connecté ✅
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>📋 Étapes de connexion</h3>
-    <div class="steps">
-      <div class="step"><div class="sn">1</div><div class="st"><strong>Allume le robot</strong> — interrupteur sous le châssis → LED rouge du micro:bit s'allume.<em>Si le micro:bit est éteint, aucune connexion n'est possible.</em></div></div>
-      <div class="step"><div class="sn">2</div><div class="st"><strong>Ouvre Chrome ou Edge</strong> — les seuls navigateurs avec Bluetooth Web.<em>Firefox et Safari iPhone ne supportent pas l'API Bluetooth.</em></div></div>
-      <div class="step"><div class="sn">3</div><div class="st"><strong>Tape le bouton 🔗 CONNECT</strong> en bas à gauche — une liste Bluetooth s'ouvre.</div></div>
-      <div class="step"><div class="sn">4</div><div class="st"><strong>Sélectionne "BBC micro:bit [XXXXX]"</strong> dans la liste, puis clique <strong>Jumeler</strong>.</div></div>
-      <div class="step"><div class="sn">5</div><div class="st"><strong>Le bouton bleu disparaît</strong> — le robot est connecté. La batterie s'affiche en haut.</div></div>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="callout warn"><div class="ci">⚠️</div><div><strong>Navigateurs supportés :</strong> Chrome (Android, Mac, Windows) et Edge (Windows). Pas Firefox, pas Safari iPhone.</div></div>
-    <div class="callout tip"><div class="ci">💡</div><div><strong>Micro:bit absent de la liste ?</strong> Appuie sur Reset au dos du micro:bit, attends 3 s et réessaie.</div></div>
-  </div>
-
-  <div class="card" style="margin-top:14px">
-    <h3>🔋 Indicateur de batterie</h3>
-    <p>Une fois connecté, la tension de la batterie s'affiche en haut de l'app (ex. <strong>3.8 V · 72 %</strong>). Si la batterie est faible (&lt;3.5 V), la couleur passe au rouge — remplace les piles pour une conduite stable.</p>
-  </div>
-</div>
-
-<!-- ─────────────────── SÉCURITÉ ─────────────────── -->
-<div class="section" id="s-securite" data-keywords="stop arrêt urgence sécurité escape echap bouton rouge">
-  <div class="section-hero">
-    <span class="sh-icon">⏹</span>
-    <div class="sh-body">
-      <h2>Bouton STOP — Sécurité absolue</h2>
-      <p>Le bouton STOP est la règle n°1 de la robotique. Il est <strong>toujours visible</strong>, quel que soit l'endroit de la page.</p>
-    </div>
-  </div>
-
-  <div class="fab-pair">
-    <div>
-      <div class="fab stop"><span class="fi">⏹</span>STOP</div>
-      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:8px">Bas à droite<br>toujours visible</div>
-    </div>
-    <div style="align-self:center;max-width:260px">
-      <p style="font-size:14px;color:#c4d4e8;margin-bottom:10px">Ce bouton rouge :</p>
-      <div class="feat"><div class="feat-icon">🛑</div><div class="feat-body"><strong>Coupe les moteurs</strong><span>Envoie STOP via BLE immédiatement</span></div></div>
-      <div class="feat"><div class="feat-icon">🚦</div><div class="feat-body"><strong>Annule tous les modes</strong><span>Auto-wander, autopilot, macro, tilt, voix…</span></div></div>
-      <div class="feat"><div class="feat-icon">💡</div><div class="feat-body"><strong>Flash visuel</strong><span>Confirme que l'ordre a bien été envoyé</span></div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>⌨️ Raccourci clavier : <kbd>Échap</kbd></h3>
-    <p>Sur ordinateur, la touche <kbd>Échap</kbd> (Escape) déclenche le même arrêt d'urgence — encore plus rapide que cliquer !</p>
-    <div class="callout good" style="margin-top:10px"><div class="ci">✅</div><div><strong>Bonne pratique :</strong> Avant de faire rouler le robot, teste toujours le bouton STOP une première fois pour être sûr qu'il répond bien.</div></div>
-  </div>
-</div>
-
-<!-- ─────────────────── ONGLET MAQUEEN ─────────────────── -->
-<div class="section" id="s-tab-maqueen" data-keywords="onglet maqueen drive keypad vitesse speed wander personality macro dashboard jeux games">
-  <div class="section-hero">
-    <span class="sh-icon">🤖</span>
-    <div class="sh-body">
-      <h2>Onglet 🤖 Maqueen</h2>
-      <p>L'onglet principal — conduite, modes automatiques, jeux, tableau de bord et carte SLAM. C'est ici que tu passes 90 % du temps.</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>📐 Structure de l'onglet (de haut en bas)</h3>
-    <table>
-      <tr><th>Section</th><th>Contenu</th></tr>
-      <tr><td>🏁 Drive</td><td>Pavé directionnel + curseur vitesse + barre de macros (modes, jeux, copilot…)</td></tr>
-      <tr><td>📊 Dashboard</td><td>4 jauges live : Vitesse, Puissance, Cap, Sonar</td></tr>
-      <tr><td>🗺️ Carte SLAM</td><td>Tracé en temps réel avec boutons de la carte (photo, timelapse, autopilot…)</td></tr>
-      <tr><td>🎮 Jeux</td><td>SLAM the Room, Drift, Soccer, Math, Race, Echo Hunt, Simon, Morse…</td></tr>
-      <tr><td>🎵 Musique</td><td>Piano 8 touches, buzzer fréquence/durée</td></tr>
-    </table>
-  </div>
-
-  <div class="callout info"><div class="ci">💡</div><div>Les sections se <strong>masquent automatiquement</strong> selon le profil de densité choisi (Débutant / Standard / Hacker). Si tu ne vois pas une section, change le profil dans ⚙ Réglages.</div></div>
-</div>
-
-<!-- ─────────────────── ONGLET CONTROLS ─────────────────── -->
-<div class="section" id="s-tab-controls" data-keywords="onglet controls moteur servo lumière buzzer curseur slider RAW">
-  <div class="section-hero">
-    <span class="sh-icon">🎛️</span>
-    <div class="sh-body">
-      <h2>Onglet 🎛️ Controls</h2>
-      <p>Contrôle brut des composants — moteurs, servos, LEDs, buzzer. Idéal pour tester chaque pièce individuellement ou calibrer.</p>
-    </div>
-  </div>
-  <div class="grid2">
-    <div class="card">
-      <h3>⚙️ Moteurs gauche / droite</h3>
-      <p>Deux curseurs indépendants (−255 à +255) pour chaque moteur. Parfait pour tester si un moteur est plus puissant que l'autre et comprendre la conduite différentielle.</p>
-      <div class="callout tip" style="margin-top:8px"><div class="ci">💡</div><div>Mets L=150 R=150 → avance droit. L=150 R=50 → vire à droite. L=−100 R=100 → tourne sur place.</div></div>
-    </div>
-    <div class="card">
-      <h3>🦾 Servo S1 &amp; S2</h3>
-      <p>Contrôle direct de l'angle (0–180°) ou de la vitesse pour les servos à rotation continue. Voir la section <a href="#" onclick="show('servos');return false" style="color:var(--accent)">Servos &amp; sonar</a> pour le détail complet.</p>
-    </div>
-  </div>
-  <div class="grid2">
-    <div class="card">
-      <h3>🌈 LEDs NeoPixel</h3>
-      <p>Sélecteur de couleur + 4 boutons préréglés. Agit sur les 4 LEDs WS2812 en même temps.</p>
-    </div>
-    <div class="card">
-      <h3>🔊 Buzzer</h3>
-      <p>Curseur fréquence (50–2000 Hz) + curseur durée (10–5000 ms) + bouton ▶ Bip. Joue une note unique au PWM du micro:bit.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ─────────────────── ONGLET SENSORS ─────────────────── -->
-<div class="section" id="s-tab-sensors" data-keywords="onglet sensors capteurs boutons accéléromètre boussole lumière son température sonar">
-  <div class="section-hero">
-    <span class="sh-icon">📡</span>
-    <div class="sh-body">
-      <h2>Onglet 📡 Sensors</h2>
-      <p>Lecture en direct de tous les capteurs du micro:bit et du Maqueen. Utile pour diagnostiquer et pour les activités scientifiques.</p>
-    </div>
-  </div>
-  <div class="grid2">
-    <div class="card"><h3>🔘 Boutons A / B</h3><p>Affiche l'état (appuyé / relâché) des boutons physiques du micro:bit. Tu peux les utiliser pour déclencher des actions dans ton code.</p></div>
-    <div class="card"><h3>📐 Accéléromètre</h3><p>X, Y, Z en temps réel. Secoue le robot ou incline le micro:bit — les valeurs changent instantanément. Base du mode Tilt-to-Drive.</p></div>
-    <div class="card"><h3>🧭 Boussole (magnétomètre)</h3><p>Cap en degrés (0–360°, 0 = Nord). Doit être calibrée une fois (tourner le micro:bit dans tous les sens). Utilisée par Drift Champion et le heading lock.</p></div>
-    <div class="card"><h3>💡 Capteur de lumière</h3><p>Valeur 0–255 de la luminosité ambiante. Les LEDs du micro:bit servent de photodiodes — simple mais efficace.</p></div>
-    <div class="card"><h3>🔈 Capteur sonore</h3><p>Niveau sonore ambiant (micro:bit V2 uniquement). Utile pour les activités de mesure du bruit ou pour déclencher des actions sur bruit fort.</p></div>
-    <div class="card"><h3>🌡️ Température</h3><p>Température du processeur du micro:bit en °C. Approximative (±2–3°C) mais suffisante pour des expériences comparatives.</p></div>
-  </div>
-</div>
-
-<!-- ─────────────────── ONGLET GRAPH ─────────────────── -->
-<div class="section" id="s-tab-graph" data-keywords="onglet graph graphique courbe télémétrie data enregistrement">
-  <div class="section-hero">
-    <span class="sh-icon">📈</span>
-    <div class="sh-body">
-      <h2>Onglet 📈 Graph</h2>
-      <p>Trace des courbes en temps réel de n'importe quelle valeur de capteur. Parfait pour l'analyse scientifique et les exposés.</p>
-    </div>
-  </div>
-  <div class="card">
-    <h3>Comment l'utiliser</h3>
-    <div class="steps">
-      <div class="step"><div class="sn">1</div><div class="st">Sélectionne le capteur à tracer (sonar, vitesse, cap, lumière…) dans le sélecteur en haut.</div></div>
-      <div class="step"><div class="sn">2</div><div class="st">La courbe se trace automatiquement en temps réel pendant que le robot bouge.</div></div>
-      <div class="step"><div class="sn">3</div><div class="st">Utilise les boutons <strong>Export CSV</strong> ou <strong>Export JSON</strong> pour télécharger les données brutes pour un tableur.</div></div>
-    </div>
-    <div class="callout tip" style="margin-top:12px"><div class="ci">💡</div><div><strong>Idée pédagogique :</strong> Trace la distance sonar pendant l'Auto-Wander — tu vois exactement comment le robot "voit" les obstacles et décide de tourner.</div></div>
-  </div>
-</div>
-
-<!-- ─────────────────── ONGLET 3D ─────────────────── -->
-<div class="section" id="s-tab-3d" data-keywords="onglet 3D modèle three.js rotation visualisation micro:bit">
-  <div class="section-hero">
-    <span class="sh-icon">🧊</span>
-    <div class="sh-body">
-      <h2>Onglet 🧊 3D</h2>
-      <p>Modèle 3D interactif du micro:bit qui reflète l'état réel du robot en temps réel.</p>
-    </div>
-  </div>
-  <div class="card">
-    <h3>Ce qu'il montre</h3>
-    <div class="feat"><div class="feat-icon">🔄</div><div class="feat-body"><strong>Rotation 3D</strong><span>Le modèle tourne et s'incline avec l'accéléromètre réel du micro:bit</span></div></div>
-    <div class="feat"><div class="feat-icon">💡</div><div class="feat-body"><strong>LEDs allumées</strong><span>La matrice LED 5×5 du micro:bit s'affiche en 3D</span></div></div>
-    <div class="feat"><div class="feat-icon">🖱️</div><div class="feat-body"><strong>Navigation souris</strong><span>Clic + glisser pour faire pivoter le modèle manuellement</span></div></div>
-  </div>
-</div>
-
-<!-- ─────────────────── PILOTAGE MANUEL ─────────────────── -->
-<div class="section" id="s-pilotage" data-keywords="pavé directionnel keypad flèches vitesse speed slider moteur gauche droite avance recule tourne WASD macro enregistrement">
-  <div class="section-hero">
-    <span class="sh-icon">🕹️</span>
-    <div class="sh-body">
-      <h2>Pilotage manuel</h2>
-      <p>Conduis le robot avec les flèches à l'écran ou les touches du clavier. C'est la base de tout !</p>
-    </div>
-  </div>
-
-  <div class="where-badge">📍 Onglet 🤖 Maqueen → section Drive</div>
-
-  <div class="grid2">
-    <div>
-      <div class="card">
-        <h3>🎮 Pavé directionnel</h3>
-        <div class="keypad">
-          <div class="kbtn empty"></div><div class="kbtn">⬆️</div><div class="kbtn empty"></div>
-          <div class="kbtn">⬅️</div><div class="kbtn stop">■</div><div class="kbtn">➡️</div>
-          <div class="kbtn empty"></div><div class="kbtn">⬇️</div><div class="kbtn empty"></div>
-        </div>
-        <p style="text-align:center;font-size:12px;color:var(--muted)">Maintiens appuyé → le robot bouge<br>Relâche → il s'arrête</p>
-      </div>
-    </div>
-    <div>
-      <div class="card" style="margin-bottom:14px">
-        <h3>⌨️ Équivalents clavier</h3>
-        <table>
-          <tr><td><kbd>↑</kbd></td><td>Avance</td></tr>
-          <tr><td><kbd>↓</kbd></td><td>Recule</td></tr>
-          <tr><td><kbd>←</kbd></td><td>Tourne gauche</td></tr>
-          <tr><td><kbd>→</kbd></td><td>Tourne droite</td></tr>
-          <tr><td><kbd>Échap</kbd></td><td>STOP d'urgence</td></tr>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>⚡ Curseur de vitesse — SPEED</h3>
-    <p>Règle la puissance moteur de 0 à 255. Tous les modes (wander, autopilot, tilt, copilot…) respectent cette limite.</p>
-    <div class="speed-demo">
-      <div class="sd-label">Débutant</div>
-      <div class="sd-track" style="flex:1"><div class="sd-fill" style="width:40%"></div><div class="sd-thumb" style="left:calc(40% - 9px)"></div></div>
-      <div class="sd-val" style="color:var(--green)">100</div>
-    </div>
-    <div class="speed-demo">
-      <div class="sd-label">Standard</div>
-      <div class="sd-track" style="flex:1"><div class="sd-fill" style="width:70%"></div><div class="sd-thumb" style="left:calc(70% - 9px)"></div></div>
-      <div class="sd-val" style="color:var(--yellow)">175</div>
-    </div>
-    <div class="speed-demo">
-      <div class="sd-label">Max</div>
-      <div class="sd-track" style="flex:1"><div class="sd-fill" style="width:100%"></div><div class="sd-thumb" style="left:calc(100% - 18px)"></div></div>
-      <div class="sd-val" style="color:var(--red)">255</div>
-    </div>
-    <div class="callout tip" style="margin-top:10px"><div class="ci">💡</div><div>Commence à <strong>100</strong> pour apprendre. Monte à <strong>200+</strong> quand tu maîtrises l'espace disponible.</div></div>
-  </div>
-
-  <div class="card">
-    <h3>📼 Enregistrement de macro</h3>
-    <div class="feat"><div class="feat-icon">🔴</div><div class="feat-body"><strong>Bouton REC</strong><span>Lance l'enregistrement — chaque commande (direction + durée) est capturée</span></div></div>
-    <div class="feat"><div class="feat-icon">▶️</div><div class="feat-body"><strong>Bouton REPLAY</strong><span>Rejoue exactement la séquence enregistrée, à la même vitesse</span></div></div>
-    <div class="callout tip" style="margin-top:10px"><div class="ci">💡</div><div><strong>Pourquoi c'est utile :</strong> Enregistre un parcours complexe une seule fois, puis rejoue-le en boucle pour une démo ou un concours de précision.</div></div>
-  </div>
-</div>
-
-<!-- ─────────────────── MODES AUTOMATIQUES ─────────────────── -->
-<div class="section" id="s-modes" data-keywords="wander auto tilt téléphone voix commande geste gesture webcam copilot 2 joueurs heading lock cap boussole">
-  <div class="section-hero">
-    <span class="sh-icon">🚗</span>
-    <div class="sh-body">
-      <h2>Modes de pilotage automatiques</h2>
-      <p>Six façons différentes de contrôler le robot — du pilote autonome au geste de la main.</p>
-    </div>
-  </div>
-
-  <!-- WANDER -->
-  <div class="card" style="border-color:rgba(74,222,128,.3)">
-    <h3 style="color:var(--green)">🚦 Auto-Wander — exploration autonome</h3>
-    <p><strong>Qu'est-ce que c'est ?</strong> Le robot avance seul, détecte les obstacles avec le sonar et tourne pour les éviter. Il explore la pièce sans aucune intervention humaine.</p>
-    <p><strong>Comment ça marche ?</strong> Un sonar orientable balaye de gauche à droite. Quand il détecte un mur à moins de X cm, le robot choisit le côté le plus libre et tourne.</p>
-
-    <div class="wander-diag">
-      <svg class="wd-svg" viewBox="0 0 360 160" xmlns="http://www.w3.org/2000/svg">
-        <!-- Floor -->
-        <rect x="0" y="0" width="360" height="160" fill="#040c1e"/>
-        <!-- Walls -->
-        <rect x="10" y="10" width="340" height="4" fill="#38bdf8" opacity=".4" rx="2"/>
-        <rect x="10" y="10" width="4" height="140" fill="#38bdf8" opacity=".4" rx="2"/>
-        <rect x="346" y="10" width="4" height="140" fill="#38bdf8" opacity=".4" rx="2"/>
-        <rect x="10" y="146" width="340" height="4" fill="#38bdf8" opacity=".4" rx="2"/>
-        <!-- Obstacle -->
-        <rect x="200" y="50" width="50" height="50" fill="rgba(251,191,36,.15)" stroke="#facc15" stroke-width="1.5" rx="4"/>
-        <!-- Trail -->
-        <path d="M 60 120 Q 80 80 60 50 Q 50 30 80 25 Q 130 20 150 60 Q 160 90 190 80" fill="none" stroke="#4ade80" stroke-width="2" stroke-dasharray="4,3" opacity=".8"/>
-        <!-- Robot -->
-        <circle cx="190" cy="80" r="12" fill="rgba(56,189,248,.2)" stroke="#38bdf8" stroke-width="1.5"/>
-        <text x="190" y="85" text-anchor="middle" font-size="12">🤖</text>
-        <!-- Sonar arc -->
-        <path d="M 190 80 L 230 55" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3,2" opacity=".6"/>
-        <path d="M 190 80 L 240 80" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3,2" opacity=".6"/>
-        <path d="M 190 80 L 230 105" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3,2" opacity=".6"/>
-        <text x="250" y="55" font-size="9" fill="#facc15">obstacle !</text>
-        <!-- Arrow turn -->
-        <path d="M 190 80 Q 160 60 140 40" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-        <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4ade80"/></marker></defs>
-        <text x="100" y="35" font-size="9" fill="#4ade80">vire !</text>
-      </svg>
-      <div style="font-size:12px;color:var(--muted);margin-top:8px">Le robot détecte l'obstacle (🟡) et vire du côté libre (flèche verte)</div>
-    </div>
-
-    <div class="personalities">
-      <div class="pers">
-        <span class="pers-icon">⚡</span>
-        <div class="pers-name">Rapide</div>
-        <div class="pers-desc">Vitesse élevée, seuil de détection court — fonce et vire vite</div>
-        <div class="pers-bars">
-          <div class="pers-bar-row">Vitesse<div class="pers-bar-track"><div class="pers-bar-fill" style="width:85%;background:var(--red)"></div></div></div>
-          <div class="pers-bar-row">Prudence<div class="pers-bar-track"><div class="pers-bar-fill" style="width:20%;background:var(--green)"></div></div></div>
-        </div>
-      </div>
-      <div class="pers">
-        <span class="pers-icon">🐢</span>
-        <div class="pers-name">Prudent</div>
-        <div class="pers-desc">Lent, seuil large — vire longtemps avant les obstacles</div>
-        <div class="pers-bars">
-          <div class="pers-bar-row">Vitesse<div class="pers-bar-track"><div class="pers-bar-fill" style="width:25%;background:var(--red)"></div></div></div>
-          <div class="pers-bar-row">Prudence<div class="pers-bar-track"><div class="pers-bar-fill" style="width:90%;background:var(--green)"></div></div></div>
-        </div>
-      </div>
-      <div class="pers">
-        <span class="pers-icon">🔍</span>
-        <div class="pers-name">Curieux</div>
-        <div class="pers-desc">Balayage sonar très large — explore systématiquement</div>
-        <div class="pers-bars">
-          <div class="pers-bar-row">Vitesse<div class="pers-bar-track"><div class="pers-bar-fill" style="width:55%;background:var(--red)"></div></div></div>
-          <div class="pers-bar-row">Balayage<div class="pers-bar-track"><div class="pers-bar-fill" style="width:95%;background:var(--purple)"></div></div></div>
-        </div>
-      </div>
-      <div class="pers">
-        <span class="pers-icon">😴</span>
-        <div class="pers-name">Fainéant</div>
-        <div class="pers-desc">S'arrête souvent, balayage rare — économe en batterie</div>
-        <div class="pers-bars">
-          <div class="pers-bar-row">Vitesse<div class="pers-bar-track"><div class="pers-bar-fill" style="width:15%;background:var(--red)"></div></div></div>
-          <div class="pers-bar-row">Pauses<div class="pers-bar-track"><div class="pers-bar-fill" style="width:80%;background:var(--yellow)"></div></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TILT -->
-  <div class="card" style="margin-top:14px;border-color:rgba(56,189,248,.3)">
-    <h3 style="color:var(--accent)">📱 Tilt-to-Drive — pilotage par inclinaison</h3>
-    <p><strong>Qu'est-ce que c'est ?</strong> Tu tiens le téléphone comme un volant de voiture et le robot répond à tes inclinaisons.</p>
-
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;text-align:center">
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px">
-        <div style="font-size:30px;margin-bottom:8px">📱↗️</div>
-        <div style="font-size:12px;font-weight:700;margin-bottom:3px">Incline en avant</div>
-        <div style="font-size:11px;color:var(--green)">→ Avance</div>
-      </div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px">
-        <div style="font-size:30px;margin-bottom:8px">📱↙️</div>
-        <div style="font-size:12px;font-weight:700;margin-bottom:3px">Incline en arrière</div>
-        <div style="font-size:11px;color:var(--red)">→ Recule</div>
-      </div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px">
-        <div style="font-size:30px;margin-bottom:8px">📱↔️</div>
-        <div style="font-size:12px;font-weight:700;margin-bottom:3px">Penche à droite/gauche</div>
-        <div style="font-size:11px;color:var(--yellow)">→ Tourne</div>
-      </div>
-    </div>
-
-    <div class="where-badge">📍 Bouton 📱 dans la barre de macros Drive</div>
-    <div class="callout tip" style="margin-top:10px"><div class="ci">💡</div><div>Sur iOS 13+, l'app demande une permission d'accès aux capteurs de mouvement. Accepte-la ! Si tu cliques "Refuser", le bouton affiche ❌ — va dans Réglages → Safari → Accès aux capteurs de mouvement.</div></div>
-  </div>
-
-  <!-- VOICE -->
-  <div class="card" style="margin-top:14px;border-color:rgba(192,132,252,.3)">
-    <h3 style="color:var(--purple)">🎙️ Commandes vocales</h3>
-    <p>Parle au micro de ton téléphone — le robot obéit à ta voix !</p>
-    <table style="margin-top:10px">
-      <tr><th>Mot(s) reconnus</th><th>Action</th></tr>
-      <tr><td>avance / forward / go</td><td>⬆️ En avant</td></tr>
-      <tr><td>recule / backward / back</td><td>⬇️ En arrière</td></tr>
-      <tr><td>gauche / left</td><td>⬅️ Tourne gauche</td></tr>
-      <tr><td>droite / right</td><td>➡️ Tourne droite</td></tr>
-      <tr><td>stop / arrête</td><td>■ STOP</td></tr>
-      <tr><td>plus vite / faster</td><td>⚡ +25 vitesse</td></tr>
-      <tr><td>moins vite / slower</td><td>🐢 −25 vitesse</td></tr>
-    </table>
-  </div>
-
-  <!-- COPILOT -->
-  <div class="card" style="margin-top:14px;border-color:rgba(244,114,182,.3)">
-    <h3 style="color:var(--pink)">👯 Co-Pilot — 2 joueurs, 1 clavier</h3>
-    <p><strong>Principe :</strong> Deux enfants partagent le même clavier. L'un contrôle l'accélération, l'autre la direction. Aucun ne peut conduire seul — il faut coopérer !</p>
-    <div class="grid2" style="margin-top:12px">
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
-        <div style="font-size:22px;margin-bottom:8px">👧 Joueur 1</div>
-        <div style="margin-bottom:4px"><kbd>W</kbd> Avance</div>
-        <div><kbd>S</kbd> Recule</div>
-      </div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
-        <div style="font-size:22px;margin-bottom:8px">👦 Joueur 2</div>
-        <div style="margin-bottom:4px"><kbd>J</kbd> Gauche</div>
-        <div><kbd>L</kbd> Droite</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ─────────────────── AUTOPILOT ─────────────────── -->
-<div class="section" id="s-autopilot" data-keywords="dessine roule autopilot chemin waypoint trace path save load replay json purple violet">
-  <div class="section-hero">
-    <span class="sh-icon">🖍️</span>
-    <div class="sh-body">
-      <h2>Dessine &amp; Roule — Autopilot</h2>
-      <p>Trace un chemin du doigt sur la carte — le robot le suit exactement grâce à un contrôleur de cap proportionnel.</p>
-    </div>
-  </div>
-
-  <div class="where-badge">📍 Bouton 🖍️ dans la barre de la carte SLAM</div>
-
-  <div class="card">
-    <h3>📐 Comment ça marche (la physique)</h3>
-    <p>À chaque instant (10 fois/seconde), le robot calcule :</p>
-    <ol style="padding-left:20px;margin-top:8px;font-size:13px;color:#c4d4e8;line-height:2">
-      <li>L'angle vers le prochain waypoint (point du tracé)</li>
-      <li>La différence avec son cap actuel (= erreur)</li>
-      <li>La correction moteur proportionnelle à cette erreur</li>
-      <li>Le waypoint est "atteint" quand le robot passe à moins de 6 cm</li>
-    </ol>
-    <div class="ap-vis">
-      <svg viewBox="0 0 300 160" width="100%" xmlns="http://www.w3.org/2000/svg">
-        <rect width="300" height="160" fill="#040c1e"/>
-        <!-- Path -->
-        <path d="M 30 130 Q 80 40 150 80 Q 220 120 270 30" fill="none" stroke="#c084fc" stroke-width="2" stroke-dasharray="5,3"/>
-        <!-- Waypoints -->
-        <circle cx="80" cy="57" r="3" fill="#c084fc" opacity=".6"/>
-        <circle cx="150" cy="80" r="3" fill="#c084fc" opacity=".6"/>
-        <circle cx="220" cy="100" r="3" fill="#c084fc" opacity=".6"/>
-        <circle cx="270" cy="30" r="5" fill="#c084fc" stroke="#fff" stroke-width="1"/>
-        <!-- Robot -->
-        <circle cx="80" cy="57" r="11" fill="rgba(45,212,191,.2)" stroke="#2dd4bf" stroke-width="1.5"/>
-        <text x="80" y="62" text-anchor="middle" font-size="11">🤖</text>
-        <!-- Bearing arrow -->
-        <line x1="80" y1="57" x2="150" y2="80" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="3,2"/>
-        <text x="105" y="60" font-size="9" fill="#2dd4bf">cap cible</text>
-        <!-- Start -->
-        <circle cx="30" cy="130" r="4" fill="#4ade80"/>
-        <text x="35" y="145" font-size="9" fill="#4ade80">départ</text>
-        <!-- End -->
-        <text x="255" y="28" font-size="9" fill="#c084fc">arrivée</text>
-      </svg>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>🖱️ Étapes d'utilisation</h3>
-    <div class="steps">
-      <div class="step"><div class="sn">1</div><div class="st"><strong>Clique sur 🖍️</strong> dans la barre de la carte — le curseur devient une croix.</div></div>
-      <div class="step"><div class="sn">2</div><div class="st"><strong>Maintiens appuyé</strong> sur la carte et trace une courbe douce.<em>Des points violets capturent le tracé toutes les 2 cm de déplacement.</em></div></div>
-      <div class="step"><div class="sn">3</div><div class="st"><strong>Relâche</strong> — le robot démarre immédiatement.</div></div>
-      <div class="step"><div class="sn">4</div><div class="st">Les boutons <strong>💾 🔁 📂</strong> apparaissent automatiquement sous les boutons de la carte.</div></div>
-    </div>
-  </div>
-
-  <div class="grid3">
-    <div class="card">
-      <h3 style="color:var(--teal)">💾 Enregistrer</h3>
-      <p>Télécharge le chemin en fichier <code>.json</code>. Le fichier contient tous les waypoints en coordonnées monde (cm).</p>
-      <div class="callout tip" style="margin-top:8px"><div class="ci">💡</div><div>Le fichier est sauvegardé même APRÈS la course — les waypoints d'origine sont conservés.</div></div>
-    </div>
-    <div class="card">
-      <h3 style="color:var(--teal)">🔁 Rejouer</h3>
-      <p>Relance exactement le même chemin depuis le début sans avoir à redessiner.</p>
-      <p>Parfait pour comparer plusieurs runs ou faire une démo répétée.</p>
-    </div>
-    <div class="card">
-      <h3 style="color:var(--teal)">📂 Charger</h3>
-      <p>Ouvre un fichier <code>.json</code> sauvegardé. Le chemin s'affiche sur la carte et le robot part automatiquement.</p>
-    </div>
-  </div>
-
-  <div class="callout tip"><div class="ci">💡</div><div><strong>Astuce :</strong> Dessine sur une carte "propre" (après ↺ effacer) pour que le point de départ du chemin corresponde à la position réelle du robot.</div></div>
-  <div class="callout warn"><div class="ci">⚠️</div><div>Le robot suit le chemin en <em>coordonnées odométriques</em> — si le sol est glissant ou les piles faibles, la position estimée dérive et le robot s'écarte du tracé.</div></div>
-</div>
-
-<!-- ─────────────────── DASHBOARD ─────────────────── -->
-<div class="section" id="s-dashboard" data-keywords="tableau bord dashboard jauge vitesse puissance cap sonar odo trip peak avg compteur">
-  <div class="section-hero">
-    <span class="sh-icon">📊</span>
-    <div class="sh-body">
-      <h2>Tableau de bord</h2>
-      <p>4 jauges en temps réel + 4 compteurs de trajet. Tu vois exactement ce que fait le robot à chaque instant.</p>
-    </div>
-  </div>
-
-  <div class="where-badge">📍 Onglet 🤖 Maqueen → section Dashboard</div>
-
-  <div class="gauges-demo">
-    <div class="gauge">
-      <div class="gauge-val" style="color:var(--accent)">87</div>
-      <div class="gauge-label">cm/s · Vitesse</div>
-    </div>
-    <div class="gauge">
-      <div class="gauge-val" style="color:var(--green)">68%</div>
-      <div class="gauge-label">Puissance</div>
-    </div>
-    <div class="gauge">
-      <div class="gauge-val" style="color:var(--yellow)">324°</div>
-      <div class="gauge-label">Cap</div>
-    </div>
-    <div class="gauge">
-      <div class="gauge-val" style="color:var(--red)">18cm</div>
-      <div class="gauge-label">Sonar</div>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <h3>🔵 Vitesse (cm/s)</h3>
-      <p>Vitesse réelle estimée des roues, calculée à partir de la PWM moteur et de la tension batterie. S'affiche en cm/s.</p>
-      <p>Utile pour l'activité <strong>Math the Distance</strong> : tu connais la vitesse réelle pour calculer d = v × t.</p>
-    </div>
-    <div class="card">
-      <h3>🟢 Puissance (%)</h3>
-      <p>Pourcentage du curseur de vitesse actuel par rapport au maximum (255). Reflète exactement où tu as mis le curseur SPEED.</p>
-    </div>
-    <div class="card">
-      <h3>🟡 Cap (°)</h3>
-      <p>Direction du robot, de 0° à 360° (0° = Nord). Calculé à partir de la boussole ou de l'odométrie des roues selon le mode actif.</p>
-      <p>Quand le cap boussole est verrouillé (🎚 LOCK), cette jauge affiche la boussole — plus précis sur longue distance.</p>
-    </div>
-    <div class="card">
-      <h3>🔴 Sonar (cm)</h3>
-      <p>Distance de l'obstacle le plus proche détecté par le sonar HC-SR04. Rouge quand inférieur au seuil d'alerte. La valeur clignote quand le robot est en mode wander et détecte un mur.</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>🛣️ Compteurs de trajet</h3>
-    <table>
-      <tr><th>Compteur</th><th>Mesure</th><th>Se remet à 0</th></tr>
-      <tr><td>📏 ODO</td><td>Distance totale depuis le premier démarrage</td><td>Jamais (persistant)</td></tr>
-      <tr><td>🔄 TRIP</td><td>Distance depuis la dernière connexion</td><td>À chaque connexion</td></tr>
-      <tr><td>🚀 PEAK</td><td>Vitesse maximale atteinte en cm/s</td><td>Manuellement ou reconnexion</td></tr>
-      <tr><td>📈 AVG</td><td>Vitesse moyenne sur la session</td><td>À chaque connexion</td></tr>
-    </table>
-  </div>
-</div>
-
-<!-- ─────────────────── SLAM ─────────────────── -->
-<div class="section" id="s-slam" data-keywords="carte SLAM odometrie tracé vert jaune obstacle photo timelapse reset effacer challenge carré cercle huit autopilot dessin">
-  <div class="section-hero">
-    <span class="sh-icon">🗺️</span>
-    <div class="sh-body">
-      <h2>Carte SLAM — Odométrie en temps réel</h2>
-      <p>La carte dessine le trajet du robot en direct. SLAM = Simultaneous Localization And Mapping — la même technologie que dans les voitures autonomes !</p>
-    </div>
-  </div>
-
-  <div class="where-badge">📍 Onglet 🤖 Maqueen → SVG interactif sous le Dashboard</div>
-
-  <div style="position:relative;max-width:340px;height:200px;background:#040c1e;border:1px solid var(--border);border-radius:12px;margin:16px auto;overflow:hidden">
-    <svg viewBox="0 0 340 200" width="100%" xmlns="http://www.w3.org/2000/svg">
-      <!-- Grid -->
-      <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20,0 L0,0 0,20" fill="none" stroke="rgba(56,189,248,.06)" stroke-width=".5"/></pattern></defs>
-      <rect width="340" height="200" fill="url(#grid)"/>
-      <!-- Trail -->
-      <path d="M 170 170 Q 140 130 150 90 Q 160 60 200 70 Q 240 80 230 120 Q 220 150 250 160" fill="none" stroke="#4ade80" stroke-width="2.5" opacity=".85"/>
-      <!-- Obstacles -->
-      <circle cx="160" cy="88" r="5" fill="#facc15" opacity=".8"/>
-      <circle cx="230" cy="122" r="5" fill="#facc15" opacity=".8"/>
-      <!-- Robot -->
-      <circle cx="250" cy="160" r="10" fill="rgba(56,189,248,.15)" stroke="#38bdf8" stroke-width="1.5"/>
-      <text x="250" y="165" text-anchor="middle" font-size="10">🤖</text>
-      <!-- Origin -->
-      <circle cx="170" cy="170" r="4" fill="#4ade80" opacity=".6"/>
-      <text x="178" y="174" font-size="8" fill="#4ade80" opacity=".7">0,0</text>
-      <!-- Legend -->
-      <circle cx="15" cy="15" r="4" fill="#4ade80"/>
-      <text x="24" y="19" font-size="8" fill="#4ade80">trajet</text>
-      <circle cx="15" cy="30" r="4" fill="#facc15"/>
-      <text x="24" y="34" font-size="8" fill="#facc15">obstacle</text>
+  <!-- Animated demo: robot rolling back and forth on a track -->
+  <div class="figure" style="background:linear-gradient(180deg, rgba(56,189,248,0.04), rgba(251,191,36,0.04)); padding: 24px;">
+    <svg viewBox="0 0 360 130" style="max-width:100%;">
+      <defs>
+        <pattern id="track-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(56,189,248,0.18)" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="360" height="130" fill="url(#track-grid)"/>
+      <!-- finish line -->
+      <g transform="translate(330 30)">
+        <rect width="6" height="80" fill="#fbbf24"/>
+        <rect width="3" height="80" x="3" fill="#0a0f1a"/>
+        <text x="3" y="-6" text-anchor="middle" fill="#fbbf24" font-family="JetBrains Mono, monospace" font-size="9">GOAL</text>
+      </g>
+      <!-- start line -->
+      <g transform="translate(20 30)">
+        <rect width="6" height="80" fill="#38bdf8"/>
+      </g>
+      <!-- rolling robot -->
+      <g class="roll-robot" transform="translate(40 50)">
+        <rect width="60" height="40" rx="6" fill="#1d4ed8" stroke="#38bdf8" stroke-width="1.5"/>
+        <rect x="14" y="8" width="32" height="20" rx="2" fill="#0a0f1a"/>
+        <text x="30" y="22" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="7">µbit</text>
+        <circle cx="18" cy="6" r="2" fill="#fbbf24"/>
+        <circle cx="42" cy="6" r="2" fill="#fbbf24"/>
+        <g transform="translate(0 40)"><circle r="9" fill="#1f2937" stroke="#38bdf8"/><g class="wheel"><line x1="-9" y1="0" x2="9" y2="0" stroke="#64748b" stroke-width="2"/></g></g>
+        <g transform="translate(60 40)"><circle r="9" fill="#1f2937" stroke="#38bdf8"/><g class="wheel"><line x1="-9" y1="0" x2="9" y2="0" stroke="#64748b" stroke-width="2"/></g></g>
+        <!-- exhaust dust -->
+        <circle cx="-8" cy="38" r="3" fill="rgba(251,191,36,0.6)">
+          <animate attributeName="r" values="2;5;2" dur="0.8s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.6;0;0.6" dur="0.8s" repeatCount="indefinite"/>
+        </circle>
+      </g>
     </svg>
+    <div class="caption">Drive the robot from <span style="color:#38bdf8;">START</span> to <span style="color:#fbbf24;">GOAL</span> — the fundamental loop. Everything else builds on this.</div>
+  </div>
+</section>
+
+<div class="divider-fun">▸ ▸ ▸</div>
+
+<!-- ============================================================
+     2 · HARDWARE
+     ============================================================ -->
+<section id="hardware">
+  <h2><span class="num">2</span> Meet your robot</h2>
+  <p class="lede">Before we drive, let's tour the chassis. The Maqueen Lite v4 has more sensors than a smartphone has cameras.</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 600 360" style="max-width:100%;">
+      <!-- chassis -->
+      <rect x="120" y="100" width="360" height="200" rx="22" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2.5"/>
+      <!-- micro:bit -->
+      <rect x="220" y="160" width="160" height="80" rx="6" fill="#0a0e2e" stroke="#38bdf8" stroke-width="2"/>
+      <text x="300" y="206" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="14">micro:bit v2</text>
+      <text x="300" y="224" text-anchor="middle" fill="#64748b" font-family="JetBrains Mono, monospace" font-size="9">5×5 LED matrix · A B buttons</text>
+      <!-- ultrasonic eyes -->
+      <circle cx="160" cy="120" r="14" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+      <circle cx="160" cy="120" r="5"  fill="#fbbf24"/>
+      <circle cx="440" cy="120" r="14" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+      <circle cx="440" cy="120" r="5"  fill="#fbbf24"/>
+      <!-- wheels -->
+      <g transform="translate(120 300)">
+        <circle r="34" fill="#1f2937" stroke="#3b82f6" stroke-width="3"/>
+        <g class="wheel"><line x1="-34" y1="0" x2="34" y2="0" stroke="#64748b" stroke-width="4"/></g>
+      </g>
+      <g transform="translate(480 300)">
+        <circle r="34" fill="#1f2937" stroke="#3b82f6" stroke-width="3"/>
+        <g class="wheel"><line x1="-34" y1="0" x2="34" y2="0" stroke="#64748b" stroke-width="4"/></g>
+      </g>
+      <!-- onboard LEDs -->
+      <circle cx="180" cy="280" r="8" fill="#fbbf24"/>
+      <circle cx="420" cy="280" r="8" fill="#fbbf24"/>
+      <!-- line sensors -->
+      <rect x="240" y="290" width="20" height="14" fill="#4ade80"/>
+      <rect x="340" y="290" width="20" height="14" fill="#4ade80"/>
+      <!-- NeoPixels -->
+      <circle cx="200" cy="150" r="5" fill="#ef4444"/>
+      <circle cx="260" cy="150" r="5" fill="#fbbf24"/>
+      <circle cx="340" cy="150" r="5" fill="#22d3ee"/>
+      <circle cx="400" cy="150" r="5" fill="#38bdf8"/>
+      <!-- buzzer -->
+      <circle cx="300" cy="280" r="9" fill="#1f2937" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="300" y="285" text-anchor="middle" fill="#fbbf24" font-size="9" font-family="JetBrains Mono, monospace">♪</text>
+
+      <!-- callouts -->
+      <g font-family="JetBrains Mono, monospace" font-size="11" fill="#f0f4ff">
+        <line x1="160" y1="100" x2="80" y2="60" stroke="#fbbf24" stroke-width="1"/>
+        <text x="20"  y="55"  fill="#fbbf24">🦇 Ultrasonic eyes</text>
+        <text x="20"  y="68"  fill="#94a3b8">echo distance ↦ cm</text>
+
+        <line x1="220" y1="150" x2="170" y2="180" stroke="#38bdf8" stroke-width="1"/>
+        <text x="10"  y="195" fill="#38bdf8">💎 NeoPixels (×4)</text>
+        <text x="10"  y="208" fill="#94a3b8">RGB pearls in front</text>
+
+        <line x1="180" y1="280" x2="60" y2="300" stroke="#fbbf24" stroke-width="1"/>
+        <text x="0"   y="320" fill="#fbbf24">💡 Onboard LEDs</text>
+        <text x="0"   y="333" fill="#94a3b8">L &amp; R indicators</text>
+
+        <line x1="250" y1="295" x2="220" y2="345" stroke="#4ade80" stroke-width="1"/>
+        <text x="160" y="358" fill="#4ade80">👀 Line sensors</text>
+
+        <line x1="300" y1="280" x2="400" y2="335" stroke="#fbbf24" stroke-width="1"/>
+        <text x="380" y="350" fill="#fbbf24">🔊 Buzzer</text>
+
+        <line x1="340" y1="100" x2="450" y2="60" stroke="#38bdf8" stroke-width="1"/>
+        <text x="430" y="50" fill="#38bdf8">📐 Servo ports S1/S2</text>
+        <text x="430" y="63" fill="#94a3b8">add a horn or arm</text>
+
+        <line x1="120" y1="300" x2="40" y2="350" stroke="#fb923c" stroke-width="1"/>
+        <text x="0"   y="345" fill="#fb923c">🛞 Wheel L</text>
+
+        <line x1="480" y1="300" x2="560" y2="350" stroke="#00d4ff" stroke-width="1"/>
+        <text x="490" y="345" fill="#00d4ff">🛞 Wheel R</text>
+      </g>
+    </svg>
+    <div class="caption">Top-down view. Real robot looks similar — yours might have a colored shell.</div>
   </div>
 
-  <div class="card">
-    <h3>🔘 Boutons de la carte (barre d'icônes)</h3>
-    <div class="feat">
-      <div class="feat-icon">📸</div>
-      <div class="feat-body"><strong>Photo</strong><span>Télécharge une image PNG haute résolution de la carte actuelle — parfaite pour un compte-rendu ou une affiche</span></div>
+  <div class="grid">
+    <div class="card geek">
+      <span class="ico">🧠</span>
+      <h3>The brain</h3>
+      <p class="why">micro:bit v2</p>
+      <p>5×5 LED screen, two buttons (A &amp; B), accelerometer, magnetometer, microphone, speaker, and Bluetooth Low Energy radio.</p>
     </div>
-    <div class="feat">
-      <div class="feat-icon">🎬</div>
-      <div class="feat-body"><strong>Timelapse</strong><span>Génère une vidéo WebM accélérée (×10) montrant l'évolution du trajet sur 6 secondes</span></div>
+    <div class="card geek">
+      <span class="ico">⚡</span>
+      <h3>The motors</h3>
+      <p class="why">TB6612FNG driver via I²C 0x10</p>
+      <p>Two DC motors, each independently controllable from -255 (full reverse) to +255 (full forward). PWM speed control.</p>
     </div>
-    <div class="feat">
-      <div class="feat-icon">🖍️</div>
-      <div class="feat-body"><strong>Dessine &amp; Roule</strong><span>Trace un chemin sur la carte — le robot le suit (voir section Autopilot)</span></div>
+    <div class="card geek">
+      <span class="ico">🦇</span>
+      <h3>The "eyes"</h3>
+      <p class="why">SR04 ultrasonic on P1·P2</p>
+      <p>Sends a 40 kHz chirp and times the echo. Range 2 cm to ~4 m. Sees through glass, fabric, even fog. Cannot see clear plastic head-on.</p>
     </div>
-    <div class="feat">
-      <div class="feat-icon">📷</div>
-      <div class="feat-body"><strong>AR</strong><span>Mode réalité augmentée — superpose la carte sur le flux de la caméra du téléphone</span></div>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">🍩</div>
-      <div class="feat-body"><strong>Bilan</strong><span>Résumé de session : distance parcourue, obstacles rencontrés, vitesse max, durée</span></div>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">✏️</div>
-      <div class="feat-body"><strong>Pen / Stylo</strong><span>Le robot trace avec une vraie plume montée sur le servo S2 — active ce mode et le servo descend pour dessiner sur papier</span></div>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">↺</div>
-      <div class="feat-body"><strong>Effacer</strong><span>Remet la carte à zéro et repositionne le robot à l'origine (0,0). <em>Irréversible !</em></span></div>
+    <div class="card geek">
+      <span class="ico">👀</span>
+      <h3>The "feet feelers"</h3>
+      <p class="why">Line sensors on P13 &amp; P14</p>
+      <p>Infrared reflectance — black tape absorbs, white paper reflects. Each sensor returns 0 or 1. Two sensors = a sense of <em>which side</em> of a line you're on.</p>
     </div>
   </div>
 
-  <div class="card">
-    <h3>🎯 Mode Challenge — suis une forme</h3>
-    <p>Sélectionne une forme cible dans le menu <strong>Challenge</strong> (sous la carte) :</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0">
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;text-align:center">🟦 Carré<br><span style="font-size:11px;color:var(--muted)">4 × 4 tours</span></div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;text-align:center">⭕ Cercle<br><span style="font-size:11px;color:var(--muted)">rayon 30 cm</span></div>
-      <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;text-align:center">∞ Figure 8<br><span style="font-size:11px;color:var(--muted)">deux boucles</span></div>
-    </div>
-    <p>La forme apparaît en pointillés sur la carte. Un score live mesure à quel point ton tracé correspond au modèle. Le meilleur score est sauvegardé.</p>
+  <div class="funny-box">
+    Your Maqueen has more sensors than the <b>Mars Pathfinder</b> (1997) had. The Pathfinder rover relied on five photodiodes for navigation. You have seven onboard senses, two motors, four pixels, a buzzer, and Bluetooth. Your robot would have crushed it on Mars. 🚀
   </div>
-</div>
+</section>
 
-<!-- ─────────────────── JEUX ─────────────────── -->
-<div class="section" id="s-jeux" data-keywords="jeux games slam drift soccer echo hunt maze math race simon morse piano buzz">
-  <div class="section-hero">
-    <span class="sh-icon">🎮</span>
-    <div class="sh-body">
-      <h2>Mini-jeux</h2>
-      <p>10 jeux qui mêlent robot, capteurs, physique et réflexes. Tous les meilleurs scores sont sauvegardés automatiquement.</p>
-    </div>
+<hr class="div"/>
+
+<!-- ============================================================
+     3 · INTERFACE
+     ============================================================ -->
+<section id="interface">
+  <h2><span class="num">3</span> The cockpit, explained</h2>
+  <p class="lede">When the app loads you land on <b>Maqueen → Drive</b>. Big keypad in the middle, gauges below, sensors on the right. Here's the layout.</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 700 420" style="max-width:100%;">
+      <!-- main app outline -->
+      <rect x="20" y="20" width="490" height="380" rx="12" fill="#1a2256" stroke="#1f2a44" stroke-width="1.5"/>
+      <!-- header strip -->
+      <rect x="32" y="28" width="466" height="34" rx="8" fill="#0f1644" stroke="#1f2a44" stroke-width="1"/>
+      <text x="44" y="50" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700">MAQUEEN LAB</text>
+      <text x="148" y="50" fill="#94a3b8" font-family="Inter" font-size="11">Play · Learn · Create</text>
+      <circle cx="380" cy="45" r="6" fill="#4ade80"/>
+      <text x="392" y="49" fill="#4ade80" font-family="JetBrains Mono, monospace" font-size="10">CONNECTED</text>
+      <text x="465" y="49" fill="#fbbf24" font-size="14">📱</text>
+      <text x="482" y="49" fill="#94a3b8" font-size="14">🗑️</text>
+
+      <!-- tabs -->
+      <rect x="32" y="74"  width="220" height="32" rx="14" fill="#0a0e2e" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="142" y="94" text-anchor="middle" fill="#38bdf8" font-family="Inter" font-size="13" font-weight="700">🤖 Maqueen</text>
+      <rect x="262" y="74" width="220" height="32" rx="14" fill="transparent" stroke="#1f2a44" stroke-width="1"/>
+      <text x="372" y="94" text-anchor="middle" fill="#94a3b8" font-family="Inter" font-size="13">🧪 Playground</text>
+
+      <!-- sub-tab strip -->
+      <g transform="translate(32 116)">
+        <rect width="48" height="26" rx="6" fill="#0a0e2e" stroke="#fb923c"/>
+        <text x="24" y="18" text-anchor="middle" fill="#fb923c" font-size="10">Drive</text>
+        <rect x="52" width="48" height="26" rx="6" fill="#0a0e2e" stroke="#1f2a44"/>
+        <text x="76" y="18" text-anchor="middle" fill="#94a3b8" font-size="10">Servos</text>
+        <rect x="104" width="44" height="26" rx="6" fill="#0a0e2e" stroke="#1f2a44"/>
+        <text x="126" y="18" text-anchor="middle" fill="#94a3b8" font-size="10">LEDs</text>
+        <rect x="152" width="64" height="26" rx="6" fill="#0a0e2e" stroke="#1f2a44"/>
+        <text x="184" y="18" text-anchor="middle" fill="#94a3b8" font-size="10">NeoPixels</text>
+        <rect x="220" width="48" height="26" rx="6" fill="#0a0e2e" stroke="#1f2a44"/>
+        <text x="244" y="18" text-anchor="middle" fill="#94a3b8" font-size="10">Buzzer</text>
+        <rect x="272" width="60" height="26" rx="6" fill="#0a0e2e" stroke="#1f2a44"/>
+        <text x="302" y="18" text-anchor="middle" fill="#94a3b8" font-size="10">Distance</text>
+        <rect x="336" width="40" height="26" rx="6" fill="#0a0e2e" stroke="#1f2a44"/>
+        <text x="356" y="18" text-anchor="middle" fill="#94a3b8" font-size="10">Line</text>
+        <rect x="380" width="32" height="26" rx="6" fill="#0a0e2e" stroke="#1f2a44"/>
+        <text x="396" y="18" text-anchor="middle" fill="#94a3b8" font-size="10">IR</text>
+      </g>
+
+      <!-- main content area: keypad + robot + joystick -->
+      <g transform="translate(60 170)">
+        <!-- keypad -->
+        <rect x="0" y="0" width="120" height="120" rx="6" fill="none" stroke="#fb923c" stroke-dasharray="3,2"/>
+        <rect x="40" y="10" width="40" height="30" rx="6" fill="#0f1644" stroke="#fb923c"/>
+        <text x="60" y="30" text-anchor="middle" fill="#fb923c" font-size="14">↑</text>
+        <rect x="0"  y="50" width="40" height="30" rx="6" fill="#0f1644" stroke="#fb923c"/>
+        <text x="20" y="70" text-anchor="middle" fill="#fb923c" font-size="14">↺</text>
+        <rect x="40" y="50" width="40" height="30" rx="6" fill="#0f1644" stroke="#f87171"/>
+        <text x="60" y="70" text-anchor="middle" fill="#f87171" font-size="11">STOP</text>
+        <rect x="80" y="50" width="40" height="30" rx="6" fill="#0f1644" stroke="#fb923c"/>
+        <text x="100" y="70" text-anchor="middle" fill="#fb923c" font-size="14">↻</text>
+        <rect x="40" y="90" width="40" height="30" rx="6" fill="#0f1644" stroke="#fb923c"/>
+        <text x="60" y="110" text-anchor="middle" fill="#fb923c" font-size="14">↓</text>
+      </g>
+      <!-- robot animation in middle -->
+      <g transform="translate(220 200)">
+        <rect x="-30" y="-20" width="60" height="50" rx="8" fill="#1d4ed8"/>
+        <circle cx="-22" cy="-12" r="3" fill="#fbbf24"/>
+        <circle cx="22"  cy="-12" r="3" fill="#fbbf24"/>
+        <circle cx="-30" cy="30" r="10" fill="#1f2937" stroke="#3b82f6"/>
+        <circle cx="30"  cy="30" r="10" fill="#1f2937" stroke="#3b82f6"/>
+      </g>
+      <!-- joystick -->
+      <g transform="translate(360 200)">
+        <circle cx="50" cy="50" r="50" fill="none" stroke="#fb923c" stroke-dasharray="3,2"/>
+        <circle cx="50" cy="50" r="20" fill="#fb923c"/>
+      </g>
+
+      <!-- right rail (CONNECT card preview) -->
+      <rect x="520" y="20" width="160" height="380" rx="12" fill="#1a2256" stroke="#1f2a44" stroke-width="1.5"/>
+      <text x="600" y="48" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700">RIGHT RAIL</text>
+      <rect x="532" y="60" width="136" height="80" rx="8" fill="#0f1644" stroke="#1f2a44"/>
+      <text x="600" y="78" text-anchor="middle" fill="#38bdf8" font-size="10">🤖 robot identity</text>
+      <text x="600" y="92" text-anchor="middle" fill="#94a3b8" font-size="9">(anatomy + kit)</text>
+      <rect x="532" y="150" width="136" height="60" rx="8" fill="#0f1644" stroke="#1f2a44"/>
+      <text x="600" y="172" text-anchor="middle" fill="#4ade80" font-size="10">🔗 CONNECT</text>
+      <text x="600" y="186" text-anchor="middle" fill="#94a3b8" font-size="9">Connect / Disconnect</text>
+      <rect x="532" y="220" width="136" height="40" rx="8" fill="#0f1644" stroke="#1f2a44"/>
+      <text x="600" y="240" text-anchor="middle" fill="#fbbf24" font-size="10">📡 sensor strip</text>
+      <rect x="532" y="270" width="136" height="120" rx="8" fill="#0f1644" stroke="#1f2a44"/>
+      <text x="600" y="290" text-anchor="middle" fill="#38bdf8" font-size="10">📋 message log</text>
+      <text x="600" y="306" text-anchor="middle" fill="#94a3b8" font-size="9">raw UART</text>
+
+      <!-- collapse tab -->
+      <rect x="510" y="200" width="14" height="40" rx="4" fill="#38bdf8"/>
+      <text x="517" y="225" text-anchor="middle" fill="#0a0e2e" font-size="12" font-weight="900">‹</text>
+      <circle cx="517" cy="232" r="3" fill="#4ade80"/>
+    </svg>
+    <div class="caption">App layout. Main area = controls. Right rail = connection + sensor stream + log. Tap the cyan "‹" tab to collapse the rail and reclaim screen width.</div>
   </div>
 
-  <div class="game-grid">
-    <div class="game-card">
-      <span class="gc-icon">🛰️</span>
-      <div class="gc-name">SLAM the Room</div>
-      <div class="gc-where">📍 Section Jeux → SLAM</div>
-      <div class="gc-desc">Explore un maximum de cases de 10×10 cm en 60 secondes. La carte compte chaque cellule unique visitée. Lance le chrono, conduis dans tous les coins de la pièce !</div>
-      <div class="gc-rule">🏆 Score = nombre de cases · Persistant</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">🎯</span>
-      <div class="gc-name">Drift Champion</div>
-      <div class="gc-where">📍 Section Jeux → Drift</div>
-      <div class="gc-desc">Conduis le plus droit possible pendant 60 s. La boussole mesure en continu l'écart entre ton cap et la direction initiale. Erreur = dérive en degrés.</div>
-      <div class="gc-rule">🏆 Score = 100 − dérive_moyenne°</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">🧱</span>
-      <div class="gc-name">Maze Runner</div>
-      <div class="gc-where">📍 Section Jeux → Maze</div>
-      <div class="gc-desc">Active ce mode : vitesse basse, seuil de détection serré, balayage sonar étroit. Guide le robot dans un labyrinthe fait de livres ou de boîtes sans toucher les murs !</div>
-      <div class="gc-rule">🏆 Construis le labyrinthe le plus long possible</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">⚽</span>
-      <div class="gc-name">Robot Soccer</div>
-      <div class="gc-where">📍 Section Jeux → Soccer</div>
-      <div class="gc-desc">Scoreboard pour 2 équipes (Rouge vs Bleu). Pilote le robot pour pousser une balle dans le but de l'adversaire. Compte les buts avec les boutons +1.</div>
-      <div class="gc-rule">🏆 Premier à X buts gagne la coupe !</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">🎯</span>
-      <div class="gc-name">Echo Hunt</div>
-      <div class="gc-where">📍 Section Jeux → Echo</div>
-      <div class="gc-desc">Un trésor invisible est placé aléatoirement sur la carte. Le sonar émet des bips audio qui s'accélèrent quand le robot s'approche (chaud/froid robotique).</div>
-      <div class="gc-rule">🏆 Trouve le trésor en moins de temps</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">📐</span>
-      <div class="gc-name">Math the Distance</div>
-      <div class="gc-where">📍 Section Jeux → Math</div>
-      <div class="gc-desc">L'app donne une vitesse + un temps. Calcule d = v × t, entre ta réponse, puis lance le robot pour vérifier. L'odométrie mesure la distance réelle.</div>
-      <div class="gc-rule">🏆 Score = précision de ton calcul en %</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">🏁</span>
-      <div class="gc-name">Line Race</div>
-      <div class="gc-where">📍 Section Jeux → Race</div>
-      <div class="gc-desc">Chronomètre avec boutons Start et Lap. Trace un circuit sur le sol avec du scotch, fais des tours et bats ton meilleur temps de tour.</div>
-      <div class="gc-rule">🏆 Meilleur tour ⚡ sauvegardé auto</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">🔴</span>
-      <div class="gc-name">Simon Says</div>
-      <div class="gc-where">📍 Section Jeux → Simon</div>
-      <div class="gc-desc">Jeu de mémoire classique. L'app allume les LEDs Maqueen dans un ordre aléatoire. Reproduis la séquence sur les boutons colorés à l'écran. La séquence s'allonge à chaque bon tour.</div>
-      <div class="gc-rule">🏆 Record de longueur de séquence sauvegardé</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">• − •</span>
-      <div class="gc-name">Morse Code</div>
-      <div class="gc-where">📍 Section Jeux → Morse</div>
-      <div class="gc-desc">Le buzzer du robot joue un mot en code morse (points et tirets sonores). Transcris ce que tu entends lettre par lettre dans le champ de texte.</div>
-      <div class="gc-rule">🏆 Score = lettres correctes / total</div>
-    </div>
-    <div class="game-card">
-      <span class="gc-icon">🎯</span>
-      <div class="gc-name">Challenge Shape</div>
-      <div class="gc-where">📍 Carte → Challenge</div>
-      <div class="gc-desc">Sélectionne carré, cercle ou 8. La forme s'affiche en pointillés sur la carte. Conduis le robot aussi près du tracé idéal que possible. Score live calculé en temps réel.</div>
-      <div class="gc-rule">🏆 Meilleur score par forme sauvegardé</div>
-    </div>
-  </div>
-</div>
-
-<!-- ─────────────────── MUSIQUE ─────────────────── -->
-<div class="section" id="s-musique" data-keywords="musique piano buzzer note son fréquence durée mélodie simon">
-  <div class="section-hero">
-    <span class="sh-icon">🎵</span>
-    <div class="sh-body">
-      <h2>Musique &amp; sons</h2>
-      <p>Piano 8 touches, buzzer personnalisé et jeux de rythme — le robot fait aussi de la musique !</p>
-    </div>
-  </div>
-  <div class="grid2">
+  <h3>Key zones</h3>
+  <div class="grid">
     <div class="card">
-      <h3>🎹 Piano (Buzz Tune)</h3>
-      <p>8 touches blanches couvrant une octave (Do → Do). Chaque touche joue simultanément :</p>
-      <ul style="font-size:13px;color:#9ab2cc;padding-left:18px;margin:8px 0">
-        <li>La note sur le <strong>buzzer PWM</strong> du robot</li>
-        <li>La même note en <strong>Web Audio</strong> (dans le navigateur)</li>
-      </ul>
-      <p>Bouton <strong>Demo</strong> → joue "Au Clair de la Lune" automatiquement.</p>
+      <span class="ico">🤖</span>
+      <h4>Header</h4>
+      <p>Logo, language flags 🇬🇧 🇫🇷 🇩🇿, theme picker (six themes!), the 📱 QR-share button, the 🤝 robot-pair button, and the 🟢 connection pill that's always visible.</p>
     </div>
     <div class="card">
-      <h3>🔊 Buzzer personnalisé</h3>
-      <p>Deux curseurs indépendants :</p>
-      <ul style="font-size:13px;color:#9ab2cc;padding-left:18px;margin:8px 0">
-        <li><strong>Fréquence</strong> : 50–2000 Hz (grave → aigu)</li>
-        <li><strong>Durée</strong> : 10–5000 ms (court → très long)</li>
-      </ul>
-      <p>Bouton <strong>▶ Bip</strong> joue la note. Idéal pour coder des signaux personnalisés dans ton programme micro:bit.</p>
+      <span class="ico">🎮</span>
+      <h4>Tab row</h4>
+      <p><b>Maqueen</b> = the cockpit (default). <b>Playground</b> = a generic micro:bit tinker space. Inside Maqueen, 8 sub-tabs split by component.</p>
+    </div>
+    <div class="card">
+      <span class="ico">🛤️</span>
+      <h4>Right rail</h4>
+      <p>Floats on the right at all times: robot identity card, CONNECT controls, live sensor strip, and message log. Drag its left edge to resize. Click the chevron to collapse.</p>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ─────────────────── SERVOS ─────────────────── -->
-<div class="section" id="s-servos" data-keywords="servo sonar balayage sweep angle rotation position S1 S2 moteur bras">
-  <div class="section-hero">
-    <span class="sh-icon">🦾</span>
-    <div class="sh-body">
-      <h2>Servos &amp; sonar</h2>
-      <p>Le Maqueen a 2 ports servo. S1 est généralement le support sonar (balayage), S2 peut porter un stylo ou un bras.</p>
+<hr class="div"/>
+
+<!-- ============================================================
+     4 · CONNECT
+     ============================================================ -->
+<section id="connect">
+  <h2><span class="num">4</span> Connecting via Bluetooth</h2>
+  <p class="lede">The bridge between your screen and the robot is <b>Web Bluetooth</b>. No app install. No driver. Just a permission prompt and away you go.</p>
+
+  <h3>Step by step</h3>
+  <ol class="steps">
+    <li><b>Robot ON.</b> The micro:bit shows a smiley face when the firmware is running and ready to advertise.</li>
+    <li><b>Click 🔗 Connect.</b> Your browser opens its native pair dialog.</li>
+    <li><b>Pick "BBC micro:bit [xxxxx]"</b> from the list. The 5 letters are your robot's unique ID.</li>
+    <li><b>Wait for the green pulse.</b> The 🟢 dot in the header pulses when linked.</li>
+  </ol>
+
+  <h3>The BLE stack flow</h3>
+  <p>Right inside the CONNECT card you'll see this 6-stage diagram light up as bytes travel:</p>
+  <div class="figure" style="background:#0a0e2e;">
+    <svg viewBox="0 0 600 90" style="max-width:550px;">
+      <g font-family="JetBrains Mono, monospace" font-size="10" fill="#fff">
+        <g transform="translate(20 20)">
+          <circle cx="20" cy="20" r="18" fill="#1d4ed8" stroke="#38bdf8"/>
+          <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="14">🌐</text>
+          <text x="20" y="58" text-anchor="middle" fill="#94a3b8">Browser</text>
+        </g>
+        <line x1="60" y1="40" x2="100" y2="40" stroke="#38bdf8" stroke-dasharray="3,2"/>
+        <g transform="translate(100 20)">
+          <circle cx="20" cy="20" r="18" fill="#1d4ed8" stroke="#fbbf24"/>
+          <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="14">⏳</text>
+          <text x="20" y="58" text-anchor="middle" fill="#94a3b8">Queue</text>
+        </g>
+        <line x1="140" y1="40" x2="180" y2="40" stroke="#38bdf8" stroke-dasharray="3,2"/>
+        <g transform="translate(180 20)">
+          <circle cx="20" cy="20" r="18" fill="#1d4ed8" stroke="#38bdf8"/>
+          <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="14">📡</text>
+          <text x="20" y="58" text-anchor="middle" fill="#94a3b8">BLE</text>
+        </g>
+        <line x1="220" y1="40" x2="260" y2="40" stroke="#38bdf8" stroke-dasharray="3,2"/>
+        <g transform="translate(260 20)">
+          <circle cx="20" cy="20" r="18" fill="#1d4ed8" stroke="#4ade80"/>
+          <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="14">🤖</text>
+          <text x="20" y="58" text-anchor="middle" fill="#94a3b8">micro:bit</text>
+        </g>
+        <line x1="300" y1="40" x2="340" y2="40" stroke="#38bdf8" stroke-dasharray="3,2"/>
+        <g transform="translate(340 20)">
+          <circle cx="20" cy="20" r="18" fill="#1d4ed8" stroke="#fbbf24"/>
+          <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="14">⚙️</text>
+          <text x="20" y="58" text-anchor="middle" fill="#94a3b8">Driver</text>
+        </g>
+        <line x1="380" y1="40" x2="420" y2="40" stroke="#38bdf8" stroke-dasharray="3,2"/>
+        <g transform="translate(420 20)">
+          <circle cx="20" cy="20" r="18" fill="#1d4ed8" stroke="#fb923c"/>
+          <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="14">🛞</text>
+          <text x="20" y="58" text-anchor="middle" fill="#94a3b8">Output</text>
+        </g>
+      </g>
+    </svg>
+    <div class="caption">Browser → Queue → BLE radio → micro:bit → Motor driver → Wheels. End-to-end latency ≈ 30 ms.</div>
+  </div>
+
+  <div class="geek-box">
+    <b>What's actually happening:</b> The app talks to the micro:bit via the <b>Nordic UART Service</b> (a virtual serial port over BLE). Each command is a tiny text line like <code>M:200,200</code> for "drive both motors at speed 200". The robot replies <code>ECHO:42 M:200,200</code> ("got it, I'm executing"). Round trip is around 30 ms — about as fast as you can blink three times.
+  </div>
+
+  <h3>The "streams" toggle</h3>
+  <p>Inside the CONNECT card, next to the Firmware button, there's a <code>streams: OFF / ON</code> toggle.</p>
+  <ul>
+    <li><b>OFF (default)</b> — only on-demand verbs. Polite. Quiet. Saves battery and bandwidth.</li>
+    <li><b>ON</b> — micro:bit auto-broadcasts ACC (accelerometer), TEMP, LIGHT, COMPASS, and BTN events at 5 Hz. Needed if you want the Sensors / Graph / 3D tabs in <b>Playground</b> to populate.</li>
+  </ul>
+  <p>Turn it ON when you want pretty graphs. Turn it OFF for max responsiveness when driving.</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     5 · DRIVE
+     ============================================================ -->
+<section id="drive">
+  <h2><span class="num">5</span> Driving — sub-tab Drive 🛞</h2>
+  <p class="lede">The headline feature. Three ways to control the wheels, plus a bunch of automation.</p>
+
+  <h3>The three control surfaces</h3>
+  <div class="grid">
+    <div class="card">
+      <span class="ico">⌨️</span>
+      <h4>Keyboard / keypad</h4>
+      <p><kbd>W</kbd> forward · <kbd>S</kbd> back · <kbd>A</kbd> spin left · <kbd>D</kbd> spin right · <kbd>Space</kbd> stop. Tap the on-screen buttons if you don't have a keyboard.</p>
+    </div>
+    <div class="card">
+      <span class="ico">🎯</span>
+      <h4>Analog joystick</h4>
+      <p>Drag the orange dot in the circle. Distance = speed. Direction = motion vector. Release = stop. Best on touchscreens.</p>
+    </div>
+    <div class="card">
+      <span class="ico">📱</span>
+      <h4>Tilt-to-drive</h4>
+      <p>On phones, click the <kbd>📱 tilt</kbd> button in the macro bar and tilt the phone like a steering wheel. <a href="#tilt">More details below.</a></p>
     </div>
   </div>
-  <div class="card">
-    <h3>🎛️ Deux modes pour chaque servo</h3>
-    <div class="grid2">
-      <div>
-        <div style="background:var(--card2);border:1px solid rgba(56,189,248,.3);border-radius:10px;padding:14px;margin-bottom:10px">
-          <div style="font-weight:700;font-size:14px;margin-bottom:6px;color:var(--accent)">🎯 Mode Position (0–180°)</div>
-          <p style="font-size:13px;color:#c4d4e8">Le servo va à une position angulaire précise. Utilise le curseur ou les boutons préréglés :</p>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
-            <span style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px">Full 0–180°</span>
-            <span style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px">Front 60–120°</span>
-            <span style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px">Left 0–90°</span>
-            <span style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px">Right 90–180°</span>
-          </div>
+
+  <h3>Speed slider</h3>
+  <p>The big horizontal slider sets the maximum speed (50 = crawl, 255 = sprint). It scales every drive command — so if you're set to 100 and tap forward, the robot uses speed 100, not 200.</p>
+
+  <h3>"Hold to drive" checkbox</h3>
+  <ul>
+    <li><b>OFF (default)</b> — clicking ↑ starts driving, you have to click STOP to stop. Like a remote-control car.</li>
+    <li><b>ON</b> — clicking ↑ drives <em>only while held</em>. Releasing the button stops the robot. Like driving with a real gas pedal.</li>
+  </ul>
+  <p class="pro-tip">Hold-to-drive is safer for kids — the robot stops the instant you let go.</p>
+
+  <h3>🎭 Robot Personalities</h3>
+  <p>Four chip buttons above the speed row that bundle drive feel + sweep speed + obstacle margin:</p>
+  <table>
+    <thead><tr><th>Character</th><th>Speed</th><th>Obstacle margin</th><th>Sweep</th><th>Vibe</th></tr></thead>
+    <tbody>
+      <tr><td>🏃 Speedy</td>   <td>240</td><td>15 cm</td><td>full, fast</td><td>Brave and fast</td></tr>
+      <tr><td>🐢 Cautious</td> <td>110</td><td>45 cm</td><td>narrow front cone, slow</td><td>Stops a long way before any wall</td></tr>
+      <tr><td>🔍 Curious</td>  <td>180</td><td>25 cm</td><td>full, medium</td><td>Balanced explorer</td></tr>
+      <tr><td>😴 Lazy</td>     <td>90</td> <td>55 cm</td><td>narrow, very slow</td><td>Chill mode — for tight spaces</td></tr>
+    </tbody>
+  </table>
+  <p>One tap = full character swap. Choice persists between sessions.</p>
+
+  <h3>🚦 Auto-wander</h3>
+  <p>Click the green button — the robot drives forward on its own, watches the sonar, and turns away from anything closer than the <code>obstacle ≤</code> slider. Touch any drive control to take back over.</p>
+  <div class="funny-box">
+    Auto-wander is the simplest possible "AI" — just <code>if (something close) then turn</code>. Yet it's astonishing how alive it feels. Welcome to roboticist's secret #1: <b>simple rules → emergent behavior.</b>
+  </div>
+
+  <h3>🎬 Macro record &amp; replay</h3>
+  <p>Tap <kbd>🔴 Record</kbd>, drive a sequence, tap again to stop. Then <kbd>▶ Replay</kbd> plays it back at original timing — useful for choreography demos. Saved between reloads.</p>
+
+  <h3>🎙 Voice &amp; 📱 Tilt buttons (in the macro bar)</h3>
+  <p>Both pulse when active so the mic / motion sensor state is always visible. <a href="#voice">Voice details</a> · <a href="#tilt">Tilt details</a>.</p>
+
+  <h3>🎯 Mini-Games strip (Echo Hunt · Maze · Soccer)</h3>
+  <p>Three quick launchers below the macro bar. <a href="#games">All games explained →</a></p>
+
+  <h3>📏 Math the Distance</h3>
+  <p>A pop-quiz card: random speed × time, predict the cm. <a href="#games">Inside the Games section.</a></p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     6 · DASHBOARD
+     ============================================================ -->
+<section id="dashboard">
+  <h2><span class="num">6</span> The dashboard cluster 🏁</h2>
+  <p class="lede">Below the controls sits an automotive-style cluster. Four gauges + an LCD trip computer + warning lights.</p>
+
+  <div class="grid">
+    <div class="card">
+      <span class="ico">🚀</span>
+      <h4>SPEED</h4>
+      <p>Cyan needle. Reads cm/s, computed from the wheel velocities you commanded × a calibration constant. Red tick = your peak speed this session.</p>
+    </div>
+    <div class="card">
+      <span class="ico">⚡</span>
+      <h4>POWER</h4>
+      <p>Orange needle, 0–100 %. Average of |left| + |right| motor commands. Spinning in place still uses power even though SPEED is 0.</p>
+    </div>
+    <div class="card">
+      <span class="ico">🧭</span>
+      <h4>HEADING</h4>
+      <p>North/South/East/West compass. Integrated from wheel velocities (no real magnetometer reading by default). Resets on path-reset.</p>
+    </div>
+    <div class="card">
+      <span class="ico">📡</span>
+      <h4>SONAR</h4>
+      <p>Inverted scale — 0 cm pegs the needle right (alarm!), 100+ cm pegs left (chill). Color shifts with proximity.</p>
+    </div>
+  </div>
+
+  <h3>Trip computer (the LCD strip)</h3>
+  <table>
+    <tr><td>ODO</td><td>Total distance ever driven this session, in meters</td></tr>
+    <tr><td>TRIP</td><td>Distance since last <kbd>↺ reset</kbd></td></tr>
+    <tr><td>PEAK</td><td>Top cm/s reached this session</td></tr>
+    <tr><td>AVG</td><td>Average cm/s while moving (excludes idle)</td></tr>
+    <tr><td>⏱</td><td>Total drive time, mm:ss</td></tr>
+  </table>
+
+  <h3>Warning indicators</h3>
+  <ul>
+    <li><span style="color:var(--red);">⚠ COLLISION</span> — sonar reports &lt; 8 cm. Robot is about to hit something.</li>
+    <li><span style="color:var(--amber);">⚠ NO LINK</span> — BLE went silent for 2+ s.</li>
+    <li><b>N</b> — gear indicator, like a car. <b>D</b> = forward, <b>R</b> = reverse, <b>N</b> = neutral.</li>
+  </ul>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     7 · PATH / SLAM
+     ============================================================ -->
+<section id="path">
+  <h2><span class="num">7</span> Path / SLAM map 🧭</h2>
+  <p class="lede">The robot draws its own breadcrumb trail in the world — and projects sonar pings into a live obstacle map. Real Simultaneous Localization And Mapping, kid-sized.</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 360 280">
+      <rect width="360" height="280" rx="10" fill="#061121" stroke="#1f2a44"/>
+      <!-- grid -->
+      <g stroke="#1d3556" stroke-width="0.5">
+        <line x1="0" y1="140" x2="360" y2="140"/>
+        <line x1="180" y1="0" x2="180" y2="280"/>
+        <circle cx="180" cy="140" r="40"  fill="none"/>
+        <circle cx="180" cy="140" r="80"  fill="none"/>
+        <circle cx="180" cy="140" r="120" fill="none"/>
+      </g>
+      <!-- trail -->
+      <path d="M 180 140 L 200 130 L 220 110 L 240 100 L 250 80 L 240 60 L 210 50 L 180 60 L 160 90 L 150 130"
+            stroke="#4ade80" stroke-width="2.2" fill="none"/>
+      <!-- robot dot at end -->
+      <circle cx="150" cy="130" r="5" fill="#fb923c"/>
+      <line x1="150" y1="130" x2="150" y2="115" stroke="#fb923c" stroke-width="2" marker-end="url(#arr)"/>
+      <defs>
+        <marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill="#fb923c"/>
+        </marker>
+      </defs>
+      <!-- obstacles -->
+      <circle cx="270" cy="80"  r="3" fill="#fbbf24"/>
+      <circle cx="280" cy="100" r="3" fill="#84cc16"/>
+      <circle cx="100" cy="140" r="3" fill="#ef4444"/>
+      <circle cx="120" cy="170" r="3" fill="#fbbf24"/>
+      <!-- legend -->
+      <g font-family="JetBrains Mono, monospace" font-size="9">
+        <rect x="10" y="10" width="10" height="10" fill="#4ade80"/>
+        <text x="26" y="20" fill="#94a3b8">trail</text>
+        <circle cx="80" cy="15" r="3" fill="#fbbf24"/>
+        <text x="90" y="20" fill="#94a3b8">obstacles</text>
+      </g>
+      <text x="180" y="270" text-anchor="middle" fill="#64748b" font-size="9">grid · 8 cm</text>
+    </svg>
+    <div class="caption">Green line = where the robot has been (dead reckoning from wheels). Colored dots = sonar pings projected into the world. Red = very close, amber = close, lime = far, cyan = max range.</div>
+  </div>
+
+  <h3>The header buttons</h3>
+  <ul>
+    <li><kbd>📸 snap</kbd> — saves the current map as a PNG (great for show-and-tell)</li>
+    <li><kbd>🎬 timelapse</kbd> — exports a 6-second WebM video of the trail unrolling. <a href="#timelapse">Details below.</a></li>
+    <li><kbd>🖍 draw &amp; go</kbd> — finger-paint a path, robot drives it. <a href="#autopilot">Details below.</a></li>
+    <li><kbd>📷 AR</kbd> — overlay sensor data on your phone camera. <a href="#ar">Details below.</a></li>
+    <li><kbd>🍩 recap</kbd> — Spotify-Wrapped-style session summary. <a href="#telemetry">Details below.</a></li>
+    <li><kbd>↺ reset</kbd> — wipe the trail and start over.</li>
+  </ul>
+
+  <h3>🎯 Challenges</h3>
+  <p>Pick a target shape from the dropdown — Square 40 cm, Circle r=30 cm, Figure-8. The app draws a dashed outline; your job is to drive along it. <b>SCORE</b> updates live as your trail covers the target. Best score per shape persists.</p>
+
+  <h3>🛰️ SLAM the Room</h3>
+  <p>A 60-second timed run. Score = unique 10×10 cm cells your trail visits. The room you've "mapped" appears in the cells display. <a href="#games">More on this game →</a></p>
+
+  <div class="geek-box">
+    <b>Why "SLAM-lite"?</b> Real SLAM uses both the wheel odometry <em>and</em> sensor returns to <em>correct</em> the pose estimate (wheel slip, battery droop, etc.). We only do dead-reckoning. Drive in a perfect square and you'll see the trail close up <em>almost</em> at the start — but not exactly. That gap is the <em>drift</em>, and finding/fixing it is the heart of mobile robotics.
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     8 · SERVOS
+     ============================================================ -->
+<section id="servos">
+  <h2><span class="num">8</span> Servos 🦾 — and the PWM Lab</h2>
+  <p class="lede">The Maqueen has two servo ports (S1 &amp; S2). Plug in any standard hobby servo — robot arms, ultrasonic gimbals, claw grippers.</p>
+
+  <h3>Modes</h3>
+  <ul>
+    <li><b>180° position</b> (default) — slider sets the angle, 0° to 180°. The horn snaps to that angle.</li>
+    <li><b>360° speed</b> — for continuous-rotation servos, the slider sets <em>speed</em>. 90 = stop, 0 = full reverse, 180 = full forward.</li>
+  </ul>
+
+  <h3>Quick buttons</h3>
+  <ul>
+    <li><kbd>0°</kbd> <kbd>45°</kbd> <kbd>90°</kbd> <kbd>135°</kbd> <kbd>180°</kbd> — instant snap to common angles. Faster than dragging.</li>
+  </ul>
+
+  <h3>Sweep mode</h3>
+  <p>Toggle the <b>SWEEP</b> button — the servo bounces back and forth automatically. Two sliders control the show:</p>
+  <ul>
+    <li><b>Period</b> — how long one full back-and-forth takes (0.5–10 s)</li>
+    <li><b>Range</b> — start and end angles (defaults 0°→180°)</li>
+  </ul>
+  <p>Five preset chips: <kbd>Full</kbd> (0–180), <kbd>Front</kbd> (60–120), <kbd>Left</kbd> (90–180), <kbd>Right</kbd> (0–90), <kbd>Wide</kbd> (30–150). Sweep is essential for the radar — it's how the sonar "looks around".</p>
+
+  <h3>🧮 PWM Lab — game</h3>
+  <p>A target servo angle pops up. Drag the purple slider to match it. Hit <kbd>Lock answer</kbd> — score = 100 − |target − guess|. If the robot's connected, your guess physically moves S1 so you <em>feel</em> the answer. Best score persists.</p>
+
+  <div class="geek-box">
+    <b>What is PWM?</b> Pulse-Width Modulation. The micro:bit sends pulses of a specific width to the servo every 20 ms. A 1.5 ms pulse = 90°. 0.5 ms = 0°. 2.5 ms = 180°. The servo's tiny brain turns those pulse widths into shaft angles. PWM Lab teaches you the slider is the pulse width.
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     9 · LEDS
+     ============================================================ -->
+<section id="leds">
+  <h2><span class="num">9</span> Onboard LEDs 💡</h2>
+  <p class="lede">Two yellow LEDs, one on each side of the robot's "face". Mostly used as turn indicators or status flashers.</p>
+
+  <h3>Controls</h3>
+  <ul>
+    <li><b>L / R buttons</b> — toggle each LED on or off.</li>
+    <li><b>Both / Off / Blink</b> — quick presets.</li>
+    <li><b>Blink rate slider</b> — 100 ms (frantic) to 2000 ms (chill).</li>
+  </ul>
+
+  <p>Use case: pair with auto-wander to flash a "yes I see you, turning now" signal when the robot detects an obstacle. Or set them as eyes that pulse to the buzzer's beat.</p>
+
+  <p class="pro-tip">The BLE verb is <code>LED:i,s</code>. <code>i</code> = 0 (left) or 1 (right), <code>s</code> = 0 (off) or 1 (on). Try sending <code>LED:0,1</code> from the message log!</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     10 · NEOPIXELS
+     ============================================================ -->
+<section id="neopixels">
+  <h2><span class="num">10</span> NeoPixels 💎 — and Simon Says</h2>
+  <p class="lede">Four addressable RGB pearls along the front of the robot. Each can be any of 16.7 million colors. Independently.</p>
+
+  <h3>Color picker</h3>
+  <p>Click any of the four pearls in the diagram, then pick a color from the wheel. The change pushes to the robot in &lt; 50 ms.</p>
+
+  <h3>Palettes</h3>
+  <ul>
+    <li><kbd>🌈 Cyan</kbd> — mellow blues + cyans (boys-friendly default).</li>
+    <li><kbd>🔥 Heat</kbd> — red→orange→yellow gradient. Looks like a campfire.</li>
+    <li><kbd>🌊 Ocean</kbd> — deep blue to seafoam.</li>
+    <li><kbd>💎 Rainbow</kbd> — full spectrum, classic.</li>
+  </ul>
+
+  <h3>Effects</h3>
+  <ul>
+    <li><b>Solid</b> — all four show the same color.</li>
+    <li><b>Chase</b> — color cycles through the pearls left → right.</li>
+    <li><b>Pulse</b> — fades in and out, breathing.</li>
+    <li><b>Off</b> — go dark.</li>
+  </ul>
+
+  <h3>🌈 Simon Says — game</h3>
+  <p>4 colored pads (red/green/blue/yellow), each with a unique tone. App plays a growing sequence; you tap them back in order. One wrong = game over, score = sequence length. <a href="#games">Inside Games →</a></p>
+
+  <div class="card warn" style="margin-top:18px;">
+    <span class="ico">⚠️</span>
+    <p><b>Important:</b> Standard <code>neopixel</code> conflicts with <code>bluetooth</code> on the micro:bit because they both want the same hardware timer. Our default firmware shows your <em>intent</em> in the screen pearls but doesn't fire the real on-bot LEDs unless you flash a BLE-safe NeoPixel fork. The screen mockup is faithful — what you'd see in real life if the timing worked.</p>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     11 · BUZZER
+     ============================================================ -->
+<section id="buzzer">
+  <h2><span class="num">11</span> Buzzer 🔊 — and Buzz the Tune</h2>
+  <p class="lede">A piezo buzzer that can play any single note in the audible range (about 20 Hz to 20 kHz). One note at a time.</p>
+
+  <h3>Controls</h3>
+  <ul>
+    <li><b>Frequency slider</b> — 100 Hz (low rumble) to 4000 Hz (high squeak).</li>
+    <li><b>Duration slider</b> — 50 ms (blip) to 2000 ms (sustained note).</li>
+    <li><b>Live oscilloscope</b> — visual representation of the wave.</li>
+    <li><b>▶ Play</b> — fires a single beep. <b>⏹ Off</b> — silence.</li>
+  </ul>
+
+  <h3>Note presets</h3>
+  <p>Eight buttons mapped to the C-major scale: C D E F G A B C. Each button shows the frequency. Tap them as a piano.</p>
+
+  <h3>🎵 Buzz the Tune — game</h3>
+  <p>An 8-key piano strip (C5 → C6). Tap to play notes on both screen and robot. Hit <kbd>🎼 Twinkle demo</kbd> to hear Twinkle Twinkle Little Star and discover the concept "a tune is a sequence of (pitch, duration) pairs". <a href="#games">Inside Games →</a></p>
+
+  <h3>📡 Morse Decoder — game</h3>
+  <p>The robot transmits a hidden 3–6 letter word as Morse code. You type what you heard. Score = exact matches. <a href="#games">Inside Games →</a></p>
+
+  <div class="funny-box">
+    The first beep your robot makes is a <b>440 Hz tone</b>. That's the international standard pitch for <b>concert A</b> — the same note an orchestra tunes to before every concert. Your $40 robot speaks the same language as the Berlin Philharmonic. 🎻
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     12 · DISTANCE / SWEEP
+     ============================================================ -->
+<section id="distance">
+  <h2><span class="num">12</span> Distance &amp; Sweep radar 📡</h2>
+  <p class="lede">The ultrasonic sensor is the robot's best friend. This panel has FIVE different ways to visualize what it sees.</p>
+
+  <h3>The single-shot reading</h3>
+  <p>The headline number on top. Updates a few times per second. Click <kbd>poll DIST</kbd> in the rail to start auto-polling.</p>
+
+  <h3>The 5 radar styles</h3>
+  <div class="figure">
+    <svg viewBox="0 0 400 220">
+      <rect width="400" height="220" rx="10" fill="#061121"/>
+      <g transform="translate(100 110)">
+        <circle r="80" fill="none" stroke="#1d3556" stroke-dasharray="2,2"/>
+        <circle r="40" fill="none" stroke="#1d3556" stroke-dasharray="2,2"/>
+        <line x1="-80" y1="0" x2="80" y2="0" stroke="#1d3556" stroke-dasharray="2,2"/>
+        <line x1="0" y1="-80" x2="0" y2="80" stroke="#1d3556" stroke-dasharray="2,2"/>
+        <!-- sweep beam -->
+        <g class="sweep-beam">
+          <path d="M 0 0 L 0 -80 A 80 80 0 0 1 30 -75 Z" fill="#22c55e" opacity="0.4"/>
+        </g>
+        <!-- dots -->
+        <circle cx="-30" cy="-50" r="3" fill="#fbbf24"/>
+        <circle cx="20" cy="-60" r="3" fill="#84cc16"/>
+        <circle cx="50" cy="-30" r="3" fill="#22d3ee"/>
+        <text x="0" y="100" text-anchor="middle" fill="#64748b" font-family="JetBrains Mono, monospace" font-size="10">Bat / Sweep</text>
+      </g>
+      <g transform="translate(280 110)">
+        <circle r="80" fill="none" stroke="#1d3556"/>
+        <!-- color rings to indicate distance bands -->
+        <circle r="80" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity="0.4"/>
+        <circle r="60" fill="none" stroke="#84cc16" stroke-width="1.5" opacity="0.4"/>
+        <circle r="40" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.4"/>
+        <circle r="20" fill="none" stroke="#ef4444" stroke-width="1.5" opacity="0.4"/>
+        <text x="0" y="100" text-anchor="middle" fill="#64748b" font-family="JetBrains Mono, monospace" font-size="10">Distance bands</text>
+        <text x="0" y="-90" text-anchor="middle" fill="#22d3ee" font-size="9">far (60+ cm)</text>
+        <text x="0" y="-65" text-anchor="middle" fill="#84cc16" font-size="9">safe (30 cm)</text>
+        <text x="0" y="-45" text-anchor="middle" fill="#fbbf24" font-size="9">close (10 cm)</text>
+        <text x="0" y="-25" text-anchor="middle" fill="#ef4444" font-size="9">danger</text>
+      </g>
+    </svg>
+    <div class="caption">Left: live sweep with detected echo dots, color-coded by distance. Right: the four threshold bands.</div>
+  </div>
+
+  <table>
+    <thead><tr><th>Style</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>🦇 Bat</td>     <td>Default. Big single-distance number, like an echolocator's perception.</td></tr>
+      <tr><td>🚢 Sonar</td>   <td>Submarine vibe — slow circular sweep with persistent contacts.</td></tr>
+      <tr><td>📐 LiDAR</td>   <td>Engineering view — precise lines and grids.</td></tr>
+      <tr><td>🔥 Heat</td>    <td>Heat-map gradient. Looks like an infrared camera.</td></tr>
+      <tr><td>🌀 Sweep</td>   <td>Classic radar. Rotating beam, fading dots. Five marker shapes:</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Sweep marker styles</h3>
+  <ul>
+    <li><kbd>●●● dots</kbd> — original, fading dots</li>
+    <li><kbd>▆▆▆ sectors</kbd> — pie wedges (occupancy grid)</li>
+    <li><kbd>─── rays</kbd> — bearing lines from origin</li>
+    <li><kbd>✦✦✦ stars</kbd> — playful but precise</li>
+    <li><kbd>💥⚠✨ emoji</kbd> — kid-friendly threshold story</li>
+  </ul>
+
+  <h3>Audio voices</h3>
+  <p>Each radar style has its own audio cue when something is detected. <kbd>🔊 audio</kbd> turns it on:</p>
+  <ul>
+    <li><b>Bat</b> — chirp at 2200 Hz</li>
+    <li><b>Sonar</b> — submarine boop, 700 Hz with long decay</li>
+    <li><b>LiDAR</b> — laser "pew" (square wave)</li>
+    <li><b>Heat</b> — wide-pitch triangle</li>
+    <li><b>Sweep</b> — classic radar tick</li>
+  </ul>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     13 · LINE
+     ============================================================ -->
+<section id="line">
+  <h2><span class="num">13</span> Line sensors 👀 — and Line Race</h2>
+  <p class="lede">Two infrared eyes on the robot's underside detect dark vs. light. Black tape on white paper = perfect.</p>
+
+  <h3>Live indicators</h3>
+  <p>Two big dots — one for the left sensor, one for the right. Light up when they see white, dark when they see black tape.</p>
+
+  <h3>🚥 Auto follow-line</h3>
+  <p>Toggles a basic line follower. Logic: <code>L sees line + R sees line → forward. L only → spin right. R only → spin left. Both lost → stop.</code> Speed is the Drive slider.</p>
+
+  <p>Fine-tune with the <b>tick</b> slider — how often the follower re-evaluates (100 ms = jittery responsive, 1000 ms = smooth slow).</p>
+
+  <h3>🏁 Line Follower Race — game</h3>
+  <p>Stopwatch. Print/draw a black-line track. Click <kbd>▶ Start</kbd> when the robot crosses the start line, <kbd>🏁 Lap</kbd> when it finishes. Multi-lap one-handed; best lap persists. <a href="#games">Inside Games →</a></p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     14 · IR
+     ============================================================ -->
+<section id="ir">
+  <h2><span class="num">14</span> IR remote 📺</h2>
+  <p class="lede">Plug in an IR receiver module on the appropriate pin (NEC protocol). Press buttons on a TV remote — the codes appear here.</p>
+
+  <h3>Display</h3>
+  <ul>
+    <li><b>Last code</b> — the most recently received hex code, big and bold.</li>
+    <li><b>Code history</b> — last 10 received, scrollable.</li>
+    <li><b>poll IR</b> button (in rail) — manually request the latest code.</li>
+  </ul>
+
+  <p class="pro-tip">Map IR codes to drive commands — turn any TV remote into a robot remote. Add an event listener in the message log: when <code>IR:nnn</code> arrives, fire the matching <code>M:</code> verb.</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     15 · VOICE
+     ============================================================ -->
+<section id="voice">
+  <h2><span class="num">15</span> Voice commands 🎙</h2>
+  <p class="lede">Hands-free driving. Click the <kbd>🎙 voice</kbd> button in the macro bar and shout commands at your phone.</p>
+
+  <h3>Vocabulary</h3>
+  <table>
+    <thead><tr><th>Phrase (any language)</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td>"forward" / "go" / "avance" / "تقدم"</td><td>Drive ↑</td></tr>
+      <tr><td>"back" / "reverse" / "recule" / "إرجع"</td><td>Drive ↓</td></tr>
+      <tr><td>"left" / "spin left" / "gauche" / "يسار"</td><td>Spin ↺</td></tr>
+      <tr><td>"right" / "spin right" / "droite" / "يمين"</td><td>Spin ↻</td></tr>
+      <tr><td>"stop" / "arrête" / "قف"</td><td>STOP</td></tr>
+      <tr><td>"faster" / "plus vite" / "أسرع"</td><td>+30 to speed slider</td></tr>
+      <tr><td>"slower" / "moins vite" / "أبطأ"</td><td>−30 to speed slider</td></tr>
+    </tbody>
+  </table>
+
+  <h3>How it works</h3>
+  <ol class="steps">
+    <li>Click 🎙 voice. Browser asks for microphone permission. Allow it.</li>
+    <li>Button pulses <span style="color:var(--red);">red</span> — listening!</li>
+    <li>Speak a command. App writes what it heard next to the button.</li>
+    <li>Recognized words trigger the matching keypad button automatically.</li>
+    <li>Click 🎙 again to stop.</li>
+  </ol>
+
+  <div class="card warn" style="margin-top:14px;">
+    <p><b>Browser support:</b> Chrome and Edge only. Firefox and Safari don't support the Web Speech API. The button greys out where unsupported.</p>
+    <p><b>Privacy:</b> audio is streamed to the browser's speech service (Google for Chrome). Don't use voice control where you'd care about that being uploaded.</p>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     16 · TILT
+     ============================================================ -->
+<section id="tilt">
+  <h2><span class="num">16</span> Tilt-to-drive 📱</h2>
+  <p class="lede">Steering wheel mode. Hold your phone like a Wii steering wheel. Tilt forward → robot goes forward. Tilt right → robot turns right. Wii era, reborn.</p>
+
+  <h3>Setup</h3>
+  <ol class="steps">
+    <li>On a phone or tablet, click <kbd>📱 tilt</kbd> in the macro bar.</li>
+    <li>iOS asks for motion permission — tap "Allow Access". On Android nothing extra.</li>
+    <li>The button pulses gold. The phone <b>auto-calibrates</b> to your current pose — that's now "stop".</li>
+    <li>Tilt forward (top of phone leans away from you) = forward. Tilt right = right.</li>
+    <li>Click again to stop.</li>
+  </ol>
+
+  <h3>Tuning</h3>
+  <p>Defaults are tuned for a kid holding a phone naturally. The dead-zone is 4° around the calibrated center, so micro-shake doesn't make the robot twitch.</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     17 · AUTOPILOT
+     ============================================================ -->
+<section id="autopilot">
+  <h2><span class="num">17</span> Drag-to-trace autopilot 🖍</h2>
+  <p class="lede">Finger-paint a route on the SLAM map. The robot drives it.</p>
+
+  <h3>How to use</h3>
+  <ol class="steps">
+    <li>Reset the path (<kbd>↺</kbd>) so the robot is at origin.</li>
+    <li>Click <kbd>🖍 draw &amp; go</kbd> on the path card.</li>
+    <li>Drag with finger or mouse on the SLAM SVG. A purple dashed line traces your input.</li>
+    <li>Release. Robot starts following the waypoints autonomously.</li>
+    <li>Click 🖍 again any time to abort.</li>
+  </ol>
+
+  <h3>How it works (geek mode)</h3>
+  <div class="geek-box">
+    Each tick (10 Hz), the controller looks at the next un-reached waypoint and computes a <b>bearing error</b> = direction-to-waypoint minus robot heading. A proportional gain (K = 1.4) maps that error to a turn rate ω. Forward speed scales with cos(error) — when wrong-aimed, slow down; when on-target, full speed. Waypoints within 4 cm get dropped from the front of the queue. The last waypoint within 6 cm = mission complete.
+  </div>
+
+  <p class="pro-tip">Drift accumulates! Long curvy paths might end up several centimeters off because we don't correct using sensor data. That's the same problem real robots have — and it's why GPS / lidar / vision matter.</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     18 · TELEMETRY
+     ============================================================ -->
+<section id="telemetry">
+  <h2><span class="num">18</span> Telemetry &amp; Recap 📊🍩</h2>
+
+  <h3>📊 Telemetry export</h3>
+  <p>Two buttons next to the Message Log "Export":</p>
+  <ul>
+    <li><kbd>📊 Telemetry</kbd> — full session as JSON. Pose, trail, SLAM obstacles, dashboard stats, every setting. Schema-versioned.</li>
+    <li><kbd>📈 CSV</kbd> — just the trail (timestamps + x,y in cm) plus an obstacle section. Open in Excel / Python.</li>
+  </ul>
+
+  <p class="pro-tip">CSV opens directly in Google Sheets / Excel. Plot column B (x_cm) vs C (y_cm) and you've got your robot's path in 30 seconds. School-assignment gold.</p>
+
+  <h3>🍩 Session Recap</h3>
+  <p>Click <kbd>🍩 recap</kbd> on the path card. A modal pops up with a <b>Spotify-Wrapped-style narrative</b> — total distance, top speed, obstacles spotted, final pose, suggested next tab.</p>
+
+  <p>Optional <kbd>✨ AI polish</kbd> button rewrites the recap via the Claude API for extra flair. Needs a Claude API key in <code>localStorage.maqueen.claudeKey</code> (we don't ship one — get yours at <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>).</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     19 · TIME-LAPSE
+     ============================================================ -->
+<section id="timelapse">
+  <h2><span class="num">19</span> Time-lapse export 🎬</h2>
+  <p class="lede">Click 🎬 on the path card. A 6-second WebM video of your trail unrolling and SLAM hits popping in is generated and downloaded.</p>
+
+  <ul>
+    <li><b>Auto-fit</b> — video zooms to fit your whole map exactly.</li>
+    <li><b>~10× speed</b> — long sessions condense beautifully.</li>
+    <li><b>Looks great on social</b> — final frame held an extra ½ second so thumbnails grab the completed map.</li>
+  </ul>
+
+  <p class="pro-tip">Drive a recognizable shape (your name? a heart?) and the time-lapse becomes a shareable moment. <b>Etsy listing material that sells itself.</b></p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     20 · AR
+     ============================================================ -->
+<section id="ar">
+  <h2><span class="num">20</span> AR webcam overlay 📷</h2>
+  <p class="lede">Best on a phone. Click <kbd>📷 AR</kbd> on the path card. Phone asks for camera permission. Allow. Suddenly your phone screen shows the room with sensor data overlaid.</p>
+
+  <h3>What you see</h3>
+  <ul>
+    <li>Live rear camera feed, full screen.</li>
+    <li>Crosshair in the middle = robot's heading.</li>
+    <li>Dynamic ring around the crosshair — radius shrinks as the obstacle gets closer (and color matches the threshold band).</li>
+    <li>HUD top-left: live distance, line state, heading.</li>
+  </ul>
+
+  <p class="pro-tip">Geometry caveat: we don't know the camera's field-of-view in cm, so the ring is schematic — a feel, not a measurement. The HUD numbers are truthful — they come straight from BLE.</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     21 · PAIRING
+     ============================================================ -->
+<section id="pair">
+  <h2><span class="num">21</span> 2-robot pairing 🤝</h2>
+  <p class="lede">Two Maqueens, two browser tabs, one mirrors the other. Pure peer-to-peer over WebRTC — no server.</p>
+
+  <h3>The handshake</h3>
+  <ol class="steps">
+    <li><b>Tab A</b> opens 🤝 and clicks <kbd>A · create offer</kbd>. A long blob of SDP appears.</li>
+    <li>Send the SDP to your friend (any way — chat, AirDrop, paper).</li>
+    <li><b>Tab B</b> pastes the SDP, clicks <kbd>B · paste offer &amp; answer</kbd>. A reply SDP appears.</li>
+    <li>Your friend sends the reply back.</li>
+    <li><b>Tab A</b> pastes the reply, clicks <kbd>A · paste answer</kbd>. <b>Connected.</b></li>
+  </ol>
+
+  <p>Once linked, every drive command on Tab A mirrors to Tab B's robot in real time. <em>"Look mom, they're dancing together!"</em></p>
+
+  <div class="geek-box">
+    The SDP exchange is "manual signaling" — most webRTC apps have a server in the middle to auto-exchange. We're skipping that for simplicity. The blob is a one-time Session Description Protocol message containing your IP, ports, and capabilities. Pair-share-paste works because the data is just text.
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     22 · GAMES
+     ============================================================ -->
+<section id="games">
+  <h2><span class="num">22</span> All 10 educational games 🎮</h2>
+  <p class="lede">Each game lives in the matching sub-tab. They're not gimmicks — every game teaches a real CS / engineering concept.</p>
+
+  <div class="grid">
+    <div class="card tutor"><span class="ico">🛰️</span><h3>1. SLAM the Room</h3><p class="why">Path tab</p><p>Drive around for 60 s. Score = unique 10×10 cm cells visited.</p><ul><li>Teaches: localization + sensor fusion</li></ul></div>
+    <div class="card tutor"><span class="ico">🎯</span><h3>2. Echo Hunt</h3><p class="why">Drive · Mini-Games</p><p>Hidden virtual treasure. Ping rate accelerates as you close in.</p><ul><li>Teaches: triangulation + search</li></ul></div>
+    <div class="card tutor"><span class="ico">🧱</span><h3>3. Maze Runner</h3><p class="why">Drive · Mini-Games</p><p>Bundles slow-speed + tight-margin auto-wander. Build cardboard mazes!</p><ul><li>Teaches: reactive control (Brooks subsumption)</li></ul></div>
+    <div class="card tutor"><span class="ico">🎵</span><h3>4. Buzz the Tune</h3><p class="why">Buzzer tab</p><p>8-key piano strip. Tap → buzzer plays. Twinkle Twinkle demo included.</p><ul><li>Teaches: frequency = pitch, duration = rhythm</li></ul></div>
+    <div class="card tutor"><span class="ico">🌈</span><h3>5. Simon Says</h3><p class="why">NeoPixels tab</p><p>4 colored pads, growing color sequence. One miss = game over.</p><ul><li>Teaches: sequence + memory + RGB color theory</li></ul></div>
+    <div class="card tutor"><span class="ico">📏</span><h3>6. Math the Distance</h3><p class="why">Drive tab</p><p>Predict d = v × t. Hit "Run it" to verify on real hardware.</p><ul><li>Teaches: kinematics + calibration</li></ul></div>
+    <div class="card tutor"><span class="ico">⚽</span><h3>7. Robot Soccer</h3><p class="why">Drive · Mini-Games</p><p>Two-robot scoreboard. Plus the Push kit makes a real bulldozer.</p><ul><li>Teaches: kinematics + tactics</li></ul></div>
+    <div class="card tutor"><span class="ico">🏁</span><h3>8. Line Follower Race</h3><p class="why">Line tab</p><p>Stopwatch with multi-lap. Print a track, time the laps.</p><ul><li>Teaches: closed-loop feedback control</li></ul></div>
+    <div class="card tutor"><span class="ico">🎚️</span><h3>9. PWM Lab</h3><p class="why">Servos tab</p><p>"Hit 67° EXACTLY." Slider drag, score by accuracy.</p><ul><li>Teaches: pulse width = analog control</li></ul></div>
+    <div class="card tutor"><span class="ico">📡</span><h3>10. Morse Decoder</h3><p class="why">Buzzer tab</p><p>Buzzer transmits a hidden word in Morse. You type what you heard.</p><ul><li>Teaches: digital encoding + binary thinking</li></ul></div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     23 · MOBILE
+     ============================================================ -->
+<section id="mobile">
+  <h2><span class="num">23</span> Phone &amp; tablet mode 📱</h2>
+  <p class="lede">The whole app is touch-friendly and reflows automatically below 1100 px viewport.</p>
+
+  <h3>What changes on phone</h3>
+  <ul>
+    <li><b>Right rail stacks above</b> the main app — Connect is the very first card visible.</li>
+    <li><b>Sub-tab strip wraps</b> into 3 chips per row (or 2 on tiny phones).</li>
+    <li><b>Dashboard gauges</b> reflow from 4-up to 2-up to 1-up.</li>
+    <li><b>Drive cockpit</b> stacks vertically — keypad, robot, joystick.</li>
+    <li><b>Pinch-zoom is enabled</b> — kids can zoom into the gauges and SVG details.</li>
+  </ul>
+
+  <h3>Phone-only features</h3>
+  <ul>
+    <li>📱 <a href="#tilt">Tilt-to-drive</a></li>
+    <li>📷 <a href="#ar">AR webcam overlay</a></li>
+  </ul>
+
+  <h3>Get it on your phone fast</h3>
+  <p>Click the 📱 button in the header. A QR code appears with the live URL. Scan with your phone camera.</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     24 · THEMES
+     ============================================================ -->
+<section id="themes">
+  <h2><span class="num">24</span> Themes &amp; languages 🎨</h2>
+
+  <h3>Six themes</h3>
+  <div class="grid">
+    <div class="card" style="background:#1c1f2e;"><span class="ico">🛠️</span><h4>Workshop</h4><p>Warm maker-bench amber.</p></div>
+    <div class="card" style="background:#1a3a5e;"><span class="ico">🌤️</span><h4>Sky</h4><p>Calm classroom blue.</p></div>
+    <div class="card" style="background:#1d3b2c;"><span class="ico">🌿</span><h4>Mint</h4><p>Soft sage learning.</p></div>
+    <div class="card" style="background:#0d2818;"><span class="ico">🌳</span><h4>Forest</h4><p>Treehouse green (darker).</p></div>
+    <div class="card" style="background:#0a1628; border-color:#38bdf8;"><span class="ico">🌌</span><h4>Cosmos (default)</h4><p>Galaxy purple. The first-run vibe.</p></div>
+    <div class="card" style="background:#0a1628;"><span class="ico">🌙</span><h4>Night</h4><p>Deep navy for low light.</p></div>
+  </div>
+  <p>Click any flag-icon in the header to switch. Choice persists.</p>
+
+  <h3>Three languages</h3>
+  <p><span style="font-size:24px;">🇬🇧</span> English · <span style="font-size:24px;">🇫🇷</span> Français · <span style="font-size:24px;">🇩🇿</span> العربية (with full RTL layout flip)</p>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     25 · TROUBLESHOOTING
+     ============================================================ -->
+<section id="troubleshoot">
+  <h2><span class="num">25</span> Troubleshooting 🔧</h2>
+
+  <div class="grid">
+    <div class="card danger">
+      <span class="ico">🚫</span>
+      <h4>"Web Bluetooth is not supported"</h4>
+      <p>You're in Safari or Firefox. Switch to Chrome or Edge. Apple disabled Web Bluetooth on Safari/iOS — there's no workaround.</p>
+    </div>
+    <div class="card warn">
+      <span class="ico">😶</span>
+      <h4>Robot doesn't appear in the pair list</h4>
+      <ul>
+        <li>Check the slide switch is ON.</li>
+        <li>Reset the micro:bit (red button on back) and re-flash if needed.</li>
+        <li>Make sure no other tab is connected (only one BLE link at a time).</li>
+        <li>Some Linux distros need <code>bluez ≥ 5.50</code>.</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <span class="ico">🔌</span>
+      <h4>Connects, then drops 5 seconds later</h4>
+      <p>Battery is low. The micro:bit's BLE radio is power-hungry. Swap in fresh batteries or plug in USB.</p>
+    </div>
+    <div class="card warn">
+      <span class="ico">🤔</span>
+      <h4>Drive commands ignored</h4>
+      <p>Check the streams toggle didn't go OFF unexpectedly. Reload the page. If still dead, re-flash firmware (the 🧪 Firmware button in CONNECT card opens MakeCode).</p>
+    </div>
+    <div class="card warn">
+      <span class="ico">🎙</span>
+      <h4>Voice button greyed out</h4>
+      <p>Browser doesn't support Web Speech. Use Chrome / Edge.</p>
+    </div>
+    <div class="card warn">
+      <span class="ico">📱</span>
+      <h4>Tilt button does nothing on iPhone</h4>
+      <p>iOS gates motion sensors behind explicit permission. The button click triggers the prompt — make sure you tap "Allow" when it appears.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     26 · GLOSSARY
+     ============================================================ -->
+<section id="glossary">
+  <h2><span class="num">26</span> Geeky glossary 🤓</h2>
+  <p class="lede">All the words. Skip what you know. Bookmark what you don't.</p>
+
+  <table>
+    <tr><td>BLE</td><td><b>Bluetooth Low Energy.</b> The radio protocol your robot uses. Same family as your fitness tracker.</td></tr>
+    <tr><td>GATT</td><td><b>Generic Attribute Profile.</b> The "language" BLE devices speak. Defines services and characteristics.</td></tr>
+    <tr><td>UART</td><td><b>Universal Asynchronous Receiver/Transmitter.</b> The oldest serial protocol. Over BLE, we use the Nordic UART Service to send text lines.</td></tr>
+    <tr><td>I²C</td><td><b>Inter-Integrated Circuit.</b> A 2-wire bus. The Maqueen's motor driver lives at I²C address 0x10.</td></tr>
+    <tr><td>PWM</td><td><b>Pulse-Width Modulation.</b> Faking analog output by toggling a digital pin really fast.</td></tr>
+    <tr><td>SLAM</td><td><b>Simultaneous Localization And Mapping.</b> Building a map of where you are while figuring out where you are. Hard problem.</td></tr>
+    <tr><td>Odometry</td><td>Tracking position by integrating wheel motion. Cheap, but drifts over time.</td></tr>
+    <tr><td>Dead reckoning</td><td>Same idea, classic name (sailors used it before GPS).</td></tr>
+    <tr><td>Differential drive</td><td>Two wheels independently controlled. The Maqueen kinematic model.</td></tr>
+    <tr><td>WebRTC</td><td><b>Web Real-Time Communication.</b> Peer-to-peer browser-to-browser. We use it for 2-robot pairing.</td></tr>
+    <tr><td>SDP</td><td><b>Session Description Protocol.</b> The blob you copy-paste during pairing.</td></tr>
+    <tr><td>NeoPixel</td><td>WS2812B addressable LED. Each one is a tiny computer that holds its own color.</td></tr>
+    <tr><td>SR04</td><td>The classic ultrasonic distance sensor. 40 kHz chirp, time-of-flight measurement.</td></tr>
+  </table>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     27 · PARENTS
+     ============================================================ -->
+<section id="parents">
+  <h2><span class="num">27</span> For parents &amp; teachers 👨‍🏫</h2>
+
+  <h3>What's the curriculum value?</h3>
+  <p>Maqueen Lab covers a real CS / engineering curriculum disguised as play:</p>
+  <ul>
+    <li><b>Computational thinking</b> — sequences (Simon Says), loops (line follower), conditionals (auto-wander)</li>
+    <li><b>Mathematics</b> — d=v·t (Math the Distance), trigonometry (autopilot bearing), modular arithmetic (heading)</li>
+    <li><b>Physics</b> — kinematics, PWM, ultrasound, electromagnetism (motors)</li>
+    <li><b>Engineering</b> — sensor calibration, feedback loops, dead reckoning vs. SLAM</li>
+    <li><b>CS theory</b> — graph traversal (autopilot), state machines (Simon Says), encoding (Morse)</li>
+    <li><b>Data literacy</b> — telemetry export → Excel/Sheets practice</li>
+  </ul>
+
+  <h3>Recommended progression</h3>
+  <ol class="steps">
+    <li><b>Week 1:</b> Drive (keypad), LEDs, NeoPixels. Pure cause-and-effect.</li>
+    <li><b>Week 2:</b> Buzzer (Buzz the Tune), Distance (Bat radar). Intro to sensors.</li>
+    <li><b>Week 3:</b> Servos (PWM Lab), Line follower. Intro to control.</li>
+    <li><b>Week 4:</b> Path/SLAM, Macro recording, Auto-wander. Composition.</li>
+    <li><b>Week 5:</b> Autopilot, Voice, Tilt. Advanced interactions.</li>
+    <li><b>Week 6:</b> Telemetry export → Excel project. Data analysis.</li>
+  </ol>
+
+  <h3>Safety</h3>
+  <ul>
+    <li>The robot has no exposed pinch points.</li>
+    <li>Battery: standard AA or USB. Don't leave AAs in long-term storage.</li>
+    <li>Floor surface: tile / hardwood / low-pile carpet. High-pile carpet stalls the wheels.</li>
+    <li>Voice control uses online speech services (Google for Chrome). Disable if that's a privacy concern.</li>
+  </ul>
+</section>
+
+<hr class="div"/>
+
+<!-- ============================================================
+     RESOURCES
+     ============================================================ -->
+<section id="resources">
+  <h2>📚 More resources</h2>
+  <div class="grid">
+    <a class="res" href="index.html">              <span class="res-icon">▶</span><span class="res-text"><strong>Open the app</strong><span>The cockpit itself</span></span></a>
+    <a class="res" href="schematics-kids.html">    <span class="res-icon">🤖</span><span class="res-text"><strong>Meet your robot</strong><span>kid-friendly schematic</span></span></a>
+    <a class="res" href="schematics.html">         <span class="res-icon">📐</span><span class="res-text"><strong>Engineer schematic</strong><span>full pinout + nets</span></span></a>
+    <a class="res" href="pinout.html">             <span class="res-icon">📌</span><span class="res-text"><strong>Pinout reference</strong><span>quick lookup</span></span></a>
+    <a class="res" href="lab.html">                <span class="res-icon">🧪</span><span class="res-text"><strong>Component Lab</strong><span>servo explorer pilot</span></span></a>
+    <a class="res" href="plan.html">               <span class="res-icon">📋</span><span class="res-text"><strong>Build plan</strong><span>how this app was made</span></span></a>
+    <a class="res" href="todo.md">                 <span class="res-icon">✅</span><span class="res-text"><strong>Roadmap</strong><span>20 features scorecard</span></span></a>
+    <a class="res" href="https://github.com/abourdim/maqueen-lab"      target="_blank" rel="noopener"><span class="res-icon">⭐</span><span class="res-text"><strong>Source on GitHub</strong><span>MIT licensed</span></span></a>
+    <a class="res" href="https://www.dfrobot.com/product-2230.html"     target="_blank" rel="noopener"><span class="res-icon">🛒</span><span class="res-text"><strong>Buy a Maqueen Lite v4</strong><span>~$40 from DFRobot</span></span></a>
+    <a class="res" href="https://makecode.microbit.org/"                target="_blank" rel="noopener"><span class="res-icon">🧱</span><span class="res-text"><strong>MakeCode</strong><span>flash custom firmware</span></span></a>
+    <a class="res" href="https://microbit.org/"                         target="_blank" rel="noopener"><span class="res-icon">🦄</span><span class="res-text"><strong>micro:bit official</strong><span>the brain</span></span></a>
+    <a class="res" href="https://console.anthropic.com/"                target="_blank" rel="noopener"><span class="res-icon">✨</span><span class="res-text"><strong>Get a Claude API key</strong><span>for AI Recap polish</span></span></a>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER — branded close-out with logo, columns, contributor strip.
+     ============================================================ -->
+<footer class="site-footer">
+  <div class="site-footer__grid">
+    <div>
+      <div class="site-footer__brand">
+        <img src="assets/workshop-diy-logo.svg" alt="Workshop DIY logo"/>
+        <div>
+          <div class="site-footer__brand-name">Maqueen Lab</div>
+          <div class="site-footer__brand-tag">Workshop DIY · MIT licensed</div>
         </div>
       </div>
-      <div>
-        <div style="background:var(--card2);border:1px solid rgba(192,132,252,.3);border-radius:10px;padding:14px">
-          <div style="font-weight:700;font-size:14px;margin-bottom:6px;color:var(--purple)">🔄 Mode Rotation continue</div>
-          <p style="font-size:13px;color:#c4d4e8">Pour les servos 360°. Curseur de −255 à +255 :</p>
-          <ul style="font-size:12px;color:#9ab2cc;padding-left:16px;margin-top:8px">
-            <li>Valeur positive → tourne dans un sens</li>
-            <li>Valeur négative → sens inverse</li>
-            <li>0 → arrêt</li>
-          </ul>
-        </div>
+      <p class="site-footer__about">
+        A live cockpit for the DFRobot Maqueen Lite v4 micro:bit robot.
+        Built for kids, by makers. No cloud. No subscriptions. Just bytes,
+        wheels, and a big amber STOP button.
+      </p>
+      <div class="site-footer__chips" style="margin-top:14px;">
+        <span>Web Bluetooth</span><span>BLE GATT</span><span>micro:bit v2</span>
+        <span>WebRTC P2P</span><span>WebAudio</span><span>WebSpeech</span>
       </div>
     </div>
-  </div>
-  <div class="card">
-    <h3>🔭 Balayage automatique du sonar</h3>
-    <p>Le sonar peut balayer automatiquement de gauche à droite pour cartographier tout l'espace devant le robot. Règle les angles de début et fin, puis active le balayage.</p>
-    <div class="callout info" style="margin-top:10px"><div class="ci">🔭</div><div>L'Auto-Wander utilise ce balayage pour décider du meilleur sens de virage quand un obstacle est détecté — il cherche le côté le plus libre.</div></div>
-  </div>
-</div>
 
-<!-- ─────────────────── LEDS ─────────────────── -->
-<div class="section" id="s-leds" data-keywords="led neopixel rgb couleur rouge vert bleu jaune buzzer son lumière clignotement">
-  <div class="section-hero">
-    <span class="sh-icon">💡</span>
-    <div class="sh-body">
-      <h2>LEDs NeoPixel &amp; buzzer</h2>
-      <p>4 LEDs RGB WS2812 adressables + buzzer PWM — le robot peut signaler, décorer et jouer de la musique !</p>
-    </div>
-  </div>
-  <div class="card">
-    <h3>🌈 LEDs NeoPixel</h3>
-    <p>Le Maqueen dispose de <strong>4 LEDs RGB</strong> (2 à l'avant, 2 à l'arrière). Tu peux :</p>
-    <div style="display:flex;gap:10px;margin:12px 0;flex-wrap:wrap">
-      <div style="background:#dc2626;color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700">🔴 Rouge</div>
-      <div style="background:#16a34a;color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700">🟢 Vert</div>
-      <div style="background:#2563eb;color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700">🔵 Bleu</div>
-      <div style="background:#ca8a04;color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700">🟡 Jaune</div>
-      <div style="background:linear-gradient(135deg,#dc2626,#2563eb);color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700">🎨 Couleur perso</div>
-    </div>
-    <div class="callout info" style="margin-top:8px"><div class="ci">💡</div><div>Les LEDs clignotent <strong>automatiquement en rouge</strong> quand le sonar détecte un obstacle à moins du seuil d'alerte wander — ton robot "rougit" de peur !</div></div>
-  </div>
-</div>
-
-<!-- ─────────────────── VIDEO ─────────────────── -->
-<div class="section" id="s-video" data-keywords="video timelapse vlog youtube webm export film enregistrement narration">
-  <div class="section-hero">
-    <span class="sh-icon">🎬</span>
-    <div class="sh-body">
-      <h2>Export vidéo</h2>
-      <p>Partage ta session avec une vidéo générée automatiquement — timelapse ou vlog complet.</p>
-    </div>
-  </div>
-  <div class="grid2">
-    <div class="card" style="border-color:rgba(167,85,247,.3)">
-      <h3 style="color:var(--purple)">🎬 Timelapse</h3>
-      <p><strong>Bouton dans la barre de la carte</strong></p>
-      <p>Génère une vidéo WebM de 6 secondes accélérée ×10 montrant :</p>
-      <ul style="font-size:13px;color:#9ab2cc;padding-left:18px;margin:8px 0">
-        <li>L'évolution du tracé vert sur la carte</li>
-        <li>L'apparition des obstacles jaunes</li>
-        <li>La progression du robot pas à pas</li>
+    <div>
+      <h5>📖 Learn</h5>
+      <ul>
+        <li><a href="#quickstart">Quick start</a></li>
+        <li><a href="#hardware">Hardware tour</a></li>
+        <li><a href="#games">All 10 games</a></li>
+        <li><a href="#troubleshoot">Troubleshooting</a></li>
+        <li><a href="#glossary">Geek glossary</a></li>
+        <li><a href="#parents">Curriculum</a></li>
       </ul>
     </div>
-    <div class="card" style="border-color:rgba(244,114,182,.3)">
-      <h3 style="color:var(--pink)">🎥 Vlog YouTuber</h3>
-      <p><strong>Bouton 🎥 dans la barre de la carte</strong></p>
-      <p>Vidéo ~25 secondes de qualité profesionnelle :</p>
-      <ol style="font-size:13px;color:#9ab2cc;padding-left:18px;margin:8px 0">
-        <li>Carte de titre animée</li>
-        <li>Timelapse du trajet</li>
-        <li>Panneau de statistiques</li>
-        <li>Narration vocale optionnelle (Web Speech TTS)</li>
-      </ol>
-    </div>
-  </div>
-</div>
 
-<!-- ─────────────────── RÉGLAGES ─────────────────── -->
-<div class="section" id="s-reglages" data-keywords="réglages settings profil densité débutant standard hacker démo langue français anglais arabe thème cosmos workshop stealth">
-  <div class="section-hero">
-    <span class="sh-icon">⚙️</span>
-    <div class="sh-body">
-      <h2>Réglages &amp; Profils de densité</h2>
-      <p>Adapte l'interface à ton niveau — de l'enfant de 6 ans au maker confirmé.</p>
+    <div>
+      <h5>🚀 Use</h5>
+      <ul>
+        <li><a href="index.html">▶ Open the app</a></li>
+        <li><a href="schematics-kids.html">🤖 Meet your robot</a></li>
+        <li><a href="schematics.html">📐 Engineer schematic</a></li>
+        <li><a href="pinout.html">📌 Pinout reference</a></li>
+        <li><a href="lab.html">🧪 Component Lab</a></li>
+        <li><a href="todo.md">✅ Roadmap</a></li>
+      </ul>
     </div>
-  </div>
-  <div class="card">
-    <h3>🎚️ Profils de densité</h3>
-    <p>Le profil masque ou affiche des sections entières selon le niveau de l'utilisateur :</p>
-    <table style="margin-top:12px">
-      <tr><th>Profil</th><th>Ce qui s'affiche</th><th>Pour qui ?</th></tr>
-      <tr><td>🐣 Débutant</td><td>Pavé + vitesse + STOP uniquement</td><td>Enfants 6–8 ans, première utilisation</td></tr>
-      <tr><td>🎓 Standard</td><td>Dashboard + modes + carte + jeux</td><td>Utilisation régulière — défaut</td></tr>
-      <tr><td>🥷 Hacker</td><td>Tout + BLE sniffer + debug + export brut</td><td>Développeurs, enseignants, makers</td></tr>
-      <tr><td>🎬 Démo</td><td>Débutant + auto-wander pré-armé</td><td>Présentations, stands, showcases</td></tr>
-    </table>
-  </div>
-  <div class="grid2">
-    <div class="card">
-      <h3>🌍 Langue</h3>
-      <p>Bascule entre <strong>Français 🇫🇷</strong>, <strong>English 🇬🇧</strong> et <strong>عربي 🇲🇦</strong>. Toute l'interface se traduit instantanément — boutons, labels, messages d'erreur, aide.</p>
-    </div>
-    <div class="card">
-      <h3>🎨 Thème visuel</h3>
-      <p>Trois thèmes disponibles :</p>
-      <ul style="font-size:13px;color:#9ab2cc;padding-left:16px;margin-top:6px">
-        <li><strong>Cosmos</strong> — bleu nuit, défaut</li>
-        <li><strong>Workshop</strong> — tons chauds orange/brun</li>
-        <li><strong>Stealth</strong> — noir absolu, très contrasté</li>
+
+    <div>
+      <h5>🌐 Reach out</h5>
+      <ul>
+        <li><a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener">⭐ GitHub repo</a></li>
+        <li><a href="https://github.com/abourdim/maqueen-lab/issues" target="_blank" rel="noopener">🐞 Report a bug</a></li>
+        <li><a href="https://www.dfrobot.com/product-2230.html" target="_blank" rel="noopener">🛒 Buy a Maqueen</a></li>
+        <li><a href="https://makecode.microbit.org/" target="_blank" rel="noopener">🧱 MakeCode</a></li>
+        <li><a href="https://microbit.org/" target="_blank" rel="noopener">🦄 micro:bit.org</a></li>
+        <li><a href="USER_GUIDE.fr.html">🇫🇷 Guide en français</a></li>
+        <li><a href="USER_GUIDE.ar.html">🇩🇿 الدليل بالعربية</a></li>
       </ul>
     </div>
   </div>
-</div>
 
-<!-- ─────────────────── RACCOURCIS ─────────────────── -->
-<div class="section" id="s-raccourcis" data-keywords="raccourci clavier keyboard shortcut escape stop wasd flèche tab espace">
-  <div class="section-hero">
-    <span class="sh-icon">⌨️</span>
-    <div class="sh-body">
-      <h2>Raccourcis clavier</h2>
-      <p>Sur ordinateur, tout se fait plus vite avec les touches. Voici la liste complète.</p>
+  <div class="site-footer__bottom">
+    <div>
+      Made with 🛠️ &amp; 🤖 by <a href="https://github.com/abourdim" target="_blank" rel="noopener">@abourdim</a>.
+      Now go build something — <span style="color:var(--accent);">the future doesn't program itself.</span> 🚀
+    </div>
+    <div style="opacity:0.6; font-family:var(--mono); font-size:11px;">
+      v0.1.54 · 2026
     </div>
   </div>
-  <div class="card">
-    <table>
-      <tr><th>Touche</th><th>Action</th><th>Disponible quand</th></tr>
-      <tr><td><kbd>Échap</kbd></td><td>🛑 Arrêt d'urgence — priorité absolue</td><td>Toujours</td></tr>
-      <tr><td><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></td><td>Avance / Recule / Gauche / Droite</td><td>Pavé directionnel actif</td></tr>
-      <tr><td><kbd>W</kbd> <kbd>S</kbd></td><td>Throttle Co-Pilot (Joueur 1)</td><td>Co-Pilot activé</td></tr>
-      <tr><td><kbd>J</kbd> <kbd>L</kbd></td><td>Direction Co-Pilot (Joueur 2)</td><td>Co-Pilot activé</td></tr>
-      <tr><td><kbd>Espace</kbd></td><td>Focus sur le pavé directionnel</td><td>Toujours</td></tr>
-      <tr><td><kbd>Tab</kbd></td><td>Cycle entre les onglets principaux</td><td>Toujours</td></tr>
-    </table>
-  </div>
-</div>
-
-<!-- ─────────────────── DÉPANNAGE ─────────────────── -->
-<div class="section" id="s-depannage" data-keywords="problème bug erreur connexion moteur stop dérive sonar led neopixel tilt cache reset">
-  <div class="section-hero">
-    <span class="sh-icon">🔧</span>
-    <div class="sh-body">
-      <h2>Dépannage</h2>
-      <p>Solutions aux problèmes les plus fréquents — essaie dans l'ordre indiqué.</p>
-    </div>
-  </div>
-  <div class="card">
-    <h3>🔗 Le micro:bit n'apparaît pas dans la liste Bluetooth</h3>
-    <div class="steps">
-      <div class="step"><div class="sn">1</div><div class="st">Vérifie que tu utilises <strong>Chrome ou Edge</strong> — pas Firefox, pas Safari.</div></div>
-      <div class="step"><div class="sn">2</div><div class="st">Vérifie que le <strong>Bluetooth est activé</strong> sur ton téléphone/ordinateur.</div></div>
-      <div class="step"><div class="sn">3</div><div class="st">Appuie sur le bouton <strong>Reset</strong> au dos du micro:bit → attends 3 s.</div></div>
-      <div class="step"><div class="sn">4</div><div class="st">Si tu étais déjà jumelé, va dans les <strong>Réglages Bluetooth</strong> du système → oublie le micro:bit → réessaie.</div></div>
-    </div>
-  </div>
-  <div class="card">
-    <h3>🚗 Le robot ne s'arrête pas</h3>
-    <div class="callout warn"><div class="ci">🚨</div><div>Appuie immédiatement sur <kbd>Échap</kbd> ou le bouton rouge ⏹ STOP. Si ça ne marche pas, appuie sur Reset sur le micro:bit.</div></div>
-    <p style="margin-top:10px;font-size:13px;color:#c4d4e8">Cause probable : commande M: coalesced qui arrive après le STOP. La mise à jour récente du firmware corrige ce problème — reflashe si nécessaire.</p>
-  </div>
-  <div class="card">
-    <h3>↔️ Le robot dérive à gauche ou à droite</h3>
-    <p style="font-size:13px;color:#c4d4e8">C'est normal — les deux moteurs ont de légères différences. Solutions :</p>
-    <ul style="font-size:13px;color:#9ab2cc;padding-left:16px;margin:8px 0;line-height:2">
-      <li>Active le <strong>cap boussole</strong> (🎚 LOCK dans la carte) pour corriger la dérive sur longue distance</li>
-      <li>Utilise l'onglet Controls → moteurs L/R pour équilibrer manuellement les deux côtés</li>
-      <li>Vérifie que les piles sont <strong>symétriques</strong> dans le boîtier (même niveau de charge)</li>
-    </ul>
-  </div>
-  <div class="card">
-    <h3>📡 Sonar affiche 0 ou des valeurs incohérentes</h3>
-    <ul style="font-size:13px;color:#9ab2cc;padding-left:16px;margin:8px 0;line-height:2">
-      <li>Vérifie que le capteur <strong>HC-SR04</strong> est bien branché sur le port sonar</li>
-      <li>Redémarre le robot (interrupteur OFF → ON)</li>
-      <li>Teste en pointant le sonar vers un mur plat à 30 cm</li>
-    </ul>
-  </div>
-  <div class="card">
-    <h3>💡 LEDs NeoPixel ne s'allument pas</h3>
-    <p style="font-size:13px;color:#c4d4e8">Le firmware doit inclure le support NeoPixel. Va dans <strong>Plus → Firmware</strong> et reflashe avec la dernière version.</p>
-  </div>
-  <div class="card">
-    <h3>📱 Tilt-to-Drive ne fonctionne pas (iOS)</h3>
-    <p style="font-size:13px;color:#c4d4e8">iOS 13+ bloque l'accès aux capteurs de mouvement par défaut. Va dans :</p>
-    <p style="font-size:13px;color:var(--accent);margin-top:6px"><strong>Réglages → Safari → Accès aux capteurs de mouvement et d'orientation</strong> → Activé</p>
-    <p style="font-size:13px;color:#c4d4e8;margin-top:6px">Ensuite recharge la page et retape le bouton 📱 tilt.</p>
-  </div>
-  <div class="card">
-    <h3>🌀 L'app est lente ou bugguée</h3>
-    <div class="steps">
-      <div class="step"><div class="sn">1</div><div class="st">Ouvre ⚙ Réglages → <strong>Vider le cache</strong>.</div></div>
-      <div class="step"><div class="sn">2</div><div class="st">Si ça persiste, ferme complètement l'onglet et rouvre l'URL.</div></div>
-      <div class="step"><div class="sn">3</div><div class="st">En dernier recours, efface les données du site dans les Réglages du navigateur.</div></div>
-    </div>
-  </div>
-</div>
-
-</main>
-</div><!-- /layout -->
-
-<footer>
-  <p>🤖 <strong>Maqueen Lab</strong> — Guide complet · <a href="start.html" style="color:var(--accent)">🚀 Premiers pas</a> · <a href="index.html" style="color:var(--accent)">Retour à l'app</a></p>
-  <p style="margin-top:6px;color:#4a6a8a">Robot DFRobot Maqueen + BBC micro:bit v1 &amp; v2 · Chrome &amp; Edge uniquement</p>
 </footer>
 
-<script>
-/* ── Navigation ── */
-const sections = {};
-document.querySelectorAll('.section').forEach(s => { sections[s.id.replace('s-','')] = s; });
-const navItems = document.querySelectorAll('.nav-item');
+<a href="#" class="back-top" aria-label="Back to top">↑ top</a>
 
-function show(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  navItems.forEach(n => n.classList.remove('active'));
-  const sec = document.getElementById('s-'+id);
-  if (sec) { sec.classList.add('active'); sec.scrollIntoView({behavior:'smooth',block:'start'}); }
-  navItems.forEach(n => { if (n.getAttribute('onclick')?.includes("'"+id+"'")) n.classList.add('active'); });
-  history.replaceState(null,'','#'+id);
-}
-
-/* Load from hash */
-const hash = location.hash.replace('#','');
-if (hash && document.getElementById('s-'+hash)) show(hash);
-else show('connexion');
-
-/* ── Search ── */
-const INDEX = [];
-document.querySelectorAll('.section').forEach(s => {
-  const id = s.id.replace('s-','');
-  const keywords = (s.dataset.keywords||'').toLowerCase();
-  const text = s.innerText.toLowerCase();
-  const title = s.querySelector('h2')?.innerText || id;
-  // Split into sub-headings
-  s.querySelectorAll('h3').forEach(h => {
-    INDEX.push({id, title, sub: h.innerText, keywords, text: h.parentElement?.innerText?.toLowerCase()||''});
-  });
-  INDEX.push({id, title, sub: '', keywords, text});
-});
-
-const searchInput = document.getElementById('searchInput');
-const searchResults = document.getElementById('searchResults');
-
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value.trim().toLowerCase();
-  searchResults.innerHTML = '';
-  if (!q) { searchResults.style.display='none'; return; }
-  const seen = new Set();
-  const hits = INDEX.filter(item => {
-    const key = item.id + item.sub;
-    if (seen.has(key)) return false;
-    const match = item.keywords.includes(q) || item.text.includes(q) || item.title.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q);
-    if (match) seen.add(key);
-    return match;
-  }).slice(0, 10);
-  if (!hits.length) {
-    searchResults.style.display='block';
-    searchResults.innerHTML='<div class="sr-item"><strong style="color:var(--muted)">Aucun résultat</strong></div>';
-    return;
-  }
-  hits.forEach(h => {
-    const div = document.createElement('div');
-    div.className = 'sr-item';
-    div.innerHTML = `<strong>${h.title}${h.sub ? ' → ' + h.sub : ''}<span class="sr-tag">${h.id}</span></strong><span>${(h.text.substring(0,80)||'').replace(/\n/g,' ')}…</span>`;
-    div.onclick = () => { show(h.id); searchResults.style.display='none'; searchInput.value=''; };
-    searchResults.appendChild(div);
-  });
-  searchResults.style.display='block';
-});
-
-document.addEventListener('click', e => {
-  if (!searchResults.contains(e.target) && e.target !== searchInput) searchResults.style.display='none';
-});
-searchInput.addEventListener('keydown', e => { if (e.key==='Escape') { searchResults.style.display='none'; searchInput.value=''; } });
-</script>
 </body>
 </html>
