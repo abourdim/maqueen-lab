@@ -35,29 +35,33 @@
   .conn-bar button.disconnect { background: var(--danger); color: white; }
   .conn-bar .verb-feed { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--cyan); padding: 4px 12px; background: var(--ink); border-radius: 6px; min-width: 160px; text-align: center; }
 
-  /* MODE PICKER — sidebar tabs + content panel */
-  .picker { display: grid; grid-template-columns: 220px 1fr; gap: 16px; margin: 18px 0 26px; }
-  @media (max-width: 720px) { .picker { grid-template-columns: 1fr; } }
-  .cat-sidebar { display: flex; flex-direction: column; gap: 6px; padding: 8px; background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 14px; align-self: start; position: sticky; top: 12px; }
-  @media (max-width: 720px) { .cat-sidebar { flex-direction: row; flex-wrap: wrap; position: static; } }
-  .cat-tab { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: transparent; border: 1.5px solid transparent; color: var(--steel); font-family: var(--font-tech); font-weight: 700; letter-spacing: 0.06em; font-size: 0.78rem; text-transform: uppercase; cursor: pointer; text-align: left; transition: all 0.12s; width: 100%; }
-  @media (max-width: 720px) { .cat-tab { width: auto; flex: 1; min-width: 130px; } }
+  /* APP LAYOUT — sidebar (cats + mode list) | stage (main canvas) */
+  .app-layout { display: grid; grid-template-columns: 280px 1fr; gap: 16px; margin: 18px 0 26px; align-items: start; }
+  @media (max-width: 820px) { .app-layout { grid-template-columns: 1fr; } }
+  .picker { display: flex; flex-direction: column; gap: 12px; background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 14px; padding: 10px; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; }
+  @media (max-width: 820px) { .picker { position: static; max-height: none; } }
+  /* Category pills row */
+  .cat-sidebar { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .cat-tab { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; background: transparent; border: 1.5px solid transparent; color: var(--steel); font-family: var(--font-tech); font-weight: 700; letter-spacing: 0.04em; font-size: 0.74rem; text-transform: uppercase; cursor: pointer; text-align: left; transition: all 0.12s; width: 100%; }
   .cat-tab:hover { background: var(--bg-soft); color: var(--text); }
-  .cat-tab.active { background: linear-gradient(135deg, var(--bg-soft), var(--bg-card)); border-color: var(--neon); color: var(--neon); box-shadow: 0 4px 14px var(--hero-glow); }
-  .cat-tab .cat-icon { font-size: 1.1rem; }
-  .cat-tab .cat-count { margin-left: auto; font-size: 0.7rem; opacity: 0.6; font-weight: 400; }
+  .cat-tab.active { background: linear-gradient(135deg, var(--bg-soft), var(--bg-card)); border-color: var(--neon); color: var(--neon); box-shadow: 0 4px 12px var(--hero-glow); }
+  .cat-tab .cat-icon { font-size: 1rem; }
+  .cat-tab .cat-count { margin-left: auto; font-size: 0.68rem; opacity: 0.6; font-weight: 400; }
   .cat-tab.active .cat-count { color: var(--cyan); opacity: 0.9; }
-  .cat-content { min-height: 200px; }
-  .mode-grid { display: none; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-  .mode-grid.active { display: grid; }
-  .mode-card { background: var(--bg-card); border: 2px solid var(--border); border-radius: 14px; padding: 14px 12px; cursor: pointer; text-align: center; transition: transform 0.12s, border-color 0.12s; user-select: none; }
-  .mode-card:hover { transform: translateY(-2px); border-color: var(--cyan); }
-  .mode-card.active { border-color: var(--neon); background: linear-gradient(135deg, var(--bg-card), var(--bg-soft)); box-shadow: 0 6px 18px var(--hero-glow); }
-  .mode-card .mode-icon { font-size: 1.8rem; line-height: 1; margin-bottom: 6px; }
-  .mode-card .mode-title { font-family: var(--font-display); font-size: 0.92rem; color: var(--text); margin: 0 0 2px; line-height: 1.15; }
-  .mode-card .mode-sub { font-size: 0.7rem; color: var(--steel); }
+  /* Mode cards inside the sidebar — compact horizontal list rows */
+  .cat-content { min-height: 100px; }
+  .mode-grid { display: none; flex-direction: column; gap: 4px; }
+  .mode-grid.active { display: flex; }
+  /* Mode cards — compact horizontal row inside the sidebar */
+  .mode-card { display: flex; align-items: center; gap: 10px; background: var(--bg-soft); border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 10px; cursor: pointer; text-align: left; transition: all 0.12s; user-select: none; }
+  .mode-card:hover { background: var(--bg-card); border-color: var(--cyan); }
+  .mode-card.active { border-color: var(--neon); background: linear-gradient(90deg, rgba(74,222,128,0.18), var(--bg-card)); box-shadow: inset 3px 0 0 var(--neon); }
+  .mode-card .mode-icon { font-size: 1.4rem; line-height: 1; margin-bottom: 0; flex-shrink: 0; width: 28px; text-align: center; }
+  .mode-card .mode-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .mode-card .mode-title { font-family: var(--font-display); font-size: 0.85rem; color: var(--text); margin: 0; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mode-card .mode-sub { font-size: 0.66rem; color: var(--steel); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mode-card.unsupported { opacity: 0.45; cursor: not-allowed; }
-  .mode-card.unsupported::after { content: '· no API'; display: block; font-size: 0.65rem; color: var(--amber); margin-top: 4px; }
+  .mode-card.unsupported .mode-sub::after { content: ' · no API'; color: var(--amber); }
 
   /* STAGE — where the active mode renders its UI */
   .stage { background: var(--bg-card); border: 2px solid var(--neon); border-radius: 18px; padding: 22px; min-height: 360px; box-shadow: 0 6px 26px var(--hero-glow); }
@@ -176,6 +180,7 @@
   <button id="debugBtn" style="padding:6px 12px; border-radius:8px; background:var(--bg-soft); border:1px solid var(--border); color:var(--text); cursor:pointer; font-size:12px;">🐞 Debug</button>
 </div>
 
+<div class="app-layout">
 <div class="picker">
 <nav class="cat-sidebar" aria-label="Mode categories">
   <button class="cat-tab active" data-target="grid-touch" type="button"><span class="cat-icon">🕹</span><span data-i18n="cat_touch">Touch &amp; Pointer</span><span class="cat-count">(4)</span></button>
@@ -186,44 +191,44 @@
 </nav>
 <div class="cat-content">
   <div class="mode-grid active" id="grid-touch">
-    <div class="mode-card" data-mode="classic"><div class="mode-icon">🕹</div><div class="mode-title" data-i18n="m_classic_t">Classic Pad</div><div class="mode-sub" data-i18n="m_classic_s">drag knob</div></div>
-    <div class="mode-card" data-mode="dpad"><div class="mode-icon">🎮</div><div class="mode-title" data-i18n="m_dpad_t">D-Pad</div><div class="mode-sub" data-i18n="m_dpad_s">8-dir taps</div></div>
-    <div class="mode-card" data-mode="twin"><div class="mode-icon">🎚</div><div class="mode-title" data-i18n="m_twin_t">Twin Sticks</div><div class="mode-sub" data-i18n="m_twin_s">tank drive</div></div>
-    <div class="mode-card" data-mode="painter"><div class="mode-icon">✏️</div><div class="mode-title" data-i18n="m_painter_t">Path Painter</div><div class="mode-sub" data-i18n="m_painter_s">draw → follow</div></div>
+    <div class="mode-card" data-mode="classic"><div class="mode-icon">🕹</div><div class="mode-text"><div class="mode-title" data-i18n="m_classic_t">Classic Pad</div><div class="mode-sub" data-i18n="m_classic_s">drag knob</div></div></div>
+    <div class="mode-card" data-mode="dpad"><div class="mode-icon">🎮</div><div class="mode-text"><div class="mode-title" data-i18n="m_dpad_t">D-Pad</div><div class="mode-sub" data-i18n="m_dpad_s">8-dir taps</div></div></div>
+    <div class="mode-card" data-mode="twin"><div class="mode-icon">🎚</div><div class="mode-text"><div class="mode-title" data-i18n="m_twin_t">Twin Sticks</div><div class="mode-sub" data-i18n="m_twin_s">tank drive</div></div></div>
+    <div class="mode-card" data-mode="painter"><div class="mode-icon">✏️</div><div class="mode-text"><div class="mode-title" data-i18n="m_painter_t">Path Painter</div><div class="mode-sub" data-i18n="m_painter_s">draw → follow</div></div></div>
   </div>
   <div class="mode-grid" id="grid-hw">
-    <div class="mode-card" data-mode="tilt"><div class="mode-icon">📱</div><div class="mode-title" data-i18n="m_tilt_t">Tilt</div><div class="mode-sub" data-i18n="m_tilt_s">phone tip</div></div>
-    <div class="mode-card" data-mode="keyboard"><div class="mode-icon">⌨️</div><div class="mode-title" data-i18n="m_keyboard_t">Keyboard</div><div class="mode-sub" data-i18n="m_keyboard_s">WASD desktop</div></div>
-    <div class="mode-card" data-mode="gamepad"><div class="mode-icon">🎮</div><div class="mode-title" data-i18n="m_gamepad_t">Gamepad</div><div class="mode-sub" data-i18n="m_gamepad_s">USB controller</div></div>
+    <div class="mode-card" data-mode="tilt"><div class="mode-icon">📱</div><div class="mode-text"><div class="mode-title" data-i18n="m_tilt_t">Tilt</div><div class="mode-sub" data-i18n="m_tilt_s">phone tip</div></div></div>
+    <div class="mode-card" data-mode="keyboard"><div class="mode-icon">⌨️</div><div class="mode-text"><div class="mode-title" data-i18n="m_keyboard_t">Keyboard</div><div class="mode-sub" data-i18n="m_keyboard_s">WASD desktop</div></div></div>
+    <div class="mode-card" data-mode="gamepad"><div class="mode-icon">🎮</div><div class="mode-text"><div class="mode-title" data-i18n="m_gamepad_t">Gamepad</div><div class="mode-sub" data-i18n="m_gamepad_s">USB controller</div></div></div>
   </div>
   <div class="mode-grid" id="grid-audio">
-    <div class="mode-card" data-mode="voice"><div class="mode-icon">🎤</div><div class="mode-title" data-i18n="m_voice_t">Voice</div><div class="mode-sub" data-i18n="m_voice_s">say it</div></div>
-    <div class="mode-card" data-mode="whistle"><div class="mode-icon">🎺</div><div class="mode-title" data-i18n="m_whistle_t">Whistle</div><div class="mode-sub" data-i18n="m_whistle_s">pitch → dir</div></div>
-    <div class="mode-card" data-mode="beat"><div class="mode-icon">🥁</div><div class="mode-title" data-i18n="m_beat_t">BeatBox</div><div class="mode-sub" data-i18n="m_beat_s">clap → step</div></div>
+    <div class="mode-card" data-mode="voice"><div class="mode-icon">🎤</div><div class="mode-text"><div class="mode-title" data-i18n="m_voice_t">Voice</div><div class="mode-sub" data-i18n="m_voice_s">say it</div></div></div>
+    <div class="mode-card" data-mode="whistle"><div class="mode-icon">🎺</div><div class="mode-text"><div class="mode-title" data-i18n="m_whistle_t">Whistle</div><div class="mode-sub" data-i18n="m_whistle_s">pitch → dir</div></div></div>
+    <div class="mode-card" data-mode="beat"><div class="mode-icon">🥁</div><div class="mode-text"><div class="mode-title" data-i18n="m_beat_t">BeatBox</div><div class="mode-sub" data-i18n="m_beat_s">clap → step</div></div></div>
   </div>
   <div class="mode-grid" id="grid-game">
-    <div class="mode-card" data-mode="aim"><div class="mode-icon">🎯</div><div class="mode-title" data-i18n="m_aim_t">Aim &amp; Click</div><div class="mode-sub" data-i18n="m_aim_s">click-to-move</div></div>
-    <div class="mode-card" data-mode="wheel"><div class="mode-icon">🏎️</div><div class="mode-title" data-i18n="m_wheel_t">Wheel + Pedals</div><div class="mode-sub" data-i18n="m_wheel_s">arcade racer</div></div>
-    <div class="mode-card" data-mode="spring"><div class="mode-icon">🪂</div><div class="mode-title" data-i18n="m_spring_t">Spring Stick</div><div class="mode-sub" data-i18n="m_spring_s">physics return</div></div>
-    <div class="mode-card" data-mode="combo"><div class="mode-icon">⚡</div><div class="mode-title" data-i18n="m_combo_t">Combo Keys</div><div class="mode-sub" data-i18n="m_combo_s">fighting moves</div></div>
-    <div class="mode-card" data-mode="sequencer"><div class="mode-icon">🎼</div><div class="mode-title" data-i18n="m_seq_t">Step Sequencer</div><div class="mode-sub" data-i18n="m_seq_s">4×8 grid</div></div>
-    <div class="mode-card" data-mode="traffic"><div class="mode-icon">🚦</div><div class="mode-title" data-i18n="m_traffic_t">Traffic Light</div><div class="mode-sub" data-i18n="m_traffic_s">red/yellow/green</div></div>
-    <div class="mode-card" data-mode="roulette"><div class="mode-icon">🎰</div><div class="mode-title" data-i18n="m_roul_t">Roulette</div><div class="mode-sub" data-i18n="m_roul_s">spin the wheel</div></div>
-    <div class="mode-card" data-mode="gesture"><div class="mode-icon">✍️</div><div class="mode-title" data-i18n="m_gest_t">Gesture Shapes</div><div class="mode-sub" data-i18n="m_gest_s">draw a shape</div></div>
-    <div class="mode-card" data-mode="pendulum"><div class="mode-icon">🪀</div><div class="mode-title" data-i18n="m_pen_t">Pendulum</div><div class="mode-sub" data-i18n="m_pen_s">swing physics</div></div>
-    <div class="mode-card" data-mode="polar"><div class="mode-icon">🎡</div><div class="mode-title" data-i18n="m_polar_t">Polar Pad</div><div class="mode-sub" data-i18n="m_polar_s">radial joystick</div></div>
+    <div class="mode-card" data-mode="aim"><div class="mode-icon">🎯</div><div class="mode-text"><div class="mode-title" data-i18n="m_aim_t">Aim &amp; Click</div><div class="mode-sub" data-i18n="m_aim_s">click-to-move</div></div></div>
+    <div class="mode-card" data-mode="wheel"><div class="mode-icon">🏎️</div><div class="mode-text"><div class="mode-title" data-i18n="m_wheel_t">Wheel + Pedals</div><div class="mode-sub" data-i18n="m_wheel_s">arcade racer</div></div></div>
+    <div class="mode-card" data-mode="spring"><div class="mode-icon">🪂</div><div class="mode-text"><div class="mode-title" data-i18n="m_spring_t">Spring Stick</div><div class="mode-sub" data-i18n="m_spring_s">physics return</div></div></div>
+    <div class="mode-card" data-mode="combo"><div class="mode-icon">⚡</div><div class="mode-text"><div class="mode-title" data-i18n="m_combo_t">Combo Keys</div><div class="mode-sub" data-i18n="m_combo_s">fighting moves</div></div></div>
+    <div class="mode-card" data-mode="sequencer"><div class="mode-icon">🎼</div><div class="mode-text"><div class="mode-title" data-i18n="m_seq_t">Step Sequencer</div><div class="mode-sub" data-i18n="m_seq_s">4×8 grid</div></div></div>
+    <div class="mode-card" data-mode="traffic"><div class="mode-icon">🚦</div><div class="mode-text"><div class="mode-title" data-i18n="m_traffic_t">Traffic Light</div><div class="mode-sub" data-i18n="m_traffic_s">red/yellow/green</div></div></div>
+    <div class="mode-card" data-mode="roulette"><div class="mode-icon">🎰</div><div class="mode-text"><div class="mode-title" data-i18n="m_roul_t">Roulette</div><div class="mode-sub" data-i18n="m_roul_s">spin the wheel</div></div></div>
+    <div class="mode-card" data-mode="gesture"><div class="mode-icon">✍️</div><div class="mode-text"><div class="mode-title" data-i18n="m_gest_t">Gesture Shapes</div><div class="mode-sub" data-i18n="m_gest_s">draw a shape</div></div></div>
+    <div class="mode-card" data-mode="pendulum"><div class="mode-icon">🪀</div><div class="mode-text"><div class="mode-title" data-i18n="m_pen_t">Pendulum</div><div class="mode-sub" data-i18n="m_pen_s">swing physics</div></div></div>
+    <div class="mode-card" data-mode="polar"><div class="mode-icon">🎡</div><div class="mode-text"><div class="mode-title" data-i18n="m_polar_t">Polar Pad</div><div class="mode-sub" data-i18n="m_polar_s">radial joystick</div></div></div>
   </div>
   <div class="mode-grid" id="grid-cam">
-    <div class="mode-card" data-mode="colortrack"><div class="mode-icon">🎨</div><div class="mode-title" data-i18n="m_colortrack_t">Color Tracker</div><div class="mode-sub" data-i18n="m_colortrack_s">follow a color</div></div>
-    <div class="mode-card" data-mode="facesteer"><div class="mode-icon">👤</div><div class="mode-title" data-i18n="m_facesteer_t">Face Steer</div><div class="mode-sub" data-i18n="m_facesteer_s">head + size</div></div>
-    <div class="mode-card" data-mode="handwave"><div class="mode-icon">👋</div><div class="mode-title" data-i18n="m_handwave_t">Hand Wave</div><div class="mode-sub" data-i18n="m_handwave_s">motion blob</div></div>
-    <div class="mode-card" data-mode="light"><div class="mode-icon">💡</div><div class="mode-title" data-i18n="m_light_t">Light Sensor</div><div class="mode-sub" data-i18n="m_light_s">brightness</div></div>
-    <div class="mode-card" data-mode="cards"><div class="mode-icon">🃏</div><div class="mode-title" data-i18n="m_cards_t">Card Reader</div><div class="mode-sub" data-i18n="m_cards_s">show QR cards</div></div>
-    <div class="mode-card" data-mode="mirror"><div class="mode-icon">🪞</div><div class="mode-title" data-i18n="m_mirror_t">Mirror Mode</div><div class="mode-sub" data-i18n="m_mirror_s">motion echo</div></div>
-    <div class="mode-card" data-mode="twohand"><div class="mode-icon">✋</div><div class="mode-title" data-i18n="m_twohand_t">Two-Hand Tank</div><div class="mode-sub" data-i18n="m_twohand_s">L/R wheel</div></div>
-    <div class="mode-card" data-mode="pose"><div class="mode-icon">🤸</div><div class="mode-title" data-i18n="m_pose_t">Pose</div><div class="mode-sub" data-i18n="m_pose_s">arms up = drive</div></div>
-    <div class="mode-card" data-mode="lean"><div class="mode-icon">🫷</div><div class="mode-title" data-i18n="m_lean_t">Lean Forward</div><div class="mode-sub" data-i18n="m_lean_s">closer = faster</div></div>
-    <div class="mode-card" data-mode="colorwand"><div class="mode-icon">🌈</div><div class="mode-title" data-i18n="m_colorwand_t">Color Wand</div><div class="mode-sub" data-i18n="m_colorwand_s">trace + replay</div></div>
+    <div class="mode-card" data-mode="colortrack"><div class="mode-icon">🎨</div><div class="mode-text"><div class="mode-title" data-i18n="m_colortrack_t">Color Tracker</div><div class="mode-sub" data-i18n="m_colortrack_s">follow a color</div></div></div>
+    <div class="mode-card" data-mode="facesteer"><div class="mode-icon">👤</div><div class="mode-text"><div class="mode-title" data-i18n="m_facesteer_t">Face Steer</div><div class="mode-sub" data-i18n="m_facesteer_s">head + size</div></div></div>
+    <div class="mode-card" data-mode="handwave"><div class="mode-icon">👋</div><div class="mode-text"><div class="mode-title" data-i18n="m_handwave_t">Hand Wave</div><div class="mode-sub" data-i18n="m_handwave_s">motion blob</div></div></div>
+    <div class="mode-card" data-mode="light"><div class="mode-icon">💡</div><div class="mode-text"><div class="mode-title" data-i18n="m_light_t">Light Sensor</div><div class="mode-sub" data-i18n="m_light_s">brightness</div></div></div>
+    <div class="mode-card" data-mode="cards"><div class="mode-icon">🃏</div><div class="mode-text"><div class="mode-title" data-i18n="m_cards_t">Card Reader</div><div class="mode-sub" data-i18n="m_cards_s">show QR cards</div></div></div>
+    <div class="mode-card" data-mode="mirror"><div class="mode-icon">🪞</div><div class="mode-text"><div class="mode-title" data-i18n="m_mirror_t">Mirror Mode</div><div class="mode-sub" data-i18n="m_mirror_s">motion echo</div></div></div>
+    <div class="mode-card" data-mode="twohand"><div class="mode-icon">✋</div><div class="mode-text"><div class="mode-title" data-i18n="m_twohand_t">Two-Hand Tank</div><div class="mode-sub" data-i18n="m_twohand_s">L/R wheel</div></div></div>
+    <div class="mode-card" data-mode="pose"><div class="mode-icon">🤸</div><div class="mode-text"><div class="mode-title" data-i18n="m_pose_t">Pose</div><div class="mode-sub" data-i18n="m_pose_s">arms up = drive</div></div></div>
+    <div class="mode-card" data-mode="lean"><div class="mode-icon">🫷</div><div class="mode-text"><div class="mode-title" data-i18n="m_lean_t">Lean Forward</div><div class="mode-sub" data-i18n="m_lean_s">closer = faster</div></div></div>
+    <div class="mode-card" data-mode="colorwand"><div class="mode-icon">🌈</div><div class="mode-text"><div class="mode-title" data-i18n="m_colorwand_t">Color Wand</div><div class="mode-sub" data-i18n="m_colorwand_s">trace + replay</div></div></div>
   </div>
 </div>
 </div>
@@ -239,6 +244,7 @@
   <div class="verb-log" id="verbLog"></div>
 </div>
 
+</div>
 </div>
 
 <div class="wd-band wd-band-bottom"></div>
