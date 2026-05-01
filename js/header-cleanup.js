@@ -199,7 +199,7 @@
         toolsMount.appendChild(a);
       });
       // Engineer-only nav links (kept second so workshops show first)
-      const navIds = ['lab.html','schematics-kids.html','schematics.html','pinout.html'];
+      const navIds = ['lab.html','docs/schematics-kids.html','docs/schematics.html','docs/pinout.html'];
       navIds.forEach(href => {
         const a = document.querySelector(`a[href="${href}"]`);
         if (a && toolsMount) {
