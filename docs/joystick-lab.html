@@ -247,11 +247,31 @@
         if (c.uuid.toLowerCase().includes('6e400002')) rxChar = c;
       }
       if (!rxChar) { alert('UART RX characteristic not found.'); return; }
+      // Also subscribe to the TX characteristic so we can SEE the firmware's
+      // ECHO replies — proves whether bytes are reaching the parser.
+      let txChar = null;
+      for (const c of chars) {
+        if (c.uuid.toLowerCase().includes('6e400003')) txChar = c;
+      }
+      if (txChar) {
+        try {
+          await txChar.startNotifications();
+          txChar.addEventListener('characteristicvaluechanged', e => {
+            const txt = new TextDecoder().decode(e.target.value);
+            txt.split(/\r?\n/).forEach(line => {
+              if (!line.trim()) return;
+              const el = document.createElement('div');
+              el.style.color = 'var(--cyan)';
+              el.textContent = '← ' + line;
+              verbLog.appendChild(el);
+              verbLog.scrollTop = verbLog.scrollHeight;
+              while (verbLog.children.length > 30) verbLog.removeChild(verbLog.firstChild);
+            });
+          });
+        } catch (e) { console.warn('TX notify subscribe failed', e); }
+      }
       setConnected(true);
-      // Same handshake the main app does — without these, the firmware
-      // stays in idle mode and ignores M:L,R verbs.
       writeRaw('HELLO');
-      writeRaw('TAB:maqueen');
     } catch (e) {
       console.warn('connect failed', e);
       // user cancelled the chooser is the most common case; ignore silently
