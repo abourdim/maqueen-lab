@@ -29,6 +29,13 @@
   --font-display: 'Righteous', 'Tajawal', 'Bangers', sans-serif;
   --font-body: 'Tajawal', 'Inter', system-ui, sans-serif;
   --font-tech: 'Orbitron', 'Righteous', sans-serif;
+  /* ── Round-control palette (Classic Pad, Spring Stick, Pendulum,
+     Polar Pad, Aim & Click). 3-stop knob: highlight → mid → shadow. */
+  --joy-knob-hi: #fef9e7;
+  --joy-knob-mid: #fb923c;
+  --joy-knob-lo: #7c2d12;
+  --joy-ring: #4ade80;
+  --joy-tick: rgba(168,184,204,0.18);
 }
 
 /* ────── 2. FOREST · medium · friendly explorer green ─────────────── */
@@ -53,6 +60,12 @@
   --font-display: 'Bangers', 'Righteous', sans-serif;
   --font-body: 'Tajawal', system-ui, sans-serif;
   --font-tech: 'Orbitron', sans-serif;
+  /* Wood + brass — warm explorer feel */
+  --joy-knob-hi: #fef3c7;
+  --joy-knob-mid: #d97706;
+  --joy-knob-lo: #78350f;
+  --joy-ring: #a3e635;
+  --joy-tick: rgba(168,192,168,0.18);
 }
 
 /* ────── 3. STEEL · medium · industrial sky-blue ──────────────────── */
@@ -77,6 +90,12 @@
   --font-display: 'Orbitron', 'Righteous', sans-serif;
   --font-body: 'Tajawal', system-ui, sans-serif;
   --font-tech: 'Orbitron', sans-serif;
+  /* Brushed chrome — industrial */
+  --joy-knob-hi: #f1f5f9;
+  --joy-knob-mid: #94a3b8;
+  --joy-knob-lo: #1e293b;
+  --joy-ring: #38bdf8;
+  --joy-tick: rgba(176,196,216,0.20);
 }
 
 /* ────── 4. PAPER · LIGHT · ivory lab notebook ────────────────────── */
@@ -101,6 +120,12 @@
   --font-display: 'Righteous', 'Bangers', sans-serif;
   --font-body: 'Tajawal', system-ui, sans-serif;
   --font-tech: 'Orbitron', sans-serif;
+  /* Soft amber notebook — warm + light */
+  --joy-knob-hi: #fffbeb;
+  --joy-knob-mid: #d97706;
+  --joy-knob-lo: #92400e;
+  --joy-ring: #16a34a;
+  --joy-tick: rgba(20,40,60,0.10);
 }
 
 /* ────── 5. PEARL · LIGHT · cool pearl/ocean ──────────────────────── */
@@ -125,6 +150,12 @@
   --font-display: 'Righteous', sans-serif;
   --font-body: 'Tajawal', system-ui, sans-serif;
   --font-tech: 'Orbitron', sans-serif;
+  /* Cool teal — calm minimal */
+  --joy-knob-hi: #f0f9ff;
+  --joy-knob-mid: #0e7c6b;
+  --joy-knob-lo: #134e4a;
+  --joy-ring: #0369a1;
+  --joy-tick: rgba(20,40,60,0.12);
 }
 
 /* ═══════════════════════════════════════════════════════════════════

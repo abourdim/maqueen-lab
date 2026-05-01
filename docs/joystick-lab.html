@@ -140,10 +140,11 @@
   .speed-knob input { width: 140px; }
   .speed-knob output { font-family: 'JetBrains Mono', monospace; color: var(--neon); min-width: 38px; text-align: right; }
 
-  /* ─── CLASSIC JOYSTICK ─── */
-  .pad { width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, var(--bg-soft), var(--bg-card)); border: 3px solid var(--neon); position: relative; touch-action: none; box-shadow: inset 0 0 30px rgba(0,0,0,0.3); }
-  .pad .knob { position: absolute; left: 50%; top: 50%; width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--neon), var(--cyan)); transform: translate(-50%, -50%); box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+  /* ─── CLASSIC JOYSTICK — themed via --joy-* vars from theme.css ─── */
+  .pad { width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, var(--bg-soft), var(--bg-card)); border: 3px solid var(--joy-ring, var(--neon)); position: relative; touch-action: none; box-shadow: inset 0 0 30px rgba(0,0,0,0.3), 0 6px 24px color-mix(in srgb, var(--joy-ring, var(--neon)) 20%, transparent); }
+  .pad .knob { position: absolute; left: 50%; top: 50%; width: 70px; height: 70px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--joy-knob-hi, #fef9e7), var(--joy-knob-mid, var(--orange)) 60%, var(--joy-knob-lo, #7c2d12)); transform: translate(-50%, -50%); box-shadow: 0 6px 18px rgba(0,0,0,0.4), inset 0 -2px 6px rgba(0,0,0,0.25); border: 2px solid color-mix(in srgb, var(--joy-knob-lo, #7c2d12) 70%, transparent); }
   .pad .crosshair { position: absolute; inset: 0; pointer-events: none; }
+  .pad .crosshair line { stroke: var(--joy-tick, rgba(168,184,204,0.18)); }
 
   /* ─── D-PAD ─── */
   .dpad { display: grid; grid-template-columns: repeat(3, 70px); grid-template-rows: repeat(3, 70px); gap: 6px; }
@@ -585,7 +586,7 @@
     host.innerHTML = '';
     const pad = document.createElement('div');
     pad.className = 'pad';
-    pad.innerHTML = '<svg class="crosshair" viewBox="0 0 240 240"><line x1="120" y1="20" x2="120" y2="220" stroke="rgba(168,184,204,0.2)"/><line x1="20" y1="120" x2="220" y2="120" stroke="rgba(168,184,204,0.2)"/></svg><div class="knob"></div>';
+    pad.innerHTML = '<svg class="crosshair" viewBox="0 0 240 240"><line x1="120" y1="20" x2="120" y2="220"/><line x1="20" y1="120" x2="220" y2="120"/></svg><div class="knob"></div>';
     host.appendChild(pad);
     const knob = pad.querySelector('.knob');
     let dragging = false;

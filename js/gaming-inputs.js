@@ -12,6 +12,22 @@
 (function () {
   'use strict';
 
+  // Read joystick-knob palette from the active theme's CSS variables
+  // so canvas-drawn round controls (Spring Stick, Pendulum, Polar Pad)
+  // match the CSS-styled Classic Pad. Re-reads on every draw frame
+  // so theme switches re-skin live without page reload.
+  function joyPalette() {
+    const cs = getComputedStyle(document.documentElement);
+    const p = (n, fb) => (cs.getPropertyValue(n).trim() || fb);
+    return {
+      hi:   p('--joy-knob-hi',  '#fef9e7'),
+      mid:  p('--joy-knob-mid', '#fb923c'),
+      lo:   p('--joy-knob-lo',  '#7c2d12'),
+      ring: p('--joy-ring',     '#4ade80'),
+      tick: p('--joy-tick',     'rgba(168,184,204,0.18)'),
+    };
+  }
+
   // ---- Mode 21: Aim & Click (top-down RTS-style) -----------------
   function installAim(host, fireVec, stop, sendVerb) {
     host.innerHTML = '';
@@ -201,14 +217,15 @@
       // Spring line from center to knob
       ctx.strokeStyle = 'var(--cyan)'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(SZ/2, SZ/2); ctx.lineTo(SZ/2 + px, SZ/2 + py); ctx.stroke();
-      // Knob
+      // Knob — palette from the active theme
+      const J = joyPalette();
       const grad = ctx.createRadialGradient(SZ/2 + px - 8, SZ/2 + py - 8, 4, SZ/2 + px, SZ/2 + py, KNOB/2);
-      grad.addColorStop(0, '#fef9e7');
-      grad.addColorStop(0.6, '#fb923c');
-      grad.addColorStop(1, '#7c2d12');
+      grad.addColorStop(0, J.hi);
+      grad.addColorStop(0.6, J.mid);
+      grad.addColorStop(1, J.lo);
       ctx.fillStyle = grad;
       ctx.beginPath(); ctx.arc(SZ/2 + px, SZ/2 + py, KNOB/2, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = '#0a1018'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.strokeStyle = J.lo; ctx.lineWidth = 2; ctx.stroke();
       // Drive
       const xv = px / R, yv = -py / R;
       if (Math.abs(xv) < 0.06 && Math.abs(yv) < 0.06) stop();
@@ -599,12 +616,13 @@
       const [bx, by] = bobPos();
       ctx.strokeStyle = '#a8b8cc'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(pivX, pivY); ctx.lineTo(bx, by); ctx.stroke();
-      // Bob
+      // Bob — themed gradient
+      const J = joyPalette();
       const grad = ctx.createRadialGradient(bx-8, by-8, 4, bx, by, 22);
-      grad.addColorStop(0, '#fef9e7'); grad.addColorStop(0.6, '#fbbf24'); grad.addColorStop(1, '#7c2d12');
+      grad.addColorStop(0, J.hi); grad.addColorStop(0.6, J.mid); grad.addColorStop(1, J.lo);
       ctx.fillStyle = grad;
       ctx.beginPath(); ctx.arc(bx, by, 22, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = '#0a1018'; ctx.stroke();
+      ctx.strokeStyle = J.lo; ctx.stroke();
       // Drive: angle → steer; peak amplitude → throttle
       const xv = Math.sin(theta);                       // -1..1
       const yv = Math.min(1, Math.abs(theta) / 0.7);    // amplitude → throttle
@@ -659,12 +677,13 @@
         ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.moveTo(SZ/2, SZ/2); ctx.lineTo(SZ/2 + px, SZ/2 + py); ctx.stroke();
       }
-      // Ball
+      // Ball — themed gradient
+      const J = joyPalette();
       const grad = ctx.createRadialGradient(SZ/2 + px - 6, SZ/2 + py - 6, 4, SZ/2 + px, SZ/2 + py, 18);
-      grad.addColorStop(0, '#dcfce7'); grad.addColorStop(0.6, '#4ade80'); grad.addColorStop(1, '#15803d');
+      grad.addColorStop(0, J.hi); grad.addColorStop(0.6, J.mid); grad.addColorStop(1, J.lo);
       ctx.fillStyle = grad;
       ctx.beginPath(); ctx.arc(SZ/2 + px, SZ/2 + py, 16, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = '#0a1018'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.strokeStyle = J.lo; ctx.lineWidth = 2; ctx.stroke();
       // Drive: angle from up (0°) clockwise; speed = radius/R
       const dist = Math.hypot(px, py);
       const speed = Math.min(1, dist / R);
