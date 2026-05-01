@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="carbon">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maqueen Lite v4 — Schéma · Robi-9 Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<link rel="stylesheet" href="doc-shell.css">
+<script src="../workshops/newtab.js" defer></script>
+<style>
+  .doc-wrap { max-width: 1280px; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; background: var(--bg-card); border: 1.5px solid var(--border); padding: 12px 16px; border-radius: 12px; margin-bottom: 24px; font-size: 13px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 8px; }
+  .swatch { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
+  .schematic-wrap { background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 12px; padding: 24px; overflow-x: auto; }
+  svg.schematic { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  .footer-nav { margin-top: 40px; text-align: center; color: var(--steel); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1>Robi-9 Lab // Schéma</h1>
+      <div class="subtitle">Vue ingénieur · Maqueen Lite v4</div>
+    </div>
+  </div>
+  <div class="wd-header-right">
+    <select class="wd-select" id="themeSelect" aria-label="Thème">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;">🤖 App Robot</a>
+  </div>
+</header>
+
+<div class="doc-wrap">
+
+<div class="langbar">
+  <a href="schematics.html">🇬🇧 EN</a>
+  <a href="schematics.fr.html" class="active">🇫🇷 FR</a>
+  <a href="schematics.ar.html">🇩🇿 AR</a>
+</div>
+
+<h1>Maqueen Lite v4 — Schéma déduit</h1>
+<div class="subtitle">
+  Diagramme visuel des connexions entre le BBC micro:bit et la carte support Maqueen Lite v4. Chaque ligne est tracée à une référence source précise dans l'extension
+  <a href="https://github.com/DFRobot/pxt-maqueen" target="_blank" rel="noopener">pxt-maqueen</a> —
+  voir <a href="pinout.fr.html">pinout.fr.html</a> pour le tableau de preuves ligne par ligne.
+</div>
+
+<div class="legend">
+  <span class="legend-item"><span class="swatch" style="background:#fb923c"></span>Moteurs (PWM via I2C)</span>
+  <span class="legend-item"><span class="swatch" style="background:#f472b6"></span>4× RGB ambiance (I2C)</span>
+  <span class="legend-item"><span class="swatch" style="background:#00d4ff"></span>Servos S1/S2 (I2C)</span>
+  <span class="legend-item"><span class="swatch" style="background:#facc15"></span>LEDs simples (numérique)</span>
+  <span class="legend-item"><span class="swatch" style="background:#4ade80"></span>Capteurs (numérique)</span>
+  <span class="legend-item"><span class="swatch" style="background:#fbbf24"></span>Buzzer (PWM)</span>
+  <span class="legend-item"><span class="swatch" style="background:#c084fc"></span>Bus I2C (P19/P20)</span>
+</div>
+
+<div class="schematic-wrap">
+<svg class="schematic" viewBox="0 0 1280 800" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>.pin-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600}.comp-label{font-family:Inter,sans-serif;font-size:12px;font-weight:600}.comp-sub{font-family:Inter,sans-serif;font-size:9px;fill:#93a8c4}.reg{font-family:'JetBrains Mono',monospace;font-size:11px}</style>
+  </defs>
+  <text x="180"  y="40" text-anchor="middle" fill="#00d4ff" font-size="15" font-weight="700">BBC micro:bit V2</text>
+  <text x="540"  y="40" text-anchor="middle" fill="#00d4ff" font-size="15" font-weight="700">Composants GPIO direct</text>
+  <text x="900"  y="40" text-anchor="middle" fill="#c084fc" font-size="15" font-weight="700">Chip I2C 0x10</text>
+  <text x="1160" y="40" text-anchor="middle" fill="#fb923c" font-size="15" font-weight="700">Attachés en I2C</text>
+
+  <g id="microbit">
+    <rect x="40" y="60" width="280" height="540" rx="14" fill="#0a1628" stroke="#00d4ff" stroke-width="2" filter="url(#glow)"/>
+    <g transform="translate(95 90)"><rect width="170" height="100" rx="6" fill="#1d3556"/>
+      <g fill="#fbbf24" opacity="0.85">
+        <circle cx="22" cy="20" r="3.5"/><circle cx="55" cy="20" r="3.5"/><circle cx="85" cy="20" r="3.5"/><circle cx="115" cy="20" r="3.5"/><circle cx="148" cy="20" r="3.5"/>
+        <circle cx="22" cy="40" r="3.5"/><circle cx="55" cy="40" r="3.5"/><circle cx="85" cy="40" r="3.5"/><circle cx="115" cy="40" r="3.5"/><circle cx="148" cy="40" r="3.5"/>
+        <circle cx="22" cy="60" r="3.5"/><circle cx="55" cy="60" r="3.5"/><circle cx="85" cy="60" r="3.5"/><circle cx="115" cy="60" r="3.5"/><circle cx="148" cy="60" r="3.5"/>
+        <circle cx="22" cy="80" r="3.5"/><circle cx="55" cy="80" r="3.5"/><circle cx="85" cy="80" r="3.5"/><circle cx="115" cy="80" r="3.5"/><circle cx="148" cy="80" r="3.5"/>
+      </g>
+    </g>
+    <text x="180" y="208" text-anchor="middle" class="comp-sub">matrice LED 5×5</text>
+    <circle cx="80" cy="240" r="11" fill="#1d3556" stroke="#93a8c4"/><text x="80" y="244" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">A</text><text x="80" y="262" text-anchor="middle" class="comp-sub">P5</text>
+    <circle cx="280" cy="240" r="11" fill="#1d3556" stroke="#93a8c4"/><text x="280" y="244" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">B</text><text x="280" y="262" text-anchor="middle" class="comp-sub">P11</text>
+    <rect x="60" y="500" width="240" height="80" rx="6" fill="#0f1e35" stroke="#1d3556"/>
+    <text x="180" y="520" text-anchor="middle" fill="#93a8c4" font-size="11" font-weight="600">Libres pour ajouts utilisateur</text>
+    <text x="180" y="540" text-anchor="middle" class="pin-label" fill="#4ade80">P3 · P4 · P6 · P7</text>
+    <text x="180" y="558" text-anchor="middle" class="pin-label" fill="#4ade80">P9 · P10 · P15 · P16</text>
+    <text x="180" y="575" text-anchor="middle" class="comp-sub" font-style="italic">(P3/4/6/7/9/10 partagent la matrice LED)</text>
+  </g>
+
+  <g class="pin-label">
+    <circle cx="320" cy="110" r="5" fill="#fbbf24"/><text x="312" y="105" text-anchor="end" fill="#fbbf24">P0</text>
+    <circle cx="320" cy="160" r="5" fill="#4ade80"/><text x="312" y="155" text-anchor="end" fill="#4ade80">P1</text>
+    <circle cx="320" cy="210" r="5" fill="#4ade80"/><text x="312" y="205" text-anchor="end" fill="#4ade80">P2</text>
+    <circle cx="320" cy="280" r="5" fill="#facc15"/><text x="312" y="275" text-anchor="end" fill="#facc15">P8</text>
+    <circle cx="320" cy="330" r="5" fill="#facc15"/><text x="312" y="325" text-anchor="end" fill="#facc15">P12</text>
+    <circle cx="320" cy="380" r="5" fill="#4ade80"/><text x="312" y="375" text-anchor="end" fill="#4ade80">P13</text>
+    <circle cx="320" cy="430" r="5" fill="#4ade80"/><text x="312" y="425" text-anchor="end" fill="#4ade80">P14</text>
+    <circle cx="320" cy="475" r="5" fill="#c084fc"/><text x="312" y="470" text-anchor="end" fill="#c084fc">P19</text>
+    <circle cx="320" cy="490" r="5" fill="#c084fc"/><text x="312" y="485" text-anchor="end" fill="#c084fc">P20</text>
+  </g>
+
+  <g><rect x="480" y="92" width="160" height="36" rx="6" fill="#0a1628" stroke="#fbbf24" stroke-width="1.5"/><text x="498" y="115" fill="#fbbf24" font-size="14">♪</text><text x="520" y="116" fill="#fff" class="comp-label">Buzzer</text><text x="630" y="116" text-anchor="end" class="comp-sub">PWM</text></g>
+  <g><rect x="480" y="142" width="160" height="36" rx="6" fill="#0a1628" stroke="#4ade80" stroke-width="1.5"/><text x="495" y="166" fill="#fff" class="comp-label">Ultrason SR04</text><text x="630" y="166" text-anchor="end" class="comp-sub">TRIG</text></g>
+  <g><rect x="480" y="192" width="160" height="36" rx="6" fill="#0a1628" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="4 2"/><text x="495" y="216" fill="#93a8c4" class="comp-label">  └─ même SR04</text><text x="630" y="216" text-anchor="end" class="comp-sub">ECHO</text></g>
+  <g><rect x="480" y="262" width="160" height="36" rx="6" fill="#0a1628" stroke="#facc15" stroke-width="1.5"/><circle cx="498" cy="280" r="9" fill="#facc15" filter="url(#glow)" opacity="0.9"/><text x="520" y="285" fill="#fff" class="comp-label">LED Gauche</text><text x="630" y="285" text-anchor="end" class="comp-sub">numérique</text></g>
+  <g><rect x="480" y="312" width="160" height="36" rx="6" fill="#0a1628" stroke="#facc15" stroke-width="1.5"/><circle cx="498" cy="330" r="9" fill="#facc15" filter="url(#glow)" opacity="0.9"/><text x="520" y="335" fill="#fff" class="comp-label">LED Droite</text><text x="630" y="335" text-anchor="end" class="comp-sub">numérique</text></g>
+  <g><rect x="480" y="362" width="160" height="36" rx="6" fill="#0a1628" stroke="#4ade80" stroke-width="1.5"/><text x="495" y="385" fill="#fff" class="comp-label">Capteur ligne L</text><text x="630" y="385" text-anchor="end" class="comp-sub">numérique</text></g>
+  <g><rect x="480" y="412" width="160" height="36" rx="6" fill="#0a1628" stroke="#4ade80" stroke-width="1.5"/><text x="495" y="435" fill="#fff" class="comp-label">Capteur ligne R</text><text x="630" y="435" text-anchor="end" class="comp-sub">numérique</text></g>
+  <g><rect x="480" y="540" width="160" height="46" rx="6" fill="#0a1628" stroke="#c084fc" stroke-width="1.5"/><text x="560" y="560" text-anchor="middle" fill="#fff" class="comp-label">Récepteur IR</text><text x="560" y="577" text-anchor="middle" class="comp-sub" font-style="italic">NEC · maqueenIR.initIR(P16)</text></g>
+
+  <g>
+    <rect x="760" y="80" width="260" height="430" rx="10" fill="#1d3556" stroke="#c084fc" stroke-width="2" filter="url(#glow)"/>
+    <circle cx="760" cy="475" r="5" fill="#c084fc"/><circle cx="760" cy="490" r="5" fill="#c084fc"/>
+    <text x="745" y="478" text-anchor="end" class="pin-label" fill="#c084fc">SCL</text>
+    <text x="745" y="495" text-anchor="end" class="pin-label" fill="#c084fc">SDA</text>
+    <text x="890" y="115" text-anchor="middle" fill="#c084fc" font-size="16" font-weight="700">I2C 0x10</text>
+    <text x="890" y="134" text-anchor="middle" class="comp-sub">IC pilote moteur + servo + RGB</text>
+    <g class="reg">
+      <text x="780" y="180" fill="#93a8c4">registre</text><text x="900" y="180" fill="#93a8c4">→ composant</text>
+      <line x1="780" y1="188" x2="1000" y2="188" stroke="#1d3556"/>
+      <text x="780" y="220" fill="#fb923c">0x00</text><text x="900" y="220" fill="#fb923c">→ Moteur M1</text>
+      <text x="780" y="260" fill="#fb923c">0x02</text><text x="900" y="260" fill="#fb923c">→ Moteur M2</text>
+      <text x="780" y="320" fill="#00d4ff">0x14</text><text x="900" y="320" fill="#00d4ff">→ Servo S1</text>
+      <text x="780" y="380" fill="#00d4ff">0x15</text><text x="900" y="380" fill="#00d4ff">→ Servo S2</text>
+      <text x="780" y="440" fill="#f472b6">0x32</text><text x="900" y="440" fill="#f472b6">→ 4× RGB</text>
+    </g>
+    <circle cx="1020" cy="220" r="5" fill="#fb923c"/><circle cx="1020" cy="260" r="5" fill="#fb923c"/>
+    <circle cx="1020" cy="320" r="5" fill="#00d4ff"/><circle cx="1020" cy="380" r="5" fill="#00d4ff"/>
+    <circle cx="1020" cy="440" r="5" fill="#f472b6"/>
+  </g>
+
+  <g><rect x="1080" y="200" width="170" height="46" rx="6" fill="#0a1628" stroke="#fb923c" stroke-width="1.5"/><text x="1165" y="222" text-anchor="middle" fill="#fff" class="comp-label">Moteur N20 M1</text><text x="1165" y="237" text-anchor="middle" class="comp-sub">roue gauche</text></g>
+  <g><rect x="1080" y="240" width="170" height="46" rx="6" fill="#0a1628" stroke="#fb923c" stroke-width="1.5"/><text x="1165" y="262" text-anchor="middle" fill="#fff" class="comp-label">Moteur N20 M2</text><text x="1165" y="277" text-anchor="middle" class="comp-sub">roue droite</text></g>
+  <g><rect x="1080" y="302" width="170" height="36" rx="6" fill="#0a1628" stroke="#00d4ff" stroke-width="1.5"/><text x="1165" y="324" text-anchor="middle" fill="#fff" class="comp-label">Servo S1</text></g>
+  <g><rect x="1080" y="362" width="170" height="36" rx="6" fill="#0a1628" stroke="#00d4ff" stroke-width="1.5"/><text x="1165" y="384" text-anchor="middle" fill="#fff" class="comp-label">Servo S2</text></g>
+  <g><rect x="1080" y="418" width="170" height="46" rx="6" fill="#0a1628" stroke="#f472b6" stroke-width="1.5"/><text x="1165" y="436" text-anchor="middle" fill="#fff" class="comp-label">4× RGB ambiance</text>
+    <g transform="translate(1100 446)"><circle cx="10" cy="6" r="6" fill="#ef4444" filter="url(#glow)"/><circle cx="42" cy="6" r="6" fill="#22c55e" filter="url(#glow)"/><circle cx="80" cy="6" r="6" fill="#3b82f6" filter="url(#glow)"/><circle cx="118" cy="6" r="6" fill="#a855f7" filter="url(#glow)"/></g>
+  </g>
+
+  <line x1="325" y1="110" x2="480" y2="110" stroke="#fbbf24" stroke-width="2"/>
+  <line x1="325" y1="160" x2="480" y2="160" stroke="#4ade80" stroke-width="2"/>
+  <line x1="325" y1="210" x2="480" y2="210" stroke="#4ade80" stroke-width="2"/>
+  <line x1="325" y1="280" x2="480" y2="280" stroke="#facc15" stroke-width="2"/>
+  <line x1="325" y1="330" x2="480" y2="330" stroke="#facc15" stroke-width="2"/>
+  <line x1="325" y1="380" x2="480" y2="380" stroke="#4ade80" stroke-width="2"/>
+  <line x1="325" y1="430" x2="480" y2="430" stroke="#4ade80" stroke-width="2"/>
+  <line x1="325" y1="475" x2="760" y2="475" stroke="#c084fc" stroke-width="2.5"/>
+  <line x1="325" y1="490" x2="760" y2="490" stroke="#c084fc" stroke-width="2.5"/>
+  <line x1="1025" y1="220" x2="1080" y2="220" stroke="#fb923c" stroke-width="2"/>
+  <line x1="1025" y1="260" x2="1080" y2="260" stroke="#fb923c" stroke-width="2"/>
+  <line x1="1025" y1="320" x2="1080" y2="320" stroke="#00d4ff" stroke-width="2"/>
+  <line x1="1025" y1="380" x2="1080" y2="380" stroke="#00d4ff" stroke-width="2"/>
+  <line x1="1025" y1="440" x2="1080" y2="440" stroke="#f472b6" stroke-width="2"/>
+
+  <g transform="translate(0 630)">
+    <rect x="40" y="0" width="1200" height="160" rx="10" fill="#0f1e35" stroke="#1d3556"/>
+    <text x="60" y="28" fill="#00d4ff" font-size="14" font-weight="700">Source — chaque connexion tracée à pxt-maqueen</text>
+    <g class="reg" fill="#93a8c4">
+      <text x="60"  y="56">P0  buzzer  ← broche haut-parleur micro:bit V2 (convention)</text>
+      <text x="60"  y="76">P1  TRIG    ← maqueen.ts:164  pins.digitalWritePin(DigitalPin.P1, 1)</text>
+      <text x="60"  y="96">P2  ECHO    ← maqueen.ts:172  pins.pulseIn(DigitalPin.P2, ...)</text>
+      <text x="60"  y="116">P8  LED L  ← maqueen.ts:287  pins.digitalWritePin(DigitalPin.P8, ledswitch)</text>
+      <text x="60"  y="136">P12 LED R  ← maqueen.ts:289  pins.digitalWritePin(DigitalPin.P12, ledswitch)</text>
+      <text x="640" y="56">P13 Ligne L  ← maqueen.ts:267  pins.digitalReadPin(DigitalPin.P13)</text>
+      <text x="640" y="76">P14 Ligne R  ← maqueen.ts:269  pins.digitalReadPin(DigitalPin.P14)</text>
+      <text x="640" y="96">I2C 0x10    ← maqueen.ts:19   const MOTER_ADDRESSS = 0x10</text>
+      <text x="640" y="116">  reg 0x00/0x02 → M1/M2  ← maqueen.ts:202, 208  buf[0] = 0x00 / 0x02</text>
+      <text x="640" y="136">  reg 0x14/0x15 → S1/S2 · 0x32 → RGB  ← lignes 308, 311, 659</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+<h2>Lire ce diagramme</h2>
+<table>
+  <tr><th>Élément visuel</th><th>Ce qu'il représente</th></tr>
+  <tr><td><strong>Broche colorée pleine</strong> sur le bord droit du micro:bit</td><td>Une broche GPIO du micro:bit effectivement utilisée par la carte Maqueen (couleur = composant connecté)</td></tr>
+  <tr><td><strong>Ligne pleine</strong> entre broche et composant</td><td>Connexion GPIO directe — un fil, une fonction</td></tr>
+  <tr><td><strong>Lignes violettes du bus I2C</strong> (P19/P20)</td><td>Bus deux-fils partagé atteignant l'IC pilote moteur et (en pointillés) le réseau RGB — multiplexé par adresse I2C</td></tr>
+  <tr><td><strong>Blocs en éventail depuis le chip I2C 0x10</strong></td><td>Composants pilotés <em>à travers</em> l'IC pilote moteur, adressés par registre : M1, M2, S1, S2, RGB</td></tr>
+  <tr><td><strong>Bloc récepteur IR à contour pointillé</strong></td><td>Connecté via une broche fixe interne à <code>maqueenIR.cpp</code> — non déclarée dans la couche TypeScript</td></tr>
+  <tr><td><strong>Broches libres listées sous le micro:bit</strong></td><td>P3/P4/P6/P7/P9/P10/P15/P16 — disponibles pour ajouts d'enfant (P3/4/6/7/9/10 partagent la matrice LED ; désactiver l'affichage d'abord)</td></tr>
+</table>
+
+<h2>Ce qui n'est <em>pas</em> montré</h2>
+<p>La connexion buzzer sur <code>P0</code> est représentée mais reste une déduction par convention — pxt-maqueen ne la déclare pas. La Maqueen Lite v4 câble le buzzer embarqué sur <code>P0</code> selon la convention standard du haut-parleur micro:bit V2 ; cela correspond aux exemples DFRobot sur le
+  <a href="https://wiki.dfrobot.com/rob0148-en/" target="_blank" rel="noopener">wiki produit</a>.</p>
+<p>Les ports d'extension Gravity (P0, P1, P2) ne sont <strong>pas dessinés séparément</strong> — ils partagent les broches avec le buzzer et l'ultrason. Y brancher quoi que ce soit désactive la fonction embarquée sur cette broche. Le futur cadre « Add-on » (verbes <code>ADDON:*</code> dans le firmware) gérera ce conflit proprement.</p>
+
+<div class="footer-nav">
+  <a href="pinout.fr.html">← retour au pinout</a> ·
+  <a href="plan.fr.html">plan de construction</a> ·
+  <a href="../index.html">Maqueen Lab →</a>
+</div>
+
+</div>
+
+<div class="wd-band wd-band-bottom"></div>
+<footer class="wd-footer">
+  <span>propulsé par <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
+  <span class="sep">·</span>
+  <span>Robi-9 Lab · Schéma</span>
+</footer>
+
+<script>
+  (function () {
+    const sel = document.getElementById('themeSelect');
+    function apply(t) { document.documentElement.setAttribute('data-theme', t); if (sel) sel.value = t; try { localStorage.setItem('robi.theme', t); } catch (e) {} }
+    try { const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme'); if (t) apply(t); } catch (e) {}
+    if (sel) sel.addEventListener('change', e => apply(e.target.value));
+  })();
+</script>
+
+</body>
+</html>
