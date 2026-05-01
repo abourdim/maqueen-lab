@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="carbon">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Maqueen Lab — Guide complet</title>
+<title>Maqueen Lab — Guide complet · Robi-9 Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<script src="../workshops/newtab.js" defer></script>
 <style>
 :root {
   --bg:#050e1f; --card:#0b1a33; --card2:#0f2040;
@@ -252,6 +254,30 @@ footer{text-align:center;padding:24px 20px;border-top:1px solid var(--border);
 </style>
 </head>
 <body>
+
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1>Robi-9 Lab // Guide</h1>
+      <div class="subtitle">Manuel du pilote · Maqueen Lab</div>
+    </div>
+  </div>
+  <div class="wd-header-right">
+    <a href="guide.html" class="wd-select" style="text-decoration:none;">🇬🇧 EN</a>
+    <a href="guide.fr.html" class="wd-select" style="text-decoration:none; border-color:var(--neon); color:var(--neon);">🇫🇷 FR</a>
+    <a href="guide.ar.html" class="wd-select" style="text-decoration:none;">🇩🇿 AR</a>
+    <select class="wd-select" id="themeSelect" aria-label="Thème">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <a class="wd-select" href="../index.html" style="text-decoration:none;">🤖 App</a>
+  </div>
+</header>
 
 <div class="hero">
   <span class="hero-icon">🤖</span>
@@ -1265,6 +1291,22 @@ footer{text-align:center;padding:24px 20px;border-top:1px solid var(--border);
   <p>🤖 <strong>Maqueen Lab</strong> — Guide complet · <a href="../start.html" style="color:var(--accent)">🚀 Premiers pas</a> · <a href="../index.html" style="color:var(--accent)">Retour à l'app</a></p>
   <p style="margin-top:6px;color:#4a6a8a">Robot DFRobot Maqueen + BBC micro:bit v1 &amp; v2 · Chrome &amp; Edge uniquement</p>
 </footer>
+
+<div class="wd-band wd-band-bottom"></div>
+<footer class="wd-footer">
+  <span>propulsé par <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
+  <span class="sep">·</span>
+  <span>Robi-9 Lab · Guide</span>
+</footer>
+
+<script>
+  (function () {
+    const sel = document.getElementById('themeSelect');
+    function apply(t) { document.documentElement.setAttribute('data-theme', t); if (sel) sel.value = t; try { localStorage.setItem('robi.theme', t); } catch (e) {} }
+    try { const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme'); if (t) apply(t); } catch (e) {}
+    if (sel) sel.addEventListener('change', e => apply(e.target.value));
+  })();
+</script>
 
 <script>
 /* ── Navigation ── */

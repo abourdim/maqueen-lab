@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="carbon">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Maqueen Lab — Pilot's Handbook</title>
+<title>Maqueen Lab — Pilot's Handbook · Robi-9 Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<script src="../workshops/newtab.js" defer></script>
 <style>
   /* ============================================================
      MAQUEEN LAB · USER GUIDE
@@ -543,6 +545,8 @@
 </head>
 <body>
 
+<div class="wd-band wd-band-top"></div>
+
 <!-- ============================================================
      STICKY HEADER — workshop logo + brand + language switcher.
      Sticky so users can jump back home or change language while
@@ -560,6 +564,13 @@
     <a href="guide.html"    class="lang-pill active">🇬🇧 EN</a>
     <a href="guide.fr.html" class="lang-pill">🇫🇷 FR</a>
     <a href="guide.ar.html" class="lang-pill">🇩🇿 AR</a>
+    <select class="wd-select" id="themeSelect" aria-label="Theme" style="margin-left:8px;">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
     <a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener" class="gh-link">⭐ GitHub</a>
   </nav>
 </header>
@@ -2087,6 +2098,30 @@
 </footer>
 
 <a href="#" class="back-top" aria-label="Back to top">↑ top</a>
+
+<div class="wd-band wd-band-bottom"></div>
+<footer class="wd-footer">
+  <span>powered by <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
+  <span class="sep">·</span>
+  <span>Robi-9 Lab · User Guide</span>
+</footer>
+
+<script>
+  // Theme picker — inherit from main app, persist locally
+  (function () {
+    const sel = document.getElementById('themeSelect');
+    function apply(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      if (sel) sel.value = t;
+      try { localStorage.setItem('robi.theme', t); } catch (e) {}
+    }
+    try {
+      const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme');
+      if (t) apply(t);
+    } catch (e) {}
+    if (sel) sel.addEventListener('change', e => apply(e.target.value));
+  })();
+</script>
 
 </body>
 </html>
