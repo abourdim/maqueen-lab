@@ -218,6 +218,7 @@
 <div class="controls">
   <button class="btn" id="play-tour">▶ Visite guidée de toutes les pièces</button>
   <button class="btn secondary" id="toggle-voice">🔇 Voix : off</button>
+  <select class="btn secondary" id="voice-select" aria-label="Choisis une voix" style="min-width:160px;"><option value="">🎤 Voix auto</option></select>
   <a href="schematics.fr.html" class="btn secondary">Pour les grands → vue ingénieur</a>
 </div>
 
@@ -243,9 +244,21 @@
   const ttTitle = document.getElementById('tt-title'); const ttDesc = document.getElementById('tt-desc');
   const stage = document.querySelector('.stage-wrap');
   const voiceBtn = document.getElementById('toggle-voice'); const tourBtn = document.getElementById('play-tour');
-  let voiceOn = false;
+  const voiceSel = document.getElementById('voice-select');
+  let voiceOn = false; let pickedVoice = null;
   voiceBtn.addEventListener('click', () => { voiceOn = !voiceOn; voiceBtn.textContent = voiceOn ? '🔊 Voix : on' : '🔇 Voix : off'; });
-  function speak(text) { if (!voiceOn || !window.speechSynthesis) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; u.rate = 0.95; u.pitch = 1.1; speechSynthesis.speak(u); }
+  function loadVoices() {
+    if (!window.speechSynthesis) return;
+    const all = speechSynthesis.getVoices();
+    const matches = all.filter(v => v.lang.toLowerCase().startsWith('fr'));
+    const list = matches.length ? matches : all;
+    voiceSel.innerHTML = '<option value="">🎤 Voix auto</option>' + list.map(v => `<option value="${v.name}">${v.name} · ${v.lang}${v.default ? ' ★' : ''}</option>`).join('');
+    const saved = localStorage.getItem('robi.voice.fr');
+    if (saved) { const v = all.find(x => x.name === saved); if (v) { voiceSel.value = saved; pickedVoice = v; } }
+  }
+  voiceSel.addEventListener('change', e => { pickedVoice = speechSynthesis.getVoices().find(v => v.name === e.target.value) || null; try { localStorage.setItem('robi.voice.fr', e.target.value); } catch (e) {} });
+  if (window.speechSynthesis) { speechSynthesis.onvoiceschanged = loadVoices; loadVoices(); }
+  function speak(text) { if (!voiceOn || !window.speechSynthesis) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'fr-FR'; u.rate = 0.95; u.pitch = 1.1; if (pickedVoice) u.voice = pickedVoice; speechSynthesis.speak(u); }
   function showTooltip(t) { const r = t.getBoundingClientRect(); const sr = stage.getBoundingClientRect(); ttTitle.textContent = t.dataset.title; ttDesc.textContent = t.dataset.desc; tooltip.style.left = (r.left - sr.left + r.width/2) + 'px'; tooltip.style.top = (r.top - sr.top + r.height/2) + 'px'; tooltip.classList.add('show'); }
   function hideTooltip() { tooltip.classList.remove('show'); }
   document.querySelectorAll('.comp').forEach(c => { c.addEventListener('mouseenter', () => showTooltip(c)); c.addEventListener('mouseleave', hideTooltip); c.addEventListener('click', () => { showTooltip(c); speak(c.dataset.title.replace(/[^\w\sÀ-ÿ]/g, '') + '. ' + c.dataset.desc); }); });

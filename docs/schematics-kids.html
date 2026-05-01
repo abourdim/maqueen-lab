@@ -296,6 +296,7 @@
 <div class="controls">
   <button class="btn" id="play-tour">▶ Play tour of all parts</button>
   <button class="btn secondary" id="toggle-voice">🔇 Voice: off</button>
+  <select class="btn secondary" id="voice-select" aria-label="Pick a voice" style="min-width:160px;"><option value="">🎤 Auto voice</option></select>
   <a href="schematics.html" class="btn secondary">For grown-ups → engineer view</a>
 </div>
 
@@ -324,18 +325,49 @@
   const stage = document.querySelector('.stage-wrap');
   const voiceBtn = document.getElementById('toggle-voice');
   const tourBtn = document.getElementById('play-tour');
+  const voiceSel = document.getElementById('voice-select');
   let voiceOn = false;
+  let pickedVoice = null;
 
   voiceBtn.addEventListener('click', () => {
     voiceOn = !voiceOn;
     voiceBtn.textContent = voiceOn ? '🔊 Voice: on' : '🔇 Voice: off';
   });
 
+  function pageLangPrefix() {
+    return (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
+  }
+  function loadVoices() {
+    if (!window.speechSynthesis) return;
+    const prefix = pageLangPrefix();
+    const all = speechSynthesis.getVoices();
+    // Match same lang first; if none, fall back to all voices
+    const matches = all.filter(v => v.lang.toLowerCase().startsWith(prefix));
+    const list = matches.length ? matches : all;
+    voiceSel.innerHTML = '<option value="">🎤 Auto voice</option>' +
+      list.map(v => `<option value="${v.name}">${v.name} · ${v.lang}${v.default ? ' ★' : ''}</option>`).join('');
+    const saved = localStorage.getItem('robi.voice.' + prefix);
+    if (saved) {
+      const v = all.find(x => x.name === saved);
+      if (v) { voiceSel.value = saved; pickedVoice = v; }
+    }
+  }
+  voiceSel.addEventListener('change', e => {
+    const all = speechSynthesis.getVoices();
+    pickedVoice = all.find(v => v.name === e.target.value) || null;
+    try { localStorage.setItem('robi.voice.' + pageLangPrefix(), e.target.value); } catch (e) {}
+  });
+  if (window.speechSynthesis) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+  }
+
   function speak(text, lang) {
     if (!voiceOn || !window.speechSynthesis) return;
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang || 'en-US'; u.rate = 0.95; u.pitch = 1.1;
+    if (pickedVoice) u.voice = pickedVoice;
     speechSynthesis.speak(u);
   }
   function showTooltip(target) {
