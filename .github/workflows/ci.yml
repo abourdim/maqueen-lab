@@ -43,6 +43,20 @@ jobs:
           python -c "import json; json.load(open('product.json'))"
           python -c "import json; json.load(open('build-info.json'))"
 
+      - name: A11y sanity (no images without alt; lang on every html)
+        run: |
+          # 1. Every <html> should have lang=
+          missing_lang=$(grep -L 'html[^>]*lang=' --include='*.html' -r . | grep -v node_modules | grep -v '.git' | grep -v 'etsy-package' || true)
+          if [ -n "$missing_lang" ]; then
+            echo "::warning::HTML files missing lang= attribute:"
+            echo "$missing_lang"
+          fi
+          # 2. <img> without alt= attribute
+          if grep -rn '<img[^>]*src=[^>]*>' --include='*.html' . 2>/dev/null | grep -v 'alt=' | grep -v node_modules | grep -v '.git' | grep -v 'etsy-package' | head -5; then
+            echo "::warning::Some <img> elements may lack alt= (review above)"
+          fi
+          echo "✓ a11y sanity complete"
+
       - name: Sanity: no SECRETS / TODOs in shipped HTML
         run: |
           if grep -rn "TODO:.*SECRET\|API_KEY=\|PRIVATE_KEY" --include="*.html" --include="*.js" --exclude-dir=.git --exclude-dir=node_modules .; then

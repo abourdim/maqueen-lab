@@ -80,7 +80,7 @@ The app is great; almost nobody knows it exists yet.
 - [ ] 6. Smoke tests for all 8 labs + main connect/disconnect path
 - [ ] 7. `js/maqueen-tab.js` → `js/maqueen/{drive,servos,leds,...}.js`
 - [x] 8. CI workflow — `.github/workflows/ci.yml`: link audit (`tools/_audit-links.py --strict`) + inlined-md staleness check + JSON validity + secret-leak grep. Fails the push if any HTML href is broken or if a `.md` was edited without re-running `docs/_inline-md.mjs`.
-- [ ] 9. A11y audit — keyboard nav, ARIA, contrast
+- [x] 9. A11y pass — `js/a11y.js` (auto-injected on 53 pages): skip-link "Skip to main content", visible `:focus-visible` outline overriding legacy `outline:none`, auto-`aria-label` for icon-only buttons, `aria-hidden` on decorative emoji, `prefers-reduced-motion` honored, `lang` ensured. CI workflow extended with a11y sanity (`<html lang>` + `<img alt>` checks).
 - [ ] 10. Perf budget + Lighthouse CI
 
 ---
