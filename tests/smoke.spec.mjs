@@ -31,6 +31,21 @@ function attachErrCollector(page) {
   page.on('pageerror', (err) => page._mqErrs.push(err.message));
 }
 
+// Several hubs run infinite CSS animations (Maqueen mascot blink, antenna pulse,
+// LED breathe). Playwright's BrowserContext teardown waits for these to settle,
+// causing 30s timeouts on otherwise-passing tests. Call this before the test
+// returns to make teardown fast.
+async function stopAnimations(page) {
+  try {
+    await page.evaluate(() => {
+      // Suspend all CSS animations + transitions so teardown isn't blocked
+      const s = document.createElement('style');
+      s.textContent = '*, *::before, *::after { animation: none !important; transition: none !important; }';
+      document.head.appendChild(s);
+    });
+  } catch (e) { /* page may already be closed */ }
+}
+
 // ───── 1. Hub pages all load with an h1 ─────
 const HUBS = [
   { url: '/index.html',                 sel: 'h1' },
@@ -42,11 +57,12 @@ const HUBS = [
 for (const hub of HUBS) {
   test(`hub loads: ${hub.url}`, async ({ page }) => {
     attachErrCollector(page);
-    const resp = await page.goto(hub.url);
+    const resp = await page.goto(hub.url, { waitUntil: 'domcontentloaded' });
     expect(resp.status()).toBe(200);
     await expect(page.locator('h1, h2, h3').first()).toBeAttached();
     if (hub.text) await expect(page.locator('h1, h2').first()).toContainText(hub.text);
     await expectNoConsoleErrors(page);
+    await stopAnimations(page);
   });
 }
 
@@ -55,7 +71,7 @@ const LAB_NAMES = ['joystick', 'distance', 'music', 'servo', 'ir', 'lights', 'vi
 for (const name of LAB_NAMES) {
   test(`lab loads: ${name}`, async ({ page }) => {
     attachErrCollector(page);
-    const resp = await page.goto(`/labs/${name}-lab.html`);
+    const resp = await page.goto(`/labs/${name}-lab.html`, { waitUntil: 'domcontentloaded' });
     expect(resp.status()).toBe(200);
     await expect(page.locator('h1, h2, h3').first()).toBeAttached();
     // Cross-link to the lesson plan must exist (Phase-2A bonus link)
@@ -68,6 +84,7 @@ for (const name of LAB_NAMES) {
     expect(hasTelemetry).toBe(true);
     expect(hasShare).toBe(true);
     await expectNoConsoleErrors(page);
+    await stopAnimations(page);
   });
 }
 

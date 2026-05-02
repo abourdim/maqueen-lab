@@ -93,13 +93,22 @@ function processHtml(htmlPath) {
   return null;
 }
 
-console.log('🔗 Inlining markdown into HTML shells…');
+const QUIET = process.argv.includes('--quiet');
 let updated = 0, skipped = 0;
+const updates = [];
 for (const dir of SCAN_DIRS) {
   for (const htmlPath of findHtml(dir)) {
     const result = processHtml(htmlPath);
-    if (result) { console.log(`  ✓ ${htmlPath.replace(REPO_ROOT, '.').replace(/\\/g, '/')} ← ${result}`); updated++; }
+    if (result) { updates.push({ htmlPath, result }); updated++; }
     else        { skipped++; }
   }
 }
-console.log(`✅ Done — ${updated} files updated, ${skipped} skipped.`);
+// Be quiet on no-op runs (most pre-commits) — only print when something changed
+// or when explicitly running interactively without --quiet.
+if (updated > 0) {
+  console.log('🔗 Inlining markdown into HTML shells…');
+  for (const u of updates) console.log(`  ✓ ${u.htmlPath.replace(REPO_ROOT, '.').replace(/\\/g, '/')} ← ${u.result}`);
+  console.log(`✅ Done — ${updated} files updated.`);
+} else if (!QUIET) {
+  console.log(`✓ inline-md: ${skipped} files already in sync.`);
+}

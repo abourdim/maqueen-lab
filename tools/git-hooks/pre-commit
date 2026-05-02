@@ -94,8 +94,9 @@ if ! git diff --cached --quiet -- 'docs/*.md' 'docs/lessons/*.md' 'README.md' 'R
 fi
 if [ "$MD_CHANGED" = "1" ] && [ -f docs/_inline-md.mjs ]; then
   if command -v node >/dev/null 2>&1; then
-    echo "[pre-commit] markdown changed → inlining into HTML shells…" >&2
-    node docs/_inline-md.mjs >&2 || echo "[pre-commit] WARN: inline-md.mjs failed (non-fatal)" >&2
+    # --quiet: only prints if something actually got updated. Keeps docs-only
+    # commits clean when the html shells are already in sync.
+    node docs/_inline-md.mjs --quiet >&2 || echo "[pre-commit] WARN: inline-md.mjs failed (non-fatal)" >&2
     git add 'docs/*.html' 'docs/lessons/*.html' 'README.html' 2>/dev/null || true
   else
     echo "[pre-commit] node not on PATH — skipping markdown inline (run 'node docs/_inline-md.mjs' manually)" >&2
