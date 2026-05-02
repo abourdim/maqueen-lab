@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Curriculum mapping · Maqueen Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<link rel="stylesheet" href="doc-shell.css">
+<style>
+  .md table { border-collapse: collapse; margin: 12px 0; width: 100%; font-size: 14px; }
+  .md table th, .md table td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; vertical-align: top; }
+  .md table th { background: var(--bg-card); color: var(--text); font-weight: 700; }
+  .md pre { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; overflow-x: auto; font-size: 13px; }
+  .md code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; }
+  .md p code, .md li code, .md td code { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; }
+  .md blockquote { border-left: 3px solid var(--cyan); padding: 4px 14px; color: var(--steel); margin: 12px 0; background: var(--bg-card); }
+  .md h2 { color: var(--neon); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-top: 36px; }
+  .md h3 { color: var(--cyan); margin-top: 22px; }
+  .md ul li, .md ol li { margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1>Maqueen Lab // Curriculum mapping</h1>
+      <div class="subtitle">8 Labs + 10 games × FR Cycle 3/4 + US/UK K-8</div>
+    </div>
+  </div>
+  <div class="wd-header-right">
+    <select class="wd-select" id="themeSelect" aria-label="Theme">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <select class="wd-select" id="langSelect" aria-label="Language">
+      <option value="en">EN</option>
+      <option value="fr">FR</option>
+      <option value="ar">AR</option>
+    </select>
+    <a class="wd-select" href="index.html" style="text-decoration:none; border-bottom:none;">📚 Docs</a>
+    <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;">🤖 Robot App</a>
+  </div>
+</header>
+
+<main class="wd-main">
+  <article class="md" id="mdContent">
+    <p style="color:var(--steel)">Loading <code>curriculum.md</code>…</p>
+  </article>
+</main>
+
+<footer class="wd-footer">
+  <span>▣ Maqueen Lab · Open source — MIT</span>
+  <span><a href="curriculum.md">Raw markdown</a></span>
+</footer>
+
+<script>
+  window.MD_FILE  = 'curriculum.md';
+  window.MD_TITLE = 'Curriculum mapping';
+</script>
+<script src="_md-render.js" defer></script>
+</body>
+</html>

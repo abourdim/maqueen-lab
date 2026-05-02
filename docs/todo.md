@@ -62,7 +62,7 @@ The app is great; almost nobody knows it exists yet.
 - [ ] 2. Etsy package v1 — listing-ready
 - [ ] 3. Teacher kit — 8 lesson plans + rubrics
 - [x] 4. PDF export from flyer/poster — `💾 PDF` button on both, with first-click i18n toast hint pointing to "Save as PDF" destination
-- [ ] 5. Curriculum mapping (FR cycles + EN grades)
+- [x] 5. Curriculum mapping (FR cycles + EN grades) — [docs/curriculum.md](curriculum.html): 8 Labs + 10 games × FR Cycle 3/4 · NGSS · CCSS-M · CSTA, with by-grade quick-pick + year-long unit + 4h workshop
 
 ---
 
