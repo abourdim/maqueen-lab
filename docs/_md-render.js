@@ -149,6 +149,40 @@
     try { localStorage.setItem('robi.lang', l); } catch (e) {}
     var sel = document.getElementById('langSelect');
     if (sel) sel.value = l;
+    // Re-load the markdown in the chosen language (will fall back to base file if no translation)
+    if (window._mdRenderReady) loadMd(l);
+  }
+  // Try lang-specific file first (e.g. README.fr.md), fall back to base (README.md)
+  function loadMd(lang) {
+    var file = window.MD_FILE;
+    var host = document.getElementById('mdContent');
+    if (!file || !host) return;
+    var base = file.replace(/\.md$/i, '');
+    var tries = [];
+    if (lang && lang !== 'en') tries.push(base + '.' + lang + '.md');
+    tries.push(file);
+    var attempt = 0;
+    function next() {
+      if (attempt >= tries.length) {
+        host.innerHTML = '<p style="color:var(--danger)">Could not load <code>' + file + '</code></p>';
+        return;
+      }
+      var url = tries[attempt++];
+      fetch(url).then(function (r) {
+        if (!r.ok) { next(); return; }
+        return r.text().then(function (txt) {
+          host.innerHTML = renderMd(txt);
+          // Show "translation pending" hint when we fell back to EN on a non-EN lang
+          if (lang && lang !== 'en' && url === file) {
+            var hint = document.createElement('p');
+            hint.style.cssText = 'color:var(--steel);font-style:italic;border-left:3px solid var(--amber);padding:6px 12px;margin:0 0 16px;background:var(--bg-card)';
+            hint.innerHTML = '⚠ Translation for <b>' + lang.toUpperCase() + '</b> not available yet — showing English source.';
+            host.insertBefore(hint, host.firstChild);
+          }
+        });
+      }).catch(function () { next(); });
+    }
+    next();
   }
 
   // ───────── Boot ─────────
@@ -164,19 +198,8 @@
     var ls = document.getElementById('langSelect');
     if (ls) ls.addEventListener('change', function () { applyLang(this.value); });
 
-    var file = window.MD_FILE;
-    var host = document.getElementById('mdContent');
-    if (!file || !host) return;
-    fetch(file).then(function (r) {
-      if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
-      return r.text();
-    }).then(function (txt) {
-      host.innerHTML = renderMd(txt);
-    }).catch(function (err) {
-      host.innerHTML = '<p style="color:var(--danger)">Could not load <code>' + file
-        + '</code>: ' + err.message + '</p><p>Open the raw file directly: '
-        + '<a href="' + file + '">' + file + '</a></p>';
-    });
+    window._mdRenderReady = true;
+    loadMd(savedLang);
   }
 
   if (document.readyState === 'loading') {
