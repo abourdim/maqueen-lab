@@ -152,11 +152,42 @@
     // Re-load the markdown in the chosen language (will fall back to base file if no translation)
     if (window._mdRenderReady) loadMd(l);
   }
-  // Try lang-specific file first (e.g. README.fr.md), fall back to base (README.md)
+  // Source priority:
+  //   1. <script type="text/markdown" id="md-<lang>"> for chosen lang
+  //   2. <script type="text/markdown" id="md-en"> as fallback
+  //   3. fetch <file>.<lang>.md (HTTP only — fails on file:// silently)
+  //   4. fetch <file> (English source)
+  // Inline blocks let lessons work over file:// (no CORS); fetch is the dev hot-reload path.
+  function readInline(id) {
+    var el = document.getElementById(id);
+    if (!el) return null;
+    // Decode escaped markers used by the inliner
+    return el.textContent.replace(/<\\\/script>/g, '</script>');
+  }
   function loadMd(lang) {
     var file = window.MD_FILE;
     var host = document.getElementById('mdContent');
-    if (!file || !host) return;
+    if (!host) return;
+    var inlineLang = readInline('md-' + lang);
+    var inlineEn   = readInline('md-en');
+    if (inlineLang) {
+      host.innerHTML = renderMd(inlineLang);
+      return;
+    }
+    if (inlineEn && lang !== 'en') {
+      host.innerHTML = renderMd(inlineEn);
+      var hint = document.createElement('p');
+      hint.style.cssText = 'color:var(--steel);font-style:italic;border-left:3px solid var(--amber);padding:6px 12px;margin:0 0 16px;background:var(--bg-card)';
+      hint.innerHTML = '⚠ Translation for <b>' + lang.toUpperCase() + '</b> not available yet — showing English source.';
+      host.insertBefore(hint, host.firstChild);
+      return;
+    }
+    if (inlineEn) {
+      host.innerHTML = renderMd(inlineEn);
+      return;
+    }
+    if (!file) return;
+    // Fall back to network fetch (dev mode over HTTP)
     var base = file.replace(/\.md$/i, '');
     var tries = [];
     if (lang && lang !== 'en') tries.push(base + '.' + lang + '.md');
@@ -164,7 +195,9 @@
     var attempt = 0;
     function next() {
       if (attempt >= tries.length) {
-        host.innerHTML = '<p style="color:var(--danger)">Could not load <code>' + file + '</code></p>';
+        host.innerHTML = '<p style="color:var(--danger)">Could not load <code>' + file
+          + '</code>. If you opened this page via <code>file://</code>, serve it via HTTP instead — '
+          + 'or use the inlined version (rebuild docs).</p>';
         return;
       }
       var url = tries[attempt++];
@@ -172,7 +205,6 @@
         if (!r.ok) { next(); return; }
         return r.text().then(function (txt) {
           host.innerHTML = renderMd(txt);
-          // Show "translation pending" hint when we fell back to EN on a non-EN lang
           if (lang && lang !== 'en' && url === file) {
             var hint = document.createElement('p');
             hint.style.cssText = 'color:var(--steel);font-style:italic;border-left:3px solid var(--amber);padding:6px 12px;margin:0 0 16px;background:var(--bg-card)';

@@ -64,5 +64,416 @@
   window.MD_TITLE = 'Roadmap';
 </script>
 <script src="_md-render.js" defer></script>
+<!-- inlined-md:start -->
+<script type="text/markdown" id="md-en"># Maqueen Lab — Roadmap
+
+> **Phase 1 (10 + 10 = 20 items) is complete as of v0.1.60.** Phase 2 below
+> shifts focus from *features* → *reach, hardening, depth*. Pick whichever
+> chunk fits the next session — each item is self-contained.
+
+---
+
+## ✅ Phase 1 — Shipped (v0.1.0 → v0.1.60)
+
+The original "20 things to ship next: 10 app improvements + 10 educational
+games" — **all checked**. Open the [Changelog](CHANGELOG.html) for the full
+release-by-release breakdown. Open the [labs wishlist](../labs/wishlist.html)
+to vote on new ideas; the next batch is curated from there.
+
+### App improvements (10/10) — done
+
+- [x] 1. Voice commands · [x] 2. Tilt-to-drive · [x] 3. AI session summary ·
+  [x] 4. Time-lapse export · [x] 5. Drag-to-trace autopilot ·
+  [x] 6. AR webcam overlay · [x] 7. Robot personalities ·
+  [x] 8. Battery indicator · [x] 9. Telemetry export · [x] 10. 2-robot pairing
+
+### Educational games (10/10) — done
+
+- [x] 1. SLAM the Room · [x] 2. Echo Hunt · [x] 3. Maze Runner ·
+  [x] 4. Buzz the Tune · [x] 5. Simon Says NeoPixel ·
+  [x] 6. Math the Distance · [x] 7. Robot Soccer ·
+  [x] 8. Line Follower Race · [x] 9. PWM Lab · [x] 10. Morse Decoder
+
+### Bonus shipped during Phase 1
+
+- [x] **8 single-purpose Labs** (`labs/`): Joystick · Distance · Music ·
+  Servos · IR · Lights · Vision · Co-Pilot
+- [x] **Right-rail Message Log** in every Lab, faithful to the main app's
+  `> #N VERB` / `< ECHO` format
+- [x] **Draggable cockpit FABs** (Connect / Labs / Stop) with localStorage
+  position persistence
+- [x] **Workshops surface**: bilingual manual, booklet, cheat-cards,
+  energizers, hub
+- [x] **Kid-attracting flyer + poster** (FR, 8 ans+) with comic bursts,
+  real QR codes, mobile scale-to-fit
+- [x] **Brand sweep** `ROBI-9 LAB → MAQUEEN LAB` across HTML/CSS/JS
+- [x] **Auto-rendered HTML for every `.md`** (`docs/_md-render.js`)
+- [x] **Defensive theme sanitizer** in every lab + hub
+
+---
+
+## 🎯 Phase 2A — Reach (turn product into adoption)
+
+The app is great; almost nobody knows it exists yet.
+
+| # | Item | Why now |
+|---|------|---------|
+| 1 | ~~**i18n parity for the main cockpit** (FR + AR)~~ — **DONE.** `js/lang.js` (1932 LoC) + 304 `data-i18n` attrs + EN/FR/AR dicts (~600 lines each) + 3-flag picker + RTL + localStorage. All HTML surfaces are trilingual. |
+| 2 | **Etsy package v1 ready-to-list** | `etsy-package/` is half-baked. Finish: hero photos, listing copy locked, quickstart card. This is your distribution. |
+| 3 | **Teacher kit** — 1-pager lesson plan + rubric per Lab | 8 labs × 1 lesson plan = 8 pages. Sells to schools instantly. |
+| 4 | **Print-quality flyer/poster export** (PDF) | Add a "Save as PDF" CTA + verified A4 print preview. Right now teachers have to know to Ctrl+P. |
+| 5 | **Curriculum-aligned challenge set** (Cycle 3/4 FR · K-8 EN) | Map existing Labs/games to formal learning objectives. Teachers need this verbatim. |
+
+### Checklist
+- [x] 1. i18n parity — main cockpit (FR + AR) — already shipped via `js/lang.js`
+- [ ] 2. Etsy package v1 — listing-ready
+- [x] 3. Teacher kit — 8 lesson plans (one per Lab) at [docs/lessons/](lessons/index.html) — A4 print-ready, mapped to FR Cycle 3/4 + NGSS + CCSS-M + CSTA, with 💾 PDF button
+- [x] 4. PDF export from flyer/poster — `💾 PDF` button on both, with first-click i18n toast hint pointing to "Save as PDF" destination
+- [x] 5. Curriculum mapping (FR cycles + EN grades) — [docs/curriculum.md](curriculum.html): 8 Labs + 10 games × FR Cycle 3/4 · NGSS · CCSS-M · CSTA, with by-grade quick-pick + year-long unit + 4h workshop
+
+---
+
+## 🛠 Phase 2B — Hardening (so things don't rot)
+
+| # | Item | Why now |
+|---|------|---------|
+| 6 | **Smoke tests** (Playwright headless) | 8 labs + main app = a lot of surface. One PR can break a Lab silently. ~200 LoC covers 80% of regressions. |
+| 7 | **Split `maqueen-tab.js` (4580 LoC)** | One file, one accident. Modularize by card (Drive, Servos, LEDs, etc.). Pre-condition for any further main-app work. |
+| 8 | **GitHub Actions CI** — lint + tests + Pages deploy | Currently every push is hope. 30-line workflow file. |
+| 9 | **A11y pass** — keyboard, focus rings, ARIA on FABs/labs | Disabled-kid accessibility is a real selling point and a real bug (FABs aren't keyboard-reachable). |
+| 10 | **Performance budget** — measure first-paint + JS bundle on Labs | Labs feel snappy on desktop, sluggish on cheap Android tablets (school hardware). Budget: ≤ 1.5 s LCP on a £100 tablet. |
+
+### Checklist
+- [ ] 6. Smoke tests for all 8 labs + main connect/disconnect path
+- [ ] 7. `js/maqueen-tab.js` → `js/maqueen/{drive,servos,leds,...}.js`
+- [ ] 8. CI workflow (lint, tests, deploy on green)
+- [ ] 9. A11y audit — keyboard nav, ARIA, contrast
+- [ ] 10. Perf budget + Lighthouse CI
+
+---
+
+## 🚀 Phase 2C — Depth (deepen what already works)
+
+| # | Item | Why now |
+|---|------|---------|
+| 11 | **3 new labs from `wishlist.html`** (top-voted) | Channel new ideas through the wishlist you just built. Pick 3, ship a "Labs v2" milestone. |
+| 12 | **Multi-robot Lab** (WebRTC peer-to-peer) | Phase 1 #10 was checked but the demo isn't first-class. Two Maqueens dancing = viral. |
+| 13 | **Progress badges / kid passport** | Tracks which Labs they've completed. localStorage only — no backend. Big motivator. |
+| 14 | **Add-on framework** (Gravity sensors + I2C accessories) | Verb namespace stubbed in firmware. Unblock "what else can I plug in?". |
+| 15 | **Phase 2 firmware** (`firmware/v2-raw-pins.ts`) | Same wire protocol, raw `pins.*` calls instead of `maqueen.*` lib — for advanced learners. |
+
+### Checklist
+- [ ] 11. Top 3 wishlist labs shipped
+- [ ] 12. Multi-robot dance demo (1st-class lab)
+- [ ] 13. Kid passport / badges
+- [ ] 14. Add-on framework + first I2C accessory
+- [ ] 15. v2-raw-pins firmware
+
+---
+
+## ⚡ Multipliers — small effort, large leverage
+
+- [ ] **One-click "Demo without robot"** — a fake BLE shim in every Lab so
+  kids/teachers can try the app *before* buying hardware. Conversion lever.
+- [ ] **`/share` deep links** — encode robot config + theme + lang into URL
+  hash so a teacher can share "this exact Lab setup" with one link.
+- [ ] **Local-only telemetry** — `localStorage` heatmap of "which Lab did I
+  open most" to inform what to invest in next. Zero privacy cost.
+
+---
+
+## ⚠️ Anti-patterns to avoid
+
+- **No new feature before the `maqueen-tab.js` split** (Phase 2B #7).
+  Every new card makes the 4580-line file worse.
+- **No new Lab without smoke tests** for it. Recurring bugs (joystick logger
+  mount, co-pilot double-mount) prove this.
+- **Don't translate the main cockpit by hand** — wire it to the same
+  `T={en,fr,ar}` pattern as `workshops/manual` and let it scale.
+
+---
+
+## How to use this file
+
+- New ideas → go to [labs/wishlist.html](../labs/wishlist.html), not here.
+- Picking up an item → tick it (`- [x]`), commit with the item number in
+  the message (e.g. `feat(2B-7): split maqueen-tab.js`).
+- A Phase 2 sub-section is "done" when its checklist is fully ticked —
+  bump the milestone (e.g. v0.2.0 = Phase 2A complete).
+</script>
+<script type="text/markdown" id="md-fr"># Maqueen Lab — Feuille de route
+
+> **La Phase 1 (10 + 10 = 20 items) est complète depuis v0.1.60.** La Phase 2 ci-dessous
+> déplace l'attention des *fonctionnalités* → *portée, robustesse, profondeur*. Choisis le
+> bloc qui convient à la prochaine session — chaque item est autonome.
+
+---
+
+## ✅ Phase 1 — Livré (v0.1.0 → v0.1.60)
+
+Les "20 trucs à livrer ensuite : 10 améliorations app + 10 jeux éducatifs"
+d'origine — **tous cochés**. Ouvre le [Changelog](CHANGELOG.html) pour le détail
+release par release. Ouvre la [wishlist labs](../labs/wishlist.html) pour voter
+sur de nouvelles idées ; le prochain lot est curé là-bas.
+
+### Améliorations app (10/10) — fait
+
+- [x] 1. Commandes vocales · [x] 2. Pilotage par inclinaison · [x] 3. Résumé IA de session ·
+  [x] 4. Export time-lapse · [x] 5. Pilote auto par tracé ·
+  [x] 6. Overlay AR webcam · [x] 7. Personnalités robot ·
+  [x] 8. Indicateur batterie · [x] 9. Export télémétrie · [x] 10. Appairage 2 robots
+
+### Jeux éducatifs (10/10) — fait
+
+- [x] 1. SLAM la pièce · [x] 2. Chasse à l'écho · [x] 3. Maze Runner ·
+  [x] 4. Buzz the Tune · [x] 5. Simon Says NeoPixel ·
+  [x] 6. Maths la distance · [x] 7. Robot Soccer ·
+  [x] 8. Course suiveur de ligne · [x] 9. PWM Lab · [x] 10. Décodeur Morse
+
+### Bonus livré pendant la Phase 1
+
+- [x] **8 Labs mono-thèmes** (`labs/`) : Joystick · Distance · Musique ·
+  Servos · IR · Lumières · Vision · Co-Pilote
+- [x] **Journal de messages** à droite dans chaque Lab, fidèle au format
+  `> #N VERB` / `< ECHO` de l'app principale
+- [x] **FABs cockpit déplaçables** (Connect / Labs / Stop) avec persistance
+  de position en localStorage
+- [x] **Surface workshops** : manuel bilingue, livret, cartes mémo,
+  animations, hub
+- [x] **Flyer + poster pour enfants** (FR, 8 ans+) avec étoiles BD,
+  vrais QR codes, mise à l'échelle mobile
+- [x] **Nettoyage de marque** `ROBI-9 LAB → MAQUEEN LAB` dans HTML/CSS/JS
+- [x] **HTML auto-rendu pour chaque `.md`** (`docs/_md-render.js`)
+- [x] **Sanitiseur défensif de thème** dans chaque lab + hub
+
+---
+
+## 🎯 Phase 2A — Portée (transformer le produit en adoption)
+
+L'app est super ; presque personne ne sait qu'elle existe.
+
+| # | Item | Pourquoi maintenant |
+|---|------|---------------------|
+| 1 | **Parité i18n du cockpit principal** (FR + AR) | Docs et workshops sont trilingues ; pas le cockpit. Bloque les écoles francophones/arabophones. ~1 jour avec le pattern `T={en,fr,ar}` existant. |
+| 2 | **Pack Etsy v1 prêt-à-lister** | `etsy-package/` est à moitié cuit. Finir : photos hero, copy listing verrouillée, carte démarrage. C'est ta distribution. |
+| 3 | **Kit enseignant** — 1 fiche pédago + grille par Lab | 8 labs × 1 fiche = 8 pages. Vendable aux écoles instantanément. |
+| 4 | **Export PDF flyer/poster** qualité impression | Ajouter un CTA "Save as PDF" + aperçu A4 vérifié. Là, les profs doivent connaître Ctrl+P. |
+| 5 | **Set de défis alignés programme** (Cycle 3/4 FR · K-8 EN) | Cartographier Labs/jeux existants vers objectifs d'apprentissage formels. Les profs en ont besoin verbatim. |
+
+### Checklist
+- [ ] 1. Parité i18n — cockpit principal (FR + AR)
+- [ ] 2. Pack Etsy v1 — prêt-à-lister
+- [ ] 3. Kit enseignant — 8 fiches pédago + grilles
+- [ ] 4. Export PDF depuis flyer/poster
+- [ ] 5. Cartographie programme (cycles FR + grades EN)
+
+---
+
+## 🛠 Phase 2B — Robustesse (pour que ça pourrisse pas)
+
+| # | Item | Pourquoi maintenant |
+|---|------|---------------------|
+| 6 | **Tests smoke** (Playwright headless) | 8 labs + app principale = beaucoup de surface. Une PR peut casser un Lab silencieusement. ~200 LdC couvrent 80% des régressions. |
+| 7 | **Découper `maqueen-tab.js` (4580 LdC)** | Un fichier, un accident. Modulariser par carte (Drive, Servos, LEDs, etc.). Pré-condition à tout futur travail sur l'app principale. |
+| 8 | **GitHub Actions CI** — lint + tests + déploiement Pages | Là, chaque push est de l'espoir. Workflow de 30 lignes. |
+| 9 | **Passe a11y** — clavier, anneaux focus, ARIA sur FABs/labs | Accessibilité enfants handicapés = vrai argument de vente et vrai bug (FABs pas atteignables au clavier). |
+| 10 | **Budget perf** — mesurer first-paint + bundle JS sur les Labs | Les Labs sont rapides sur desktop, lents sur tablettes Android cheap (matériel école). Budget : ≤ 1.5 s LCP sur tablette à 100 €. |
+
+### Checklist
+- [ ] 6. Tests smoke pour les 8 labs + chemin connect/disconnect principal
+- [ ] 7. `js/maqueen-tab.js` → `js/maqueen/{drive,servos,leds,...}.js`
+- [ ] 8. Workflow CI (lint, tests, déploiement au vert)
+- [ ] 9. Audit a11y — nav clavier, ARIA, contraste
+- [ ] 10. Budget perf + Lighthouse CI
+
+---
+
+## 🚀 Phase 2C — Profondeur (approfondir ce qui marche déjà)
+
+| # | Item | Pourquoi maintenant |
+|---|------|---------------------|
+| 11 | **3 nouveaux labs depuis `wishlist.html`** (top votés) | Canaliser les nouvelles idées via la wishlist que tu viens de construire. Choisir 3, livrer un milestone "Labs v2". |
+| 12 | **Lab Multi-robot** (WebRTC peer-to-peer) | Phase 1 #10 cochée mais la démo n'est pas first-class. Deux Maqueens qui dansent = viral. |
+| 13 | **Badges progression / passeport enfant** | Suit quels Labs ils ont complétés. localStorage seul — pas de backend. Gros motivateur. |
+| 14 | **Framework add-on** (capteurs Gravity + accessoires I2C) | Espace de noms verbe stubbé dans le firmware. Débloque "qu'est-ce que je peux brancher d'autre ?". |
+| 15 | **Firmware Phase 2** (`firmware/v2-raw-pins.ts`) | Même protocole fil, appels `pins.*` bruts au lieu de la lib `maqueen.*` — pour apprenants avancés. |
+
+### Checklist
+- [ ] 11. Top 3 labs wishlist livrés
+- [ ] 12. Démo multi-robot dance (lab first-class)
+- [ ] 13. Passeport / badges enfant
+- [ ] 14. Framework add-on + premier accessoire I2C
+- [ ] 15. Firmware v2-raw-pins
+
+---
+
+## ⚡ Multiplicateurs — petit effort, grand levier
+
+- [ ] **"Démo sans robot" en un clic** — un shim BLE factice dans chaque Lab
+  pour que les enfants/profs puissent essayer l'app *avant* d'acheter le matériel.
+  Levier de conversion.
+- [ ] **Liens partage `/share`** — encoder config robot + thème + langue dans le
+  hash URL pour qu'un prof puisse partager "exactement cette config Lab" en un lien.
+- [ ] **Télémétrie locale uniquement** — heatmap `localStorage` de "quel Lab j'ai
+  ouvert le plus" pour informer les investissements futurs. Zéro coût vie privée.
+
+---
+
+## ⚠️ Anti-patterns à éviter
+
+- **Pas de nouvelle fonctionnalité avant la découpe `maqueen-tab.js`** (Phase 2B #7).
+  Chaque nouvelle carte aggrave le fichier de 4580 lignes.
+- **Pas de nouveau Lab sans tests smoke** pour lui. Bugs récurrents (mount logger
+  joystick, double-mount co-pilot) le prouvent.
+- **Ne traduis pas le cockpit principal à la main** — câble-le au même pattern
+  `T={en,fr,ar}` que `workshops/manual` et laisse-le passer à l'échelle.
+
+---
+
+## Comment utiliser ce fichier
+
+- Nouvelles idées → vont dans [labs/wishlist.html](../labs/wishlist.html), pas ici.
+- Prendre un item → coche-le (`- [x]`), commit avec le numéro d'item dans
+  le message (ex. `feat(2B-7): découpe maqueen-tab.js`).
+- Une sous-section Phase 2 est "fait" quand sa checklist est entièrement cochée —
+  bump le milestone (ex. v0.2.0 = Phase 2A complète).
+</script>
+<script type="text/markdown" id="md-ar"># Maqueen Lab — خريطة الطريق
+
+> **المرحلة 1 (10 + 10 = 20 بندًا) مكتملة منذ v0.1.60.** المرحلة 2 أدناه
+> تُحوِّل التركيز من *الميزات* → *الوصول، التصلُّب، العمق*. اختر الكتلة
+> المناسبة للجلسة القادمة — كلّ بند مستقلّ.
+
+---
+
+## ✅ المرحلة 1 — مُنجَزة (v0.1.0 → v0.1.60)
+
+"العشرون شيئًا التالية : 10 تحسينات للتطبيق + 10 ألعاب تعليميّة" الأصليّة
+— **كلّها مُؤشَّرة**. افتح [Changelog](CHANGELOG.html) للتفاصيل إصدارًا بإصدار.
+افتح [قائمة أمنيات labs](../labs/wishlist.html) للتصويت على أفكار جديدة ؛
+الدفعة القادمة منتقاة من هناك.
+
+### تحسينات التطبيق (10/10) — مُنجَز
+
+- [x] 1. أوامر صوتيّة · [x] 2. القيادة بالإمالة · [x] 3. ملخّص جلسة بالذكاء الاصطناعي ·
+  [x] 4. تصدير time-lapse · [x] 5. قيادة آليّة بالتتبُّع ·
+  [x] 6. طبقة AR للكاميرا · [x] 7. شخصيّات الروبوت ·
+  [x] 8. مؤشّر البطّاريّة · [x] 9. تصدير القياس عن بعد · [x] 10. اقتران روبوتَين
+
+### ألعاب تعليميّة (10/10) — مُنجَز
+
+- [x] 1. مسح الغرفة (SLAM) · [x] 2. صيد الصدى · [x] 3. حلّ المتاهة ·
+  [x] 4. عزف اللحن (Buzz the Tune) · [x] 5. Simon Says NeoPixel ·
+  [x] 6. رياضيّات المسافة · [x] 7. كرة قدم الروبوت ·
+  [x] 8. سباق متابعة الخطّ · [x] 9. مختبر PWM · [x] 10. فكّ شيفرة مورس
+
+### علاوة مُنجَزة خلال المرحلة 1
+
+- [x] **8 مختبرات مركَّزة** (`labs/`) : Joystick · Distance · Music ·
+  Servos · IR · Lights · Vision · Co-Pilot
+- [x] **سجلّ الرسائل** على اليمين في كلّ مختبر، أمين لتنسيق
+  `> #N VERB` / `< ECHO` في التطبيق الرئيسي
+- [x] **أزرار FAB كوكبيت قابلة للسحب** (Connect / Labs / Stop) مع حفظ
+  المواقع في localStorage
+- [x] **سطح workshops** : دليل ثنائي اللغة، كتيِّب، بطاقات،
+  منشِّطات، مركز
+- [x] **منشور وملصق للأطفال** (FR، 8 سنوات+) مع انفجارات قصصيّة،
+  QR حقيقيّة، تحجيم تلقائي على الجوّال
+- [x] **تحديث العلامة** `ROBI-9 LAB → MAQUEEN LAB` عبر HTML/CSS/JS
+- [x] **HTML مُولَّد تلقائيًّا لكلّ `.md`** (`docs/_md-render.js`)
+- [x] **مُعقِّم مظهر دفاعيّ** في كلّ مختبر + مركز
+
+---
+
+## 🎯 المرحلة 2A — الوصول (تحويل المنتج إلى تبنّي)
+
+التطبيق رائع ؛ تقريبًا لا أحد يعلم بوجوده بعد.
+
+| # | البند | لماذا الآن |
+|---|------|-----------|
+| 1 | **تكافؤ i18n للكوكبيت الرئيسي** (FR + AR) | الوثائق وworkshops ثلاثيّة اللغة ؛ ليس الكوكبيت. يَحجب المدارس الفرنكوفونيّة/العربيّة. ~يوم واحد بنمط `T={en,fr,ar}` الموجود. |
+| 2 | **حزمة Etsy v1 جاهزة للنشر** | `etsy-package/` نصف مطبوخ. أنهِ : صور hero، نصّ القائمة مقفَل، بطاقة بداية سريعة. هذه قناة توزيعك. |
+| 3 | **حقيبة المعلِّم** — صفحة درس + معيار تقييم لكلّ Lab | 8 مختبرات × درس واحد = 8 صفحات. تُباع للمدارس فورًا. |
+| 4 | **تصدير PDF منشور/ملصق** بجودة طباعة | إضافة CTA "Save as PDF" + معاينة A4 موثَّقة. حاليًّا، يجب أن يعرف المعلِّمون Ctrl+P. |
+| 5 | **حزمة تحدّيات موافقة للمنهاج** (Cycle 3/4 FR · K-8 EN) | تخطيط Labs/الألعاب الموجودة على أهداف تعلّم رسميّة. المعلِّمون يحتاجون هذا حرفيًّا. |
+
+### قائمة المهامّ
+- [ ] 1. تكافؤ i18n — الكوكبيت الرئيسي (FR + AR)
+- [ ] 2. حزمة Etsy v1 — جاهزة للنشر
+- [ ] 3. حقيبة المعلِّم — 8 خطط دروس + معايير
+- [ ] 4. تصدير PDF من المنشور/الملصق
+- [ ] 5. تخطيط المنهاج (دورات FR + درجات EN)
+
+---
+
+## 🛠 المرحلة 2B — التصلُّب (كي لا يتعفَّن)
+
+| # | البند | لماذا الآن |
+|---|------|-----------|
+| 6 | **اختبارات smoke** (Playwright headless) | 8 مختبرات + التطبيق الرئيسي = سطح كبير. PR واحد قد يكسر مختبرًا بصمت. ~200 سطر تغطّي 80% من الانحدارات. |
+| 7 | **تقسيم `maqueen-tab.js` (4580 سطر)** | ملفّ واحد، حادث واحد. تنميط حسب البطاقة (Drive، Servos، LEDs، إلخ). شرط مسبق لأيّ عمل آخر على التطبيق الرئيسي. |
+| 8 | **GitHub Actions CI** — lint + tests + نشر Pages | حاليًّا، كلّ push رهان. ملفّ workflow بـ30 سطر. |
+| 9 | **مرور a11y** — لوحة مفاتيح، حلقات تركيز، ARIA على FABs/labs | إمكانيّة وصول الأطفال ذوي الإعاقة = حجّة بيع حقيقيّة وعطل حقيقي (FABs غير قابلة للوصول من لوحة المفاتيح). |
+| 10 | **ميزانيّة الأداء** — قياس first-paint + حزمة JS على Labs | المختبرات سريعة على سطح المكتب، بطيئة على أجهزة Android رخيصة (عتاد المدارس). الميزانيّة : ≤ 1.5 ث LCP على لوح بـ100 €. |
+
+### قائمة المهامّ
+- [ ] 6. اختبارات smoke لكلّ المختبرات الـ8 + مسار connect/disconnect الرئيسي
+- [ ] 7. `js/maqueen-tab.js` → `js/maqueen/{drive,servos,leds,...}.js`
+- [ ] 8. workflow CI (lint، tests، نشر عند الأخضر)
+- [ ] 9. تدقيق a11y — تنقّل لوحة مفاتيح، ARIA، تباين
+- [ ] 10. ميزانيّة الأداء + Lighthouse CI
+
+---
+
+## 🚀 المرحلة 2C — العمق (تعميق ما يعمل بالفعل)
+
+| # | البند | لماذا الآن |
+|---|------|-----------|
+| 11 | **3 مختبرات جديدة من `wishlist.html`** (الأكثر تصويتًا) | قَنّ الأفكار الجديدة عبر قائمة الأمنيات التي بنيتَها. اختر 3، انشر milestone "Labs v2". |
+| 12 | **مختبر متعدِّد الروبوتات** (WebRTC peer-to-peer) | المرحلة 1 #10 مُؤشَّرة لكنّ العرض ليس من الدرجة الأولى. روبوتان Maqueen يرقصان = فيروسي. |
+| 13 | **شارات تقدُّم / جواز سفر طفل** | يتتبَّع المختبرات التي أنهاها. localStorage فقط — لا backend. محفِّز كبير. |
+| 14 | **إطار add-on** (مستشعرات Gravity + ملحقات I2C) | فضاء أسماء الأفعال مهيَّأ في البرنامج الثابت. يفتح "ماذا أستطيع أن أوصل أيضًا ؟". |
+| 15 | **برنامج ثابت المرحلة 2** (`firmware/v2-raw-pins.ts`) | نفس بروتوكول السلك، استدعاءات `pins.*` خامّ بدلاً من مكتبة `maqueen.*` — للمتعلِّمين المتقدِّمين. |
+
+### قائمة المهامّ
+- [ ] 11. أعلى 3 مختبرات من قائمة الأمنيات منشورة
+- [ ] 12. عرض رقص متعدِّد الروبوتات (مختبر من الدرجة الأولى)
+- [ ] 13. جواز سفر / شارات الطفل
+- [ ] 14. إطار add-on + أوّل ملحق I2C
+- [ ] 15. برنامج ثابت v2-raw-pins
+
+---
+
+## ⚡ المُضاعِفات — جهد صغير، رافعة كبيرة
+
+- [ ] **"عرض بدون روبوت" بنقرة واحدة** — shim BLE وهميّ في كلّ مختبر كي
+  يستطيع الأطفال/المعلِّمون تجربة التطبيق *قبل* شراء العتاد. رافعة تحويل.
+- [ ] **روابط مشاركة `/share`** — ترميز إعداد الروبوت + المظهر + اللغة في
+  hash الـURL ليتمكَّن المعلِّم من مشاركة "إعداد المختبر هذا بالضبط" في رابط واحد.
+- [ ] **قياس عن بعد محلّيّ فقط** — خريطة حرارة `localStorage` لـ"أيّ مختبر فتحتُ
+  الأكثر" لإعلام الاستثمار المستقبلي. صفر تكلفة على الخصوصيّة.
+
+---
+
+## ⚠️ أنماط مضادّة لتجنُّبها
+
+- **لا ميزة جديدة قبل تقسيم `maqueen-tab.js`** (المرحلة 2B #7).
+  كلّ بطاقة جديدة تجعل الملفّ ذي الـ4580 سطر أسوأ.
+- **لا مختبر جديد بدون اختبارات smoke** له. الأخطاء المتكرِّرة (mount logger
+  joystick، double-mount co-pilot) تثبت ذلك.
+- **لا تُترجم الكوكبيت الرئيسي يدويًّا** — اربطه بنفس نمط
+  `T={en,fr,ar}` كما `workshops/manual` ودعه يتوسَّع.
+
+---
+
+## كيف تستخدم هذا الملفّ
+
+- أفكار جديدة → تذهب إلى [labs/wishlist.html](../labs/wishlist.html)، ليس هنا.
+- التقاط بند → أَشِّره (`- [x]`)، commit مع رقم البند في
+  الرسالة (مثال `feat(2B-7): تقسيم maqueen-tab.js`).
+- قسم فرعي من المرحلة 2 يكون "مُنجَزًا" عندما تكون قائمة مهامّه مُؤشَّرة بالكامل
+  — رفع milestone (مثال v0.2.0 = المرحلة 2A مكتملة).
+</script>
+<!-- inlined-md:end -->
 </body>
 </html>

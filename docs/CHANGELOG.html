@@ -64,5 +64,459 @@
   window.MD_TITLE = 'Changelog';
 </script>
 <script src="_md-render.js" defer></script>
+<!-- inlined-md:start -->
+<script type="text/markdown" id="md-en"># Changelog
+
+## v0.1.60 — 2026-05-02
+
+Big surface expansion: a `labs/` folder with 8 single-purpose kid labs, draggable cockpit FABs in the main app, brand sweep, and printable workshop artifacts (flyer + poster) with real QR codes.
+
+### Added — Labs surface (`labs/`)
+
+- **8 single-purpose Labs**: Joystick, Distance, Music, Servos, IR, Lights, Vision, Co-Pilot. Each lab connects via the same `js/ble.js`, mounts the live robot, and pins a right-rail **Message Log** faithful to the main app's MESSAGE LOG (TX `> #N VERB` / RX `< ECHO` format).
+- `labs/index.html` hub + `labs/wishlist.html` (next-lab vote board).
+- `labs/lab-logger.js` + `.css` — pinned right-rail logger with drag-resize, `lockShimHook` via `Object.defineProperty` (un-overridable handler chain), classifyLine() auto-detect of TX/RX/ERR.
+- Defensive theme sanitizer in every lab + hub: `if (_validThemes.indexOf(t) === -1) t = 'carbon'` — protects the lab palette (`carbon / forest / steel / paper / pearl`) from cross-surface localStorage propagation accidents.
+
+### Added — Cockpit (main app)
+
+- **Draggable FABs**: CONNECT, LABS, STOP. Pointer-events drag with 8px click-vs-drag threshold; positions persist in localStorage. LABS anchor sets `draggable=false` + `dragstart preventDefault` to defeat HTML5 drag-to-bookmark interception.
+
+### Added — Workshops
+
+- `workshops/flyer.html` + `workshops/poster.html` — kid-attracting v2 (FR, 8 ans+).
+  - Comic-book bursts (POW / BAM / ZAP / BOOM via 12-pt clip-path stars).
+  - Wave emanations behind mascot, "VROUM VROUM!" speech bubble.
+  - Animated SVG illustrations: radar sweep, servo wave, music notes, LED pulse.
+  - Real QR code via `js/qrcode.min.js` (qrcode-generator API: `createSvgTag()`).
+  - Official `assets/logo.svg` + "MAQUEEN LAB" wordmark in the hero.
+  - **Mobile-friendly scale-to-fit**: A4 internal layout preserved; JS sets `transform: scale()` on viewports ≤ 820px and collapses the layout-box height so there's no white tail. Print path untouched (still true A4).
+
+### Fixed — Reliability
+
+- **`sw.js`** — atomic `cache.addAll` was failing on missing assets. Now per-asset `cache.add().catch()`. Removed 5 dead asset entries. Cache renamed `maqueen-lab-v11`.
+- **`js/ble-scheduler.js`** — wrapper was swallowing the awaited promise (`return throttledSend(line)`).
+- **Joystick lab logger** — DOMContentLoaded handler was inside an IIFE that ran *after* DCL. Fixed with readyState-aware mount.
+- **Co-Pilot lab** — both DCL + readyState fallback fired, double-mounting the logger. Added `_copilotMounted` guard.
+
+### Fixed — Theming
+
+- Reverted the `mb_theme → robi.theme` cross-surface unification — main app and labs have **different palettes** (only `forest` overlaps). Each surface owns its own localStorage key.
+- Added theme sanitizer to all labs + `labs/index.html` + `labs/wishlist.html`.
+- Servo-lab regression: sanitizer ran *before* the localStorage fallback → reset to `carbon` on every visit. Reordered.
+
+### Changed — Brand
+
+- Sweep `ROBI-9 LAB` → `MAQUEEN LAB` across HTML strings *and* CSS / JS comments (`docs/doc-shell.css`, `workshops/theme.css`, `js/voice-picker.js`).
+
+### Docs
+
+- `docs/index.html` + every guide / pinout / plan / schematics page: theme + lang selectors, Robi-9 mascot pill, faithful to `workshops/hub.html`.
+
+## v0.1.55 — 2026-04-27
+
+The Maqueen tab is now the front door. Heavy clean-up of duplicated
+controls in the Playground sub-tabs, big BLE-reliability rewrite, and a
+bunch of firmware polish.
+
+### Added — UI
+
+- **Two top tabs**: 🤖 **Maqueen** (real-robot UI) and 🧪 **Playground**
+  (collapsible group of legacy bit-playground sub-tabs).
+- **Maqueen tab cards**: Drive · Servos (with Mechanic-Kit picker:
+  Forklift / Loader / Beetle / Push) · Simple LEDs · NeoPixels · Buzzer
+  · Ultrasonic · IR remote · Line sensors (Follow-line auto mode now
+  lives inside this card).
+- **Live sensor strip** across the top: LINE, DIST, IR, ACC, BLE bench
+  (sent · echoed · lost · avg ms), three poll buttons, `streams: ON/OFF`
+  chip.
+- **Streams auto-toggle** on/off when entering/leaving the Sensors /
+  Graph / 3D sub-tabs.
+- **Hold to drive (release = stop)** option in the Drive panel.
+- **DIST/LINE auto-poll rate sliders** (200–2000 ms) and Follow-line
+  tick slider (100–1000 ms) — all persisted in localStorage.
+- Auto-pollers **pause when leaving the Maqueen tab** to spare BLE
+  bandwidth.
+
+### Added — Firmware (now v0.1.55)
+
+- **ACC / LIGHT / SOUND streams** emit a heartbeat ≥ once per
+  ~500–1000 ms even when the value hasn't changed, so the Graph never
+  looks frozen.
+- **`STREAM:on|off`** verb to opt into/out of ACC/LIGHT/SOUND streams
+  (off by default to keep the BLE channel free).
+- **`LM:HEX`** — 5×5 LED matrix bitmap; the Controls sub-tab can draw
+  on the board.
+- **`OTHER:*`** verbs from the More tab now show visible micro:bit-screen
+  feedback (digits, heart, arrows, switch icons, bar graphs, scrolling
+  text) instead of silently acking.
+- **`DIST?`** returns `DIST:-` instead of `DIST:500` when no obstacle is
+  detected.
+- **`HELLO` / `HELLO:<ver>`** confirms connection and reports firmware
+  version on the Connect card.
+
+### Fixed — BLE / connectivity
+
+- **Single global write serializer** awaits each `writeValue()` Promise.
+  No more `NetworkError: GATT operation already in progress`.
+- **One source of truth for connection state** — DOM signal +
+  MutationObserver, broadcasts `connected` / `disconnected` events.
+- **Pending sends rejected on disconnect** (no more silent hangs).
+- **Removed `input.compassHeading()` from auto-stream** — it was
+  triggering tilt-game calibration that blocked the BLE handler. Root
+  cause of the long-standing "no echo" symptom.
+
+### Removed (duplicates of Maqueen-tab panels)
+
+- Touch P0 / P1 / P2 cards (Maqueen wires P13/P14 to line sensors;
+  P0/P1/P2 not exposed for touch).
+- Buzzer card from Controls (duplicate of Maqueen Buzzer).
+- Servo / LED / Buzzer cards from More (duplicates of Maqueen panels).
+- GamePad sub-tab (duplicate of Maqueen Drive).
+- Motors sub-tab (duplicate of Maqueen Servos with kit picker).
+
+Net Playground sub-tab count: **8 → 6**.
+
+### Changed — build/version policy
+
+- Pre-commit hook auto-bumps `BUILD_VERSION` **only** when
+  `firmware/v1-maqueen-lib.ts` is in the staged change. Docs commits no
+  longer bump the version label — the stamp now tracks real firmware
+  churn.
+- The `.hex` is **not** auto-compiled. Re-build it in MakeCode and
+  re-flash when the version changes (see User Guide → "Building the
+  firmware .hex").
+
+## v0.1.x — auto-bump enabled
+
+Pre-commit hook (`tools/git-hooks/pre-commit`) now bumps the firmware
+patch version + UTC build date on every commit. Set
+`SKIP_FW_BUMP=1 git commit ...` to opt out for a specific commit.
+
+## v0.1.0 — 2026-04-26 (in progress)
+
+Initial scaffold. Forked from [bit-playground](https://github.com/abourdim/bit-playground) v1.2.0.
+
+### Added
+
+- Project structure forked from bit-playground.
+- Maqueen-specific config (`package.json`, `product.json`, `manifest.json`).
+- Maqueen Lite v4 firmware scaffold (`firmware/v1-maqueen-lib.ts`) — BLE UART verbs with sequence + echo confirmation, USB serial mirror, boot banner.
+- BLE scheduler wrapper (`js/ble-scheduler.js`) — wraps existing `js/ble.js` with sequence numbers, echo validation, coalescing, rate limiting, animation registry. **Does not modify `js/ble.js`.**
+- Servo Explorer (pilot) — visual + calibration + sweep + code panel + auto-demo.
+
+### Removed
+
+- bit-playground's non-Maqueen 3D models (`arm.js`, `balance.js`, `buggy.js`, `weather.js`).
+- bit-playground's docs (`docs/`) and Etsy package (will be regenerated for maqueen-app).
+- bit-playground's makecode-extension scaffold (replaced with Maqueen-specific firmware).
+- bit-playground branding from configs.
+
+### Notes
+
+- `js/ble.js` from bit-playground is reused **unchanged**. New code wraps it; never edits it.
+- Firmware uses the `pxt-maqueen` MakeCode extension for hardware access.
+- Same BLE UART wire protocol works with future raw-pin firmware (`firmware/v2-raw-pins.ts`).
+</script>
+<script type="text/markdown" id="md-fr"># Changelog
+
+## v0.1.60 — 2026-05-02
+
+Grosse expansion de surface : un dossier `labs/` avec 8 labos mono-thèmes pour enfants, FABs cockpit déplaçables dans l'app principale, nettoyage de marque, et supports workshop imprimables (flyer + poster) avec vrais QR codes.
+
+### Ajouté — Surface Labs (`labs/`)
+
+- **8 Labs mono-thèmes** : Joystick, Distance, Musique, Servos, IR, Lumières, Vision, Co-Pilote. Chaque labo se connecte via le même `js/ble.js`, monte le robot live, et épingle à droite un **journal de messages** fidèle au MESSAGE LOG de l'app principale (TX `> #N VERB` / RX `< ECHO`).
+- Hub `labs/index.html` + `labs/wishlist.html` (tableau de vote pour le prochain labo).
+- `labs/lab-logger.js` + `.css` — logger épinglé à droite avec poignée drag-resize, `lockShimHook` via `Object.defineProperty` (chaîne de handlers non-écrasable), classifyLine() auto-détecte TX/RX/ERR.
+- Sanitiseur de thème défensif dans chaque labo + hub : `if (_validThemes.indexOf(t) === -1) t = 'carbon'` — protège la palette labs (`carbon / forest / steel / paper / pearl`) des accidents de propagation localStorage cross-surface.
+
+### Ajouté — Cockpit (app principale)
+
+- **FABs déplaçables** : CONNECT, LABS, STOP. Drag pointer-events avec seuil click-vs-drag de 8 px ; positions persistées en localStorage. L'ancre LABS définit `draggable=false` + `dragstart preventDefault` pour neutraliser l'interception drag-to-bookmark de HTML5.
+
+### Ajouté — Workshops
+
+- `workshops/flyer.html` + `workshops/poster.html` — v2 attractive pour enfants (FR, 8 ans+).
+  - Étoiles BD (POW / BAM / ZAP / BOOM via étoiles 12 pts en clip-path).
+  - Émanations d'ondes derrière le mascot, bulle de parole "VROUM VROUM!".
+  - Illustrations SVG animées : balayage radar, vague servo, notes musicales, pulsation LED.
+  - Vrai QR code via `js/qrcode.min.js` (API qrcode-generator : `createSvgTag()`).
+  - `assets/logo.svg` officiel + wordmark "MAQUEEN LAB" dans le hero.
+  - **Mise à l'échelle mobile** : layout interne A4 préservé ; JS pose `transform: scale()` sur les viewports ≤ 820 px et collapse la hauteur de la layout-box pour qu'il n'y ait pas de queue blanche. Le chemin impression reste intact (toujours vrai A4).
+
+### Corrigé — Fiabilité
+
+- **`sw.js`** — `cache.addAll` atomique échouait sur des assets manquants. Maintenant `cache.add().catch()` par asset. 5 entrées d'asset mortes supprimées. Cache renommé `maqueen-lab-v11`.
+- **`js/ble-scheduler.js`** — le wrapper avalait la promesse attendue (`return throttledSend(line)`).
+- **Logger labo Joystick** — le handler DOMContentLoaded était dans une IIFE qui tournait *après* DCL. Corrigé avec un mount aware de readyState.
+- **Labo Co-Pilote** — DCL + fallback readyState se déclenchaient tous les deux, double-mountant le logger. Ajout d'un guard `_copilotMounted`.
+
+### Corrigé — Theming
+
+- Reverté l'unification cross-surface `mb_theme → robi.theme` — l'app principale et les labs ont **des palettes différentes** (seul `forest` se chevauche). Chaque surface possède sa propre clé localStorage.
+- Ajout du sanitiseur de thème dans tous les labs + `labs/index.html` + `labs/wishlist.html`.
+- Régression labo Servo : le sanitiseur tournait *avant* le fallback localStorage → reset à `carbon` à chaque visite. Réordonné.
+
+### Changé — Marque
+
+- Sweep `ROBI-9 LAB` → `MAQUEEN LAB` à travers les chaînes HTML *et* les commentaires CSS / JS (`docs/doc-shell.css`, `workshops/theme.css`, `js/voice-picker.js`).
+
+### Docs
+
+- `docs/index.html` + chaque page guide / pinout / plan / schematics : sélecteurs thème + langue, pill mascot Maqueen, fidèle à `workshops/hub.html`.
+
+## v0.1.55 — 2026-04-27
+
+L'onglet Maqueen est désormais la porte d'entrée. Gros nettoyage des contrôles
+dupliqués dans les sous-onglets Playground, grosse réécriture de fiabilité BLE,
+et un paquet de polish firmware.
+
+### Ajouté — UI
+
+- **Deux onglets du haut** : 🤖 **Maqueen** (UI robot réel) et 🧪 **Playground**
+  (groupe pliable des sous-onglets historiques bit-playground).
+- **Cartes onglet Maqueen** : Drive · Servos (avec sélecteur Mechanic-Kit :
+  Forklift / Loader / Beetle / Push) · LEDs simples · NeoPixels · Buzzer
+  · Ultrason · Télécommande IR · Capteurs ligne (le mode Follow-line auto vit
+  désormais dans cette carte).
+- **Bandeau capteurs live** en haut : LINE, DIST, IR, ACC, BLE bench
+  (envoyés · écho · perdus · ms moy), trois boutons de sondage, puce
+  `streams: ON/OFF`.
+- **Toggle auto des streams** on/off à l'entrée/sortie des sous-onglets
+  Sensors / Graph / 3D.
+- Option **Hold to drive (lâche = stop)** dans le panneau Drive.
+- **Sliders de fréquence auto-poll DIST/LINE** (200–2000 ms) et slider
+  tick Follow-line (100–1000 ms) — tous persistés en localStorage.
+- Les sondes auto **se mettent en pause à la sortie de l'onglet Maqueen**
+  pour préserver la bande BLE.
+
+### Ajouté — Firmware (maintenant v0.1.55)
+
+- **Streams ACC / LIGHT / SOUND** émettent un battement ≥ une fois par
+  ~500–1000 ms même si la valeur n'a pas changé, pour que le Graph n'ait
+  jamais l'air figé.
+- Verbe **`STREAM:on|off`** pour opt-in/out des streams ACC/LIGHT/SOUND
+  (off par défaut pour garder le canal BLE libre).
+- **`LM:HEX`** — bitmap matrice LED 5×5 ; le sous-onglet Controls peut dessiner
+  sur la carte.
+- Les verbes **`OTHER:*`** de l'onglet More montrent désormais un retour visible
+  à l'écran micro:bit (chiffres, cœur, flèches, icônes switch, bargraphs, texte
+  défilant) au lieu d'ack silencieux.
+- **`DIST?`** retourne `DIST:-` au lieu du `DIST:500` bidon quand aucun obstacle
+  n'est détecté.
+- **`HELLO` / `HELLO:<ver>`** confirme la connexion et reporte la version firmware
+  sur la carte Connect.
+
+### Corrigé — BLE / connectivité
+
+- **Sérialiseur global d'écriture** attend chaque promesse `writeValue()`.
+  Plus de `NetworkError: GATT operation already in progress`.
+- **Une source de vérité pour l'état de connexion** — signal DOM +
+  MutationObserver, broadcast events `connected` / `disconnected`.
+- **Envois en attente rejetés à la déconnexion** (plus de hangs silencieux).
+- **Suppression de `input.compassHeading()` du auto-stream** — il déclenchait
+  la calibration tilt-game qui bloquait le handler BLE. Cause racine du symptôme
+  "no echo" qui durait depuis longtemps.
+
+### Supprimé (doublons des panneaux onglet Maqueen)
+
+- Cartes Touch P0 / P1 / P2 (Maqueen câble P13/P14 aux capteurs ligne ;
+  P0/P1/P2 pas exposés au touch).
+- Carte Buzzer dans Controls (doublon du Buzzer Maqueen).
+- Cartes Servo / LED / Buzzer dans More (doublons des panneaux Maqueen).
+- Sous-onglet GamePad (doublon du Drive Maqueen).
+- Sous-onglet Motors (doublon du Servos Maqueen avec sélecteur kit).
+
+Compte net sous-onglets Playground : **8 → 6**.
+
+### Changé — politique build/version
+
+- Le hook pre-commit auto-incrémente `BUILD_VERSION` **uniquement** quand
+  `firmware/v1-maqueen-lib.ts` fait partie du commit. Les commits docs n'incrémentent
+  plus le label de version — le tampon suit désormais les vrais changements firmware.
+- Le `.hex` n'est **pas** compilé automatiquement. Reconstruis-le dans MakeCode
+  et reflashe quand la version change (voir Guide → "Building the firmware .hex").
+
+## v0.1.x — auto-bump activé
+
+Le hook pre-commit (`tools/git-hooks/pre-commit`) incrémente désormais la version
+patch firmware + la date build UTC à chaque commit. Définis
+`SKIP_FW_BUMP=1 git commit ...` pour opt-out sur un commit spécifique.
+
+## v0.1.0 — 2026-04-26 (en cours)
+
+Squelette initial. Fork depuis [bit-playground](https://github.com/abourdim/bit-playground) v1.2.0.
+
+### Ajouté
+
+- Structure projet forkée depuis bit-playground.
+- Config spécifique Maqueen (`package.json`, `product.json`, `manifest.json`).
+- Squelette firmware Maqueen Lite v4 (`firmware/v1-maqueen-lib.ts`) — verbes BLE UART avec séquence + confirmation par écho, miroir USB série, bannière de boot.
+- Wrapper scheduler BLE (`js/ble-scheduler.js`) — enrobe le `js/ble.js` existant avec numéros de séquence, validation d'écho, coalescing, rate limiting, registre d'animations. **Ne modifie pas `js/ble.js`.**
+- Explorateur Servo (pilote) — visuel + calibration + balayage + panneau code + auto-démo.
+
+### Supprimé
+
+- Modèles 3D non-Maqueen de bit-playground (`arm.js`, `balance.js`, `buggy.js`, `weather.js`).
+- Docs (`docs/`) et pack Etsy de bit-playground (seront régénérés pour maqueen-app).
+- Squelette makecode-extension de bit-playground (remplacé par firmware spécifique Maqueen).
+- Branding bit-playground des configs.
+
+### Notes
+
+- `js/ble.js` de bit-playground est réutilisé **inchangé**. Le nouveau code l'enrobe ; ne l'édite jamais.
+- Le firmware utilise l'extension MakeCode `pxt-maqueen` pour l'accès matériel.
+- Le même protocole fil BLE UART marchera avec le futur firmware raw-pin (`firmware/v2-raw-pins.ts`).
+</script>
+<script type="text/markdown" id="md-ar"># سجلّ التغييرات
+
+## v0.1.60 — 2026-05-02
+
+توسُّع كبير في السطح : مجلَّد `labs/` يحوي 8 مختبرات مركَّزة للأطفال، أزرار FAB قابلة للسحب في كوكبيت التطبيق الرئيسي، تحديث للعلامة، ومواد workshop قابلة للطباعة (منشور + ملصق) مع QR حقيقيّة.
+
+### مُضاف — سطح Labs (`labs/`)
+
+- **8 مختبرات مركَّزة** : Joystick، Distance، Music، Servos، IR، Lights، Vision، Co-Pilot. كلّ مختبر يتّصل عبر نفس `js/ble.js`، يربط الروبوت المباشر، ويثبِّت على اليمين **سجلّ رسائل** أمينًا لـMESSAGE LOG في التطبيق الرئيسي (TX `> #N VERB` / RX `< ECHO`).
+- مركز `labs/index.html` + `labs/wishlist.html` (لوحة تصويت للمختبر القادم).
+- `labs/lab-logger.js` + `.css` — مسجِّل مثبَّت يمينًا مع مقبض drag-resize، `lockShimHook` عبر `Object.defineProperty` (سلسلة handlers غير قابلة للكتابة فوقها)، classifyLine() يكتشف TX/RX/ERR تلقائيًّا.
+- مُعقِّم مظهر دفاعيّ في كلّ مختبر + مركز : `if (_validThemes.indexOf(t) === -1) t = 'carbon'` — يحمي لوحة المختبرات (`carbon / forest / steel / paper / pearl`) من حوادث انتشار localStorage بين الأسطح.
+
+### مُضاف — كوكبيت (التطبيق الرئيسي)
+
+- **أزرار FAB قابلة للسحب** : CONNECT، LABS، STOP. سحب pointer-events بعتبة click-vs-drag 8 بكسل ؛ المواقع تُحفظ في localStorage. مرساة LABS تضبط `draggable=false` + `dragstart preventDefault` لإبطال اعتراض drag-to-bookmark في HTML5.
+
+### مُضاف — Workshops
+
+- `workshops/flyer.html` + `workshops/poster.html` — v2 جذّابة للأطفال (FR، 8 سنوات+).
+  - انفجارات قصصيّة (POW / BAM / ZAP / BOOM عبر نجوم 12 نقطة بـclip-path).
+  - انبعاثات موجات خلف المسكوت، فقّاعة كلام "VROUM VROUM!".
+  - رسوم SVG متحرّكة : مسح الرادار، موجة السيرفو، نوتات الموسيقى، نبضة LED.
+  - QR code حقيقي عبر `js/qrcode.min.js` (واجهة qrcode-generator : `createSvgTag()`).
+  - `assets/logo.svg` الرسمي + wordmark "MAQUEEN LAB" في hero.
+  - **تحجيم تلقائي على الجوّال** : التخطيط الداخلي A4 محفوظ ؛ JS يضع `transform: scale()` على viewports ≤ 820 بكسل ويُقلّص ارتفاع layout-box كي لا يكون هناك ذيل أبيض. مسار الطباعة لم يُمَسّ (لا يزال A4 حقيقيًّا).
+
+### مُصلَح — الموثوقيّة
+
+- **`sw.js`** — `cache.addAll` الذرّي كان يفشل على assets مفقودة. الآن `cache.add().catch()` لكلّ asset. حُذفت 5 إدخالات asset ميّتة. أُعيد تسمية الكاش `maqueen-lab-v11`.
+- **`js/ble-scheduler.js`** — الـwrapper كان يبتلع الوعد المنتظَر (`return throttledSend(line)`).
+- **مسجِّل مختبر Joystick** — handler الـDOMContentLoaded كان داخل IIFE تشغَّل *بعد* DCL. أُصلح بـmount يدرك readyState.
+- **مختبر Co-Pilot** — DCL + احتياطي readyState شُغِّلا معًا، فضوعف mount المسجِّل. أُضيف حارس `_copilotMounted`.
+
+### مُصلَح — المظاهر
+
+- عُكِس توحيد `mb_theme → robi.theme` بين الأسطح — التطبيق الرئيسي والمختبرات لها **لوحات مختلفة** (فقط `forest` يتقاطع). كلّ سطح يملك مفتاح localStorage الخاصّ به.
+- أُضيف مُعقِّم المظهر إلى كلّ المختبرات + `labs/index.html` + `labs/wishlist.html`.
+- انحدار مختبر Servo : كان المُعقِّم يعمل *قبل* احتياطي localStorage → reset إلى `carbon` في كلّ زيارة. أُعيد ترتيبه.
+
+### مُغيَّر — العلامة
+
+- Sweep `ROBI-9 LAB` → `MAQUEEN LAB` عبر سلاسل HTML *و* تعليقات CSS / JS (`docs/doc-shell.css`، `workshops/theme.css`، `js/voice-picker.js`).
+
+### الوثائق
+
+- `docs/index.html` + كلّ صفحة guide / pinout / plan / schematics : مُحدِّدات مظهر + لغة، شارة مسكوت Maqueen، أمينة لـ`workshops/hub.html`.
+
+## v0.1.55 — 2026-04-27
+
+تبويب Maqueen صار البوّابة الأماميّة. تنظيف ضخم لعناصر التحكّم المكرَّرة في
+تبويبات Playground الفرعيّة، إعادة كتابة كبيرة لموثوقيّة BLE، وكميّة من
+صقل البرنامج الثابت.
+
+### مُضاف — UI
+
+- **تبويبان علويّان** : 🤖 **Maqueen** (UI الروبوت الحقيقي) و 🧪 **Playground**
+  (مجموعة قابلة للطيّ من تبويبات bit-playground الفرعيّة القديمة).
+- **بطاقات تبويب Maqueen** : Drive · Servos (مع مُحدِّد Mechanic-Kit :
+  Forklift / Loader / Beetle / Push) · LEDs بسيطة · NeoPixels · Buzzer
+  · Ultrasonic · جهاز تحكّم IR · مستشعرات الخطّ (وضع Follow-line التلقائي يعيش
+  داخل هذه البطاقة الآن).
+- **شريط مستشعرات مباشر** عرضيًّا : LINE، DIST، IR، ACC، BLE bench
+  (مُرسَل · مُصدى · مفقود · ms متوسّط)، ثلاثة أزرار سبر، رقاقة
+  `streams: ON/OFF`.
+- **Toggle تلقائي للـstreams** on/off عند دخول/خروج التبويبات
+  Sensors / Graph / 3D.
+- خيار **Hold to drive (إفلات = توقّف)** في لوحة Drive.
+- **شرائح معدّل auto-poll DIST/LINE** (200–2000 مللي ثانية) وشريحة
+  tick Follow-line (100–1000 مللي ثانية) — كلّها محفوظة في localStorage.
+- الموسوبات التلقائيّة **تتوقَّف عند مغادرة تبويب Maqueen** لتوفير
+  عرض BLE.
+
+### مُضاف — البرنامج الثابت (الآن v0.1.55)
+
+- **streams ACC / LIGHT / SOUND** تُرسل نبضة قلب ≥ مرّة كلّ
+  ~500–1000 مللي ثانية حتّى لو لم تتغيّر القيمة، كي لا يبدو Graph مجمَّدًا.
+- فعل **`STREAM:on|off`** للاشتراك/إلغاء الاشتراك في streams ACC/LIGHT/SOUND
+  (مغلق افتراضيًّا للحفاظ على قناة BLE حرّة).
+- **`LM:HEX`** — bitmap مصفوفة LED 5×5 ؛ التبويب الفرعي Controls يستطيع الرسم
+  على اللوحة.
+- أفعال **`OTHER:*`** من تبويب More تُظهر الآن استجابة مرئيّة على شاشة micro:bit
+  (أرقام، قلب، أسهم، أيقونات switch، رسوم أعمدة، نصّ متحرّك) بدل ack صامت.
+- **`DIST?`** يُرجع `DIST:-` بدل `DIST:500` المزيَّف عندما لا توجد عقبة.
+- **`HELLO` / `HELLO:<ver>`** يؤكّد الاتّصال ويُبلِّغ نسخة البرنامج الثابت
+  على بطاقة Connect.
+
+### مُصلَح — BLE / الاتّصال
+
+- **مُسلسِل عالميّ واحد للكتابة** ينتظر كلّ وعد `writeValue()`.
+  لا مزيد من `NetworkError: GATT operation already in progress`.
+- **مصدر حقيقة واحد لحالة الاتّصال** — إشارة DOM +
+  MutationObserver، يبثّ events `connected` / `disconnected`.
+- **الإرسالات المعلَّقة تُرفض عند الانفصال** (لا مزيد من تعلُّقات صامتة).
+- **حُذف `input.compassHeading()` من auto-stream** — كان يُطلق
+  معايرة tilt-game التي تحجب handler الـBLE. السبب الجذري لعَرَض
+  "no echo" الذي دام طويلاً.
+
+### محذوف (تكرارات لوحات تبويب Maqueen)
+
+- بطاقات Touch P0 / P1 / P2 (Maqueen يصل P13/P14 لمستشعرات الخطّ ؛
+  P0/P1/P2 غير معرَّضة للتلامس).
+- بطاقة Buzzer من Controls (تكرار لـMaqueen Buzzer).
+- بطاقات Servo / LED / Buzzer من More (تكرارات للوحات Maqueen).
+- التبويب الفرعي GamePad (تكرار لـMaqueen Drive).
+- التبويب الفرعي Motors (تكرار لـMaqueen Servos مع مُحدِّد kit).
+
+عدد صافي للتبويبات الفرعيّة Playground : **8 → 6**.
+
+### مُغيَّر — سياسة build/version
+
+- خطّاف pre-commit يرفع `BUILD_VERSION` تلقائيًّا **فقط** عندما يكون
+  `firmware/v1-maqueen-lib.ts` ضمن التغيير المهيَّأ. لم تعد commits الوثائق
+  وحدها ترفع لافتة النسخة — صار الختم يتتبَّع تغييرات البرنامج الثابت الحقيقيّة.
+- ملفّ `.hex` **لا** يُترجَم تلقائيًّا. أعِد بناءه في MakeCode وأعِد الفلش
+  عند تغيير النسخة (انظر الدليل → "Building the firmware .hex").
+
+## v0.1.x — auto-bump مفعَّل
+
+خطّاف pre-commit (`tools/git-hooks/pre-commit`) يرفع الآن نسخة patch البرنامج
+الثابت + تاريخ build بـUTC في كلّ commit. اضبط
+`SKIP_FW_BUMP=1 git commit ...` للانسحاب لـcommit محدَّد.
+
+## v0.1.0 — 2026-04-26 (قيد التقدّم)
+
+هيكل أوّلي. fork من [bit-playground](https://github.com/abourdim/bit-playground) v1.2.0.
+
+### مُضاف
+
+- بنية المشروع مُشتقّة من bit-playground.
+- إعدادات خاصّة بـMaqueen (`package.json`، `product.json`، `manifest.json`).
+- هيكل البرنامج الثابت لـMaqueen Lite v4 (`firmware/v1-maqueen-lib.ts`) — أفعال BLE UART مع تسلسل + تأكيد بالصدى، مرآة USB التسلسليّة، لافتة الإقلاع.
+- Wrapper جدولة BLE (`js/ble-scheduler.js`) — يُغلِّف `js/ble.js` الموجود مع أرقام تسلسل، التحقّق من الصدى، coalescing، rate limiting، سجلّ الرسوم المتحرّكة. **لا يُعدِّل `js/ble.js`.**
+- Servo Explorer (تجريبي) — مرئي + معايرة + مسح + لوحة كود + auto-demo.
+
+### محذوف
+
+- نماذج 3D غير Maqueen من bit-playground (`arm.js`، `balance.js`، `buggy.js`، `weather.js`).
+- وثائق (`docs/`) وحزمة Etsy لـbit-playground (ستُولَّد من جديد لـmaqueen-app).
+- هيكل makecode-extension لـbit-playground (مُستبدل ببرنامج ثابت خاصّ بـMaqueen).
+- هويّة bit-playground من الإعدادات.
+
+### ملاحظات
+
+- `js/ble.js` من bit-playground مُعاد استخدامه **بدون تغيير**. الكود الجديد يُغلِّفه ؛ لا يُعدِّله أبدًا.
+- البرنامج الثابت يستخدم امتداد MakeCode `pxt-maqueen` للوصول إلى العتاد.
+- نفس بروتوكول السلك BLE UART سيعمل مع البرنامج الثابت raw-pin المستقبليّ (`firmware/v2-raw-pins.ts`).
+</script>
+<!-- inlined-md:end -->
 </body>
 </html>
