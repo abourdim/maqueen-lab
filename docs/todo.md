@@ -61,7 +61,7 @@ The app is great; almost nobody knows it exists yet.
 - [x] 1. i18n parity — main cockpit (FR + AR) — already shipped via `js/lang.js`
 - [ ] 2. Etsy package v1 — listing-ready
 - [ ] 3. Teacher kit — 8 lesson plans + rubrics
-- [ ] 4. PDF export from flyer/poster
+- [x] 4. PDF export from flyer/poster — `💾 PDF` button on both, with first-click i18n toast hint pointing to "Save as PDF" destination
 - [ ] 5. Curriculum mapping (FR cycles + EN grades)
 
 ---

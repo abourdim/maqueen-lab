@@ -514,6 +514,7 @@
     <option value="fr">🇫🇷 FR</option>
     <option value="ar">🇸🇦 AR</option>
   </select>
+  <button onclick="exportPdf()" data-i18n="bar_pdf" title="Save as PDF" style="background:linear-gradient(90deg,var(--cyan),var(--neon));color:var(--ink);font-weight:700;">💾 PDF</button>
   <button onclick="window.print()" data-i18n="bar_print">🖨 Imprimer</button>
   <a href="hub.html" data-i18n="bar_hub">🏠 Hub</a>
   <a href="poster.html" data-i18n="bar_poster">📌 Affiche</a>
@@ -709,6 +710,8 @@
   const T = {
     en: {
       bar_title: '📄 Flyer v2 · A4 · 8 yrs+ · BAM! POW! ZAP!',
+      bar_pdf: '💾 PDF',
+      pdf_hint: '💡 In the print dialog, set Destination to <b>Save as PDF</b> for a perfect A4 file ready to share.',
       bar_print: '🖨 Print', bar_hub: '🏠 Hub', bar_poster: '📌 Poster',
       bar_app: '🤖 Robot App', bar_docs: '🗂️ Catalog', bar_labs: '🧪 Labs',
       badge: '▸ MAQUEEN LAB · THE LAB ON WHEELS',
@@ -735,6 +738,8 @@
     },
     fr: {
       bar_title: '📄 Flyer v2 · A4 · 8 ans+ · BAM! POW! ZAP!',
+      bar_pdf: '💾 PDF',
+      pdf_hint: '💡 Dans la fenêtre d\'impression, choisis <b>Enregistrer en PDF</b> comme destination pour un fichier A4 parfait, prêt à partager.',
       bar_print: '🖨 Imprimer', bar_hub: '🏠 Hub', bar_poster: '📌 Affiche',
       bar_app: '🤖 App Robot', bar_docs: '🗂️ Catalogue', bar_labs: '🧪 Labos',
       badge: '▸ MAQUEEN LAB · LE LABO QUI ROULE',
@@ -761,6 +766,8 @@
     },
     ar: {
       bar_title: '📄 منشور v2 · A4 · 8 سنوات+ · BAM! POW! ZAP!',
+      bar_pdf: '💾 PDF',
+      pdf_hint: '💡 في نافذة الطباعة، اختر <b>حفظ كـPDF</b> كوجهة للحصول على ملفّ A4 مثالي جاهز للمشاركة.',
       bar_print: '🖨 طباعة', bar_hub: '🏠 المركز', bar_poster: '📌 ملصق',
       bar_app: '🤖 تطبيق الروبوت', bar_docs: '🗂️ الفهرس', bar_labs: '🧪 المختبرات',
       badge: '▸ MAQUEEN LAB · المختبر المتحرّك',
@@ -800,6 +807,28 @@
       const k = el.getAttribute('data-i18n-html');
       if (t[k] != null) el.innerHTML = t[k];
     });
+  }
+  // 💾 PDF export — opens print dialog; first time, shows a non-blocking hint to pick "Save as PDF" as destination
+  function exportPdf() {
+    const seen = (function(){ try { return localStorage.getItem('pdf_hint_seen'); } catch(e){return null;} })();
+    const lang = document.documentElement.lang || 'fr';
+    const hintHtml = (T[lang] && T[lang].pdf_hint) || T.en.pdf_hint;
+    if (!seen) {
+      // Show a toast
+      let toast = document.getElementById('pdfToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'pdfToast';
+        toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;background:var(--bg-card);border:2px solid var(--cyan);color:var(--text);padding:14px 22px;border-radius:12px;max-width:520px;box-shadow:0 10px 40px rgba(0,0,0,0.4);font-size:14px;line-height:1.5;text-align:center';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = hintHtml;
+      try { localStorage.setItem('pdf_hint_seen', '1'); } catch(e) {}
+      // Wait 1.6s so the user reads it before the print dialog steals focus
+      setTimeout(() => { toast.remove(); window.print(); }, 1600);
+    } else {
+      window.print();
+    }
   }
   (function () {
     const saved = (function(){ try { return localStorage.getItem('robi.lang'); } catch(e){return null;} })() || 'fr';
