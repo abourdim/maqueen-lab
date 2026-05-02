@@ -154,6 +154,7 @@
   <a class="btn" href="../index.html" data-i18n="navRobot">🤖 Robot App</a>
   <a class="btn" href="../docs/index.html" data-i18n="navCatalog">🗂️ Catalog</a>
   <a class="btn" href="index.html" data-i18n="navLabs">🧪 Labs</a>
+  <a class="btn" href="../docs/lessons/distance-lab.html" data-i18n="navLesson" title="Open lesson plan">📚 Lesson</a>
   <a class="btn" href="../workshops/hub.html" data-i18n="navHub">🏠 Hub</a>
   <button class="btn" id="connectBtn" data-i18n="connect">🔌 Connect</button>
   <span class="conn-pill" id="connPill"><span class="conn-dot"></span><span id="connTxt" data-i18n="disconnected">Disconnected</span></span>
@@ -397,7 +398,7 @@ try {
 /* ───────── i18n ───────── */
 const T = {
   en:{
-    brand:'📡 Distance Lab', navRobot:'🤖 Robot App', navCatalog:'📚 Catalog', navLabs:'🧪 Labs', navHub:'🏠 Hub',
+    brand:'📡 Distance Lab', navRobot:'🤖 Robot App', navCatalog:'📚 Catalog', navLabs:'🧪 Labs', navLesson:'📚 Lesson', navHub:'🏠 Hub',
     connect:'🔌 Connect', disconnected:'Disconnected', connected:'Connected',
     connecting:'Connecting…',
     masterCtrl:'Master Control', masterStop:'🛑 STOP ALL',
@@ -437,7 +438,7 @@ const T = {
     ll_title:'Message Log', ll_subtitle:'Raw UART messages', ll_clear:'Clear', ll_export:'Export', ll_copy:'Copy', ll_pin:'Pin'
   },
   fr:{
-    brand:'📡 Labo Distance', navRobot:'🤖 App Robot', navCatalog:'📚 Catalogue', navLabs:'🧪 Labos', navHub:'🏠 Hub',
+    brand:'📡 Labo Distance', navRobot:'🤖 App Robot', navCatalog:'📚 Catalogue', navLabs:'🧪 Labos', navLesson:'📚 Lesson', navHub:'🏠 Hub',
     connect:'🔌 Connecter', disconnected:'Déconnecté', connected:'Connecté',
     connecting:'Connexion…',
     masterCtrl:'Contrôle maître', masterStop:'🛑 STOP TOUT',
@@ -477,7 +478,7 @@ const T = {
     ll_title:'Journal', ll_subtitle:'Messages UART bruts', ll_clear:'Effacer', ll_export:'Exporter', ll_copy:'Copier', ll_pin:'Épingler'
   },
   ar:{
-    brand:'📡 مختبر المسافة', navRobot:'🤖 تطبيق الروبوت', navCatalog:'📚 الفهرس', navLabs:'🧪 مختبرات', navHub:'🏠 المركز',
+    brand:'📡 مختبر المسافة', navRobot:'🤖 تطبيق الروبوت', navCatalog:'📚 الفهرس', navLabs:'🧪 مختبرات', navLesson:'📚 درس', navHub:'🏠 المركز',
     connect:'🔌 اتصال', disconnected:'غير متصل', connected:'متصل', connecting:'جارٍ الاتصال…',
     masterCtrl:'التحكم الرئيسي', masterStop:'🛑 إيقاف الكل',
     mockHint:'مسافة وهمية:', mockMode:'وضع المحاكاة',
