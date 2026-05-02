@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="fr" data-theme="carbon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maqueen Lab · Flyer v2</title>
+<meta name="description" content="Flyer A4 imprimable — Maqueen Lab pour les inventeurs de 8 ans+. Radars, servos, comic burst, ondes BLE, QR code de l'app.">
+<link rel="stylesheet" href="theme.css">
+<style>
+  /* ============================================================
+     A4 portrait FLYER v2 — comic-book funny, kid-friendly FR.
+     Batman-style POW/BAM/ZAP bursts + wave emanations from the
+     mascot (BLE pulses, sound waves, sonar pings) + real QR code
+     to the live app via qrcode.min.js. Engineering palette
+     (cyan, amber, neon, orange, red, white) — NO rainbow, NO
+     pink, NO violet.
+     ============================================================ */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body, system-ui);
+    line-height: 1.4;
+  }
+  body { padding: 18px; min-height: 100vh; }
+
+  /* Top bar — only on screen */
+  .topbar {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .topbar a, .topbar button {
+    background: var(--bg-soft); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 5px 10px; font-size: 13px; cursor: pointer; text-decoration: none;
+  }
+  .topbar a:hover, .topbar button:hover { border-color: var(--neon); color: var(--neon); }
+  .topbar .title { font-weight: 700; color: var(--neon); margin-right: auto; font-size: 14px; }
+  @media print { .topbar { display: none; } }
+
+  /* ============ THE FLYER CANVAS ============ */
+  .flyer {
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto;
+    background: var(--bg);
+    color: var(--text);
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 12mm 12mm 8mm;
+    position: relative;
+    overflow: hidden;
+  }
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    body { background: white; padding: 0; }
+    .flyer { border: none; border-radius: 0; max-width: none; padding: 12mm 10mm; height: 297mm; }
+  }
+
+  /* Background blueprint grid */
+  .flyer::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--grid, rgba(74,222,128,0.06)) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid, rgba(74,222,128,0.06)) 1px, transparent 1px);
+    background-size: 14px 14px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .flyer > * { position: relative; z-index: 1; }
+
+  /* ───────── BATMAN BURSTS — POW! BAM! ZAP! ───────── */
+  .burst {
+    position: absolute;
+    z-index: 4;
+    width: 28mm; height: 28mm;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display, system-ui);
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-align: center;
+    line-height: 0.95;
+    /* The actual burst shape is a 12-point star drawn via clip-path */
+    clip-path: polygon(
+      50% 0%,   61% 18%,  78% 8%,   75% 28%,
+      96% 25%,  82% 42%,  100% 50%, 82% 58%,
+      96% 75%,  75% 72%,  78% 92%,  61% 82%,
+      50% 100%, 39% 82%,  22% 92%,  25% 72%,
+      4% 75%,   18% 58%,  0% 50%,   18% 42%,
+      4% 25%,   25% 28%,  22% 8%,   39% 18%
+    );
+    border: none;
+    text-shadow: 0 0 0 transparent;
+  }
+  .burst.pow  { background: var(--amber);  top: 5mm;  right: 28mm; transform: rotate(-12deg); }
+  .burst.bam  { background: var(--cyan);   top: 38mm; left: 4mm;  transform: rotate(8deg); }
+  .burst.zap  { background: var(--neon);   bottom: 20mm; right: 6mm; transform: rotate(-6deg); }
+  .burst.boom { background: var(--orange); top: 70mm; right: 4mm;  transform: rotate(15deg); }
+
+  /* ───────── WAVE emanations (sound, BLE, ping) ───────── */
+  @keyframes wavePulse {
+    0%   { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  .wave-svg circle {
+    fill: none;
+    stroke: var(--cyan); stroke-width: 1.6;
+    transform-origin: 50% 50%;
+    animation: wavePulse 1.6s ease-out infinite;
+  }
+  .wave-svg circle:nth-child(2) { animation-delay: 0.3s; stroke: var(--neon); }
+  .wave-svg circle:nth-child(3) { animation-delay: 0.6s; stroke: var(--amber); }
+  .wave-svg circle:nth-child(4) { animation-delay: 0.9s; stroke: var(--orange); }
+
+  /* Floating decos */
+  .deco {
+    position: absolute; z-index: 0;
+    color: var(--cyan); font-size: 22px;
+    pointer-events: none; opacity: 0.4;
+  }
+  .deco.tl { top: 8mm; left: 8mm; }
+  .deco.tr { top: 8mm; right: 8mm; color: var(--amber); }
+  .deco.bl { bottom: 5mm; left: 8mm; color: var(--neon); }
+
+  /* ============ HERO ============ */
+  .hero { text-align: center; margin-bottom: 6mm; position: relative; }
+  .badge {
+    display: inline-block;
+    background: var(--bg-card);
+    border: 2px solid var(--neon);
+    color: var(--neon);
+    padding: 5px 16px;
+    border-radius: 999px;
+    font-family: var(--font-tech, monospace);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.18em;
+    margin-bottom: 5mm;
+    box-shadow: var(--shadow);
+  }
+  /* App logo (same SVG used in the live app header) */
+  .app-logo-band {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px;
+    margin-bottom: 4mm;
+  }
+  .app-logo {
+    width: 52px; height: 52px;
+    filter: drop-shadow(0 4px 14px var(--hero-glow));
+  }
+  .app-logo-text {
+    font-family: var(--font-display, system-ui);
+    font-weight: 900;
+    font-size: 26px;
+    letter-spacing: 0.04em;
+    color: var(--cyan);
+    text-shadow: 2px 2px 0 var(--ink);
+  }
+  .app-logo-text .lab { color: var(--amber); }
+
+  .hero-stage {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6mm;
+    margin: 4mm 0 5mm;
+    position: relative;
+  }
+  .mascot-wrap { position: relative; }
+  /* Wave emanations behind the mascot — pulsing rings */
+  .wave-bg {
+    position: absolute;
+    inset: -25mm;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .robi-svg {
+    width: 110px; height: 110px;
+    display: block;
+    filter: drop-shadow(0 4px 16px var(--hero-glow));
+    position: relative; z-index: 1;
+  }
+  .speech {
+    background: var(--amber);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    padding: 4mm 6mm;
+    font-family: var(--font-display, system-ui);
+    font-weight: 900;
+    font-size: 22px;
+    line-height: 1.05;
+    position: relative;
+    transform: rotate(-3deg);
+    box-shadow: 4px 4px 0 var(--ink);
+    z-index: 2;
+  }
+  .speech::before {
+    content: '';
+    position: absolute;
+    left: -14px; top: 30%;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 8px 14px 8px 0;
+    border-color: transparent var(--ink) transparent transparent;
+  }
+  .speech::after {
+    content: '';
+    position: absolute;
+    left: -10px; top: calc(30% + 3px);
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 5px 10px 5px 0;
+    border-color: transparent var(--amber) transparent transparent;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display, system-ui);
+    font-size: 36px; line-height: 1; font-weight: 900;
+    color: var(--neon);
+    letter-spacing: -0.01em;
+    margin-bottom: 3mm;
+  }
+  .hero h1 .accent { color: var(--cyan); }
+  .hero h1 .yell   { color: var(--amber); }
+  .hero h1 .red    { color: var(--orange); }
+  .hero .pitch {
+    font-size: 14px;
+    max-width: 165mm;
+    margin: 0 auto 4mm;
+    font-weight: 500;
+  }
+  .hero .pitch b { color: var(--neon); }
+
+  /* Stamps */
+  .stamps {
+    display: flex; justify-content: center; gap: 4mm; flex-wrap: wrap;
+    margin-top: 4mm;
+  }
+  .stamp {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 6px;
+    font-weight: 900; font-size: 13px;
+    letter-spacing: 0.06em;
+    border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    transform: rotate(-2deg);
+  }
+  .stamp:nth-child(2n) { transform: rotate(2deg); }
+  .stamp.amber { background: var(--amber); color: var(--ink); }
+  .stamp.cyan  { background: var(--cyan);  color: var(--ink); }
+  .stamp.neon  { background: var(--neon);  color: var(--ink); }
+
+  /* ============ CAPABILITY GRID ============ */
+  .caps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4mm;
+    margin: 5mm 0;
+  }
+  .cap {
+    background: var(--bg-card);
+    border: 2.5px solid var(--border);
+    border-radius: 14px;
+    padding: 4mm;
+    position: relative;
+    overflow: hidden;
+    min-height: 36mm;
+  }
+  .cap.cyan  { border-color: var(--cyan);  }
+  .cap.amber { border-color: var(--amber); }
+  .cap.neon  { border-color: var(--neon);  }
+  .cap.red   { border-color: var(--orange);}
+  .cap-head {
+    display: flex; align-items: center; gap: 3mm; margin-bottom: 3mm;
+  }
+  .cap-icon {
+    width: 18mm; height: 18mm; flex-shrink: 0;
+    background: var(--bg-soft);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid currentColor;
+  }
+  .cap.cyan .cap-icon  { color: var(--cyan); }
+  .cap.amber .cap-icon { color: var(--amber); }
+  .cap.neon .cap-icon  { color: var(--neon); }
+  .cap.red .cap-icon   { color: var(--orange); }
+  .cap-title {
+    font-family: var(--font-display, system-ui);
+    font-size: 16px; font-weight: 900;
+  }
+  .cap.cyan .cap-title  { color: var(--cyan); }
+  .cap.amber .cap-title { color: var(--amber); }
+  .cap.neon .cap-title  { color: var(--neon); }
+  .cap.red .cap-title   { color: var(--orange); }
+  .cap p { font-size: 11px; line-height: 1.45; opacity: 0.92; }
+  .cap p b { color: currentColor; }
+  .cap.cyan p b  { color: var(--cyan); }
+  .cap.amber p b { color: var(--amber); }
+  .cap.neon p b  { color: var(--neon); }
+  .cap.red p b   { color: var(--orange); }
+
+  /* RADAR sweep animated cone */
+  @keyframes radarSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .radar-svg circle { fill: none; stroke: var(--cyan); stroke-width: 1.2; opacity: 0.5; }
+  .radar-svg .sweep {
+    fill: var(--cyan); fill-opacity: 0.45;
+    transform-origin: 50% 50%;
+    animation: radarSpin 3s linear infinite;
+  }
+  .radar-svg .blip { fill: var(--cyan); }
+
+  /* SERVO arm wave */
+  @keyframes servoWave {
+    0%, 100% { transform: rotate(-25deg); }
+    50%      { transform: rotate(25deg); }
+  }
+  .servo-svg .base { fill: var(--bg-soft); stroke: var(--amber); stroke-width: 1.5; }
+  .servo-svg .arm {
+    fill: var(--amber); stroke: var(--ink); stroke-width: 1;
+    transform-origin: 50% 80%;
+    animation: servoWave 2s ease-in-out infinite;
+  }
+
+  /* MUSIC notes bouncing */
+  @keyframes noteBob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+  }
+  .music-svg text {
+    font-size: 22px; fill: var(--neon);
+    animation: noteBob 1s ease-in-out infinite;
+  }
+  .music-svg text:nth-of-type(2) { animation-delay: 0.25s; }
+  .music-svg text:nth-of-type(3) { animation-delay: 0.5s; }
+
+  /* LED pulse */
+  @keyframes ledPulse {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 1; }
+  }
+  .led-svg circle { fill: var(--orange); animation: ledPulse 1.4s ease-in-out infinite; }
+  .led-svg circle:nth-of-type(2) { animation-delay: 0.3s; }
+  .led-svg circle:nth-of-type(3) { animation-delay: 0.6s; }
+
+  /* ============ HOW + QR ROW ============ */
+  .how-qr {
+    display: grid;
+    grid-template-columns: 1fr 36mm;
+    gap: 5mm;
+    margin: 5mm 0;
+  }
+  .how {
+    background: linear-gradient(135deg, var(--bg-card), color-mix(in srgb, var(--neon) 6%, var(--bg-card)));
+    border: 2px solid var(--neon);
+    border-radius: 14px;
+    padding: 5mm;
+    position: relative;
+  }
+  .how::before {
+    content: '⚡';
+    position: absolute;
+    left: 6mm; top: -10px;
+    background: var(--bg);
+    color: var(--amber);
+    font-size: 22px;
+    padding: 0 4mm;
+  }
+  .how h2 {
+    font-family: var(--font-display, system-ui);
+    font-size: 15px;
+    color: var(--neon);
+    margin-bottom: 3mm;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+  .step {
+    background: var(--bg-soft);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 3mm 2mm;
+    text-align: center;
+    position: relative;
+  }
+  .step .num {
+    display: block;
+    font-family: var(--font-display, system-ui);
+    font-size: 26px; line-height: 1;
+    color: var(--neon); font-weight: 900;
+    margin-bottom: 1mm;
+  }
+  .step .verb { display: block; font-size: 12px; font-weight: 800; color: var(--text); margin-bottom: 1mm; }
+  .step .det { font-size: 10px; color: var(--steel); line-height: 1.4; }
+  .step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -3mm; top: 50%; transform: translateY(-50%);
+    color: var(--neon);
+    font-size: 16px; font-weight: 900;
+    z-index: 1;
+  }
+
+  /* QR card */
+  .qr-card {
+    background: var(--bg-card);
+    border: 2.5px solid var(--cyan);
+    border-radius: 14px;
+    padding: 3mm;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .qr-card .qr-box {
+    width: 28mm; height: 28mm;
+    background: white;
+    padding: 1.5mm;
+    border-radius: 4mm;
+    margin-bottom: 2mm;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qr-card .qr-box img,
+  .qr-card .qr-box canvas,
+  .qr-card .qr-box svg { width: 100%; height: 100%; display: block; }
+  .qr-card .qr-label {
+    font-size: 9px; color: var(--cyan); font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* ============ FEATURE STRIP — round badges ============ */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3mm;
+    margin: 5mm 0;
+  }
+  .feat {
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    aspect-ratio: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 2mm;
+  }
+  .feat .num { font-family: var(--font-display, system-ui); font-size: 20px; font-weight: 900; line-height: 1; }
+  .feat .lbl { font-size: 8px; color: var(--steel); font-weight: 700; margin-top: 1mm; }
+  .feat:nth-child(1) { border-color: var(--cyan);  } .feat:nth-child(1) .num { color: var(--cyan); }
+  .feat:nth-child(2) { border-color: var(--amber); } .feat:nth-child(2) .num { color: var(--amber); }
+  .feat:nth-child(3) { border-color: var(--neon);  } .feat:nth-child(3) .num { color: var(--neon); }
+  .feat:nth-child(4) { border-color: var(--orange);} .feat:nth-child(4) .num { color: var(--orange); }
+  .feat:nth-child(5) { border-color: var(--cyan);  } .feat:nth-child(5) .num { color: var(--cyan); }
+  .feat:nth-child(6) { border-color: var(--neon);  } .feat:nth-child(6) .num { color: var(--neon); }
+
+  /* ============ CTA URL ============ */
+  .cta {
+    text-align: center;
+    padding: 4mm 4mm 0;
+    margin-top: 3mm;
+    border-top: 3px dashed var(--border);
+  }
+  .cta .url {
+    display: inline-block;
+    font-family: var(--font-tech, monospace);
+    font-size: 16px; font-weight: 700;
+    color: var(--neon);
+    background: var(--bg-card);
+    border: 2.5px solid var(--neon);
+    padding: 3mm 6mm;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+  .cta .sub { font-size: 11px; margin-top: 3mm; font-weight: 500; }
+  .cta .sub b { color: var(--cyan); }
+
+  /* ============ FOOTER ============ */
+  .foot {
+    margin-top: 4mm;
+    padding-top: 3mm;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: var(--steel);
+    flex-wrap: wrap; gap: 2mm;
+  }
+  .foot .brand { font-family: var(--font-tech, monospace); color: var(--neon); letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="title">📄 Flyer v2 · A4 · français · 8 ans+ · BAM! POW! ZAP!</span>
+  <button onclick="window.print()">🖨 Imprimer</button>
+  <a href="hub.html">🏠 Hub</a>
+  <a href="poster.html">📌 Affiche</a>
+  <a href="../index.html">🤖 App Robot</a>
+  <a href="../docs/index.html">🗂️ Catalogue</a>
+  <a href="../labs/index.html">🧪 Labos</a>
+</div>
+
+<article class="flyer">
+
+  <!-- Sparkle decos -->
+  <span class="deco tl">✦</span>
+  <span class="deco tr">✦</span>
+  <span class="deco bl">✦</span>
+
+  <!-- BATMAN BURSTS -->
+  <div class="burst pow">POW!</div>
+  <div class="burst bam">BAM!</div>
+  <div class="burst zap">ZAP!</div>
+  <div class="burst boom">BOOM!</div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="app-logo-band">
+      <img src="../assets/logo.svg" alt="Maqueen Lab" class="app-logo">
+      <span class="app-logo-text">MAQUEEN <span class="lab">LAB</span></span>
+    </div>
+    <span class="badge">▸ MAQUEEN LAB · LE LABO QUI ROULE</span>
+
+    <div class="hero-stage">
+      <div class="mascot-wrap">
+        <!-- Wave emanations behind the mascot -->
+        <svg class="wave-bg wave-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+          <circle cx="50" cy="50" r="22"/>
+          <circle cx="50" cy="50" r="22"/>
+          <circle cx="50" cy="50" r="22"/>
+          <circle cx="50" cy="50" r="22"/>
+        </svg>
+
+        <svg class="robi-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <line x1="60" y1="6" x2="60" y2="22" stroke="var(--cyan)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="60" cy="5" r="4" fill="var(--amber)"/>
+          <circle cx="60" cy="5" r="7" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5"/>
+          <rect x="26" y="22" width="68" height="50" rx="14" fill="var(--bg-soft)" stroke="var(--neon)" stroke-width="2.5"/>
+          <rect x="34" y="34" width="52" height="24" rx="6" fill="var(--ink)" stroke="var(--cyan)" stroke-width="2"/>
+          <circle cx="46" cy="46" r="3.5" fill="var(--neon)"/>
+          <circle cx="74" cy="46" r="3.5" fill="var(--neon)"/>
+          <path d="M 42 66 Q 60 72 78 66" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <rect x="32" y="72" width="56" height="28" rx="6" fill="var(--bg-soft)" stroke="var(--neon)" stroke-width="2"/>
+          <circle cx="44" cy="96" r="2" fill="var(--amber)"/>
+          <circle cx="76" cy="96" r="2" fill="var(--orange)"/>
+          <rect x="14" y="76" width="14" height="18" rx="4" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>
+          <rect x="92" y="76" width="14" height="18" rx="4" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>
+          <ellipse cx="40" cy="106" rx="8" ry="4" fill="var(--ink)" stroke="var(--neon)" stroke-width="1.5"/>
+          <ellipse cx="80" cy="106" rx="8" ry="4" fill="var(--ink)" stroke="var(--neon)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="speech">VROUM<br>VROUM!</div>
+    </div>
+
+    <h1>Pilote ton <span class="accent">robot</span><br>comme un <span class="yell">ninja</span> <span class="red">ingénieur !</span></h1>
+
+    <p class="pitch">Salut, c'est <b>Robi-9</b> ! Branche-moi en <b>1 clic</b>, joue avec moi de <b>30 façons folles</b>, et débloque <b>12 missions</b> de pro.</p>
+
+    <div class="stamps">
+      <span class="stamp amber">🎯 8 ANS +</span>
+      <span class="stamp cyan">🌍 FR · EN · AR</span>
+      <span class="stamp neon">🔓 GRATUIT</span>
+    </div>
+  </section>
+
+  <!-- ============ CAPABILITY GRID ============ -->
+  <section class="caps">
+
+    <div class="cap cyan">
+      <div class="cap-head">
+        <div class="cap-icon">
+          <svg class="radar-svg" viewBox="0 0 60 60" width="100%" height="100%">
+            <circle cx="30" cy="30" r="26"/>
+            <circle cx="30" cy="30" r="18"/>
+            <circle cx="30" cy="30" r="10"/>
+            <line x1="30" y1="4" x2="30" y2="56" stroke="var(--cyan)" stroke-width="0.8" opacity="0.4"/>
+            <line x1="4" y1="30" x2="56" y2="30" stroke="var(--cyan)" stroke-width="0.8" opacity="0.4"/>
+            <path class="sweep" d="M 30 30 L 30 4 A 26 26 0 0 1 52 18 Z"/>
+            <circle class="blip" cx="42" cy="22" r="2"/>
+            <circle class="blip" cx="20" cy="38" r="1.5"/>
+          </svg>
+        </div>
+        <div class="cap-title">Radar Sonar</div>
+      </div>
+      <p>Mon <b>capteur ultrason</b> mesure les obstacles. Sonar, parking parfait, alarme anti-frangin, thérémine !</p>
+    </div>
+
+    <div class="cap amber">
+      <div class="cap-head">
+        <div class="cap-icon">
+          <svg class="servo-svg" viewBox="0 0 60 60" width="100%" height="100%">
+            <rect class="base" x="22" y="42" width="16" height="14" rx="2"/>
+            <circle cx="30" cy="48" r="2" fill="var(--ink)"/>
+            <rect class="arm" x="27" y="14" width="6" height="32" rx="2"/>
+            <circle cx="30" cy="48" r="3" fill="var(--ink)" stroke="var(--amber)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="cap-title">Servos qui dansent</div>
+      </div>
+      <p><b>Deux servomoteurs</b> qui tournent partout. Salue, regarde autour, enregistre une chorégraphie !</p>
+    </div>
+
+    <div class="cap neon">
+      <div class="cap-head">
+        <div class="cap-icon">
+          <svg class="music-svg" viewBox="0 0 60 60" width="100%" height="100%">
+            <text x="10" y="30">♪</text>
+            <text x="22" y="22">♫</text>
+            <text x="36" y="32">♪</text>
+          </svg>
+        </div>
+        <div class="cap-title">Musique &amp; Buzzer</div>
+      </div>
+      <p>Mon <b>buzzer</b> joue toutes les notes ! Compose, pianote, séquence 8 pas, fais-moi danser !</p>
+    </div>
+
+    <div class="cap red">
+      <div class="cap-head">
+        <div class="cap-icon">
+          <svg class="led-svg" viewBox="0 0 60 60" width="100%" height="100%">
+            <circle cx="20" cy="30" r="6"/>
+            <circle cx="30" cy="30" r="6"/>
+            <circle cx="40" cy="30" r="6"/>
+          </svg>
+        </div>
+        <div class="cap-title">Lumières &amp; Vision</div>
+      </div>
+      <p><b>4 LED RGB</b>, <b>2 capteurs IR</b> pour suivre une ligne, et la caméra de ton ordi pour me piloter avec ton visage !</p>
+    </div>
+  </section>
+
+  <!-- ============ HOW + QR ============ -->
+  <section class="how-qr">
+    <div class="how">
+      <h2>Comment on commence ?</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="num">1</span>
+          <span class="verb">Allume Robi-9</span>
+          <span class="det">Bouton ON. Yeux verts !</span>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <span class="verb">Ouvre le site</span>
+          <span class="det">Chrome ou Edge</span>
+        </div>
+        <div class="step">
+          <span class="num">3</span>
+          <span class="verb">Tape Connect</span>
+          <span class="det">Et c'est parti !</span>
+        </div>
+      </div>
+    </div>
+    <div class="qr-card">
+      <div class="qr-box" id="qrFlyer"></div>
+      <div class="qr-label">📱 Scanne-moi !</div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURE STRIP ============ -->
+  <section class="features">
+    <div class="feat"><span class="num">3</span><span class="lbl">LANGUES</span></div>
+    <div class="feat"><span class="num">5</span><span class="lbl">THÈMES</span></div>
+    <div class="feat"><span class="num">8</span><span class="lbl">LABOS</span></div>
+    <div class="feat"><span class="num">12</span><span class="lbl">MISSIONS</span></div>
+    <div class="feat"><span class="num">25</span><span class="lbl">JEUX</span></div>
+    <div class="feat"><span class="num">∞</span><span class="lbl">OPEN<br>SOURCE</span></div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="cta">
+    <div class="url">abourdim.github.io/maqueen-lab</div>
+    <p class="sub">📱 Ouvre <b>Chrome</b> · 🔋 Charge ton Robi-9 · ▶ Tape <b>Connect</b> · 🚀 PILOTE !</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="foot">
+    <span class="brand">▸ MAQUEEN LAB</span>
+    <span>DFRobot Maqueen Lite v4 · micro:bit V2 · Web Bluetooth</span>
+    <span>workshop-diy.org</span>
+  </footer>
+
+</article>
+
+<!-- Real QR code library — same one the main app uses -->
+<script src="../js/qrcode.min.js"></script>
+<script>
+  // Render the QR code pointing to the live app URL.
+  (function () {
+    const APP_URL = 'https://abourdim.github.io/maqueen-lab';
+    const host = document.getElementById('qrFlyer');
+    if (host && typeof qrcode === 'function') {
+      try {
+        const qr = qrcode(0, 'H');
+        qr.addData(APP_URL);
+        qr.make();
+        host.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: false });
+        const svg = host.querySelector('svg');
+        if (svg) {
+          svg.setAttribute('width', '200');
+          svg.setAttribute('height', '200');
+          svg.style.display = 'block';
+          svg.querySelectorAll('path').forEach(p => p.setAttribute('fill', '#0a1018'));
+          svg.querySelectorAll('rect').forEach(r => r.setAttribute('fill', '#ffffff'));
+        }
+      } catch (e) { console.error('QR error', e); }
+    }
+  })();
+</script>
+</body>
+</html>

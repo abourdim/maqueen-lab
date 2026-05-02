@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robi-9 Lab · Documentation Catalog</title>
+<title>Maqueen Lab · Documentation Catalog</title>
 <link rel="stylesheet" href="../workshops/theme.css">
 <script src="../workshops/newtab.js" defer></script>
 <style>
@@ -224,18 +224,30 @@
   <div class="title-block">
     <div class="logo-mark">▣</div>
     <div>
-      <h1>Robi-9 Lab // Documentation</h1>
-      <div class="subtitle">Every page · who it's for · when to open it</div>
+      <h1 data-i18n="header_title">Maqueen Lab // Documentation</h1>
+      <div class="subtitle" data-i18n="header_subtitle">Every page · who it's for · when to open it</div>
     </div>
   </div>
   <div class="wd-header-right">
+    <select class="wd-select" id="themeSelect" aria-label="Theme">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <div class="lang-pills" role="radiogroup" aria-label="Language">
+      <button type="button" class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+      <button type="button" class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+      <button type="button" class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+    </div>
     <a href="../index.html" class="wd-select" style="text-decoration:none;">🤖 Robot App</a>
     <a href="../workshops/hub.html" class="wd-select" style="text-decoration:none;">🏠 Lab Home</a>
   </div>
 </header>
 
 <section class="hero">
-  <span class="badge-line">▸ DOCUMENTATION HUB</span>
+  <span class="badge-line" data-i18n="hero_badge">▸ DOCUMENTATION HUB</span>
   <div class="robi" aria-hidden="true">
     <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
       <!-- antenna -->
@@ -271,12 +283,12 @@
       <ellipse cx="80" cy="106" rx="8" ry="4" fill="var(--ink)" stroke="var(--neon)" stroke-width="1.5"/>
     </svg>
   </div>
-  <h1>Documentation Catalog</h1>
-  <p class="sub">All Robi-9 Lab pages, sorted by audience. Pick the right entry point so a 10-year-old isn't dumped in the engineer schematic, and a teacher isn't hunting for the printable journal.</p>
+  <h1 data-i18n="hero_title">Documentation Catalog</h1>
+  <p class="sub" data-i18n="hero_sub">All Maqueen Lab pages, sorted by audience. Pick the right entry point so a 10-year-old isn't dumped in the engineer schematic, and a teacher isn't hunting for the printable journal.</p>
   <div class="toc">
-    <a class="kids"  href="#kids">🧑‍🚀 For Kids</a>
-    <a class="teach" href="#teachers">👨‍🏫 For Teachers / Parents</a>
-    <a class="ref"   href="#reference">📚 Reference (Everyone)</a>
+    <a class="kids"  href="#kids" data-i18n="toc_kids">🧑‍🚀 For Kids</a>
+    <a class="teach" href="#teachers" data-i18n="toc_teach">👨‍🏫 For Teachers / Parents</a>
+    <a class="ref"   href="#reference" data-i18n="toc_ref">📚 Reference (Everyone)</a>
   </div>
 </section>
 
@@ -284,8 +296,8 @@
 
   <!-- ==================== FOR KIDS ==================== -->
   <section class="sec kids" id="kids">
-    <h2>🧑‍🚀 For Kids</h2>
-    <p class="lead">Pages a child <b>opens directly</b>. Friendly tone, big buttons, illustrated mascot, age-10+ vocabulary. No engineer jargon.</p>
+    <h2 data-i18n="sec_kids_h">🧑‍🚀 For Kids</h2>
+    <p class="lead" data-i18n="sec_kids_lead">Pages a child <b>opens directly</b>. Friendly tone, big buttons, illustrated mascot, age-10+ vocabulary. No engineer jargon.</p>
     <div class="cards">
 
       <a class="card" href="../start.html">
@@ -293,15 +305,15 @@
         <div class="top">
           <div class="ic">🚀</div>
           <div>
-            <h3>First Day at the Lab</h3>
+            <h3 data-i18n="card_firstday_h">First Day at the Lab</h3>
             <div class="filename">start.html</div>
           </div>
         </div>
-        <p>7-step setup wizard. Power check → Bluetooth pairing → STOP button → drive test → self-drive → draw a path → mini-games. Awards a "Junior Lab Inventor" certificate at the end.</p>
+        <p data-i18n="card_firstday_p">7-step setup wizard. Power check → Bluetooth pairing → STOP button → drive test → self-drive → draw a path → mini-games. Awards a "Junior Lab Inventor" certificate at the end.</p>
         <div class="meta-row">
           <span class="chip lang">EN · FR · AR</span>
-          <span class="chip use">~15 min</span>
-          <span class="chip">Day 1, every kid</span>
+          <span class="chip use" data-i18n="card_firstday_use">~15 min</span>
+          <span class="chip" data-i18n="card_firstday_tag">Day 1, every kid</span>
         </div>
       </a>
 
@@ -310,38 +322,15 @@
         <div class="top">
           <div class="ic">🤖</div>
           <div>
-            <h3>Meet Your Robot</h3>
+            <h3 data-i18n="card_meetbot_h">Meet Your Robot</h3>
             <div class="filename">docs/schematics-kids.html</div>
           </div>
         </div>
-        <p>Illustrated tour of every part on the robot — wheels, sensors, brain, eyes, buzzer — explained like it's a friendly creature, not a circuit board. No pin numbers.</p>
+        <p data-i18n="card_meetbot_p">Illustrated tour of every part on the robot — wheels, sensors, brain, eyes, buzzer — explained like it's a friendly creature, not a circuit board. No pin numbers.</p>
         <div class="meta-row">
           <span class="chip lang">EN · FR · AR</span>
-          <span class="chip use">~5 min</span>
-          <span class="chip">Before any mission</span>
-        </div>
-      </a>
-
-      <a class="card" href="joystick-lab.html">
-        <span class="who">Kid</span>
-        <div class="top">
-          <div class="ic">🕹️</div>
-          <div>
-            <h3>Joystick Lab</h3>
-            <div class="filename">docs/joystick-lab.html</div>
-          </div>
-        </div>
-        <p><strong>30 different ways to drive your robot</strong>, organized in 5 collapsible categories:
-          🕹 <em>Touch &amp; Pointer</em> (Classic Pad · D-Pad · Twin Sticks · Path Painter) ·
-          ⌨️ <em>Hardware</em> (Tilt · Keyboard · Gamepad) ·
-          🎤 <em>Audio</em> (Voice · Whistle · BeatBox) ·
-          🎮 <em>Gaming-Inspired</em> (Aim &amp; Click · Wheel + Pedals · Spring Stick · Combo Keys · Step Sequencer · Traffic Light · Roulette · Gesture Shapes · Pendulum · Polar Pad) ·
-          📷 <em>Camera</em> (Color Tracker · Face Steer · Hand Wave · Light Sensor · QR Cards · Mirror · Two-Hand Tank · Pose · Lean Forward · Color Wand).
-          Pairs directly with the robot via the same Web Bluetooth path the main app uses.</p>
-        <div class="meta-row">
-          <span class="chip lang">EN · FR · AR</span>
-          <span class="chip use">30 modes · 5 categories</span>
-          <span class="chip">Pure fun</span>
+          <span class="chip use" data-i18n="card_meetbot_use">~5 min</span>
+          <span class="chip" data-i18n="card_meetbot_tag">Before any mission</span>
         </div>
       </a>
 
@@ -350,15 +339,15 @@
         <div class="top">
           <div class="ic">🎒</div>
           <div>
-            <h3>My Robot Adventure Journal</h3>
+            <h3 data-i18n="card_journal_h">My Robot Adventure Journal</h3>
             <div class="filename">workshops/booklet.html</div>
           </div>
         </div>
-        <p>17-page printable kid journal: cover, index, 12 mission spreads (one per workshop), certificate, badge wall, future-projects page. Filled in by hand during the workshops.</p>
+        <p data-i18n="card_journal_p">17-page printable kid journal: cover, index, 12 mission spreads (one per workshop), certificate, badge wall, future-projects page. Filled in by hand during the workshops.</p>
         <div class="meta-row">
           <span class="chip lang">EN · FR · AR</span>
           <span class="chip print">📄 Print A4 booklet</span>
-          <span class="chip">One per kid</span>
+          <span class="chip" data-i18n="card_journal_tag">One per kid</span>
         </div>
       </a>
 
@@ -367,8 +356,8 @@
 
   <!-- ==================== FOR TEACHERS ==================== -->
   <section class="sec teach" id="teachers">
-    <h2>👨‍🏫 For Teachers / Parents</h2>
-    <p class="lead">Pages for the <b>grown-up running the workshop</b>. Lesson plans, prep checklists, classroom logistics, prompts to give kids, what to do when things go wrong.</p>
+    <h2 data-i18n="sec_teach_h">👨‍🏫 For Teachers / Parents</h2>
+    <p class="lead" data-i18n="sec_teach_lead">Pages for the <b>grown-up running the workshop</b>. Lesson plans, prep checklists, classroom logistics, prompts to give kids, what to do when things go wrong.</p>
     <div class="cards">
 
       <a class="card" href="../workshops/hub.html">
@@ -376,15 +365,15 @@
         <div class="top">
           <div class="ic">🏠</div>
           <div>
-            <h3>Lab Home (Workshop Hub)</h3>
+            <h3 data-i18n="card_labhome_h">Lab Home (Workshop Hub)</h3>
             <div class="filename">workshops/hub.html</div>
           </div>
         </div>
-        <p>Workshop overview. Visual journey map of all 12 missions, quick-start checklist (what to print, what to charge, what tabs to open), FAQ for first-time facilitators.</p>
+        <p data-i18n="card_labhome_p">Workshop overview. Visual journey map of all 12 missions, quick-start checklist (what to print, what to charge, what tabs to open), FAQ for first-time facilitators.</p>
         <div class="meta-row">
           <span class="chip lang">EN · FR · AR</span>
-          <span class="chip use">First read · 10 min</span>
-          <span class="chip">Read this first</span>
+          <span class="chip use" data-i18n="card_labhome_use">First read · 10 min</span>
+          <span class="chip" data-i18n="card_labhome_tag">Read this first</span>
         </div>
       </a>
 
@@ -393,15 +382,15 @@
         <div class="top">
           <div class="ic">📚</div>
           <div>
-            <h3>Field Manual · 12 Missions</h3>
+            <h3 data-i18n="card_manual_h">Field Manual · 12 Missions</h3>
             <div class="filename">workshops/manual.html</div>
           </div>
         </div>
-        <p>Full lesson plans for all 12 missions: objective, prep list, step-by-step script, 5 interactive demo blocks, what to say, common kid mistakes, extension challenges.</p>
+        <p data-i18n="card_manual_p">Full lesson plans for all 12 missions: objective, prep list, step-by-step script, 5 interactive demo blocks, what to say, common kid mistakes, extension challenges.</p>
         <div class="meta-row">
           <span class="chip lang">EN · FR · AR</span>
-          <span class="chip use">~25 min / mission</span>
-          <span class="chip">Open during session</span>
+          <span class="chip use" data-i18n="card_manual_use">~25 min / mission</span>
+          <span class="chip" data-i18n="card_manual_tag">Open during session</span>
         </div>
       </a>
 
@@ -410,15 +399,15 @@
         <div class="top">
           <div class="ic">🃏</div>
           <div>
-            <h3>Cheat Cards (A5 pocket)</h3>
+            <h3 data-i18n="card_cheats_h">Cheat Cards (A5 pocket)</h3>
             <div class="filename">workshops/cheatcards.html</div>
           </div>
         </div>
-        <p>12 A5 cards (2 per A4 sheet, 6 sheets total). One per mission. The grown-up's lap reference: objective, key prompts, expected duration, troubleshooting hints.</p>
+        <p data-i18n="card_cheats_p">12 A5 cards (2 per A4 sheet, 6 sheets total). One per mission. The grown-up's lap reference: objective, key prompts, expected duration, troubleshooting hints.</p>
         <div class="meta-row">
           <span class="chip lang">EN</span>
           <span class="chip print">📄 Print A4 → cut A5</span>
-          <span class="chip">Pocket reference</span>
+          <span class="chip" data-i18n="card_cheats_tag">Pocket reference</span>
         </div>
       </a>
 
@@ -427,15 +416,15 @@
         <div class="top">
           <div class="ic">⚡</div>
           <div>
-            <h3>Quick Games (Energizers)</h3>
+            <h3 data-i18n="card_energiz_h">Quick Games (Energizers)</h3>
             <div class="filename">workshops/energizers.html</div>
           </div>
         </div>
-        <p>25 quick games (1–3 min each), grouped: Wake-up · Brain · Team · Laugh · Calm-down. Slot between missions when kids get bored, wild, or stuck. Pick by symptom.</p>
+        <p data-i18n="card_energiz_p">25 quick games (1–3 min each), grouped: Wake-up · Brain · Team · Laugh · Calm-down. Slot between missions when kids get bored, wild, or stuck. Pick by symptom.</p>
         <div class="meta-row">
           <span class="chip lang">EN</span>
-          <span class="chip use">1–3 min each</span>
-          <span class="chip">Between missions</span>
+          <span class="chip use" data-i18n="card_energiz_use">1–3 min each</span>
+          <span class="chip" data-i18n="card_energiz_tag">Between missions</span>
         </div>
       </a>
 
@@ -444,15 +433,15 @@
         <div class="top">
           <div class="ic">📋</div>
           <div>
-            <h3>Build Plan</h3>
+            <h3 data-i18n="card_plan_h">Build Plan</h3>
             <div class="filename">docs/plan.html</div>
           </div>
         </div>
-        <p>How this app was made: stack, design choices, file map, deployment, what's solved vs. what's still pending. Background reading for the curious facilitator or co-maintainer.</p>
+        <p data-i18n="card_plan_p">How this app was made: stack, design choices, file map, deployment, what's solved vs. what's still pending. Background reading for the curious facilitator or co-maintainer.</p>
         <div class="meta-row">
           <span class="chip lang">EN</span>
-          <span class="chip use">~15 min read</span>
-          <span class="chip">Background</span>
+          <span class="chip use" data-i18n="card_plan_use">~15 min read</span>
+          <span class="chip" data-i18n="card_plan_tag">Background</span>
         </div>
       </a>
 
@@ -461,8 +450,8 @@
 
   <!-- ==================== REFERENCE ==================== -->
   <section class="sec ref" id="reference">
-    <h2>📚 Reference (Everyone)</h2>
-    <p class="lead">Engineering and lookup pages. Use them when you need <b>a specific answer</b> — not as a starting point. Curious kids and engineer-minded adults both end up here.</p>
+    <h2 data-i18n="sec_ref_h">📚 Reference (Everyone)</h2>
+    <p class="lead" data-i18n="sec_ref_lead">Engineering and lookup pages. Use them when you need <b>a specific answer</b> — not as a starting point. Curious kids and engineer-minded adults both end up here.</p>
     <div class="cards">
 
       <a class="card" href="guide.html">
@@ -470,15 +459,15 @@
         <div class="top">
           <div class="ic">📖</div>
           <div>
-            <h3>User Guide</h3>
+            <h3 data-i18n="card_guide_h">User Guide</h3>
             <div class="filename">docs/guide.html · guide.fr.html · guide.ar.html</div>
           </div>
         </div>
-        <p>Full reference for the app: every screen, every button, every Settings option, BLE protocol, troubleshooting, firmware install. Kid-friendly tone but covers everything.</p>
+        <p data-i18n="card_guide_p">Full reference for the app: every screen, every button, every Settings option, BLE protocol, troubleshooting, firmware install. Kid-friendly tone but covers everything.</p>
         <div class="meta-row">
           <span class="chip lang">EN · FR · AR</span>
-          <span class="chip use">Lookup / scan</span>
-          <span class="chip">When stuck</span>
+          <span class="chip use" data-i18n="card_guide_use">Lookup / scan</span>
+          <span class="chip" data-i18n="card_guide_tag">When stuck</span>
         </div>
       </a>
 
@@ -487,15 +476,15 @@
         <div class="top">
           <div class="ic">📐</div>
           <div>
-            <h3>Engineer Schematic</h3>
+            <h3 data-i18n="card_schem_h">Engineer Schematic</h3>
             <div class="filename">docs/schematics.html</div>
           </div>
         </div>
-        <p>Full electrical view: every net, every pin, every chip. The "for grown-ups" companion to <i>Meet Your Robot</i>. Use when you're modding hardware, soldering, or debugging the firmware.</p>
+        <p data-i18n="card_schem_p">Full electrical view: every net, every pin, every chip. The "for grown-ups" companion to <i>Meet Your Robot</i>. Use when you're modding hardware, soldering, or debugging the firmware.</p>
         <div class="meta-row">
           <span class="chip lang">EN</span>
-          <span class="chip use">Engineer lookup</span>
-          <span class="chip">Hardware mods</span>
+          <span class="chip use" data-i18n="card_schem_use">Engineer lookup</span>
+          <span class="chip" data-i18n="card_schem_tag">Hardware mods</span>
         </div>
       </a>
 
@@ -504,15 +493,15 @@
         <div class="top">
           <div class="ic">📌</div>
           <div>
-            <h3>Pinout Reference</h3>
+            <h3 data-i18n="card_pinout_h">Pinout Reference</h3>
             <div class="filename">docs/pinout.html · pinout.fr.html</div>
           </div>
         </div>
-        <p>Line-by-line table: which micro:bit pin drives what on Maqueen Lite v4. Each row links to the source line in <code>pxt-maqueen</code>. The truth source for any pin question.</p>
+        <p data-i18n="card_pinout_p">Line-by-line table: which micro:bit pin drives what on Maqueen Lite v4. Each row links to the source line in <code>pxt-maqueen</code>. The truth source for any pin question.</p>
         <div class="meta-row">
           <span class="chip lang">EN · FR</span>
-          <span class="chip use">Quick lookup</span>
-          <span class="chip">Firmware work</span>
+          <span class="chip use" data-i18n="card_pinout_use">Quick lookup</span>
+          <span class="chip" data-i18n="card_pinout_tag">Firmware work</span>
         </div>
       </a>
 
@@ -521,22 +510,22 @@
         <div class="top">
           <div class="ic">⭐</div>
           <div>
-            <h3>Source on GitHub</h3>
+            <h3 data-i18n="card_github_h">Source on GitHub</h3>
             <div class="filename">github.com/abourdim/maqueen-lab</div>
           </div>
         </div>
-        <p>The whole repo: app, firmware, workshop materials, build scripts, change log. MIT-licensed — fork it, modify it, run your own workshop with the same tools.</p>
+        <p data-i18n="card_github_p">The whole repo: app, firmware, workshop materials, build scripts, change log. MIT-licensed — fork it, modify it, run your own workshop with the same tools.</p>
         <div class="meta-row">
           <span class="chip lang">—</span>
-          <span class="chip use">Fork / contribute</span>
-          <span class="chip">MIT license</span>
+          <span class="chip use" data-i18n="card_github_use">Fork / contribute</span>
+          <span class="chip" data-i18n="card_github_tag">MIT license</span>
         </div>
       </a>
 
     </div>
   </section>
 
-  <a class="back" href="../index.html">← Back to Robot App</a>
+  <a class="back" href="../index.html" data-i18n="back_app">← Back to Robot App</a>
 
 </div>
 
@@ -544,15 +533,242 @@
 <footer class="wd-footer">
   <span>powered by <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
   <span class="sep">·</span>
-  <span>Robi-9 Lab Documentation</span>
+  <span>Maqueen Lab Documentation</span>
 </footer>
 
 <script>
-  // Theme persistence — inherit from main app
-  try {
-    const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme');
-    if (t) document.documentElement.setAttribute('data-theme', t);
-  } catch (e) {}
+// ===== Hub-style theme + language pickers (mirrors workshops/hub.html) =====
+// Theme: 5 options from workshops/theme.css (carbon · forest · steel · paper · pearl)
+// Lang : EN / FR / AR with inline T table and data-i18n attributes for the
+//        structural strings (header, hero, section titles, leads, back link).
+//        Card descriptions stay in English for now — translate later if needed.
+//        AR flips body to RTL via dir="rtl" + .rtl class.
+const T = {
+  en: {
+    header_title:    'Maqueen Lab // Documentation',
+    header_subtitle: "Every page · who it's for · when to open it",
+    hero_badge:      '▸ DOCUMENTATION HUB',
+    hero_title:      'Documentation Catalog',
+    hero_sub:        "All Maqueen Lab pages, sorted by audience. Pick the right entry point so a 10-year-old isn't dumped in the engineer schematic, and a teacher isn't hunting for the printable journal.",
+    toc_kids:        '🧑‍🚀 For Kids',
+    toc_teach:       '👨‍🏫 For Teachers / Parents',
+    toc_ref:         '📚 Reference (Everyone)',
+    sec_kids_h:      '🧑‍🚀 For Kids',
+    sec_kids_lead:   'Pages a child <b>opens directly</b>. Friendly tone, big buttons, illustrated mascot, age-10+ vocabulary. No engineer jargon.',
+    sec_teach_h:     '👨‍🏫 For Teachers / Parents',
+    sec_teach_lead:  'Pages for the <b>grown-up running the workshop</b>. Lesson plans, prep checklists, classroom logistics, prompts to give kids, what to do when things go wrong.',
+    sec_ref_h:       '📚 Reference (Everyone)',
+    sec_ref_lead:    'Engineering and lookup pages. Use them when you need <b>a specific answer</b> — not as a starting point. Curious kids and engineer-minded adults both end up here.',
+    back_app:        '← Back to Robot App',
+    // ----- Card descriptions -----
+    card_firstday_h:   'First Day at the Lab',
+    card_firstday_p:   '7-step setup wizard. Power check → Bluetooth pairing → STOP button → drive test → self-drive → draw a path → mini-games. Awards a "Junior Lab Inventor" certificate at the end.',
+    card_firstday_use: '~15 min',
+    card_firstday_tag: 'Day 1, every kid',
+    card_meetbot_h:    'Meet Your Robot',
+    card_meetbot_p:    "Illustrated tour of every part on the robot — wheels, sensors, brain, eyes, buzzer — explained like it's a friendly creature, not a circuit board. No pin numbers.",
+    card_meetbot_use:  '~5 min',
+    card_meetbot_tag:  'Before any mission',
+    card_journal_h:    'My Robot Adventure Journal',
+    card_journal_p:    '17-page printable kid journal: cover, index, 12 mission spreads (one per workshop), certificate, badge wall, future-projects page. Filled in by hand during the workshops.',
+    card_journal_tag:  'One per kid',
+    card_labhome_h:    'Lab Home (Workshop Hub)',
+    card_labhome_p:    'Workshop overview. Visual journey map of all 12 missions, quick-start checklist (what to print, what to charge, what tabs to open), FAQ for first-time facilitators.',
+    card_labhome_use:  'First read · 10 min',
+    card_labhome_tag:  'Read this first',
+    card_manual_h:     'Field Manual · 12 Missions',
+    card_manual_p:     'Full lesson plans for all 12 missions: objective, prep list, step-by-step script, 5 interactive demo blocks, what to say, common kid mistakes, extension challenges.',
+    card_manual_use:   '~25 min / mission',
+    card_manual_tag:   'Open during session',
+    card_cheats_h:     'Cheat Cards (A5 pocket)',
+    card_cheats_p:     "12 A5 cards (2 per A4 sheet, 6 sheets total). One per mission. The grown-up's lap reference: objective, key prompts, expected duration, troubleshooting hints.",
+    card_cheats_tag:   'Pocket reference',
+    card_energiz_h:    'Quick Games (Energizers)',
+    card_energiz_p:    '25 quick games (1–3 min each), grouped: Wake-up · Brain · Team · Laugh · Calm-down. Slot between missions when kids get bored, wild, or stuck. Pick by symptom.',
+    card_energiz_use:  '1–3 min each',
+    card_energiz_tag:  'Between missions',
+    card_plan_h:       'Build Plan',
+    card_plan_p:       "How this app was made: stack, design choices, file map, deployment, what's solved vs. what's still pending. Background reading for the curious facilitator or co-maintainer.",
+    card_plan_use:     '~15 min read',
+    card_plan_tag:     'Background',
+    card_guide_h:      'User Guide',
+    card_guide_p:      'Full reference for the app: every screen, every button, every Settings option, BLE protocol, troubleshooting, firmware install. Kid-friendly tone but covers everything.',
+    card_guide_use:    'Lookup / scan',
+    card_guide_tag:    'When stuck',
+    card_schem_h:      'Engineer Schematic',
+    card_schem_p:      'Full electrical view: every net, every pin, every chip. The "for grown-ups" companion to <i>Meet Your Robot</i>. Use when you\'re modding hardware, soldering, or debugging the firmware.',
+    card_schem_use:    'Engineer lookup',
+    card_schem_tag:    'Hardware mods',
+    card_pinout_h:     'Pinout Reference',
+    card_pinout_p:     'Line-by-line table: which micro:bit pin drives what on Maqueen Lite v4. Each row links to the source line in <code>pxt-maqueen</code>. The truth source for any pin question.',
+    card_pinout_use:   'Quick lookup',
+    card_pinout_tag:   'Firmware work',
+    card_github_h:     'Source on GitHub',
+    card_github_p:     'The whole repo: app, firmware, workshop materials, build scripts, change log. MIT-licensed — fork it, modify it, run your own workshop with the same tools.',
+    card_github_use:   'Fork / contribute',
+    card_github_tag:   'MIT license'
+  },
+  fr: {
+    header_title:    'Maqueen Lab // Documentation',
+    header_subtitle: 'Chaque page · pour qui · quand l’ouvrir',
+    hero_badge:      '▸ HUB DOCUMENTATION',
+    hero_title:      'Catalogue de Documentation',
+    hero_sub:        "Toutes les pages Maqueen Lab, classées par public. Choisis le bon point d'entrée — qu'un enfant de 10 ans ne tombe pas sur le schéma ingénieur, et qu'un prof ne cherche pas le carnet imprimable.",
+    toc_kids:        '🧑‍🚀 Pour les Enfants',
+    toc_teach:       '👨‍🏫 Pour Profs / Parents',
+    toc_ref:         '📚 Référence (Tous)',
+    sec_kids_h:      '🧑‍🚀 Pour les Enfants',
+    sec_kids_lead:   "Pages que l'enfant <b>ouvre directement</b>. Ton amical, gros boutons, mascotte illustrée, vocabulaire 10 ans+. Aucun jargon d'ingénieur.",
+    sec_teach_h:     '👨‍🏫 Pour Profs / Parents',
+    sec_teach_lead:  "Pages pour <b>l'adulte qui anime l'atelier</b>. Plans de cours, checklists, logistique classe, prompts à donner aux enfants, quoi faire quand ça coince.",
+    sec_ref_h:       '📚 Référence (Tous)',
+    sec_ref_lead:    "Pages d'ingénierie et de référence. À utiliser quand tu cherches <b>une réponse précise</b> — pas comme point de départ. Enfants curieux et adultes techniques s'y retrouvent.",
+    back_app:        "← Retour à l'App Robot",
+    // ----- Descriptions des cartes -----
+    card_firstday_h:   'Premier Jour au Labo',
+    card_firstday_p:   "Assistant de démarrage en 7 étapes. Vérif alimentation → appairage Bluetooth → bouton STOP → test de pilotage → auto-pilotage → trace un chemin → mini-jeux. Décerne un certificat « Inventeur Junior du Labo » à la fin.",
+    card_firstday_use: '~15 min',
+    card_firstday_tag: 'Jour 1, chaque enfant',
+    card_meetbot_h:    'Rencontre Ton Robot',
+    card_meetbot_p:    "Visite illustrée de chaque pièce du robot — roues, capteurs, cerveau, yeux, buzzer — expliquée comme une petite créature amicale, pas comme un circuit. Sans numéros de broches.",
+    card_meetbot_use:  '~5 min',
+    card_meetbot_tag:  'Avant chaque mission',
+    card_journal_h:    "Mon Carnet d'Aventure Robot",
+    card_journal_p:    "Carnet enfant imprimable de 17 pages : couverture, sommaire, 12 doubles-pages de missions (une par atelier), certificat, mur des badges, page projets futurs. À remplir à la main pendant les ateliers.",
+    card_journal_tag:  'Un par enfant',
+    card_labhome_h:    "Maison du Labo (Hub d'Atelier)",
+    card_labhome_p:    "Vue d'ensemble de l'atelier. Carte visuelle du parcours des 12 missions, checklist de démarrage rapide (quoi imprimer, quoi recharger, quels onglets ouvrir), FAQ pour les animateurs débutants.",
+    card_labhome_use:  'Première lecture · 10 min',
+    card_labhome_tag:  "À lire en premier",
+    card_manual_h:     'Manuel de Terrain · 12 Missions',
+    card_manual_p:     "Plans de cours complets pour les 12 missions : objectif, liste de préparation, script étape par étape, 5 blocs de démos interactives, ce qu'il faut dire, erreurs fréquentes des enfants, défis bonus.",
+    card_manual_use:   '~25 min / mission',
+    card_manual_tag:   'À ouvrir en séance',
+    card_cheats_h:     'Cartes Mémo (A5 de poche)',
+    card_cheats_p:     "12 cartes A5 (2 par feuille A4, 6 feuilles au total). Une par mission. La référence de poche de l'adulte : objectif, prompts clés, durée prévue, astuces de dépannage.",
+    card_cheats_tag:   'Référence de poche',
+    card_energiz_h:    'Petits Jeux (Énergisants)',
+    card_energiz_p:    "25 petits jeux (1–3 min chacun), groupés : Réveil · Cerveau · Équipe · Rire · Retour au calme. À glisser entre les missions quand les enfants s'ennuient, s'agitent ou bloquent. Choisis selon le symptôme.",
+    card_energiz_use:  '1–3 min chacun',
+    card_energiz_tag:  'Entre les missions',
+    card_plan_h:       'Plan de Construction',
+    card_plan_p:       "Comment cette app a été faite : stack, choix de design, plan des fichiers, déploiement, ce qui est résolu vs. ce qui reste à faire. Lecture de fond pour l'animateur curieux ou le co-mainteneur.",
+    card_plan_use:     '~15 min de lecture',
+    card_plan_tag:     'Lecture de fond',
+    card_guide_h:      "Guide d'Utilisation",
+    card_guide_p:      "Référence complète de l'app : chaque écran, chaque bouton, chaque option des Réglages, protocole BLE, dépannage, installation du firmware. Ton accessible aux enfants mais couvre tout.",
+    card_guide_use:    'Recherche / survol',
+    card_guide_tag:    'Quand tu coinces',
+    card_schem_h:      'Schéma Ingénieur',
+    card_schem_p:      "Vue électrique complète : chaque piste, chaque broche, chaque puce. Le pendant « pour les grands » de <i>Rencontre Ton Robot</i>. À utiliser quand tu modifies le matériel, soudes, ou débogues le firmware.",
+    card_schem_use:    'Recherche ingénieur',
+    card_schem_tag:    'Modifs matérielles',
+    card_pinout_h:     'Référence des Broches',
+    card_pinout_p:     "Tableau ligne par ligne : quelle broche du micro:bit pilote quoi sur le Maqueen Lite v4. Chaque ligne renvoie à la ligne source dans <code>pxt-maqueen</code>. La source de vérité pour toute question de broche.",
+    card_pinout_use:   'Recherche rapide',
+    card_pinout_tag:   'Travaux firmware',
+    card_github_h:     'Code Source sur GitHub',
+    card_github_p:     "Le dépôt complet : app, firmware, supports d'atelier, scripts de build, journal des changements. Sous licence MIT — forke-le, modifie-le, lance ton propre atelier avec les mêmes outils.",
+    card_github_use:   'Forker / contribuer',
+    card_github_tag:   'Licence MIT'
+  },
+  ar: {
+    header_title:    'مكوين لاب // التوثيق',
+    header_subtitle: 'كل صفحة · لمن · متى تفتحها',
+    hero_badge:      '▸ مركز التوثيق',
+    hero_title:      'كتالوج التوثيق',
+    hero_sub:        'كل صفحات مكوين لاب، مرتّبة حسب الجمهور. اختر نقطة الدخول الصحيحة حتى لا يُلقى طفل عمره 10 سنوات في المخطط الهندسي، ولا يبحث المعلّم عن الكتيّب المطبوع.',
+    toc_kids:        '🧑‍🚀 للأطفال',
+    toc_teach:       '👨‍🏫 للمعلّمين / الأهل',
+    toc_ref:         '📚 المرجع (للجميع)',
+    sec_kids_h:      '🧑‍🚀 للأطفال',
+    sec_kids_lead:   'صفحات يفتحها الطفل <b>مباشرة</b>. أسلوب وُدّي، أزرار كبيرة، شخصية مرسومة، مفردات لعمر 10+. بلا مصطلحات هندسية.',
+    sec_teach_h:     '👨‍🏫 للمعلّمين / الأهل',
+    sec_teach_lead:  'صفحات <b>للكبار الذين يقودون الورشة</b>. خطط دروس، قوائم تحضير، لوجستيات صفّ، عبارات تُقال للأطفال، وماذا تفعل حين تسوء الأمور.',
+    sec_ref_h:       '📚 المرجع (للجميع)',
+    sec_ref_lead:    'صفحات هندسية ومرجعية. استعملها حين تحتاج <b>إجابة محدّدة</b> — لا كنقطة بداية. ينتهي إليها الأطفال الفضوليون والكبار التقنيون على حدّ سواء.',
+    back_app:        '← الرجوع إلى تطبيق الروبوت',
+    // ----- وصف البطاقات -----
+    card_firstday_h:   'أوّل يوم في المختبر',
+    card_firstday_p:   'مُرشد إعداد من 7 خطوات. فحص الطاقة ← الاقتران بالبلوتوث ← زرّ التوقّف ← اختبار القيادة ← القيادة الذاتية ← ارسم مساراً ← ألعاب صغيرة. ويمنح في النهاية شهادة «مخترع المختبر الصغير».',
+    card_firstday_use: '~15 دقيقة',
+    card_firstday_tag: 'اليوم الأول، لكلّ طفل',
+    card_meetbot_h:    'تعرّف على روبوتك',
+    card_meetbot_p:    'جولة مصوّرة على كلّ قطعة في الروبوت — العجلات، الحسّاسات، الدماغ، العينان، الجَرَس — مشروحة كأنّها مخلوق وُدّي، لا لوحة دارة. بلا أرقام أطراف.',
+    card_meetbot_use:  '~5 دقائق',
+    card_meetbot_tag:  'قبل كلّ مهمّة',
+    card_journal_h:    'دفتر مغامرتي مع الروبوت',
+    card_journal_p:    'دفتر طفل قابل للطباعة من 17 صفحة: الغلاف، الفهرس، 12 صفحة مزدوجة للمهامّ (واحدة لكلّ ورشة)، الشهادة، جدار الشارات، صفحة المشاريع المستقبليّة. يُعبَّأ يدوياً خلال الورشات.',
+    card_journal_tag:  'دفتر لكلّ طفل',
+    card_labhome_h:    'بيت المختبر (مركز الورشة)',
+    card_labhome_p:    'نظرة عامّة على الورشة. خريطة بصريّة لرحلة المهامّ الـ12، قائمة بدء سريعة (ما يُطبَع، ما يُشحَن، أيّ علامات تبويب تُفتَح)، أسئلة شائعة للمنشّطين الجُدد.',
+    card_labhome_use:  'قراءة أولى · 10 دقائق',
+    card_labhome_tag:  'اقرأ هذا أوّلاً',
+    card_manual_h:     'الدليل الميداني · 12 مهمّة',
+    card_manual_p:     'خطط دروس كاملة للمهامّ الـ12: الهدف، قائمة التحضير، نصّ خطوة بخطوة، 5 كتل عرض تفاعليّة، ما يُقال، الأخطاء الشائعة عند الأطفال، تحدّيات إضافيّة.',
+    card_manual_use:   '~25 دقيقة / مهمّة',
+    card_manual_tag:   'افتحه أثناء الجلسة',
+    card_cheats_h:     'بطاقات مرجعيّة (A5 جيب)',
+    card_cheats_p:     '12 بطاقة A5 (اثنتان في ورقة A4، 6 أوراق في المجموع). واحدة لكلّ مهمّة. مرجع جيب الكبار: الهدف، العبارات الأساسيّة، المدّة المتوقّعة، تلميحات لحلّ المشاكل.',
+    card_cheats_tag:   'مرجع جيب',
+    card_energiz_h:    'ألعاب سريعة (مُنشّطات)',
+    card_energiz_p:    '25 لعبة سريعة (1–3 دقائق لكلّ منها)، مُجمَّعة: إيقاظ · ذهن · فريق · ضحك · تهدئة. اِدسسها بين المهامّ حين يملّ الأطفال أو يهيجون أو يتعثّرون. اختر حسب العَرَض.',
+    card_energiz_use:  '1–3 دقائق لكلّ لعبة',
+    card_energiz_tag:  'بين المهامّ',
+    card_plan_h:       'خطّة البناء',
+    card_plan_p:       'كيف صُنع هذا التطبيق: التقنيات، خيارات التصميم، خريطة الملفّات، النشر، ما تمّ حلّه مقابل ما زال معلّقاً. قراءة خلفيّة للمنشّط الفضولي أو الشريك في الصيانة.',
+    card_plan_use:     'قراءة ~15 دقيقة',
+    card_plan_tag:     'قراءة خلفيّة',
+    card_guide_h:      'دليل الاستخدام',
+    card_guide_p:      'مرجع كامل للتطبيق: كلّ شاشة، كلّ زرّ، كلّ خيار في الإعدادات، بروتوكول BLE، حلّ المشاكل، تثبيت البرنامج الثابت. أسلوب وُدّي للأطفال لكنّه يغطّي كلّ شيء.',
+    card_guide_use:    'بحث / تصفّح',
+    card_guide_tag:    'حين تتعثّر',
+    card_schem_h:      'المخطّط الهندسي',
+    card_schem_p:      'عرض كهربائي كامل: كلّ مسار، كلّ طرف، كلّ شريحة. النظير «للكبار» لـ<i>تعرّف على روبوتك</i>. استعمله حين تعدّل العتاد، أو تلحم، أو تُنقّح البرنامج الثابت.',
+    card_schem_use:    'بحث هندسي',
+    card_schem_tag:    'تعديلات عتاد',
+    card_pinout_h:     'مرجع الأطراف',
+    card_pinout_p:     'جدول سطراً سطراً: أيّ طرف من micro:bit يقود ماذا في Maqueen Lite v4. كلّ سطر يربط بسطر المصدر في <code>pxt-maqueen</code>. مرجع الحقيقة لأيّ سؤال عن الأطراف.',
+    card_pinout_use:   'بحث سريع',
+    card_pinout_tag:   'عمل على البرنامج الثابت',
+    card_github_h:     'الكود المصدري على GitHub',
+    card_github_p:     'المستودع كاملاً: التطبيق، البرنامج الثابت، موادّ الورشة، سكربتات البناء، سجلّ التغييرات. برخصة MIT — انسخه، عدّله، شغّل ورشتك الخاصّة بنفس الأدوات.',
+    card_github_use:   'انسخ / ساهم',
+    card_github_tag:   'رخصة MIT'
+  }
+};
+
+function setL(lang) {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (T[lang] && T[lang][k]) el.innerHTML = T[lang][k];
+  });
+  document.body.classList.toggle('rtl', lang === 'ar');
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = (lang === 'ar') ? 'rtl' : 'ltr';
+  document.querySelectorAll('.lang-pill[data-lang]').forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
+  try { localStorage.setItem('robi.lang', lang); } catch (e) {}
+}
+document.querySelectorAll('.lang-pill[data-lang]').forEach(btn => btn.addEventListener('click', () => setL(btn.dataset.lang)));
+
+const themeSel = document.getElementById('themeSelect');
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  if (themeSel) themeSel.value = t;
+  try { localStorage.setItem('robi.theme', t); } catch (e) {}
+}
+if (themeSel) themeSel.addEventListener('change', e => applyTheme(e.target.value));
+
+// Boot — restore saved lang/theme (shared keys with hub.html so choice persists across pages)
+try {
+  const sav = localStorage.getItem('robi.lang');  if (sav) setL(sav);
+  const th  = localStorage.getItem('robi.theme'); if (th)  applyTheme(th);
+  // Legacy fallback (older versions stored mb_theme)
+  if (!localStorage.getItem('robi.theme')) {
+    const legacy = localStorage.getItem('mb_theme');
+    if (legacy) applyTheme(legacy);
+  }
+} catch (e) {}
 </script>
 
 </body>

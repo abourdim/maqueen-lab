@@ -193,7 +193,11 @@
     }
     if (global.sendLine._maqueenWrapped) return;
     _origSendLine = global.sendLine;
-    const wrapped = function (line) { throttledSend(line); };
+    // Return the awaited promise so callers can `await sendLine(verb)` —
+    // critical for the GATT-busy serialization the rest of this file
+    // builds. Without `return`, the wrapper swallows the promise and
+    // spam-clicks raise "NetworkError: GATT operation already in progress".
+    const wrapped = function (line) { return throttledSend(line); };
     wrapped._maqueenWrapped = true;
     global.sendLine = wrapped;
   }

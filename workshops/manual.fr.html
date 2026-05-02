@@ -110,11 +110,16 @@ td b { color: var(--amber); }
       <option value="paper">☼ Paper</option>
       <option value="pearl">☼ Pearl</option>
     </select>
-    <select class="wd-select" id="langSelect" aria-label="Langue" onchange="if(this.value==='en')location.href='manual.html';else if(this.value==='ar')location.href='manual.ar.html';">
-      <option value="en">🇬🇧 EN</option>
-      <option value="fr" selected>🇫🇷 FR</option>
-      <option value="ar">🇩🇿 AR</option>
-    </select>
+    <div class="lang-pills" role="navigation" aria-label="Langue">
+      <a class="lang-pill"        href="manual.html"><span class="flag flag-en"></span>EN</a>
+      <a class="lang-pill active" href="manual.fr.html"><span class="flag flag-fr"></span>FR</a>
+      <a class="lang-pill"        href="manual.ar.html"><span class="flag flag-ar"></span>AR</a>
+    <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;">🤖 Robot App</a>
+    <a class="wd-select" href="../docs/index.html" style="text-decoration:none; border-bottom:none;">🗂️ Catalog</a>
+    <a class="wd-select" href="../labs/index.html" style="text-decoration:none; border-bottom:none;">🧪 Labs</a>
+    <a class="wd-select" href="hub.html" style="text-decoration:none; border-bottom:none;">🏠 Hub</a>
+  
+    </div>
   </div>
 </header>
 

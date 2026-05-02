@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<title>Co-Pilot Lab · Maqueen Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<link rel="stylesheet" href="../docs/doc-shell.css">
+<link rel="stylesheet" href="lab-logger.css?v=6">
+<script src="../workshops/newtab.js" defer></script>
+<!-- Reuse the main app's BLE module via the lab shim. -->
+<script src="../js/ble-shim.js"></script>
+<script src="../js/ble.js"></script>
+<script src="lab-logger.js?v=6" defer></script>
+<style>
+  /* ── palette: cyan / amber / neon / red / white only ── */
+  :root {
+    --panel:  #0f1620;
+    --panel2: #0a1018;
+    --border: #1f2a3a;
+    --text:   #e6edf3;
+    --muted:  #94a3b8;
+    --cyan:   #22d3ee;
+    --amber:  #fbbf24;
+    --neon:   #a3e635;
+    --red:    #ef4444;
+  }
+
+  body { margin: 0; min-height: 100vh; background: var(--bg, #0a1018); color: var(--text); font-family: var(--font-body, system-ui, sans-serif); }
+  .lab-wrap { max-width: 1100px; margin: 0 auto; padding: 22px 18px 60px; }
+
+  /* HERO */
+  .lab-hero { text-align: center; padding: 18px 12px 12px; }
+  .lab-hero h1 { font-family: var(--font-display, inherit); color: var(--cyan); font-size: clamp(1.7rem, 4.5vw, 2.4rem); margin: 0 0 6px; }
+  .lab-hero p { color: var(--muted); margin: 0 auto 12px; max-width: 720px; line-height: 1.5; }
+
+  /* CONNECT BAR */
+  .conn-bar { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; padding: 12px 18px; background: var(--panel); border: 2px solid var(--border); border-radius: 14px; }
+  .conn-bar.connected { border-color: var(--neon); }
+  .conn-bar .status { font-family: var(--font-tech, monospace); font-size: 0.85rem; letter-spacing: 0.08em; }
+  .conn-bar .status .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--muted); margin-right: 8px; box-shadow: 0 0 8px transparent; }
+  .conn-bar.connected .status .dot { background: var(--neon); box-shadow: 0 0 8px var(--neon); }
+  .conn-bar button { padding: 8px 18px; border-radius: 10px; border: none; background: var(--neon); color: #0a1018; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 0.9rem; }
+  .conn-bar button:hover { filter: brightness(1.08); }
+  .conn-bar button.disconnect { background: var(--red); color: white; }
+  .conn-bar .gw-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; padding: 4px 12px; background: var(--panel2); border: 1px solid var(--border); border-radius: 6px; min-width: 160px; text-align: center; color: var(--amber); }
+  .conn-bar .gw-pill.online { color: var(--neon); border-color: var(--neon); }
+
+  /* APP LAYOUT */
+  .app-layout { display: grid; grid-template-columns: 280px 1fr; gap: 16px; margin: 16px 0 22px; align-items: start; }
+  @media (max-width: 820px) { .app-layout { grid-template-columns: 1fr; } }
+  .sidebar { display: flex; flex-direction: column; gap: 12px; background: var(--panel); border: 1.5px solid var(--border); border-radius: 14px; padding: 10px; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; }
+  @media (max-width: 820px) { .sidebar { position: static; max-height: none; } }
+
+  .cat-sidebar { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .cat-tab { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; background: transparent; border: 2px solid transparent; color: var(--muted); font-family: var(--font-tech, monospace); font-weight: 700; letter-spacing: 0.04em; font-size: 0.78rem; text-transform: uppercase; cursor: pointer; text-align: left; transition: all 0.12s; width: 100%; --tab-color: var(--cyan); position: relative; outline: none; }
+  .cat-tab[data-target="grid-setup"] { --tab-color: var(--cyan); }
+  .cat-tab[data-target="grid-diag"]  { --tab-color: var(--amber); }
+  .cat-tab:hover:not(.active) { background: var(--panel2); color: var(--text); border-color: var(--border); }
+  .cat-tab.active { background: var(--tab-color); color: #0a1018; border-color: var(--tab-color); box-shadow: 0 6px 20px color-mix(in srgb, var(--tab-color) 45%, transparent); transform: translateX(2px); }
+  .cat-tab.active::before { content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 4px; height: 70%; background: var(--tab-color); border-radius: 0 4px 4px 0; box-shadow: 0 0 8px var(--tab-color); }
+  .cat-tab .cat-icon { font-size: 1.1rem; }
+  .cat-tab .cat-count { margin-left: auto; font-size: 0.7rem; opacity: 0.7; font-weight: 600; }
+  .cat-tab.active .cat-count { opacity: 0.85; color: rgba(10,16,24,0.85); }
+
+  .cat-content { min-height: 100px; }
+  .mode-grid { display: none; flex-direction: column; gap: 4px; }
+  .mode-grid.active { display: flex; }
+  #grid-setup { --cat-color: var(--cyan); }
+  #grid-diag  { --cat-color: var(--amber); }
+
+  .mode-card {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--cat-color, var(--cyan)) 12%, transparent), var(--panel2));
+    border: 2px solid var(--border);
+    border-left: 4px solid var(--cat-color, var(--cyan));
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer; text-align: left; transition: all 0.12s; user-select: none;
+  }
+  .mode-card:hover { background: linear-gradient(90deg, color-mix(in srgb, var(--cat-color, var(--cyan)) 22%, transparent), var(--panel)); border-color: var(--cat-color, var(--cyan)); transform: translateX(2px); }
+  .mode-card.active { border-color: var(--cat-color, var(--cyan)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--cat-color, var(--cyan)) 30%, transparent); }
+  .mode-icon { font-size: 1.4rem; flex-shrink: 0; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cat-color, var(--cyan)) 60%, transparent)); }
+  .mode-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .mode-title { font-weight: 700; font-size: 0.92rem; color: var(--text); }
+  .mode-sub { color: var(--muted); font-size: 0.75rem; }
+
+  /* STAGE */
+  .stage { background: var(--panel); border: 1.5px solid var(--border); border-radius: 14px; padding: 18px 20px; min-height: 460px; }
+  .stage h2 { margin: 0 0 4px; color: var(--cyan); font-family: var(--font-display, inherit); font-size: 1.4rem; }
+  .stage-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 14px; }
+  .stage-body { min-height: 320px; }
+
+  .stop-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; margin-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .stop-btn { padding: 10px 22px; border-radius: 10px; background: var(--red); color: white; border: none; font-weight: 800; font-size: 0.95rem; cursor: pointer; letter-spacing: 0.05em; }
+  .stop-btn:hover { filter: brightness(1.08); }
+  .stop-hint { color: var(--muted); font-size: 0.75rem; }
+
+  /* ── Pairing Wizard ── */
+  .wiz-progress { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+  .wiz-step-pill { flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 10px; background: var(--panel2); border: 2px solid var(--border); font-size: 0.82rem; }
+  .wiz-step-pill.active { border-color: var(--cyan); color: var(--cyan); }
+  .wiz-step-pill.done { border-color: var(--neon); color: var(--neon); }
+  .wiz-step-pill .num { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--border); color: var(--text); font-weight: 700; font-size: 0.75rem; flex-shrink: 0; }
+  .wiz-step-pill.active .num { background: var(--cyan); color: #0a1018; }
+  .wiz-step-pill.done .num { background: var(--neon); color: #0a1018; }
+  .wiz-arrow { color: var(--muted); }
+
+  .wiz-panel { background: var(--panel2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .wiz-panel h3 { margin: 0 0 10px; color: var(--text); font-size: 1.05rem; }
+  .wiz-panel p { color: var(--muted); line-height: 1.55; margin: 6px 0; font-size: 0.9rem; }
+  .wiz-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .wiz-btn { padding: 10px 18px; border-radius: 10px; border: 2px solid var(--cyan); background: transparent; color: var(--cyan); font-weight: 700; cursor: pointer; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  .wiz-btn.primary { background: var(--cyan); color: #0a1018; }
+  .wiz-btn.primary:hover { filter: brightness(1.08); }
+  .wiz-btn:hover { background: color-mix(in srgb, var(--cyan) 14%, transparent); }
+  .wiz-instructions { background: color-mix(in srgb, var(--text, #000) 12%, var(--bg-card, #000)); color: var(--neon, #a3e635); padding: 12px 14px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.6; border: 1px solid var(--border); margin: 10px 0; }
+
+  .wiz-slider-wrap { display: flex; align-items: center; gap: 12px; margin: 14px 0; }
+  .wiz-slider-wrap input[type=range] { flex: 1; accent-color: var(--cyan); }
+  .wiz-group-display { font-family: 'JetBrains Mono', monospace; font-size: 1.6rem; color: var(--cyan); font-weight: 700; min-width: 60px; text-align: center; padding: 6px 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+
+  .gw-badge { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px 24px; border-radius: 14px; font-weight: 800; font-size: 1.3rem; letter-spacing: 0.06em; margin: 16px 0; border: 3px solid var(--amber); background: color-mix(in srgb, var(--amber) 10%, transparent); color: var(--amber); }
+  .gw-badge.online { border-color: var(--neon); color: var(--neon); background: color-mix(in srgb, var(--neon) 12%, transparent); }
+  .gw-badge .pulse { width: 14px; height: 14px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.85); } }
+
+  /* ── Capability Matrix ── */
+  .cap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 8px; }
+  .cap-card { background: var(--panel2); border: 2px solid var(--border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .cap-card.unlocked { border-color: var(--neon); box-shadow: 0 0 0 1px color-mix(in srgb, var(--neon) 25%, transparent); }
+  .cap-head { display: flex; align-items: center; gap: 8px; }
+  .cap-lock { font-size: 1.2rem; }
+  .cap-card.unlocked .cap-lock { color: var(--neon); }
+  .cap-card:not(.unlocked) .cap-lock { color: var(--muted); }
+  .cap-name { font-weight: 700; font-size: 1rem; }
+  .cap-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.5; flex: 1; }
+  .cap-open { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--cyan); background: transparent; color: var(--cyan); cursor: pointer; font-weight: 700; font-size: 0.85rem; text-decoration: none; text-align: center; }
+  .cap-open:hover { background: color-mix(in srgb, var(--cyan) 18%, transparent); }
+  .cap-open[disabled], .cap-open.disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+  /* ── Link Health ── */
+  .health-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 600px) { .health-grid { grid-template-columns: 1fr; } }
+  .health-card { background: var(--panel2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .health-label { color: var(--muted); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .health-value { font-family: var(--font-display, monospace); font-size: 2rem; font-weight: 800; }
+  .health-value.cyan { color: var(--cyan); }
+  .health-value.amber { color: var(--amber); }
+  .health-value.neon { color: var(--neon); }
+  .health-unit { color: var(--muted); font-size: 0.8rem; margin-left: 4px; }
+  .spark-wrap { background: var(--panel2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+  .spark-wrap canvas { display: block; width: 100%; height: 120px; }
+
+  /* ── Range Test ── */
+  .range-controls { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .range-thresh { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0; }
+  .thresh-card { padding: 12px; border-radius: 10px; background: var(--panel2); border: 2px solid var(--border); text-align: center; }
+  .thresh-card.t10 { border-color: var(--neon); }
+  .thresh-card.t50 { border-color: var(--amber); }
+  .thresh-card.t100 { border-color: var(--red); }
+  .thresh-label { font-size: 0.78rem; color: var(--muted); }
+  .thresh-val { font-family: var(--font-display, monospace); font-size: 1.5rem; font-weight: 800; color: var(--text); }
+  .range-canvas-wrap { background: var(--panel2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+  .range-canvas-wrap canvas { display: block; width: 100%; height: 200px; }
+
+  /* ── Group Scan ── */
+  .scan-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .scan-progress { flex: 1; height: 10px; background: var(--panel2); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; min-width: 200px; }
+  .scan-progress-bar { height: 100%; background: var(--cyan); width: 0%; transition: width 0.2s; }
+  .scan-status { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--cyan); }
+  .scan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 3px; padding: 12px; background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; max-height: 280px; overflow-y: auto; }
+  .scan-cell { aspect-ratio: 1; border-radius: 4px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--muted); font-family: monospace; }
+  .scan-cell.clean { background: color-mix(in srgb, var(--neon) 22%, var(--panel2)); color: var(--neon); }
+  .scan-cell.busy { background: color-mix(in srgb, var(--red) 35%, var(--panel2)); color: var(--text); border: 1px solid var(--red); }
+  .scan-cell.current { outline: 2px solid var(--cyan); }
+
+  /* ── THEME BRIDGE ── map theme.css surface vars onto our locals so the picker works ── */
+  :root {
+    --panel:  var(--bg-card, #0f1620);
+    --panel2: var(--bg-soft, #0a1018);
+    --border: var(--border, #1f2a3a);
+    --text:   var(--text, #e6edf3);
+    --muted:  var(--steel, #94a3b8);
+  }
+</style>
+</head>
+<body>
+
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1 class="brand" data-i18n="header_title">🛰 Co-Pilot Lab</h1>
+      <div class="subtitle" data-i18n="header_sub">Pair a second micro:bit as your radio gateway · unlocks Lights · Walkie · Cipher · Worm · Add-on</div>
+    </div>
+  </div>
+  <span class="spacer"></span>
+  <div class="wd-header-right">
+    <select id="themeSelect" class="wd-select" aria-label="Theme">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <div class="lang-pills" role="radiogroup" aria-label="Language">
+      <button type="button" class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+      <button type="button" class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+      <button type="button" class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+    </div>
+    <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_robot_app">🤖 Robot App</a>
+    <a class="wd-select" href="../docs/index.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_catalog">🗂️ Catalog</a>
+    <a class="wd-select" href="index.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_labs">🧪 Labs</a>
+    <a class="wd-select" href="../workshops/hub.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_hub">🏠 Hub</a>
+  </div>
+</header>
+
+<div class="lab-wrap">
+
+<section class="lab-hero">
+  <h1 data-i18n="hero_title">🛰 Co-Pilot Lab</h1>
+  <p data-i18n-html="hero_pitch">Pair a second micro:bit as a <strong>radio gateway</strong> — it handles all the timing-critical work (NeoPixels, walkie audio, cipher) so the bot's BLE stays smooth. <strong>Foundation lab</strong> that unlocks the 🪄 Lights, 📻 Walkie, 🔐 Cipher, 🦠 Worm and 🤖 Add-on labs.</p>
+</section>
+
+<div class="conn-bar" id="connBar">
+  <span class="status" id="connStatus"><span class="dot"></span><span data-i18n="not_connected">NOT CONNECTED</span></span>
+  <button id="connectBtn" data-i18n="btn_connect">🔌 Connect</button>
+  <span class="gw-pill" id="gwPill" data-i18n="gw_offline">GATEWAY OFFLINE</span>
+</div>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <nav class="cat-sidebar" aria-label="Mode categories">
+      <button class="cat-tab active" data-target="grid-setup" type="button"><span class="cat-icon">🔧</span><span data-i18n="cat_setup">Setup</span><span class="cat-count">(2)</span></button>
+      <button class="cat-tab" data-target="grid-diag" type="button"><span class="cat-icon">📊</span><span data-i18n="cat_diag">Diagnostics</span><span class="cat-count">(3)</span></button>
+    </nav>
+    <div class="cat-content">
+      <div class="mode-grid active" id="grid-setup">
+        <div class="mode-card active" data-mode="pair"><div class="mode-icon">🪄</div><div class="mode-text"><div class="mode-title" data-i18n="m_pair_t">Pairing Wizard</div><div class="mode-sub" data-i18n="m_pair_s">3-step setup</div></div></div>
+        <div class="mode-card" data-mode="caps"><div class="mode-icon">🧩</div><div class="mode-text"><div class="mode-title" data-i18n="m_caps_t">Capability Matrix</div><div class="mode-sub" data-i18n="m_caps_s">what's unlocked</div></div></div>
+      </div>
+      <div class="mode-grid" id="grid-diag">
+        <div class="mode-card" data-mode="health"><div class="mode-icon">💓</div><div class="mode-text"><div class="mode-title" data-i18n="m_health_t">Link Health</div><div class="mode-sub" data-i18n="m_health_s">latency · loss · rate</div></div></div>
+        <div class="mode-card" data-mode="range"><div class="mode-icon">📏</div><div class="mode-text"><div class="mode-title" data-i18n="m_range_t">Range Test</div><div class="mode-sub" data-i18n="m_range_s">walk it away</div></div></div>
+        <div class="mode-card" data-mode="scan"><div class="mode-icon">🔭</div><div class="mode-text"><div class="mode-title" data-i18n="m_scan_t">Group Scan</div><div class="mode-sub" data-i18n="m_scan_s">find interference</div></div></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <h2 id="stageTitle" data-i18n="m_pair_t">Pairing Wizard</h2>
+    <div class="stage-sub" id="stageSub" data-i18n="m_pair_s">3-step setup</div>
+    <div class="stage-body" id="stageBody"></div>
+    <div class="stop-row">
+      <span class="stop-hint" data-i18n="stop_hint">Tip: press <kbd>Space</kbd> to STOP</span>
+      <button class="stop-btn" id="stopBtn" data-i18n="btn_stop">⏹ STOP</button>
+    </div>
+  </main>
+</div>
+
+</div>
+
+<div id="labLogger" class="lab-logger-host"></div>
+
+<div class="wd-band wd-band-bottom"></div>
+<footer class="wd-footer">
+  <span>powered by <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
+  <span class="sep">·</span>
+  <span>Maqueen Lab · Co-Pilot Lab</span>
+</footer>
+
+<script>
+/* ============================================================
+ * CO-PILOT LAB — pairing wizard for a second micro:bit gateway
+ * 5 modes / 2 categories. Each mode = install(host) → teardown.
+ * BLE verbs: RADIO:GROUP <n> · RADIO:PING · RADIO:STATUS · STOP
+ * Mock mode kicks in automatically when no robot is connected.
+ * ============================================================ */
+(function () {
+  'use strict';
+
+  // ============================================================
+  // i18n table — EN / FR / AR. ~70 keys.
+  // ============================================================
+  const T = {
+    en: {
+      header_title: '🛰 Co-Pilot Lab',
+      header_sub: 'Pair a second micro:bit as your radio gateway · unlocks Lights · Walkie · Cipher · Worm · Add-on',
+      header_robot_app: '🤖 Robot App',
+      header_catalog: '🗂️ Catalog',
+      header_labs: '🧪 Labs',
+      header_hub: '🏠 Hub',
+      hero_title: '🛰 Co-Pilot Lab',
+      hero_pitch: 'Pair a second micro:bit as a <strong>radio gateway</strong> — it handles all the timing-critical work (NeoPixels, walkie audio, cipher) so the bot\'s BLE stays smooth. <strong>Foundation lab</strong> that unlocks the 🪄 Lights, 📻 Walkie, 🔐 Cipher, 🦠 Worm and 🤖 Add-on labs.',
+      not_connected: 'NOT CONNECTED', connected: 'CONNECTED',
+      btn_connect: '🔌 Connect', btn_disconnect: '⏏ Disconnect',
+      btn_stop: '⏹ STOP',
+      stop_hint: 'Tip: press Space to STOP',
+      gw_online: '🛰 GATEWAY ONLINE', gw_offline: 'GATEWAY OFFLINE',
+      cat_setup: 'Setup', cat_diag: 'Diagnostics',
+
+      m_pair_t: 'Pairing Wizard',     m_pair_s: '3-step setup',
+      m_caps_t: 'Capability Matrix',  m_caps_s: "what's unlocked",
+      m_health_t: 'Link Health',      m_health_s: 'latency · loss · rate',
+      m_range_t: 'Range Test',        m_range_s: 'walk it away',
+      m_scan_t: 'Group Scan',         m_scan_s: 'find interference',
+
+      // ── Pairing wizard ──
+      step1_t: 'Step 1 — Flash gateway firmware',
+      step1_p: 'Plug your spare micro:bit into USB. It shows up as a <strong>MICROBIT</strong> drive on your computer. Then drop the gateway program onto it.',
+      step1_dl: '⬇ Download wand.hex',
+      step1_drag: 'Drag <code>wand.hex</code> onto the MICROBIT drive\nWait for the yellow LED to stop blinking\nUnplug and power with batteries',
+      step1_done: '✓ I flashed it',
+
+      step2_t: 'Step 2 — Choose a radio group',
+      step2_p: 'Pick a number from 0–255. The bot and the gateway must share this group to talk over radio. If your classroom has many bots, give each pair their own number to avoid crosstalk.',
+      step2_label: 'Radio group:',
+      step2_back: '◀ Back', step2_next: 'Next ▶',
+
+      step3_t: 'Step 3 — Test the ping',
+      step3_p: 'Send a ping through the bot to the gateway. The gateway pings back. If you see ✓ in under 100 ms, the link is solid.',
+      step3_btn: '🛰 Send test ping',
+      step3_back: '◀ Back', step3_finish: '✓ Finish',
+      step3_pinging: 'Pinging…',
+      step3_ok: 'Round-trip',
+      step3_fail: 'No response — check the gateway is powered on and the group matches.',
+
+      // ── Capability Matrix ──
+      caps_intro: 'These labs become available once your gateway is online. Each one runs through your paired co-pilot.',
+      cap_lights_n: '🪄 Lights Wand', cap_lights_d: 'Wave a wand of NeoPixels — patterns, chase, sparkle.',
+      cap_walkie_n: '📻 Walkie',     cap_walkie_d: 'Voice radio between two bots — push-to-talk audio over the radio link.',
+      cap_cipher_n: '🔐 Cipher',     cap_cipher_d: 'Send secret messages encrypted with a shared key.',
+      cap_worm_n:   '🦠 Worm',       cap_worm_d: 'Daisy-chain bots that pass a token along — collective games.',
+      cap_addon_n:  '🤖 Add-on',     cap_addon_d: 'Hang any new accessory off the gateway without touching the bot firmware.',
+      cap_open: 'Open',
+      cap_locked: 'Locked',
+      cap_soon: 'Coming soon',
+
+      // ── Link Health ──
+      health_intro: 'Real-time monitor of the bot↔gateway radio link. Polls a ping at 2 Hz.',
+      health_rate: 'Ping rate', health_loss: 'Packet loss', health_lat: 'Avg latency',
+      health_unit_hz: 'Hz', health_unit_pc: '%', health_unit_ms: 'ms',
+      health_start: '▶ Start monitor', health_stop: '⏸ Pause',
+
+      // ── Range Test ──
+      range_intro: 'Carry the gateway away from the bot. We log the distance at which packet loss crosses each threshold.',
+      range_start: '▶ Start range walk', range_stop: '⏸ Stop',
+      range_reset: '↺ Reset',
+      range_t10: 'First 10% loss', range_t50: 'First 50% loss', range_t100: 'Total loss',
+
+      // ── Group Scan ──
+      scan_intro: 'Cycle through every group 0–255 and listen for other gateways. Useful when several bots share the same room.',
+      scan_start: '▶ Start scan', scan_stop: '⏸ Stop',
+      scan_clear: '↺ Clear',
+      scan_progress_t: 'Scanning group',
+      scan_done: 'Scan complete',
+      scan_legend_clean: 'clear', scan_legend_busy: 'in use', scan_legend_unscanned: 'not yet',
+
+      // ── lab-logger ──
+      ll_title:    'MESSAGE LOG',
+      ll_subtitle: 'Raw UART messages',
+      ll_clear:    'Clear', ll_copy: 'Copy', ll_export: 'Export', ll_pin: 'Pin',
+    },
+
+    fr: {
+      header_title: '🛰 Labo Co-Pilote',
+      header_sub: 'Appaire un second micro:bit comme passerelle radio · débloque Lumières · Talkie · Chiffre · Ver · Module',
+      header_robot_app: '🤖 App Robot',
+      header_catalog: '🗂️ Catalogue',
+      header_labs: '🧪 Labos',
+      header_hub: '🏠 Hub',
+      hero_title: '🛰 Labo Co-Pilote',
+      hero_pitch: 'Appaire un second micro:bit comme <strong>passerelle radio</strong> — il s\'occupe de tout ce qui demande un timing strict (NeoPixels, audio talkie, chiffrement) pour que le BLE du robot reste fluide. <strong>Labo de base</strong> qui débloque les labos 🪄 Lumières, 📻 Talkie, 🔐 Chiffre, 🦠 Ver et 🤖 Module.',
+      not_connected: 'NON CONNECTÉ', connected: 'CONNECTÉ',
+      btn_connect: '🔌 Connecter', btn_disconnect: '⏏ Déconnecter',
+      btn_stop: '⏹ ARRÊT',
+      stop_hint: 'Astuce : appuie sur Espace pour ARRÊTER',
+      gw_online: '🛰 PASSERELLE EN LIGNE', gw_offline: 'PASSERELLE HORS LIGNE',
+      cat_setup: 'Installation', cat_diag: 'Diagnostic',
+
+      m_pair_t: 'Assistant d\'appairage', m_pair_s: 'installation 3 étapes',
+      m_caps_t: 'Matrice des capacités',  m_caps_s: 'ce qui est débloqué',
+      m_health_t: 'Santé du lien',        m_health_s: 'latence · perte · rythme',
+      m_range_t: 'Test de portée',        m_range_s: 'éloigne-le',
+      m_scan_t: 'Scan des groupes',       m_scan_s: 'détecte les interférences',
+
+      step1_t: 'Étape 1 — Flasher la passerelle',
+      step1_p: 'Branche ton micro:bit de rechange en USB. Il apparaît comme un disque <strong>MICROBIT</strong>. Glisse ensuite le programme passerelle dessus.',
+      step1_dl: '⬇ Télécharger wand.hex',
+      step1_drag: 'Glisse <code>wand.hex</code> sur le disque MICROBIT\nAttends que la LED jaune s\'arrête de clignoter\nDébranche et alimente avec les piles',
+      step1_done: '✓ C\'est flashé',
+
+      step2_t: 'Étape 2 — Choisir un groupe radio',
+      step2_p: 'Choisis un numéro de 0 à 255. Le robot et la passerelle doivent partager ce groupe pour se parler par radio. Si la classe a plusieurs robots, donne à chaque équipe son propre numéro pour éviter les croisements.',
+      step2_label: 'Groupe radio :',
+      step2_back: '◀ Retour', step2_next: 'Suivant ▶',
+
+      step3_t: 'Étape 3 — Tester le ping',
+      step3_p: 'Envoie un ping à travers le robot vers la passerelle. Elle répond. Si tu vois ✓ en moins de 100 ms, le lien tient bien.',
+      step3_btn: '🛰 Envoyer un ping test',
+      step3_back: '◀ Retour', step3_finish: '✓ Terminer',
+      step3_pinging: 'Ping en cours…',
+      step3_ok: 'Aller-retour',
+      step3_fail: 'Pas de réponse — vérifie que la passerelle est allumée et que le groupe correspond.',
+
+      caps_intro: 'Ces labos s\'ouvrent dès que ta passerelle est en ligne. Chacun passe par ton co-pilote appairé.',
+      cap_lights_n: '🪄 Baguette lumineuse', cap_lights_d: 'Agite une baguette de NeoPixels — motifs, chenillard, scintillement.',
+      cap_walkie_n: '📻 Talkie',             cap_walkie_d: 'Radio vocale entre deux robots — push-to-talk via le lien radio.',
+      cap_cipher_n: '🔐 Chiffre',            cap_cipher_d: 'Envoie des messages secrets chiffrés avec une clé partagée.',
+      cap_worm_n:   '🦠 Ver',                cap_worm_d: 'Robots en chaîne qui se passent un jeton — jeux collectifs.',
+      cap_addon_n:  '🤖 Module',             cap_addon_d: 'Branche n\'importe quel accessoire sur la passerelle sans toucher au firmware du robot.',
+      cap_open: 'Ouvrir',
+      cap_locked: 'Verrouillé',
+      cap_soon: 'Bientôt',
+
+      health_intro: 'Mesure en temps réel du lien radio robot↔passerelle. Envoie un ping à 2 Hz.',
+      health_rate: 'Rythme ping', health_loss: 'Perte paquets', health_lat: 'Latence moy.',
+      health_unit_hz: 'Hz', health_unit_pc: '%', health_unit_ms: 'ms',
+      health_start: '▶ Démarrer', health_stop: '⏸ Pause',
+
+      range_intro: 'Éloigne la passerelle du robot. On note la distance où la perte dépasse chaque seuil.',
+      range_start: '▶ Démarrer', range_stop: '⏸ Stop',
+      range_reset: '↺ Réinit',
+      range_t10: 'Première perte 10%', range_t50: 'Première perte 50%', range_t100: 'Perte totale',
+
+      scan_intro: 'Parcourt tous les groupes 0–255 et écoute s\'il y a d\'autres passerelles. Utile quand la salle a plusieurs robots.',
+      scan_start: '▶ Démarrer', scan_stop: '⏸ Stop',
+      scan_clear: '↺ Effacer',
+      scan_progress_t: 'Scan du groupe',
+      scan_done: 'Scan terminé',
+      scan_legend_clean: 'libre', scan_legend_busy: 'occupé', scan_legend_unscanned: 'à venir',
+
+      ll_title:    'JOURNAL',
+      ll_subtitle: 'Messages UART bruts',
+      ll_clear:    'Effacer', ll_copy: 'Copier', ll_export: 'Exporter', ll_pin: 'Épingler',
+    },
+
+    ar: {
+      header_title: '🛰 مختبر الطيار المساعد',
+      header_sub: 'اربط مايكروبت ثانية كبوابة لاسلكيّة · تفتح: المصابيح · لاسلكي · شيفرة · دودة · ملحق',
+      header_robot_app: '🤖 تطبيق الروبوت',
+      header_catalog: '🗂️ الفهرس',
+      header_labs: '🧪 مختبرات',
+      header_hub: '🏠 المركز',
+      hero_title: '🛰 مختبر الطيار المساعد',
+      hero_pitch: 'اربط مايكروبت ثانية بوصفها <strong>بوّابة لاسلكيّة</strong> — تتكفّل بكلّ ما يتطلّب توقيتاً صارماً (NeoPixels، الصوت اللاسلكي، التشفير) لتبقى حركة BLE في الروبوت سلسة. <strong>مختبر أساسي</strong> يفتح مختبرات: 🪄 المصابيح، 📻 اللاسلكي، 🔐 الشيفرة، 🦠 الدودة، 🤖 الملحق.',
+      not_connected: 'غير متّصل', connected: 'متّصل',
+      btn_connect: '🔌 اتّصل', btn_disconnect: '⏏ اقطع',
+      btn_stop: '⏹ إيقاف',
+      stop_hint: 'تلميح: اضغط مفتاح المسافة للإيقاف.',
+      gw_online: '🛰 البوّابة متّصلة', gw_offline: 'البوّابة مفصولة',
+      cat_setup: 'الإعداد', cat_diag: 'التشخيص',
+
+      m_pair_t: 'معالج الإقران',     m_pair_s: 'إعداد بثلاث خطوات',
+      m_caps_t: 'مصفوفة القدرات',    m_caps_s: 'ما الذي يفتح',
+      m_health_t: 'صحّة الوصلة',     m_health_s: 'تأخير · فقد · معدّل',
+      m_range_t: 'اختبار المدى',     m_range_s: 'ابتعد بها',
+      m_scan_t: 'مسح المجموعات',     m_scan_s: 'ابحث عن التشويش',
+
+      step1_t: 'الخطوة 1 — تفليش البوّابة',
+      step1_p: 'وصّل المايكروبت الإضافيّة بمنفذ USB. ستظهر باسم قرص <strong>MICROBIT</strong>. ثمّ أفلت برنامج البوّابة عليها.',
+      step1_dl: '⬇ تنزيل wand.hex',
+      step1_drag: 'اسحب <code>wand.hex</code> إلى قرص MICROBIT.\nانتظر حتّى يتوقّف الوميض الأصفر.\nافصل الكابل وشغّلها بالبطّاريّات.',
+      step1_done: '✓ تمّ التفليش',
+
+      step2_t: 'الخطوة 2 — اختر مجموعة الراديو',
+      step2_p: 'اختر رقماً بين 0 و255. على الروبوت والبوّابة استخدام المجموعة نفسها للتحدّث عبر الراديو. إذا كان في الصفّ روبوتات متعدّدة، فأعطِ كلّ فريق رقماً خاصّاً به لتفادي التداخل.',
+      step2_label: 'مجموعة الراديو:',
+      step2_back: '◀ السابق', step2_next: 'التالي ▶',
+
+      step3_t: 'الخطوة 3 — اختبر النداء',
+      step3_p: 'أرسِل نداءً عبر الروبوت إلى البوّابة، وستردّ. إذا ظهرت العلامة ✓ في أقلّ من 100 ميلي ثانية، فالوصلة سليمة.',
+      step3_btn: '🛰 أرسِل نداء اختبار',
+      step3_back: '◀ السابق', step3_finish: '✓ إنهاء',
+      step3_pinging: 'جارٍ النداء…',
+      step3_ok: 'الذهاب والإياب',
+      step3_fail: 'لا توجد استجابة — تأكّد من تشغيل البوّابة ومن تطابق المجموعة.',
+
+      caps_intro: 'تُفتح هذه المختبرات حال اتّصال البوّابة. كلّها تعمل عبر الطيار المساعد المُقترَن.',
+      cap_lights_n: '🪄 عصا المصابيح', cap_lights_d: 'لوّح بعصا من NeoPixels — أنماط، مطاردة، بريق.',
+      cap_walkie_n: '📻 اللاسلكي',     cap_walkie_d: 'محادثة صوتيّة بين روبوتَين — اضغط للتحدّث عبر الراديو.',
+      cap_cipher_n: '🔐 الشيفرة',      cap_cipher_d: 'أرسِل رسائل سرّيّة مشفّرة بمفتاح مشترك.',
+      cap_worm_n:   '🦠 الدودة',       cap_worm_d: 'سلسلة روبوتات تتبادل رمزاً — ألعاب جماعيّة.',
+      cap_addon_n:  '🤖 ملحق',         cap_addon_d: 'ركّب أيّ ملحق جديد على البوّابة دون لمس برنامج الروبوت.',
+      cap_open: 'افتح',
+      cap_locked: 'مقفل',
+      cap_soon: 'قريباً',
+
+      health_intro: 'مراقبة لحظيّة لوصلة الراديو روبوت↔بوّابة. ينبض النداء بمعدّل 2 هرتز.',
+      health_rate: 'معدّل النداء', health_loss: 'فقد الحزم', health_lat: 'زمن الاستجابة',
+      health_unit_hz: 'هرتز', health_unit_pc: '٪', health_unit_ms: 'م.ث',
+      health_start: '▶ ابدأ', health_stop: '⏸ إيقاف مؤقّت',
+
+      range_intro: 'احمل البوّابة بعيداً عن الروبوت. سنسجّل المسافة التي يتجاوز عندها الفقد كلّ عتبة.',
+      range_start: '▶ ابدأ المشي', range_stop: '⏸ إيقاف',
+      range_reset: '↺ إعادة',
+      range_t10: 'أوّل فقد ١٠٪', range_t50: 'أوّل فقد ٥٠٪', range_t100: 'فقد كلّي',
+
+      scan_intro: 'يمرّ على جميع المجموعات 0–255 ويصغي لبوّابات أخرى. مفيد عند وجود روبوتات عديدة في الغرفة نفسها.',
+      scan_start: '▶ ابدأ المسح', scan_stop: '⏸ إيقاف',
+      scan_clear: '↺ مسح',
+      scan_progress_t: 'مسح المجموعة',
+      scan_done: 'انتهى المسح',
+      scan_legend_clean: 'فارغ', scan_legend_busy: 'مشغول', scan_legend_unscanned: 'لم تُمسح بعد',
+
+      ll_title:    'سجل الرسائل',
+      ll_subtitle: 'رسائل UART الخام',
+      ll_clear:    'مسح', ll_copy: 'نسخ', ll_export: 'تصدير', ll_pin: 'تثبيت',
+    },
+  };
+
+  let curLang = 'en';
+  function setL(lang) {
+    if (!T[lang]) lang = 'en';
+    curLang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.dataset.i18n;
+      if (T[lang][k] !== undefined) el.textContent = T[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const k = el.dataset.i18nHtml;
+      if (T[lang][k] !== undefined) el.innerHTML = T[lang][k];
+    });
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.body.classList.toggle('rtl', lang === 'ar');
+    document.querySelectorAll('.lang-pill[data-lang]').forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
+    try { localStorage.setItem('robi.lang', lang); } catch (e) {}
+    // Re-render the active mode so dynamic text picks up the new language.
+    if (currentMode && MODES[currentMode]) activate(currentMode);
+  }
+  window.setL = setL;
+  document.querySelectorAll('.lang-pill[data-lang]').forEach(btn => btn.addEventListener('click', () => setL(btn.dataset.lang)));
+
+  // ============================================================
+  // Theme picker
+  // ============================================================
+  const themeSel = document.getElementById('themeSelect');
+  function applyTheme(t) {
+    // Defensive: workshops/theme.css only knows these 5 themes. If a value
+    // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+    // fall back to carbon so we never apply a theme this stylesheet ignores.
+    var _validThemes = ['carbon','forest','steel','paper','pearl'];
+    if (_validThemes.indexOf(t) === -1) t = 'carbon';
+    document.documentElement.setAttribute('data-theme', t);
+    if (themeSel) themeSel.value = t;
+    try { localStorage.setItem('robi.theme', t); } catch (e) {}
+  }
+  if (themeSel) themeSel.addEventListener('change', e => applyTheme(e.target.value));
+
+  // ============================================================
+  // Sidebar category tabs
+  // ============================================================
+  function wireCatPersistence() {
+    const tabs = document.querySelectorAll('.cat-tab');
+    const grids = document.querySelectorAll('.mode-grid');
+    function activateCat(target) {
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.target === target));
+      grids.forEach(g => g.classList.toggle('active', g.id === target));
+      try { localStorage.setItem('robi.copilot.cat', target); } catch (e) {}
+    }
+    tabs.forEach(t => t.addEventListener('click', () => activateCat(t.dataset.target)));
+    let last = null;
+    try { last = localStorage.getItem('robi.copilot.cat'); } catch (e) {}
+    if (last && document.getElementById(last)) activateCat(last);
+  }
+
+  // ============================================================
+  // BLE bridge
+  // ============================================================
+  const connBar = document.getElementById('connBar');
+  const connStatus = document.getElementById('connStatus');
+  const connectBtn = document.getElementById('connectBtn');
+  const gwPill = document.getElementById('gwPill');
+  let gatewayOnline = false;
+
+  function setGatewayBadge(online) {
+    gatewayOnline = online;
+    gwPill.classList.toggle('online', online);
+    gwPill.textContent = online ? T[curLang].gw_online : T[curLang].gw_offline;
+    // Trigger any watchers (cap matrix, etc.)
+    document.dispatchEvent(new CustomEvent('robi:gw', { detail: { online } }));
+  }
+
+  if (window.RobiBle) {
+    window.RobiBle.onStatus = (state, name) => {
+      connBar.classList.toggle('connected', state);
+      if (state) {
+        connStatus.innerHTML = '<span class="dot"></span>' + T[curLang].connected + ' · ' + (name || '');
+        connectBtn.textContent = T[curLang].btn_disconnect;
+        connectBtn.classList.add('disconnect');
+      } else {
+        connStatus.innerHTML = '<span class="dot"></span>' + T[curLang].not_connected;
+        connectBtn.textContent = T[curLang].btn_connect;
+        connectBtn.classList.remove('disconnect');
+        // Drop the gateway badge when the bot disconnects.
+        setGatewayBadge(false);
+      }
+    };
+    window.RobiBle.onLog = (line, level) => {
+      if (window.LabLogger && LabLogger.log) LabLogger.log(line, level || 'info');
+    };
+    window.RobiBle.onRxLine = (line) => {
+      if (window.LabLogger && LabLogger.log) LabLogger.log('← ' + line, 'rx');
+      // Watch for RADIO:STATUS replies / pong
+      if (/^RADIO:PONG/i.test(line) || /^GW:OK/i.test(line)) setGatewayBadge(true);
+    };
+  }
+
+  // Connect button uses bare connect() from ble.js
+  connectBtn.addEventListener('click', () => {
+    if (typeof isConnected !== 'undefined' && isConnected) {
+      if (typeof disconnect === 'function') disconnect();
+    } else if (typeof connect === 'function') {
+      connect();
+    } else {
+      // Mock: fake a connect for development
+      if (window.LabLogger && LabLogger.log) LabLogger.log('(mock) no ble.js — running in simulation', 'warn');
+    }
+  });
+
+  function send(verb) {
+    if (typeof isConnected !== 'undefined' && isConnected && typeof sendLine === 'function') {
+      sendLine(verb);
+      if (window.LabLogger && LabLogger.log) LabLogger.log('→ ' + verb, 'tx');
+      return true;
+    }
+    if (window.LabLogger && LabLogger.log) LabLogger.log('(mock) ' + verb, 'mock');
+    return false;
+  }
+  function stop() { send('STOP'); }
+  window.copilotStop = stop;
+
+  // ============================================================
+  // Persisted radio group
+  // ============================================================
+  function getGroup() {
+    try { return parseInt(localStorage.getItem('robi.copilot.group'), 10) || 42; }
+    catch (e) { return 42; }
+  }
+  function setGroup(n) {
+    n = Math.max(0, Math.min(255, n | 0));
+    try { localStorage.setItem('robi.copilot.group', String(n)); } catch (e) {}
+    return n;
+  }
+
+  // ============================================================
+  // MODE 1 — Pairing Wizard
+  // ============================================================
+  function installPair(host) {
+    host.innerHTML = '';
+    let step = 1;
+    let stepDone = [false, false, false];
+
+    const progress = document.createElement('div');
+    progress.className = 'wiz-progress';
+    progress.innerHTML = `
+      <div class="wiz-step-pill" data-s="1"><span class="num">1</span><span data-i18n="step1_t">${T[curLang].step1_t}</span></div>
+      <span class="wiz-arrow">→</span>
+      <div class="wiz-step-pill" data-s="2"><span class="num">2</span><span data-i18n="step2_t">${T[curLang].step2_t}</span></div>
+      <span class="wiz-arrow">→</span>
+      <div class="wiz-step-pill" data-s="3"><span class="num">3</span><span data-i18n="step3_t">${T[curLang].step3_t}</span></div>
+    `;
+    host.appendChild(progress);
+
+    const badge = document.createElement('div');
+    badge.className = 'gw-badge' + (gatewayOnline ? ' online' : '');
+    badge.innerHTML = '<span class="pulse"></span><span class="badge-text">' + (gatewayOnline ? T[curLang].gw_online : T[curLang].gw_offline) + '</span>';
+    host.appendChild(badge);
+
+    const panel = document.createElement('div');
+    panel.className = 'wiz-panel';
+    host.appendChild(panel);
+
+    function refreshProgress() {
+      progress.querySelectorAll('.wiz-step-pill').forEach(p => {
+        const s = parseInt(p.dataset.s, 10);
+        p.classList.toggle('active', s === step);
+        p.classList.toggle('done', stepDone[s - 1]);
+      });
+    }
+
+    function renderStep1() {
+      panel.innerHTML = `
+        <h3>${T[curLang].step1_t}</h3>
+        <p>${T[curLang].step1_p}</p>
+        <a class="wiz-btn primary" href="#" download="wand.hex" id="dlHex">${T[curLang].step1_dl}</a>
+        <div class="wiz-instructions">${T[curLang].step1_drag.split('\n').map((l, i) => (i + 1) + '. ' + l).join('<br>')}</div>
+        <div class="wiz-actions">
+          <button class="wiz-btn primary" id="step1Done">${T[curLang].step1_done}</button>
+        </div>
+      `;
+      panel.querySelector('#dlHex').addEventListener('click', e => {
+        // Placeholder firmware: a tiny stub blob so the download still works.
+        e.preventDefault();
+        const blob = new Blob([':020000040000FA\n:00000001FF\n'], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'wand.hex'; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        if (window.LabLogger && LabLogger.log) LabLogger.log('downloaded wand.hex (placeholder stub)', 'info');
+      });
+      panel.querySelector('#step1Done').addEventListener('click', () => {
+        stepDone[0] = true; step = 2; refreshProgress(); renderStep2();
+      });
+    }
+
+    function renderStep2() {
+      const g = getGroup();
+      panel.innerHTML = `
+        <h3>${T[curLang].step2_t}</h3>
+        <p>${T[curLang].step2_p}</p>
+        <div class="wiz-slider-wrap">
+          <span>${T[curLang].step2_label}</span>
+          <input type="range" id="grpSlider" min="0" max="255" value="${g}">
+          <span class="wiz-group-display" id="grpDisplay">${g}</span>
+        </div>
+        <div class="wiz-actions">
+          <button class="wiz-btn" id="s2Back">${T[curLang].step2_back}</button>
+          <button class="wiz-btn primary" id="s2Next">${T[curLang].step2_next}</button>
+        </div>
+      `;
+      const slider = panel.querySelector('#grpSlider');
+      const disp = panel.querySelector('#grpDisplay');
+      slider.addEventListener('input', () => { disp.textContent = slider.value; });
+      slider.addEventListener('change', () => {
+        const n = setGroup(parseInt(slider.value, 10));
+        send('RADIO:GROUP ' + n);
+      });
+      panel.querySelector('#s2Back').addEventListener('click', () => { step = 1; refreshProgress(); renderStep1(); });
+      panel.querySelector('#s2Next').addEventListener('click', () => {
+        const n = setGroup(parseInt(slider.value, 10));
+        send('RADIO:GROUP ' + n);
+        stepDone[1] = true; step = 3; refreshProgress(); renderStep3();
+      });
+    }
+
+    function renderStep3() {
+      panel.innerHTML = `
+        <h3>${T[curLang].step3_t}</h3>
+        <p>${T[curLang].step3_p}</p>
+        <div class="wiz-actions">
+          <button class="wiz-btn primary" id="pingBtn">${T[curLang].step3_btn}</button>
+          <span id="pingResult" style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; padding:8px 12px; border-radius:8px; background:var(--panel); border:1px solid var(--border); color:var(--muted); min-width:160px; text-align:center;">—</span>
+        </div>
+        <div class="wiz-actions">
+          <button class="wiz-btn" id="s3Back">${T[curLang].step3_back}</button>
+          <button class="wiz-btn primary" id="s3Finish" disabled style="opacity:0.5;">${T[curLang].step3_finish}</button>
+        </div>
+      `;
+      const result = panel.querySelector('#pingResult');
+      const finish = panel.querySelector('#s3Finish');
+      panel.querySelector('#pingBtn').addEventListener('click', () => {
+        result.textContent = T[curLang].step3_pinging;
+        result.style.color = 'var(--cyan)';
+        const t0 = performance.now();
+        const live = (typeof isConnected !== 'undefined' && isConnected);
+        send('RADIO:PING');
+        // Listen briefly for a PONG; if no real reply, simulate.
+        let resolved = false;
+        const onRx = (line) => {
+          if (resolved) return;
+          if (/PONG|GW:OK/i.test(line)) {
+            resolved = true;
+            const dt = Math.round(performance.now() - t0);
+            result.textContent = '✓ ' + T[curLang].step3_ok + ': ' + dt + ' ms';
+            result.style.color = 'var(--neon)';
+            stepDone[2] = true; finish.disabled = false; finish.style.opacity = '1';
+            refreshProgress();
+            setGatewayBadge(true);
+            badge.classList.add('online');
+            badge.querySelector('.badge-text').textContent = T[curLang].gw_online;
+          }
+        };
+        const prior = window.RobiBle && window.RobiBle.onRxLine;
+        if (window.RobiBle) {
+          window.RobiBle.onRxLine = (line) => { if (prior) prior(line); onRx(line); };
+        }
+        setTimeout(() => {
+          if (resolved) return;
+          if (live) {
+            // Real connection but nothing came back — show failure
+            result.textContent = '✗ ' + T[curLang].step3_fail;
+            result.style.color = 'var(--red)';
+          } else {
+            // Mock: pretend the gateway pong'd back at ~18ms
+            const fakeDt = 14 + Math.round(Math.random() * 12);
+            result.textContent = '✓ ' + T[curLang].step3_ok + ': ' + fakeDt + ' ms (mock)';
+            result.style.color = 'var(--neon)';
+            stepDone[2] = true; finish.disabled = false; finish.style.opacity = '1';
+            refreshProgress();
+            setGatewayBadge(true);
+            badge.classList.add('online');
+            badge.querySelector('.badge-text').textContent = T[curLang].gw_online;
+          }
+        }, 700);
+      });
+      panel.querySelector('#s3Back').addEventListener('click', () => { step = 2; refreshProgress(); renderStep2(); });
+      panel.querySelector('#s3Finish').addEventListener('click', () => {
+        if (window.LabLogger && LabLogger.log) LabLogger.log('Pairing complete — gateway online', 'success');
+      });
+    }
+
+    refreshProgress();
+    renderStep1();
+
+    return () => { host.innerHTML = ''; };
+  }
+
+  // ============================================================
+  // MODE 2 — Capability Matrix
+  // ============================================================
+  function installCaps(host) {
+    host.innerHTML = '';
+    const intro = document.createElement('p');
+    intro.style.color = 'var(--muted)';
+    intro.style.lineHeight = '1.55';
+    intro.textContent = T[curLang].caps_intro;
+    host.appendChild(intro);
+
+    const grid = document.createElement('div');
+    grid.className = 'cap-grid';
+    host.appendChild(grid);
+
+    const caps = [
+      { key: 'lights', href: 'lights-lab.html' },
+      { key: 'walkie', href: '#' },
+      { key: 'cipher', href: '#' },
+      { key: 'worm',   href: '#' },
+      { key: 'addon',  href: '#' },
+    ];
+
+    function render() {
+      grid.innerHTML = '';
+      const online = gatewayOnline;
+      caps.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'cap-card' + (online ? ' unlocked' : '');
+        const lockIcon = online ? '✓' : '🔒';
+        const isReal = c.href && c.href !== '#';
+        const btnLabel = online ? T[curLang].cap_open : (isReal ? T[curLang].cap_locked : T[curLang].cap_soon);
+        card.innerHTML = `
+          <div class="cap-head">
+            <span class="cap-lock">${lockIcon}</span>
+            <span class="cap-name">${T[curLang]['cap_' + c.key + '_n']}</span>
+          </div>
+          <div class="cap-desc">${T[curLang]['cap_' + c.key + '_d']}</div>
+          <a class="cap-open ${online && isReal ? '' : 'disabled'}" href="${online && isReal ? c.href : '#'}">${btnLabel}</a>
+        `;
+        grid.appendChild(card);
+      });
+    }
+    render();
+
+    const handler = () => render();
+    document.addEventListener('robi:gw', handler);
+
+    return () => { document.removeEventListener('robi:gw', handler); host.innerHTML = ''; };
+  }
+
+  // ============================================================
+  // MODE 3 — Link Health
+  // ============================================================
+  function installHealth(host) {
+    host.innerHTML = '';
+    const intro = document.createElement('p');
+    intro.style.color = 'var(--muted)'; intro.style.lineHeight = '1.55';
+    intro.textContent = T[curLang].health_intro;
+    host.appendChild(intro);
+
+    const grid = document.createElement('div');
+    grid.className = 'health-grid';
+    grid.innerHTML = `
+      <div class="health-card"><div class="health-label">${T[curLang].health_rate}</div><div><span class="health-value cyan" id="hRate">0</span><span class="health-unit">${T[curLang].health_unit_hz}</span></div></div>
+      <div class="health-card"><div class="health-label">${T[curLang].health_loss}</div><div><span class="health-value amber" id="hLoss">0</span><span class="health-unit">${T[curLang].health_unit_pc}</span></div></div>
+      <div class="health-card"><div class="health-label">${T[curLang].health_lat}</div><div><span class="health-value neon" id="hLat">0</span><span class="health-unit">${T[curLang].health_unit_ms}</span></div></div>
+    `;
+    host.appendChild(grid);
+
+    const sparkWrap = document.createElement('div');
+    sparkWrap.className = 'spark-wrap';
+    sparkWrap.innerHTML = '<canvas id="spark"></canvas>';
+    host.appendChild(sparkWrap);
+
+    const ctrlRow = document.createElement('div');
+    ctrlRow.style.cssText = 'display:flex; gap:10px; margin-top:12px;';
+    ctrlRow.innerHTML = `
+      <button class="wiz-btn primary" id="hStart">${T[curLang].health_start}</button>
+      <button class="wiz-btn" id="hStop">${T[curLang].health_stop}</button>
+    `;
+    host.appendChild(ctrlRow);
+
+    const samples = []; const SPARK_N = 60;
+    let timer = null;
+    let sent = 0, received = 0;
+    let latencies = [];
+    const live = () => (typeof isConnected !== 'undefined' && isConnected);
+
+    function tick() {
+      sent++;
+      send('RADIO:PING');
+      // Mock receipt with random jitter
+      const fakeLatency = 14 + Math.round(Math.random() * 22);
+      const drop = !live() && Math.random() < 0.05; // 5% mock loss
+      setTimeout(() => {
+        if (!drop) {
+          received++;
+          latencies.push(fakeLatency);
+          if (latencies.length > 30) latencies.shift();
+        }
+        samples.push({ lat: drop ? 0 : fakeLatency, ok: !drop });
+        while (samples.length > SPARK_N) samples.shift();
+        updateUI();
+      }, fakeLatency);
+    }
+
+    function updateUI() {
+      const loss = sent ? Math.round(((sent - received) / sent) * 100) : 0;
+      const avg = latencies.length ? Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length) : 0;
+      const rate = received > 0 && samples.length ? Math.min(2, samples.filter(s => s.ok).length / (samples.length / 2)).toFixed(1) : '0.0';
+      document.getElementById('hRate').textContent = rate;
+      document.getElementById('hLoss').textContent = loss;
+      document.getElementById('hLat').textContent = avg;
+      drawSpark();
+    }
+
+    function drawSpark() {
+      const c = document.getElementById('spark');
+      if (!c) return;
+      const dpr = window.devicePixelRatio || 1;
+      const w = c.clientWidth, h = c.clientHeight;
+      c.width = w * dpr; c.height = h * dpr;
+      const ctx = c.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+      // Grid
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.15)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = (h - 10) * i / 4 + 5;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+      if (!samples.length) return;
+      const maxLat = 60;
+      const stepX = w / SPARK_N;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#22d3ee';
+      ctx.beginPath();
+      samples.forEach((s, i) => {
+        const x = i * stepX;
+        const y = h - 5 - (Math.min(s.lat, maxLat) / maxLat) * (h - 10);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      // Loss markers
+      ctx.fillStyle = '#ef4444';
+      samples.forEach((s, i) => {
+        if (!s.ok) {
+          const x = i * stepX;
+          ctx.fillRect(x - 1, 2, 2, h - 4);
+        }
+      });
+    }
+
+    document.getElementById('hStart').addEventListener('click', () => {
+      if (timer) return;
+      timer = setInterval(tick, 500); // 2 Hz
+    });
+    document.getElementById('hStop').addEventListener('click', () => {
+      if (timer) { clearInterval(timer); timer = null; }
+    });
+
+    // auto-start
+    timer = setInterval(tick, 500);
+    setTimeout(drawSpark, 50);
+
+    return () => { if (timer) clearInterval(timer); host.innerHTML = ''; };
+  }
+
+  // ============================================================
+  // MODE 4 — Range Test
+  // ============================================================
+  function installRange(host) {
+    host.innerHTML = '';
+    const intro = document.createElement('p');
+    intro.style.color = 'var(--muted)'; intro.style.lineHeight = '1.55';
+    intro.textContent = T[curLang].range_intro;
+    host.appendChild(intro);
+
+    const ctrls = document.createElement('div');
+    ctrls.className = 'range-controls';
+    ctrls.innerHTML = `
+      <button class="wiz-btn primary" id="rStart">${T[curLang].range_start}</button>
+      <button class="wiz-btn" id="rStop">${T[curLang].range_stop}</button>
+      <button class="wiz-btn" id="rReset">${T[curLang].range_reset}</button>
+    `;
+    host.appendChild(ctrls);
+
+    const thr = document.createElement('div');
+    thr.className = 'range-thresh';
+    thr.innerHTML = `
+      <div class="thresh-card t10"><div class="thresh-label">${T[curLang].range_t10}</div><div class="thresh-val" id="th10">— m</div></div>
+      <div class="thresh-card t50"><div class="thresh-label">${T[curLang].range_t50}</div><div class="thresh-val" id="th50">— m</div></div>
+      <div class="thresh-card t100"><div class="thresh-label">${T[curLang].range_t100}</div><div class="thresh-val" id="th100">— m</div></div>
+    `;
+    host.appendChild(thr);
+
+    const cwrap = document.createElement('div');
+    cwrap.className = 'range-canvas-wrap';
+    cwrap.innerHTML = '<canvas id="rangeCanvas"></canvas>';
+    host.appendChild(cwrap);
+
+    let data = []; // {dist, loss}
+    let dist = 0; // simulated distance
+    let timer = null;
+    let th10 = null, th50 = null, th100 = null;
+
+    function tick() {
+      dist += 0.25; // 25cm per tick
+      // Mock loss curve: ~5% at 2m, ~30% at 5m, ~100% beyond 10m
+      let loss;
+      if (dist < 2) loss = Math.min(5, dist * 2.5);
+      else if (dist < 5) loss = 5 + (dist - 2) * 8;
+      else if (dist < 10) loss = 29 + (dist - 5) * 14;
+      else loss = 100;
+      loss = Math.max(0, Math.min(100, loss + (Math.random() - 0.5) * 8));
+      data.push({ d: dist, l: loss });
+      if (th10 === null && loss >= 10) { th10 = dist; document.getElementById('th10').textContent = dist.toFixed(1) + ' m'; }
+      if (th50 === null && loss >= 50) { th50 = dist; document.getElementById('th50').textContent = dist.toFixed(1) + ' m'; }
+      if (th100 === null && loss >= 99) { th100 = dist; document.getElementById('th100').textContent = dist.toFixed(1) + ' m'; }
+      send('RADIO:PING');
+      draw();
+    }
+
+    function draw() {
+      const c = document.getElementById('rangeCanvas');
+      if (!c) return;
+      const dpr = window.devicePixelRatio || 1;
+      const w = c.clientWidth, h = c.clientHeight;
+      c.width = w * dpr; c.height = h * dpr;
+      const ctx = c.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+      const padL = 36, padB = 22, padT = 8, padR = 8;
+      const innerW = w - padL - padR, innerH = h - padT - padB;
+      // Axes
+      ctx.strokeStyle = 'rgba(148,163,184,0.3)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
+      ctx.fillStyle = '#94a3b8'; ctx.font = '10px monospace';
+      [0, 25, 50, 75, 100].forEach(p => {
+        const y = padT + innerH * (1 - p / 100);
+        ctx.fillText(p + '%', 4, y + 3);
+        ctx.strokeStyle = 'rgba(148,163,184,0.1)';
+        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+      });
+      const maxD = Math.max(12, Math.ceil(dist + 1));
+      [0, maxD * 0.25, maxD * 0.5, maxD * 0.75, maxD].forEach(d => {
+        const x = padL + innerW * (d / maxD);
+        ctx.fillText(d.toFixed(0) + 'm', x - 8, h - 6);
+      });
+      // Threshold lines
+      [[10, '#a3e635'], [50, '#fbbf24'], [100, '#ef4444']].forEach(([p, col]) => {
+        const y = padT + innerH * (1 - p / 100);
+        ctx.strokeStyle = col; ctx.setLineDash([4, 4]); ctx.beginPath();
+        ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+        ctx.setLineDash([]);
+      });
+      // Loss curve
+      ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      data.forEach((p, i) => {
+        const x = padL + innerW * (p.d / maxD);
+        const y = padT + innerH * (1 - p.l / 100);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+
+    document.getElementById('rStart').addEventListener('click', () => {
+      if (timer) return;
+      timer = setInterval(tick, 250);
+    });
+    document.getElementById('rStop').addEventListener('click', () => {
+      if (timer) { clearInterval(timer); timer = null; }
+    });
+    document.getElementById('rReset').addEventListener('click', () => {
+      if (timer) { clearInterval(timer); timer = null; }
+      data = []; dist = 0; th10 = th50 = th100 = null;
+      document.getElementById('th10').textContent = '— m';
+      document.getElementById('th50').textContent = '— m';
+      document.getElementById('th100').textContent = '— m';
+      draw();
+    });
+
+    setTimeout(draw, 50);
+
+    return () => { if (timer) clearInterval(timer); host.innerHTML = ''; };
+  }
+
+  // ============================================================
+  // MODE 5 — Group Scan
+  // ============================================================
+  function installScan(host) {
+    host.innerHTML = '';
+    const intro = document.createElement('p');
+    intro.style.color = 'var(--muted)'; intro.style.lineHeight = '1.55';
+    intro.textContent = T[curLang].scan_intro;
+    host.appendChild(intro);
+
+    const ctrls = document.createElement('div');
+    ctrls.className = 'scan-controls';
+    ctrls.innerHTML = `
+      <button class="wiz-btn primary" id="sStart">${T[curLang].scan_start}</button>
+      <button class="wiz-btn" id="sStop">${T[curLang].scan_stop}</button>
+      <button class="wiz-btn" id="sClear">${T[curLang].scan_clear}</button>
+      <div class="scan-progress"><div class="scan-progress-bar" id="sBar"></div></div>
+      <span class="scan-status" id="sStatus">—</span>
+    `;
+    host.appendChild(ctrls);
+
+    const legend = document.createElement('div');
+    legend.style.cssText = 'display:flex; gap:18px; margin:8px 0 6px; color:var(--muted); font-size:0.78rem;';
+    legend.innerHTML = `
+      <span><span style="display:inline-block;width:10px;height:10px;background:color-mix(in srgb,var(--neon) 35%, var(--panel2));border-radius:2px;vertical-align:middle;margin-right:4px;"></span>${T[curLang].scan_legend_clean}</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:color-mix(in srgb,var(--red) 50%, var(--panel2));border-radius:2px;vertical-align:middle;margin-right:4px;"></span>${T[curLang].scan_legend_busy}</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:var(--border);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>${T[curLang].scan_legend_unscanned}</span>
+    `;
+    host.appendChild(legend);
+
+    const grid = document.createElement('div');
+    grid.className = 'scan-grid';
+    for (let i = 0; i < 256; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'scan-cell';
+      cell.dataset.g = i;
+      cell.textContent = i;
+      grid.appendChild(cell);
+    }
+    host.appendChild(grid);
+
+    let timer = null; let cur = 0;
+    // Pre-bake some "busy" groups for the mock so it looks realistic.
+    const mockBusy = new Set([7, 23, 42, 88, 142, 200, 233]);
+
+    function step() {
+      grid.querySelectorAll('.scan-cell.current').forEach(c => c.classList.remove('current'));
+      if (cur >= 256) {
+        if (timer) { clearInterval(timer); timer = null; }
+        document.getElementById('sStatus').textContent = T[curLang].scan_done;
+        document.getElementById('sBar').style.width = '100%';
+        return;
+      }
+      const cell = grid.querySelector('.scan-cell[data-g="' + cur + '"]');
+      cell.classList.add('current');
+      send('RADIO:GROUP ' + cur);
+      // In live mode we'd wait for a status reply; in mock, decide instantly.
+      const busy = mockBusy.has(cur) || (Math.random() < 0.015);
+      cell.classList.add(busy ? 'busy' : 'clean');
+      document.getElementById('sStatus').textContent = T[curLang].scan_progress_t + ' ' + cur;
+      document.getElementById('sBar').style.width = ((cur + 1) / 256 * 100).toFixed(1) + '%';
+      cur++;
+    }
+
+    document.getElementById('sStart').addEventListener('click', () => {
+      if (timer) return;
+      timer = setInterval(step, 60);
+    });
+    document.getElementById('sStop').addEventListener('click', () => {
+      if (timer) { clearInterval(timer); timer = null; }
+    });
+    document.getElementById('sClear').addEventListener('click', () => {
+      if (timer) { clearInterval(timer); timer = null; }
+      cur = 0;
+      grid.querySelectorAll('.scan-cell').forEach(c => { c.className = 'scan-cell'; });
+      document.getElementById('sStatus').textContent = '—';
+      document.getElementById('sBar').style.width = '0%';
+      // Restore the saved active group on the bot
+      send('RADIO:GROUP ' + getGroup());
+    });
+
+    return () => { if (timer) clearInterval(timer); host.innerHTML = ''; };
+  }
+
+  // ============================================================
+  // Mode router
+  // ============================================================
+  const MODES = {
+    pair:   { install: installPair,   titleKey: 'm_pair_t',   subKey: 'm_pair_s' },
+    caps:   { install: installCaps,   titleKey: 'm_caps_t',   subKey: 'm_caps_s' },
+    health: { install: installHealth, titleKey: 'm_health_t', subKey: 'm_health_s' },
+    range:  { install: installRange,  titleKey: 'm_range_t',  subKey: 'm_range_s' },
+    scan:   { install: installScan,   titleKey: 'm_scan_t',   subKey: 'm_scan_s' },
+  };
+  let teardown = null;
+  let currentMode = null;
+
+  function activate(mode) {
+    if (!MODES[mode]) return;
+    if (teardown) { try { teardown(); } catch (e) {} teardown = null; }
+    currentMode = mode;
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
+    document.getElementById('stageTitle').textContent = T[curLang][MODES[mode].titleKey];
+    document.getElementById('stageSub').textContent  = T[curLang][MODES[mode].subKey];
+    teardown = MODES[mode].install(document.getElementById('stageBody'));
+    try { localStorage.setItem('robi.copilot.mode', mode); } catch (e) {}
+  }
+
+  document.querySelectorAll('.mode-card').forEach(card => {
+    card.addEventListener('click', () => activate(card.dataset.mode));
+  });
+
+  // STOP button + spacebar shortcut
+  document.getElementById('stopBtn').addEventListener('click', stop);
+  document.addEventListener('keydown', e => {
+    if (e.key === ' ' && document.activeElement && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+      stop(); e.preventDefault();
+    }
+  });
+
+  // ============================================================
+  // Boot
+  // ============================================================
+  let _copilotMounted = false;
+  function _mountCopilot() {
+    if (_copilotMounted) return;
+    _copilotMounted = true;
+    if (window.LabLogger) LabLogger.mount('#labLogger', { surface: 'Co-Pilot Lab' });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Theme + lang restore
+    try { const t = localStorage.getItem('robi.theme'); if (t) applyTheme(t); } catch (e) {}
+    try { const l = localStorage.getItem('robi.lang') || 'en'; setL(l); } catch (e) { setL('en'); }
+    wireCatPersistence();
+
+    // Restore last mode
+    let last = null;
+    try { last = localStorage.getItem('robi.copilot.mode'); } catch (e) {}
+    activate(last && MODES[last] ? last : 'pair');
+
+    // Mount the lab logger on the right rail
+    _mountCopilot();
+
+    // Initial badge state
+    setGatewayBadge(false);
+  });
+
+  // If DOMContentLoaded already fired (script at end of body)
+  if (document.readyState !== 'loading') {
+    setTimeout(() => {
+      try { const t = localStorage.getItem('robi.theme'); if (t) applyTheme(t); } catch (e) {}
+      try { const l = localStorage.getItem('robi.lang') || 'en'; setL(l); } catch (e) { setL('en'); }
+      wireCatPersistence();
+      let last = null;
+      try { last = localStorage.getItem('robi.copilot.mode'); } catch (e) {}
+      activate(last && MODES[last] ? last : 'pair');
+      _mountCopilot();
+      setGatewayBadge(false);
+    }, 0);
+  }
+})();
+</script>
+
+</body>
+</html>

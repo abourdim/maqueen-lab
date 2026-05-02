@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Distance Lab · Maqueen Lab</title>
+<meta name="description" content="11 ways to play with one ultrasonic sensor: scope, tape, parking, tripwire, hot/cold, theremin, cruise, follow-me." />
+<link rel="icon" href="../icon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="../style.css" />
+<link rel="stylesheet" href="../workshops/theme.css">
+<link rel="stylesheet" href="lab-logger.css?v=6">
+<style>
+  /* ───────── PALETTE: cyan, amber, neon, red, white ───────── */
+  :root{
+    --bg2:#0c1822; --panel:#0f1f2c; --line:#19354a;
+    --ink:#eaf6ff; --muted:#7d96ad;
+    --cyan:#22e6ff; --amber:#ffb53d; --neon:#7cff5b; --red:#ff4d4d; --white:#ffffff;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  /* Top-left corner glow — derived from --bg-card (theme-tinted) instead of a
+     hardcoded dark blue, so the gradient looks right on Paper/Pearl themes too. */
+  html,body{margin:0;background:radial-gradient(1200px 700px at 30% -10%,var(--bg-card,#0e2436) 0%,var(--bg) 60%) fixed;color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;min-height:100%}
+  body[dir="rtl"]{font-family:Amiri,'Noto Naskh Arabic',serif}
+  a{color:var(--cyan)}
+  /* ───────── HEADER (wd-header pattern) ───────── */
+  .wd-header{display:flex;gap:.6rem;align-items:center;padding:.6rem 1rem;background:var(--bg-card,#0a1722);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;flex-wrap:wrap}
+  .wd-header .brand{display:flex;align-items:center;gap:.5rem;font-weight:700}
+  .wd-header .brand img{width:34px;height:34px}
+  .wd-header .spacer{flex:1}
+  .wd-header select,.wd-header .pill,.wd-header .btn{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:.4rem .7rem;font-size:.85rem;cursor:pointer}
+  .wd-header .btn:hover{border-color:var(--cyan)}
+  .lang-pills{display:flex;gap:.25rem}
+  .lang-pills .pill{padding:.3rem .6rem}
+  .lang-pills .pill.active{background:var(--cyan);color:#001923;border-color:var(--cyan);font-weight:700}
+  .conn-pill{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .65rem;border-radius:999px;background:var(--bg-soft,#1a0d0d);border:1px solid var(--red);font-size:.78rem;color:var(--text,inherit)}
+  .conn-pill.on{background:var(--bg-soft,#0d1a10);border-color:var(--neon);color:var(--neon)}
+  .conn-dot{width:8px;height:8px;border-radius:50%;background:var(--red)}
+  .conn-pill.on .conn-dot{background:var(--neon);box-shadow:0 0 8px var(--neon)}
+
+  /* ───────── LAYOUT ───────── */
+  .app-layout{display:grid;grid-template-columns:320px 1fr;gap:0;min-height:calc(100vh - 60px)}
+  @media (max-width:900px){.app-layout{grid-template-columns:1fr}}
+  .sidebar{background:var(--bg2);border-right:1px solid var(--line);padding:.8rem;overflow-y:auto;max-height:calc(100vh - 60px)}
+  body[dir="rtl"] .sidebar{border-right:none;border-left:1px solid var(--line)}
+  .stage{padding:1rem;overflow-y:auto;max-height:calc(100vh - 60px)}
+
+  /* ───────── SIDEBAR CARDS ───────── */
+  .cat-tab{margin-bottom:.8rem}
+  .cat-tab h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);margin:.4rem .2rem;border-bottom:1px dashed var(--line);padding-bottom:.3rem}
+  .mode-card{display:flex;flex-direction:column;gap:.15rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:.6rem .7rem;margin-bottom:.4rem;cursor:pointer;transition:all .15s}
+  .mode-card:hover{border-color:var(--cyan);transform:translateX(2px)}
+  body[dir="rtl"] .mode-card:hover{transform:translateX(-2px)}
+  .mode-card.active{border-color:var(--neon);background:color-mix(in srgb, var(--neon, #a3e635) 18%, var(--bg-card, #11261a));box-shadow:inset 3px 0 0 var(--neon)}
+  body[dir="rtl"] .mode-card.active{box-shadow:inset -3px 0 0 var(--neon)}
+  .mode-card .mt{font-weight:700;font-size:.95rem}
+  .mode-card .md{font-size:.72rem;color:var(--muted)}
+  .mode-card.soon{opacity:.5;cursor:not-allowed}
+  .mode-card.soon .badge{display:inline-block;font-size:.6rem;background:var(--amber);color:#1a1100;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:700}
+
+  .panel-section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:.7rem;margin-bottom:.6rem}
+  .panel-section h4{margin:.1rem 0 .5rem 0;font-size:.78rem;color:var(--cyan);letter-spacing:.05em;text-transform:uppercase}
+
+  .btn-big{display:block;width:100%;padding:.7rem;background:var(--cyan);color:#001923;border:none;border-radius:10px;font-weight:800;font-size:.95rem;cursor:pointer;letter-spacing:.04em}
+  .btn-big:hover{filter:brightness(1.1)}
+  .btn-big.danger{background:var(--red);color:#fff}
+  .btn-big.warn{background:var(--amber);color:#1a1100}
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+
+  /* ───────── STAGE / MODE PANEL ───────── */
+  .mode-panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:1rem;animation:fade .25s ease}
+  .mode-panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .mp-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid var(--line)}
+  .mp-head .ico{font-size:1.6rem}
+  .mp-head .ttl{font-size:1.3rem;font-weight:800}
+  .mp-head .sub{font-size:.85rem;color:var(--muted);margin-left:.4rem}
+
+  .row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.4rem 0}
+  .row label{font-size:.85rem;color:var(--muted);min-width:120px}
+  .row input[type=range]{flex:1;accent-color:var(--cyan)}
+  .row input[type=number]{background:var(--bg-soft,#000);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:.3rem .5rem;width:80px}
+  .row select{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:.35rem .5rem}
+  .row .val{font-family:ui-monospace,monospace;color:var(--amber);min-width:50px;text-align:right}
+
+  .big-num{font-family:ui-monospace,monospace;font-size:5rem;font-weight:900;text-align:center;color:var(--neon);text-shadow:0 0 22px rgba(124,255,91,.45);line-height:1}
+  .big-num.warn{color:var(--amber);text-shadow:0 0 22px rgba(255,181,61,.45)}
+  .big-num.danger{color:var(--red);text-shadow:0 0 22px rgba(255,77,77,.55)}
+  .big-sub{text-align:center;color:var(--muted);font-size:.95rem;margin-top:.3rem}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem;margin-top:.6rem}
+  .stat{background:var(--bg-soft,#000a14);border:1px solid var(--line);border-radius:10px;padding:.5rem .6rem;text-align:center}
+  .stat .k{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .stat .v{font-family:ui-monospace,monospace;font-size:1.1rem;color:var(--cyan)}
+
+  .log-box{background:color-mix(in srgb, var(--text, #000) 12%, var(--bg-card, #000));border:1px solid var(--line);border-radius:8px;padding:.5rem;height:140px;overflow-y:auto;font-family:ui-monospace,monospace;font-size:.78rem;color:var(--neon)}
+  .log-box .err{color:var(--red)}
+  .log-box .warn{color:var(--amber)}
+
+  svg.scope{display:block;margin:0 auto;background:radial-gradient(circle at center, color-mix(in srgb, var(--text, #000) 8%, var(--bg-card, #001520)) 0%, color-mix(in srgb, var(--text, #000) 14%, var(--bg-card, #000)) 80%);border-radius:50%;border:1px solid var(--line)}
+
+  .led-indicator{display:inline-block;width:18px;height:18px;border-radius:50%;background:var(--bg-soft, #222);border:1px solid var(--line);vertical-align:middle;margin:0 4px}
+  .led-indicator.on{box-shadow:0 0 12px currentColor}
+
+  .kbd{display:inline-block;padding:1px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg-soft,#000);font-family:ui-monospace,monospace;font-size:.75rem;color:var(--amber)}
+
+  .difficulty-pills{display:flex;gap:.4rem}
+  .diff-pill{padding:.4rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer;font-size:.85rem}
+  .diff-pill.active{background:var(--amber);color:#1a1100;border-color:var(--amber);font-weight:700}
+
+  .meter{height:14px;background:color-mix(in srgb, var(--text, #000) 12%, var(--bg-card, #000));border:1px solid var(--line);border-radius:7px;overflow:hidden;position:relative}
+  .meter > span{display:block;height:100%;background:linear-gradient(90deg,var(--neon),var(--amber),var(--red));transition:width .2s}
+
+  body[dir="rtl"]{direction:rtl;text-align:right}
+  body[dir="rtl"] .row label{text-align:right}
+  /* Theme bridge — maps workshops/theme.css output to local variable names so
+     [data-theme="carbon|forest|steel|paper|pearl"] actually recolors every
+     surface (sidebar, stage, mode-card, panel-section, header, footer). */
+  :root {
+    --bg2:    var(--bg-soft,  #0c1822);
+    --panel:  var(--bg-card,  #0f1f2c);
+    --panel2: var(--bg-soft,  #1a2230);
+    --line:   var(--border,   #19354a);
+    --muted:  var(--steel,    #7d96ad);
+    --ink:    var(--text,     #eaf6ff);
+  }
+  /* Also derive --accent from the theme's primary so per-theme accents show through.
+     Carbon/Steel default to --cyan; Forest/Paper/Pearl already redefine --neon and friends. */
+  :root { --accent: var(--cyan, #22d3ee); }
+  html[data-theme="forest"] { --accent: var(--neon, #a3e635); }
+  html[data-theme="paper"]  { --accent: var(--amber, #f59e0b); }
+</style>
+</head>
+<body>
+
+<header class="wd-header">
+  <div class="brand">
+    <img src="../logo.svg" alt="" onerror="this.style.display='none'"/>
+    <span data-i18n="brand">📡 Distance Lab</span>
+  </div>
+  <div class="spacer"></div>
+  <select class="wd-select" id="themeSelect" aria-label="Theme">
+    <option value="carbon">▣ Carbon</option>
+    <option value="forest">▣ Forest</option>
+    <option value="steel">▣ Steel</option>
+    <option value="paper">☼ Paper</option>
+    <option value="pearl">☼ Pearl</option>
+  </select>
+  <div class="lang-pills" id="langPills" role="radiogroup" aria-label="Language">
+    <button type="button" class="lang-pill pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+    <button type="button" class="lang-pill pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+    <button type="button" class="lang-pill pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+  </div>
+  <a class="btn" href="../index.html" data-i18n="navRobot">🤖 Robot App</a>
+  <a class="btn" href="../docs/index.html" data-i18n="navCatalog">🗂️ Catalog</a>
+  <a class="btn" href="index.html" data-i18n="navLabs">🧪 Labs</a>
+  <a class="btn" href="../workshops/hub.html" data-i18n="navHub">🏠 Hub</a>
+  <button class="btn" id="connectBtn" data-i18n="connect">🔌 Connect</button>
+  <span class="conn-pill" id="connPill"><span class="conn-dot"></span><span id="connTxt" data-i18n="disconnected">Disconnected</span></span>
+</header>
+
+<div class="app-layout">
+  <!-- ───────── SIDEBAR ───────── -->
+  <aside class="sidebar">
+    <div class="panel-section">
+      <h4 data-i18n="masterCtrl">Master Control</h4>
+      <button class="btn-big danger" id="masterStop" data-i18n="masterStop">🛑 STOP ALL <span class="kbd">Space</span></button>
+      <div style="margin-top:.5rem;font-size:.78rem;color:var(--muted)" data-i18n="mockHint">Mock distance:</div>
+      <div class="row" style="margin:.3rem 0 0">
+        <input type="range" id="mockSlider" min="0" max="200" value="40" />
+        <span class="val" id="mockVal">40</span><span style="color:var(--muted)">cm</span>
+      </div>
+      <label style="font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;margin-top:.3rem">
+        <input type="checkbox" id="mockOn" checked /> <span data-i18n="mockMode">Mock mode</span>
+      </label>
+    </div>
+
+    <div class="cat-tab">
+      <h3>👀 <span data-i18n="catVisualize">Visualize</span></h3>
+      <div class="mode-card" data-mode="sonar"><div class="mt">🦇 <span data-i18n="m1t">Sonar Scope</span></div><div class="md" data-i18n="m1d">Polar plot of pings</div></div>
+      <div class="mode-card" data-mode="tape"><div class="mt">📐 <span data-i18n="m2t">Tape Measure</span></div><div class="md" data-i18n="m2d">cm + inches, freeze</div></div>
+    </div>
+
+    <div class="cat-tab">
+      <h3>🎮 <span data-i18n="catGames">Games</span></h3>
+      <div class="mode-card" data-mode="park"><div class="mt">🅿️ <span data-i18n="m3t">Parking</span></div><div class="md" data-i18n="m3d">Stop at N cm, no crash</div></div>
+      <div class="mode-card" data-mode="trip"><div class="mt">🚨 <span data-i18n="m4t">Tripwire</span></div><div class="md" data-i18n="m4d">Alarm on breach</div></div>
+      <div class="mode-card" data-mode="hot"><div class="mt">🔥 <span data-i18n="m5t">Hot/Cold</span></div><div class="md" data-i18n="m5d">Pilot by ear alone</div></div>
+    </div>
+
+    <div class="cat-tab">
+      <h3>🎵 <span data-i18n="catSound">Sound</span></h3>
+      <div class="mode-card" data-mode="theremin"><div class="mt">🎵 <span data-i18n="m6t">Theremin</span></div><div class="md" data-i18n="m6d">Pentatonic, loops</div></div>
+    </div>
+
+    <div class="cat-tab">
+      <h3>🤖 <span data-i18n="catAuto">Autonomy</span></h3>
+      <div class="mode-card" data-mode="cruise"><div class="mt">🚗 <span data-i18n="m7t">Cruise Control</span></div><div class="md" data-i18n="m7d">Auto-brake at target</div></div>
+      <div class="mode-card" data-mode="follow"><div class="mt">🐕 <span data-i18n="m8t">Follow-Me</span></div><div class="md" data-i18n="m8d">Keep gap to target</div></div>
+    </div>
+
+    <div class="cat-tab">
+      <h3>⏳ <span data-i18n="catSoon">Coming Soon</span></h3>
+      <div class="mode-card soon"><div class="mt">🗺 <span data-i18n="m9t">Sweep Mapper</span> <span class="badge" data-i18n="badgeSoon">SOON</span></div><div class="md" data-i18n="m9d">Sweep + 2D map</div></div>
+      <div class="mode-card soon"><div class="mt">📊 <span data-i18n="m10t">Profile Logger</span> <span class="badge" data-i18n="badgeSoon">SOON</span></div><div class="md" data-i18n="m10d">CSV time-series</div></div>
+      <div class="mode-card soon"><div class="mt">🏷 <span data-i18n="m11t">Range Tag</span> <span class="badge" data-i18n="badgeSoon">SOON</span></div><div class="md" data-i18n="m11d">Tag distances by name</div></div>
+    </div>
+  </aside>
+
+  <!-- ───────── STAGE ───────── -->
+  <main class="stage">
+    <!-- 1. SONAR SCOPE -->
+    <section class="mode-panel" id="p-sonar">
+      <div class="mp-head"><span class="ico">🦇</span><span class="ttl" data-i18n="m1t">Sonar Scope</span><span class="sub" data-i18n="m1sub">Live polar trail of last 50 readings.</span></div>
+      <svg class="scope" id="sonarSvg" width="420" height="420" viewBox="-220 -220 440 440">
+        <circle r="40" fill="none" stroke="#19354a"/><circle r="80" fill="none" stroke="#19354a"/>
+        <circle r="120" fill="none" stroke="#19354a"/><circle r="160" fill="none" stroke="#19354a"/>
+        <circle r="200" fill="none" stroke="#22e6ff" stroke-dasharray="4 4" opacity=".5"/>
+        <line x1="-200" y1="0" x2="200" y2="0" stroke="#19354a"/>
+        <line x1="0" y1="-200" x2="0" y2="200" stroke="#19354a"/>
+        <text x="42" y="-4" fill="#7d96ad" font-size="10">10cm</text>
+        <text x="82" y="-4" fill="#7d96ad" font-size="10">25cm</text>
+        <text x="122" y="-4" fill="#7d96ad" font-size="10">50cm</text>
+        <text x="162" y="-4" fill="#7d96ad" font-size="10">100cm</text>
+        <g id="sonarTrail"></g>
+        <line id="sonarSweep" x1="0" y1="0" x2="0" y2="-200" stroke="#7cff5b" stroke-width="2"/>
+        <circle id="sonarPing" r="6" fill="#22e6ff"/>
+      </svg>
+      <div class="big-sub"><span data-i18n="current">Current</span>: <span id="sonarReading" style="color:var(--cyan);font-family:ui-monospace,monospace">—</span> cm</div>
+    </section>
+
+    <!-- 2. TAPE MEASURE -->
+    <section class="mode-panel" id="p-tape">
+      <div class="mp-head"><span class="ico">📐</span><span class="ttl" data-i18n="m2t">Tape Measure</span><span class="sub" data-i18n="m2sub">Last-5 averaged. FREEZE locks the value.</span></div>
+      <div class="big-num" id="tapeCm">—</div>
+      <div class="big-sub"><span id="tapeIn" style="color:var(--amber)">—</span> <span data-i18n="inches">inches</span></div>
+      <div class="row" style="justify-content:center;margin-top:1rem">
+        <button class="btn-big warn" id="tapeFreeze" style="max-width:200px" data-i18n="freeze">❄️ FREEZE</button>
+        <button class="btn-big" id="tapeReset" style="max-width:140px;background:var(--panel);color:var(--ink);border:1px solid var(--line)" data-i18n="reset">↺ Reset</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="k" data-i18n="min">Min</div><div class="v" id="tapeMin">—</div></div>
+        <div class="stat"><div class="k" data-i18n="max">Max</div><div class="v" id="tapeMax">—</div></div>
+        <div class="stat"><div class="k" data-i18n="avg">Avg(5)</div><div class="v" id="tapeAvg">—</div></div>
+        <div class="stat"><div class="k" data-i18n="samples">Samples</div><div class="v" id="tapeN">0</div></div>
+      </div>
+    </section>
+
+    <!-- 3. PARKING -->
+    <section class="mode-panel" id="p-park">
+      <div class="mp-head"><span class="ico">🅿️</span><span class="ttl" data-i18n="m3t">Parking Game</span><span class="sub" data-i18n="m3sub">Drive forward, stop exactly at target.</span></div>
+      <div class="row"><label data-i18n="difficulty">Difficulty</label>
+        <div class="difficulty-pills" id="diffPills">
+          <button class="diff-pill active" data-target="10">🟢 10cm</button>
+          <button class="diff-pill" data-target="5">🟡 5cm</button>
+          <button class="diff-pill" data-target="2">🔴 2cm</button>
+        </div>
+      </div>
+      <div class="big-num" id="parkCm">—</div>
+      <div class="big-sub"><span data-i18n="target">Target</span>: <span id="parkTarget" style="color:var(--amber)">10</span> cm</div>
+      <div class="meter" style="margin:.6rem 0"><span id="parkMeter" style="width:0%"></span></div>
+      <div class="row" style="justify-content:center">
+        <button class="btn-big" id="parkGo" style="max-width:200px" data-i18n="go">▶ GO</button>
+        <button class="btn-big danger" id="parkBrake" style="max-width:200px" data-i18n="brake">🛑 BRAKE</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="k" data-i18n="lastErr">Last error</div><div class="v" id="parkErr">—</div></div>
+        <div class="stat"><div class="k" data-i18n="best">Best</div><div class="v" id="parkBest">—</div></div>
+        <div class="stat"><div class="k" data-i18n="result">Result</div><div class="v" id="parkResult">—</div></div>
+      </div>
+    </section>
+
+    <!-- 4. TRIPWIRE -->
+    <section class="mode-panel" id="p-trip">
+      <div class="mp-head"><span class="ico">🚨</span><span class="ttl" data-i18n="m4t">Tripwire</span><span class="sub" data-i18n="m4sub">Alarm + red flash on breach.</span></div>
+      <div class="row"><label data-i18n="alertAt">Alert at</label>
+        <input type="range" id="tripDist" min="5" max="100" value="30"/>
+        <span class="val" id="tripDistVal">30</span> cm
+      </div>
+      <div class="row" style="justify-content:center">
+        <button class="btn-big" id="tripArm" style="max-width:200px" data-i18n="arm">🔒 ARM</button>
+        <button class="btn-big warn" id="tripDisarm" style="max-width:200px" data-i18n="disarm">🔓 DISARM</button>
+      </div>
+      <div class="big-num" id="tripCm">—</div>
+      <div class="big-sub"><span data-i18n="status">Status</span>: <span id="tripState" style="color:var(--neon)">IDLE</span> <span class="led-indicator" id="tripLed" style="color:var(--red)"></span></div>
+      <h4 style="color:var(--cyan);margin-top:1rem" data-i18n="breachLog">Breach log</h4>
+      <div class="log-box" id="tripLog"></div>
+    </section>
+
+    <!-- 5. HOT/COLD -->
+    <section class="mode-panel" id="p-hot">
+      <div class="mp-head"><span class="ico">🔥</span><span class="ttl" data-i18n="m5t">Hot/Cold</span><span class="sub" data-i18n="m5sub">Closer = warmer pitch. Pilot by ear.</span></div>
+      <div class="big-num" id="hotCm">—</div>
+      <div class="big-sub"><span data-i18n="pitch">Pitch</span>: <span id="hotHz" style="color:var(--cyan)">—</span> Hz</div>
+      <div class="row" style="justify-content:center;margin-top:.8rem">
+        <button class="btn-big" id="hotStart" style="max-width:200px" data-i18n="startSound">🔊 Start sound</button>
+        <button class="btn-big warn" id="hotStop" style="max-width:200px" data-i18n="stopSound">🔇 Stop sound</button>
+      </div>
+      <div style="margin-top:1rem;padding:.6rem;background:var(--bg-soft,#000a14);border-radius:8px;font-size:.85rem;color:var(--muted)" data-i18n="hotTip">
+        💡 Tip: blindfold the kid, let them drive with arrow keys — the pitch tells them how close they are.
+      </div>
+    </section>
+
+    <!-- 6. THEREMIN -->
+    <section class="mode-panel" id="p-theremin">
+      <div class="mp-head"><span class="ico">🎵</span><span class="ttl" data-i18n="m6t">Theremin</span><span class="sub" data-i18n="m6sub">Pentatonic C-D-E-G-A · 0–60 cm</span></div>
+      <div class="big-num" id="thNote">—</div>
+      <div class="big-sub"><span id="thHz" style="color:var(--cyan)">—</span> Hz · <span id="thCm" style="color:var(--amber)">—</span> cm</div>
+      <div class="row" style="justify-content:center;margin-top:.8rem">
+        <button class="btn-big" id="thPlay" style="max-width:160px" data-i18n="play">▶ Play</button>
+        <button class="btn-big warn" id="thMute" style="max-width:160px" data-i18n="mute">🔇 Mute</button>
+        <button class="btn-big" id="thRec" style="max-width:160px;background:var(--red);color:#fff" data-i18n="record">⏺ Record 4 bars</button>
+        <button class="btn-big" id="thLoop" style="max-width:160px;background:var(--neon);color:#001923" data-i18n="loop">🔁 Loop</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="k" data-i18n="recState">Rec state</div><div class="v" id="thRecState">—</div></div>
+        <div class="stat"><div class="k" data-i18n="recLen">Rec length</div><div class="v" id="thRecLen">0</div></div>
+      </div>
+    </section>
+
+    <!-- 7. CRUISE -->
+    <section class="mode-panel" id="p-cruise">
+      <div class="mp-head"><span class="ico">🚗</span><span class="ttl" data-i18n="m7t">Cruise Control</span><span class="sub" data-i18n="m7sub">Auto forward, brake at target.</span></div>
+      <div class="row"><label data-i18n="targetDist">Target distance</label>
+        <input type="range" id="cruiseTarget" min="5" max="50" value="20"/>
+        <span class="val" id="cruiseTargetVal">20</span> cm
+      </div>
+      <div class="row"><label data-i18n="speed">Cruise speed</label>
+        <input type="range" id="cruiseSpeed" min="20" max="100" value="60"/>
+        <span class="val" id="cruiseSpeedVal">60</span> %
+      </div>
+      <div class="big-num" id="cruiseCm">—</div>
+      <div class="big-sub"><span data-i18n="motorOut">Motor</span>: <span id="cruiseMotor" style="color:var(--amber)">0</span> %</div>
+      <div class="row" style="justify-content:center;margin-top:.8rem">
+        <button class="btn-big" id="cruiseStart" style="max-width:200px" data-i18n="engage">▶ ENGAGE</button>
+        <button class="btn-big danger" id="cruiseStop" style="max-width:200px" data-i18n="disengage">🛑 Disengage</button>
+      </div>
+      <svg id="cruiseChart" width="100%" height="120" style="background:color-mix(in srgb, var(--text, #000) 12%, var(--bg-card, #000));border-radius:8px;margin-top:.8rem">
+        <polyline id="cruisePath" fill="none" stroke="var(--cyan)" stroke-width="2" points=""/>
+      </svg>
+    </section>
+
+    <!-- 8. FOLLOW-ME -->
+    <section class="mode-panel" id="p-follow">
+      <div class="mp-head"><span class="ico">🐕</span><span class="ttl" data-i18n="m8t">Follow-Me</span><span class="sub" data-i18n="m8sub">Keep a gap behind moving target.</span></div>
+      <div class="row"><label data-i18n="trailDist">Trail distance</label>
+        <input type="range" id="followTarget" min="10" max="60" value="25"/>
+        <span class="val" id="followTargetVal">25</span> cm
+      </div>
+      <div class="row"><label data-i18n="kp">Reaction (Kp)</label>
+        <input type="range" id="followKp" min="1" max="10" value="4"/>
+        <span class="val" id="followKpVal">4</span>
+      </div>
+      <div class="big-num" id="followCm">—</div>
+      <div class="big-sub"><span data-i18n="error">Error</span>: <span id="followErr" style="color:var(--amber)">0</span> cm · <span data-i18n="motorOut">Motor</span>: <span id="followMot" style="color:var(--cyan)">0</span> %</div>
+      <div class="row" style="justify-content:center;margin-top:.8rem">
+        <button class="btn-big" id="followStart" style="max-width:200px" data-i18n="follow">🐾 FOLLOW</button>
+        <button class="btn-big danger" id="followStop" style="max-width:200px" data-i18n="halt">🛑 Halt</button>
+      </div>
+    </section>
+
+    <!-- WELCOME (default) -->
+    <section class="mode-panel active" id="p-welcome">
+      <div class="mp-head"><span class="ico">📡</span><span class="ttl" data-i18n="welcomeT">Welcome to the Distance Lab</span></div>
+      <p data-i18n="welcomeP">Pick a card from the sidebar to start. Connect your Maqueen first, or toggle <b>Mock mode</b> to play with a simulated distance slider.</p>
+      <ul style="line-height:1.8">
+        <li data-i18n="hint1">🛑 Press <span class="kbd">Space</span> any time to STOP all motors and sound.</li>
+        <li data-i18n="hint2">🌐 Trilingual EN / FR / AR — pick from the header.</li>
+        <li data-i18n="hint3">🎨 Theme picker also in the header.</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<div id="labLogger" class="lab-logger-host"></div>
+
+<!-- BLE shim + driver (loaded if present; safe-fallback otherwise) -->
+<script src="../js/ble-shim.js" onerror="console.warn('ble-shim missing — mock-only mode')"></script>
+<script src="../js/ble.js"      onerror="console.warn('ble.js missing — mock-only mode')"></script>
+<script src="lab-logger.js?v=6" defer></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   DISTANCE LAB — single ultrasonic, 8 modes + 3 stubs
+   ═══════════════════════════════════════════════════════════════════ */
+'use strict';
+
+/* Legacy localStorage migration: dlab.park.best → robi.distance.park.best */
+try {
+  const _legacy = localStorage.getItem('dlab.park.best');
+  if (_legacy && !localStorage.getItem('robi.distance.park.best')) {
+    localStorage.setItem('robi.distance.park.best', _legacy);
+    localStorage.removeItem('dlab.park.best');
+  }
+} catch {}
+
+/* ───────── i18n ───────── */
+const T = {
+  en:{
+    brand:'📡 Distance Lab', navRobot:'🤖 Robot App', navCatalog:'📚 Catalog', navLabs:'🧪 Labs', navHub:'🏠 Hub',
+    connect:'🔌 Connect', disconnected:'Disconnected', connected:'Connected',
+    connecting:'Connecting…',
+    masterCtrl:'Master Control', masterStop:'🛑 STOP ALL',
+    mockHint:'Mock distance:', mockMode:'Mock mode',
+    catVisualize:'Visualize', catGames:'Games', catSound:'Sound', catAuto:'Autonomy', catSoon:'Coming Soon',
+    m1t:'Sonar Scope', m1d:'Polar plot of pings', m1sub:'Live polar trail of last 50 readings.',
+    m2t:'Tape Measure', m2d:'cm + inches, freeze', m2sub:'Last-5 averaged. FREEZE locks the value.',
+    m3t:'Parking', m3d:'Stop at N cm, no crash', m3sub:'Drive forward, stop exactly at target.',
+    m4t:'Tripwire', m4d:'Alarm on breach', m4sub:'Alarm + red flash on breach.',
+    m5t:'Hot/Cold', m5d:'Pilot by ear alone', m5sub:'Closer = warmer pitch. Pilot by ear.',
+    m6t:'Theremin', m6d:'Pentatonic, loops', m6sub:'Pentatonic C-D-E-G-A · 0–60 cm',
+    m7t:'Cruise Control', m7d:'Auto-brake at target', m7sub:'Auto forward, brake at target.',
+    m8t:'Follow-Me', m8d:'Keep gap to target', m8sub:'Keep a gap behind moving target.',
+    m9t:'Sweep Mapper', m9d:'Sweep + 2D map',
+    m10t:'Profile Logger', m10d:'CSV time-series',
+    m11t:'Range Tag', m11d:'Tag distances by name',
+    badgeSoon:'SOON', current:'Current', inches:'inches',
+    freeze:'❄️ FREEZE', reset:'↺ Reset', min:'Min', max:'Max', avg:'Avg(5)', samples:'Samples',
+    difficulty:'Difficulty', target:'Target', go:'▶ GO', brake:'🛑 BRAKE',
+    lastErr:'Last error', best:'Best', result:'Result',
+    alertAt:'Alert at', arm:'🔒 ARM', disarm:'🔓 DISARM', status:'Status', breachLog:'Breach log',
+    pitch:'Pitch', startSound:'🔊 Start sound', stopSound:'🔇 Stop sound',
+    hotTip:'💡 Tip: blindfold the kid, let them drive with arrow keys — the pitch tells them how close they are.',
+    play:'▶ Play', mute:'🔇 Mute', record:'⏺ Record 4 bars', loop:'🔁 Loop',
+    recState:'Rec state', recLen:'Rec length',
+    targetDist:'Target distance', speed:'Cruise speed', motorOut:'Motor',
+    engage:'▶ ENGAGE', disengage:'🛑 Disengage',
+    trailDist:'Trail distance', kp:'Reaction (Kp)', error:'Error', follow:'🐾 FOLLOW', halt:'🛑 Halt',
+    welcomeT:'Welcome to the Distance Lab',
+    welcomeP:'Pick a card from the sidebar to start. Connect your Maqueen first, or toggle Mock mode to play with a simulated distance slider.',
+    hint1:'🛑 Press Space any time to STOP all motors and sound.',
+    hint2:'🌐 Trilingual EN / FR / AR — pick from the header.',
+    hint3:'🎨 Theme picker also in the header.',
+    soonAlert:'This mode is coming soon!',
+    breachMsg:'BREACH', armed:'ARMED', idle:'IDLE',
+    perfect:'PERFECT!', good:'good', crash:'CRASH', stopped:'STOPPED',
+    ll_title:'Message Log', ll_subtitle:'Raw UART messages', ll_clear:'Clear', ll_export:'Export', ll_copy:'Copy', ll_pin:'Pin'
+  },
+  fr:{
+    brand:'📡 Labo Distance', navRobot:'🤖 App Robot', navCatalog:'📚 Catalogue', navLabs:'🧪 Labos', navHub:'🏠 Hub',
+    connect:'🔌 Connecter', disconnected:'Déconnecté', connected:'Connecté',
+    connecting:'Connexion…',
+    masterCtrl:'Contrôle maître', masterStop:'🛑 STOP TOUT',
+    mockHint:'Distance simulée :', mockMode:'Mode simu',
+    catVisualize:'Visualiser', catGames:'Jeux', catSound:'Son', catAuto:'Autonomie', catSoon:'Bientôt',
+    m1t:'Scope Sonar', m1d:'Tracé polaire des pings', m1sub:'50 derniers points en polaire.',
+    m2t:'Mètre ruban', m2d:'cm + pouces, fige', m2sub:'Moyenne 5 dernières. FIGE verrouille.',
+    m3t:'Stationnement', m3d:'Stop à N cm, pas de crash', m3sub:'Avance et stoppe pile à la cible.',
+    m4t:'Fil-piège', m4d:'Alarme à l\'intrusion', m4sub:'Alarme + flash rouge à l\'intrusion.',
+    m5t:'Chaud/Froid', m5d:'Pilote à l\'oreille', m5sub:'Plus proche = son plus aigu.',
+    m6t:'Thérémin', m6d:'Pentatonique, boucles', m6sub:'Pentatonique do-ré-mi-sol-la · 0–60 cm',
+    m7t:'Régulateur', m7d:'Frein auto à la cible', m7sub:'Avance auto, freine à la cible.',
+    m8t:'Suis-moi', m8d:'Garde l\'écart à la cible', m8sub:'Maintient l\'écart derrière la cible.',
+    m9t:'Cartographe', m9d:'Balayage + carte 2D',
+    m10t:'Enregistreur', m10d:'Série temporelle CSV',
+    m11t:'Étiquettes', m11d:'Nomme des distances',
+    badgeSoon:'BIENTÔT', current:'Actuel', inches:'pouces',
+    freeze:'❄️ FIGER', reset:'↺ Reset', min:'Min', max:'Max', avg:'Moy(5)', samples:'Échant.',
+    difficulty:'Difficulté', target:'Cible', go:'▶ GO', brake:'🛑 FREIN',
+    lastErr:'Dernière erreur', best:'Meilleur', result:'Résultat',
+    alertAt:'Alerte à', arm:'🔒 ARMER', disarm:'🔓 DÉSARMER', status:'État', breachLog:'Journal',
+    pitch:'Hauteur', startSound:'🔊 Démarrer son', stopSound:'🔇 Stopper son',
+    hotTip:'💡 Astuce : bandeau sur les yeux, l\'enfant pilote avec les flèches — le son guide.',
+    play:'▶ Jouer', mute:'🔇 Muet', record:'⏺ Enregistrer 4 mes.', loop:'🔁 Boucle',
+    recState:'État rec', recLen:'Longueur',
+    targetDist:'Distance cible', speed:'Vitesse', motorOut:'Moteur',
+    engage:'▶ ENGAGER', disengage:'🛑 Désengager',
+    trailDist:'Distance de suivi', kp:'Réaction (Kp)', error:'Erreur', follow:'🐾 SUIVRE', halt:'🛑 Stop',
+    welcomeT:'Bienvenue au Labo Distance',
+    welcomeP:'Choisis une carte à gauche. Connecte le Maqueen ou active le Mode simu pour tester avec le curseur.',
+    hint1:'🛑 Appuie sur Espace pour TOUT arrêter.',
+    hint2:'🌐 Trilingue EN / FR / AR — dans l\'en-tête.',
+    hint3:'🎨 Thème aussi dans l\'en-tête.',
+    soonAlert:'Ce mode arrive bientôt !',
+    breachMsg:'INTRUSION', armed:'ARMÉ', idle:'INACTIF',
+    perfect:'PARFAIT !', good:'bien', crash:'CRASH', stopped:'STOPPÉ',
+    ll_title:'Journal', ll_subtitle:'Messages UART bruts', ll_clear:'Effacer', ll_export:'Exporter', ll_copy:'Copier', ll_pin:'Épingler'
+  },
+  ar:{
+    brand:'📡 مختبر المسافة', navRobot:'🤖 تطبيق الروبوت', navCatalog:'📚 الفهرس', navLabs:'🧪 مختبرات', navHub:'🏠 المركز',
+    connect:'🔌 اتصال', disconnected:'غير متصل', connected:'متصل', connecting:'جارٍ الاتصال…',
+    masterCtrl:'التحكم الرئيسي', masterStop:'🛑 إيقاف الكل',
+    mockHint:'مسافة وهمية:', mockMode:'وضع المحاكاة',
+    catVisualize:'مرئي', catGames:'ألعاب', catSound:'صوت', catAuto:'ذاتي', catSoon:'قريباً',
+    m1t:'مرسمة السونار', m1d:'رسم قطبي للنبضات', m1sub:'آخر 50 قراءة بشكل قطبي.',
+    m2t:'شريط القياس', m2d:'سم + إنش, تجميد', m2sub:'متوسط آخر 5. التجميد يقفل القيمة.',
+    m3t:'الركن', m3d:'توقف عند N سم بلا اصطدام', m3sub:'تقدم وتوقف عند الهدف بدقة.',
+    m4t:'سلك الإنذار', m4d:'إنذار عند الاختراق', m4sub:'إنذار + وميض أحمر.',
+    m5t:'ساخن/بارد', m5d:'القيادة بالأذن', m5sub:'الأقرب = نغمة أعلى.',
+    m6t:'ثيريمين', m6d:'خماسي مع حلقات', m6sub:'سلم خماسي C-D-E-G-A · 0–60 سم',
+    m7t:'تثبيت السرعة', m7d:'فرملة تلقائية', m7sub:'تقدم تلقائي ثم فرملة عند الهدف.',
+    m8t:'اتبعني', m8d:'حافظ على المسافة', m8sub:'يحافظ على فجوة خلف هدف متحرك.',
+    m9t:'مسح خرائطي', m9d:'مسح + خريطة 2D',
+    m10t:'مسجل البيانات', m10d:'سلسلة زمنية CSV',
+    m11t:'وسم المدى', m11d:'تسمية المسافات',
+    badgeSoon:'قريباً', current:'الآن', inches:'إنش',
+    freeze:'❄️ تجميد', reset:'↺ تصفير', min:'أدنى', max:'أقصى', avg:'متوسط(5)', samples:'العينات',
+    difficulty:'الصعوبة', target:'الهدف', go:'▶ انطلق', brake:'🛑 فرملة',
+    lastErr:'آخر خطأ', best:'الأفضل', result:'النتيجة',
+    alertAt:'تنبيه عند', arm:'🔒 تفعيل', disarm:'🔓 إلغاء', status:'الحالة', breachLog:'سجل الاختراقات',
+    pitch:'النغمة', startSound:'🔊 ابدأ الصوت', stopSound:'🔇 أوقف الصوت',
+    hotTip:'💡 عصابة عيون والطفل يقود بالأسهم — الصوت يدله.',
+    play:'▶ شغّل', mute:'🔇 صامت', record:'⏺ سجل 4 موازير', loop:'🔁 حلقة',
+    recState:'حالة التسجيل', recLen:'الطول',
+    targetDist:'مسافة الهدف', speed:'السرعة', motorOut:'المحرك',
+    engage:'▶ تفعيل', disengage:'🛑 إيقاف',
+    trailDist:'مسافة التتبع', kp:'الاستجابة (Kp)', error:'خطأ', follow:'🐾 اتبع', halt:'🛑 توقف',
+    welcomeT:'مرحباً في مختبر المسافة',
+    welcomeP:'اختر بطاقة من الجانب. وصّل الـMaqueen أو فعّل وضع المحاكاة.',
+    hint1:'🛑 اضغط مسطرة للإيقاف الكامل.',
+    hint2:'🌐 ثلاثي اللغة EN / FR / AR.',
+    hint3:'🎨 السمات أيضاً في الأعلى.',
+    soonAlert:'هذا الوضع قادم قريباً!',
+    breachMsg:'اختراق', armed:'مسلح', idle:'خامل',
+    perfect:'ممتاز!', good:'جيد', crash:'اصطدام', stopped:'متوقف',
+    ll_title:'سجل الرسائل', ll_subtitle:'رسائل UART الخام', ll_clear:'مسح', ll_export:'تصدير', ll_copy:'نسخ', ll_pin:'تثبيت'
+  }
+};
+
+let LANG = localStorage.getItem('robi.lang') || 'en';
+let THEME = localStorage.getItem('robi.theme') || 'carbon';
+
+function setL(lang){
+  LANG = lang;
+  localStorage.setItem('robi.lang', lang);
+  // Match the canonical RTL pattern used by every other lab + hub + wishlist:
+  //   - dir on <html> (so CSS [dir="rtl"] selectors fire universally)
+  //   - .rtl class on <body> (so workshops/theme.css's body.rtl rules fire)
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.body.classList.toggle('rtl', lang === 'ar');
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(T[lang] && T[lang][k]!=null) el.textContent = T[lang][k];
+  });
+  document.querySelectorAll('.lang-pills .pill').forEach(p=>p.classList.toggle('active', p.dataset.lang===lang));
+}
+function applyTheme(t){
+    // Defensive: workshops/theme.css only knows these 5 themes. If a value
+    // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+    // fall back to carbon so we never apply a theme this stylesheet ignores.
+    var _validThemes = ['carbon','forest','steel','paper','pearl'];
+    if (_validThemes.indexOf(t) === -1) t = 'carbon';
+  THEME = t;
+  try { localStorage.setItem('robi.theme', t); } catch(e){}
+  document.documentElement.setAttribute('data-theme', t);
+  const sel = document.getElementById('themeSelect');
+  if (sel) sel.value = t;
+}
+
+/* ───────── BLE wrapper (uses bare-global ble.js fns if present, else mock) ───────── */
+const BLE = {
+  connected:false,
+  send(cmd){
+    if(typeof sendLine === 'function' && typeof isConnected !== 'undefined' && isConnected){
+      sendLine(cmd);
+    } else { /* mock */ }
+  },
+  async connect(){
+    setConn('connecting');
+    if(typeof connect === 'function'){
+      try{ await connect(); }
+      catch(e){ this.connected=false; setConn('off'); }
+    } else {
+      // No driver → pretend connected for demo
+      this.connected=true; setConn('on');
+    }
+  },
+  disconnect(){
+    if(typeof disconnect === 'function'){ try{ disconnect(); }catch(e){} }
+  }
+};
+// Bridge ble-shim status → wrapper
+window.RobiBle = window.RobiBle || {};
+window.RobiBle.onStatus = (c) => {
+  BLE.connected = !!c;
+  setConn(c ? 'on' : 'off');
+};
+function setConn(state){
+  const pill = document.getElementById('connPill');
+  const txt = document.getElementById('connTxt');
+  pill.classList.toggle('on', state==='on');
+  txt.textContent = T[LANG][state==='on'?'connected': state==='connecting'?'connecting':'disconnected'];
+}
+
+/* ───────── Distance source ───────── */
+let lastDist = null;
+const distListeners = new Set();
+function emitDist(cm){
+  lastDist = cm;
+  distListeners.forEach(fn=>{ try{fn(cm);}catch(e){} });
+}
+// Subscribe to BLE DIST: lines via shim hook
+window.RobiBle = window.RobiBle || {};
+window.RobiBle.onRxLine = (line) => {
+  if(typeof line!=='string') return;
+  const m = line.match(/^DIST:\s*([\d.]+)/i);
+  if(m) emitDist(parseFloat(m[1]));
+};
+// Mock distance from slider
+const mockSlider = document.getElementById('mockSlider');
+const mockVal = document.getElementById('mockVal');
+const mockOn = document.getElementById('mockOn');
+mockSlider.addEventListener('input',()=>{
+  mockVal.textContent = mockSlider.value;
+  if(mockOn.checked) emitDist(parseFloat(mockSlider.value));
+});
+
+/* ───────── Polling timer (active when a mode needs distance) ───────── */
+let pollTimer=null, pollers=0;
+function startPolling(){
+  pollers++;
+  if(pollTimer) return;
+  pollTimer = setInterval(()=>{
+    if(mockOn.checked){
+      // Add tiny jitter to mocked value
+      const base = parseFloat(mockSlider.value);
+      emitDist(Math.max(0, base + (Math.random()-0.5)*1.2));
+    } else {
+      BLE.send('POLL DIST');
+    }
+  }, 150);
+}
+function stopPolling(){
+  pollers = Math.max(0, pollers-1);
+  if(pollers===0 && pollTimer){ clearInterval(pollTimer); pollTimer=null; }
+}
+
+/* ───────── Audio (single shared AudioContext) ───────── */
+let AC=null, oscNode=null, gainNode=null;
+function audio(){ if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)(); return AC; }
+function tone(hz, ms=120, vol=0.06){
+  const a = audio();
+  const o = a.createOscillator(); const g = a.createGain();
+  o.type='sine'; o.frequency.value=hz; g.gain.value=vol;
+  o.connect(g); g.connect(a.destination);
+  o.start(); o.stop(a.currentTime + ms/1000);
+}
+function startContinuousTone(){
+  const a = audio();
+  if(oscNode) return;
+  oscNode = a.createOscillator(); gainNode = a.createGain();
+  oscNode.type='sine'; oscNode.frequency.value=440; gainNode.gain.value=0.04;
+  oscNode.connect(gainNode); gainNode.connect(a.destination); oscNode.start();
+}
+function stopContinuousTone(){
+  if(oscNode){ try{oscNode.stop();}catch(e){} oscNode.disconnect(); oscNode=null; gainNode=null; }
+}
+function setToneFreq(hz){ if(oscNode) oscNode.frequency.setValueAtTime(hz, audio().currentTime); }
+
+/* ───────── Mode switching ───────── */
+const MODES = ['sonar','tape','park','trip','hot','theremin','cruise','follow'];
+let currentMode = null;
+const modeHandlers = {}; // {mode: {enter, exit}}
+
+document.querySelectorAll('.mode-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    if(card.classList.contains('soon')){ alert(T[LANG].soonAlert); return; }
+    const m = card.dataset.mode;
+    if(!m) return;
+    selectMode(m);
+  });
+});
+
+function selectMode(m){
+  if(currentMode === m) return;
+  // exit prev
+  if(currentMode && modeHandlers[currentMode] && modeHandlers[currentMode].exit) modeHandlers[currentMode].exit();
+  currentMode = m;
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.toggle('active', c.dataset.mode===m));
+  document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p-'+m).classList.add('active');
+  if(modeHandlers[m] && modeHandlers[m].enter) modeHandlers[m].enter();
+}
+
+/* ═══════════════ MODE 1: SONAR SCOPE ═══════════════ */
+(function(){
+  const trail = document.getElementById('sonarTrail');
+  const ping = document.getElementById('sonarPing');
+  const sweep = document.getElementById('sonarSweep');
+  const reading = document.getElementById('sonarReading');
+  const points=[]; let angle=0, sweepTimer=null;
+  function r(cm){ return Math.min(200, cm*2); } // 100cm = 200px
+  function onDist(cm){
+    reading.textContent = cm.toFixed(1);
+    const rad = (angle-90)*Math.PI/180;
+    const rr = r(cm);
+    const x = Math.cos(rad)*rr, y = Math.sin(rad)*rr;
+    ping.setAttribute('cx', x); ping.setAttribute('cy', y);
+    points.push({x,y,t:Date.now()});
+    if(points.length>50) points.shift();
+    trail.innerHTML = points.map((p,i)=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(2+i*0.05).toFixed(1)}" fill="#22e6ff" opacity="${(0.15+i*0.017).toFixed(2)}"/>`).join('');
+  }
+  modeHandlers.sonar = {
+    enter(){
+      distListeners.add(onDist); startPolling();
+      sweepTimer = setInterval(()=>{
+        angle = (angle+6)%360;
+        const rad=(angle-90)*Math.PI/180;
+        sweep.setAttribute('x2', Math.cos(rad)*200); sweep.setAttribute('y2', Math.sin(rad)*200);
+      }, 50);
+    },
+    exit(){ distListeners.delete(onDist); stopPolling(); if(sweepTimer){clearInterval(sweepTimer);sweepTimer=null;} }
+  };
+})();
+
+/* ═══════════════ MODE 2: TAPE MEASURE ═══════════════ */
+(function(){
+  const cmEl=document.getElementById('tapeCm'), inEl=document.getElementById('tapeIn');
+  const minEl=document.getElementById('tapeMin'), maxEl=document.getElementById('tapeMax');
+  const avgEl=document.getElementById('tapeAvg'), nEl=document.getElementById('tapeN');
+  const freeze=document.getElementById('tapeFreeze'), reset=document.getElementById('tapeReset');
+  const buf=[]; let mn=Infinity, mx=-Infinity, n=0, frozen=false;
+  function onDist(cm){
+    if(frozen) return;
+    buf.push(cm); if(buf.length>5) buf.shift();
+    const avg = buf.reduce((a,b)=>a+b,0)/buf.length;
+    cmEl.textContent = avg.toFixed(1);
+    inEl.textContent = (avg/2.54).toFixed(2);
+    if(cm<mn) mn=cm; if(cm>mx) mx=cm; n++;
+    minEl.textContent=mn.toFixed(1); maxEl.textContent=mx.toFixed(1);
+    avgEl.textContent=avg.toFixed(1); nEl.textContent=n;
+  }
+  freeze.onclick=()=>{ frozen=!frozen; freeze.textContent = frozen ? '🔥 UNFREEZE' : T[LANG].freeze; freeze.classList.toggle('danger', frozen);};
+  reset.onclick=()=>{ buf.length=0; mn=Infinity; mx=-Infinity; n=0; frozen=false; freeze.textContent=T[LANG].freeze; freeze.classList.remove('danger'); cmEl.textContent='—'; inEl.textContent='—'; minEl.textContent='—'; maxEl.textContent='—'; avgEl.textContent='—'; nEl.textContent='0'; };
+  modeHandlers.tape = { enter(){ distListeners.add(onDist); startPolling(); }, exit(){ distListeners.delete(onDist); stopPolling(); } };
+})();
+
+/* ═══════════════ MODE 3: PARKING ═══════════════ */
+(function(){
+  const cmEl=document.getElementById('parkCm'), tgtEl=document.getElementById('parkTarget');
+  const meter=document.getElementById('parkMeter'), errEl=document.getElementById('parkErr');
+  const bestEl=document.getElementById('parkBest'), resEl=document.getElementById('parkResult');
+  const goBtn=document.getElementById('parkGo'), brakeBtn=document.getElementById('parkBrake');
+  let target=10, driving=false, lastBeep=0;
+  const bestKey='robi.distance.park.best';
+  function loadBest(){ try{ return JSON.parse(localStorage.getItem(bestKey)||'{}'); }catch(e){ return {}; } }
+  function saveBest(b){ localStorage.setItem(bestKey, JSON.stringify(b)); }
+  function refreshBest(){ const b=loadBest(); bestEl.textContent = (b[target]!=null) ? b[target].toFixed(1)+' cm' : '—'; }
+  document.querySelectorAll('#diffPills .diff-pill').forEach(p=>{
+    p.onclick=()=>{ document.querySelectorAll('#diffPills .diff-pill').forEach(q=>q.classList.remove('active')); p.classList.add('active'); target=parseInt(p.dataset.target); tgtEl.textContent=target; refreshBest(); };
+  });
+  function onDist(cm){
+    cmEl.textContent = cm.toFixed(1);
+    cmEl.className='big-num' + (cm<target?' danger':cm<target*2?' warn':'');
+    meter.style.width = Math.max(0,Math.min(100, 100-(cm/100)*100))+'%';
+    if(driving){
+      const now=Date.now();
+      const period = Math.max(60, Math.min(800, cm*8));
+      if(now-lastBeep>period){ tone(900-cm*5, 60, 0.05); lastBeep=now; }
+      // Color LED ramp
+      if(cm<target){ // crashed past target
+        BLE.send('STOP'); BLE.send('LED:255,0,0'); driving=false; goBtn.disabled=false;
+        const err = target-cm; errEl.textContent = err.toFixed(1)+' cm '+T[LANG].crash;
+        resEl.textContent = T[LANG].crash; resEl.style.color='var(--red)';
+      } else if(cm < target+1){ // perfect zone — auto stop
+        BLE.send('STOP'); BLE.send('LED:0,255,0'); driving=false; goBtn.disabled=false;
+        const err = Math.abs(cm-target); errEl.textContent = err.toFixed(1)+' cm';
+        const tag = err<0.5 ? T[LANG].perfect : T[LANG].good;
+        resEl.textContent = tag; resEl.style.color = err<0.5?'var(--neon)':'var(--amber)';
+        const b=loadBest(); if(b[target]==null || err<b[target]){ b[target]=err; saveBest(b); refreshBest(); }
+      } else {
+        const r = Math.min(255, Math.max(0, 255 - (cm-target)*5));
+        const g = Math.min(255, Math.max(0, (cm-target)*5));
+        BLE.send(`LED:${r|0},${g|0},0`);
+        BLE.send(`M:50,50`);
+      }
+    }
+  }
+  goBtn.onclick=()=>{ driving=true; goBtn.disabled=true; resEl.textContent='—'; resEl.style.color='var(--cyan)'; BLE.send('M:50,50'); };
+  brakeBtn.onclick=()=>{ driving=false; goBtn.disabled=false; BLE.send('STOP'); BLE.send('LED:0,0,255'); resEl.textContent=T[LANG].stopped; };
+  modeHandlers.park = { enter(){ distListeners.add(onDist); startPolling(); refreshBest(); }, exit(){ distListeners.delete(onDist); stopPolling(); driving=false; BLE.send('STOP'); } };
+})();
+
+/* ═══════════════ MODE 4: TRIPWIRE ═══════════════ */
+(function(){
+  const distSlider=document.getElementById('tripDist'), distVal=document.getElementById('tripDistVal');
+  const arm=document.getElementById('tripArm'), disarm=document.getElementById('tripDisarm');
+  const cmEl=document.getElementById('tripCm'), state=document.getElementById('tripState');
+  const led=document.getElementById('tripLed'), log=document.getElementById('tripLog');
+  let armed=false, threshold=30, lastBreach=0, alarmTimer=null;
+  distSlider.oninput=()=>{ distVal.textContent=distSlider.value; threshold=parseInt(distSlider.value); };
+  function onDist(cm){
+    cmEl.textContent=cm.toFixed(1);
+    if(armed && cm < threshold && Date.now()-lastBreach > 800){
+      lastBreach=Date.now();
+      const ts = new Date().toLocaleTimeString();
+      const div=document.createElement('div'); div.className='err';
+      div.textContent = `[${ts}] ${T[LANG].breachMsg}: ${cm.toFixed(1)} cm < ${threshold} cm`;
+      log.prepend(div);
+      tone(880,150,0.08); setTimeout(()=>tone(660,150,0.08),180);
+      led.classList.add('on');
+      BLE.send('LED:255,0,0'); BLE.send('BUZZ:880,200');
+      setTimeout(()=>{ led.classList.remove('on'); BLE.send('LED:0,0,0'); }, 400);
+    }
+  }
+  arm.onclick=()=>{ armed=true; state.textContent=T[LANG].armed; state.style.color='var(--red)'; };
+  disarm.onclick=()=>{ armed=false; state.textContent=T[LANG].idle; state.style.color='var(--neon)'; led.classList.remove('on'); BLE.send('LED:0,0,0'); };
+  modeHandlers.trip = { enter(){ distListeners.add(onDist); startPolling(); }, exit(){ distListeners.delete(onDist); stopPolling(); armed=false; state.textContent=T[LANG].idle; state.style.color='var(--neon)'; } };
+})();
+
+/* ═══════════════ MODE 5: HOT/COLD ═══════════════ */
+(function(){
+  const cmEl=document.getElementById('hotCm'), hzEl=document.getElementById('hotHz');
+  const start=document.getElementById('hotStart'), stop=document.getElementById('hotStop');
+  let on=false;
+  function onDist(cm){
+    cmEl.textContent=cm.toFixed(1);
+    // Closer = warmer (higher pitch). 0cm → 1200Hz, 100cm → 200Hz
+    const hz = Math.max(150, 1200 - cm*10);
+    hzEl.textContent = hz.toFixed(0);
+    if(on) setToneFreq(hz);
+  }
+  start.onclick=()=>{ on=true; startContinuousTone(); };
+  stop.onclick=()=>{ on=false; stopContinuousTone(); };
+  modeHandlers.hot = { enter(){ distListeners.add(onDist); startPolling(); }, exit(){ distListeners.delete(onDist); stopPolling(); on=false; stopContinuousTone(); } };
+})();
+
+/* ═══════════════ MODE 6: THEREMIN ═══════════════ */
+(function(){
+  // Pentatonic C-D-E-G-A across 0–60 cm
+  const NOTES=[
+    {n:'C4',h:261.63},{n:'D4',h:293.66},{n:'E4',h:329.63},{n:'G4',h:392.00},{n:'A4',h:440.00},
+    {n:'C5',h:523.25},{n:'D5',h:587.33},{n:'E5',h:659.25},{n:'G5',h:783.99},{n:'A5',h:880.00}
+  ];
+  const noteEl=document.getElementById('thNote'), hzEl=document.getElementById('thHz'), cmEl=document.getElementById('thCm');
+  const play=document.getElementById('thPlay'), mute=document.getElementById('thMute');
+  const rec=document.getElementById('thRec'), loopBtn=document.getElementById('thLoop');
+  const stEl=document.getElementById('thRecState'), lenEl=document.getElementById('thRecLen');
+  let on=false, recording=false, recStart=0, recBuf=[], looping=false, loopTimer=null;
+  function pickNote(cm){
+    if(cm>60) return NOTES[0];
+    const idx = Math.min(NOTES.length-1, Math.floor((cm/60)*NOTES.length));
+    return NOTES[NOTES.length-1-idx]; // closer = higher
+  }
+  function onDist(cm){
+    cmEl.textContent=cm.toFixed(1);
+    const nt=pickNote(cm);
+    noteEl.textContent=nt.n; hzEl.textContent=nt.h.toFixed(0);
+    if(on) setToneFreq(nt.h);
+    if(recording){
+      recBuf.push({t:Date.now()-recStart, hz:nt.h, n:nt.n});
+      lenEl.textContent = recBuf.length;
+      if(Date.now()-recStart > 8000){ recording=false; stEl.textContent='ready'; rec.textContent=T[LANG].record; }
+    }
+  }
+  play.onclick=()=>{ on=true; startContinuousTone(); };
+  mute.onclick=()=>{ on=false; stopContinuousTone(); };
+  rec.onclick=()=>{
+    if(recording){ recording=false; stEl.textContent='ready'; rec.textContent=T[LANG].record; return; }
+    recBuf=[]; recording=true; recStart=Date.now(); stEl.textContent='REC ●'; rec.textContent='⏹ Stop';
+  };
+  loopBtn.onclick=()=>{
+    if(looping){ looping=false; if(loopTimer){clearTimeout(loopTimer);loopTimer=null;} loopBtn.textContent=T[LANG].loop; return; }
+    if(recBuf.length===0) return;
+    looping=true; loopBtn.textContent='⏹ '+T[LANG].loop;
+    function playOne(){
+      if(!looping) return;
+      recBuf.forEach(ev=> setTimeout(()=>{ if(looping) tone(ev.hz, 80, 0.06); }, ev.t));
+      const total = recBuf[recBuf.length-1].t + 200;
+      loopTimer = setTimeout(playOne, total);
+    }
+    playOne();
+  };
+  modeHandlers.theremin = { enter(){ distListeners.add(onDist); startPolling(); }, exit(){ distListeners.delete(onDist); stopPolling(); on=false; recording=false; looping=false; if(loopTimer){clearTimeout(loopTimer);loopTimer=null;} stopContinuousTone(); } };
+})();
+
+/* ═══════════════ MODE 7: CRUISE CONTROL ═══════════════ */
+(function(){
+  const tgt=document.getElementById('cruiseTarget'), tgtV=document.getElementById('cruiseTargetVal');
+  const spd=document.getElementById('cruiseSpeed'), spdV=document.getElementById('cruiseSpeedVal');
+  const cmEl=document.getElementById('cruiseCm'), motorEl=document.getElementById('cruiseMotor');
+  const start=document.getElementById('cruiseStart'), stop=document.getElementById('cruiseStop');
+  const path=document.getElementById('cruisePath');
+  let engaged=false, target=20, cruise=60, history=[], chartW=0;
+  tgt.oninput=()=>{ tgtV.textContent=tgt.value; target=parseInt(tgt.value); };
+  spd.oninput=()=>{ spdV.textContent=spd.value; cruise=parseInt(spd.value); };
+  function onDist(cm){
+    cmEl.textContent=cm.toFixed(1);
+    let m=0;
+    if(engaged){
+      const margin = cm - target;
+      if(margin <= 0) m=0;
+      else if(margin < 15) m = Math.round(cruise * (margin/15));
+      else m = cruise;
+      BLE.send(`M:${m},${m}`);
+      motorEl.textContent = m;
+      history.push(m); if(history.length>120) history.shift();
+      const w=path.parentNode.clientWidth || 400; chartW=w;
+      const pts = history.map((v,i)=>`${(i*w/120).toFixed(1)},${(120 - v*1.1).toFixed(1)}`).join(' ');
+      path.setAttribute('points', pts);
+    } else {
+      motorEl.textContent='0';
+    }
+  }
+  start.onclick=()=>{ engaged=true; history=[]; };
+  stop.onclick=()=>{ engaged=false; BLE.send('STOP'); motorEl.textContent='0'; };
+  modeHandlers.cruise = { enter(){ distListeners.add(onDist); startPolling(); }, exit(){ distListeners.delete(onDist); stopPolling(); engaged=false; BLE.send('STOP'); } };
+})();
+
+/* ═══════════════ MODE 8: FOLLOW-ME ═══════════════ */
+(function(){
+  const tgt=document.getElementById('followTarget'), tgtV=document.getElementById('followTargetVal');
+  const kp=document.getElementById('followKp'), kpV=document.getElementById('followKpVal');
+  const cmEl=document.getElementById('followCm'), errEl=document.getElementById('followErr'), motEl=document.getElementById('followMot');
+  const start=document.getElementById('followStart'), stop=document.getElementById('followStop');
+  let on=false, target=25, gain=4;
+  tgt.oninput=()=>{ tgtV.textContent=tgt.value; target=parseInt(tgt.value); };
+  kp.oninput =()=>{ kpV.textContent=kp.value;  gain=parseInt(kp.value); };
+  function onDist(cm){
+    cmEl.textContent=cm.toFixed(1);
+    if(!on){ motEl.textContent='0'; return; }
+    const err = cm - target; // positive = too far → drive forward
+    errEl.textContent = err.toFixed(1);
+    let m = Math.max(-100, Math.min(100, Math.round(err * gain)));
+    if(Math.abs(err)<2) m=0;
+    motEl.textContent=m;
+    BLE.send(`M:${m},${m}`);
+  }
+  start.onclick=()=>{ on=true; };
+  stop.onclick=()=>{ on=false; BLE.send('STOP'); motEl.textContent='0'; };
+  modeHandlers.follow = { enter(){ distListeners.add(onDist); startPolling(); }, exit(){ distListeners.delete(onDist); stopPolling(); on=false; BLE.send('STOP'); } };
+})();
+
+/* ───────── Master STOP ───────── */
+function masterStopAll(){
+  BLE.send('STOP'); BLE.send('LED:0,0,0');
+  stopContinuousTone();
+  // Notify modes by triggering exit/re-enter? Simpler: just halt their flags via re-click of stop buttons
+  ['parkBrake','tripDisarm','hotStop','thMute','cruiseStop','followStop'].forEach(id=>{
+    const b=document.getElementById(id); if(b) b.click();
+  });
+}
+document.getElementById('masterStop').onclick = masterStopAll;
+document.addEventListener('keydown', e=>{
+  if(e.code==='Space' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
+    e.preventDefault(); masterStopAll();
+  }
+});
+
+/* ───────── Header wiring ───────── */
+{ const _ts = document.getElementById('themeSelect'); if (_ts) _ts.addEventListener('change', e=> applyTheme(e.target.value)); }
+document.querySelectorAll('.lang-pills .pill').forEach(p=> p.addEventListener('click', ()=> setL(p.dataset.lang)));
+document.getElementById('connectBtn').addEventListener('click', ()=> {
+  if(typeof isConnected !== 'undefined' && isConnected){ BLE.disconnect(); }
+  else { BLE.connect(); }
+});
+
+/* ───────── Boot ───────── */
+applyTheme(THEME);
+setL(LANG);
+setConn('off');
+
+/* DOMContentLoaded wrapper — `lab-logger.js` is loaded with `defer`, so it
+   executes after document parsing. A bare inline call here would run at
+   parse time when window.LabLogger is still undefined. */
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.LabLogger) LabLogger.mount('#labLogger', { surface: 'Distance Lab' });
+});
+</script>
+</body>
+</html>

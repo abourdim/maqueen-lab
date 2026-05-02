@@ -1,6 +1,6 @@
 // ============================================================
 // ble-shim.js — minimal runtime so js/ble.js runs standalone
-// (outside index.html) on pages like docs/joystick-lab.html.
+// (outside index.html) on pages like labs/joystick-lab.html.
 //
 // js/ble.js was written for the main app. It references several
 // globals declared in core.js + lang.js as BARE NAMES (e.g.

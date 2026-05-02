@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   WORKSHOP-DIY · ROBI-9 LAB · Multi-Theme Sheet (kids 10y+)
+   WORKSHOP-DIY · MAQUEEN LAB · Multi-Theme Sheet (kids 10y+)
    5 themes · serious-but-friendly · NO pink, NO violet, NO rainbow
    Fonts: Righteous (display) · Tajawal (body) · Orbitron (tech accents)
    Drop-in stylesheet for all workshop-* and start.html files.
@@ -302,3 +302,55 @@ body.rtl .wd-footer,
 @media print {
   .wd-band, .wd-header, .wd-footer { display: none !important; }
 }
+
+/* ===== Language flag pills (SVG-based, OS-independent) ===========================
+   Replaces emoji flags (🇬🇧🇫🇷🇩🇿) which render as plain "GB FR DZ" text on
+   Windows (no emoji flag font). Inline data-URI SVGs ship with the stylesheet —
+   no extra HTTP requests, no missing-glyph fallbacks.
+   Usage:
+     <div class="lang-pills" role="radiogroup" aria-label="Language">
+       <button class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+       <button class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+       <button class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+     </div>
+   The page's setL(lang) handles the click; .active is toggled by the same code.
+   AR flag = Algerian (green/white halves with red star+crescent), per project policy.
+   ============================================================================== */
+.lang-pills { display: inline-flex; gap: 4px; align-items: center; }
+.lang-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.lang-pill:hover  { border-color: var(--neon); color: var(--neon); }
+.lang-pill.active { background: var(--neon); color: var(--ink); border-color: var(--neon); }
+
+/* Flag swatch — fixed 18×12 (3:2). Slight border so white halves don't bleed. */
+.lang-pill .flag {
+  width: 18px; height: 12px;
+  display: inline-block;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,0.25);
+  flex-shrink: 0;
+}
+
+/* United Kingdom — simplified Union Jack (recognizable at 18×12). */
+.flag-en { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'><rect width='60' height='40' fill='%23012169'/><path d='M0,0 L60,40 M60,0 L0,40' stroke='%23fff' stroke-width='8'/><path d='M0,0 L60,40 M60,0 L0,40' stroke='%23C8102E' stroke-width='4'/><path d='M30,0 v40 M0,20 h60' stroke='%23fff' stroke-width='10'/><path d='M30,0 v40 M0,20 h60' stroke='%23C8102E' stroke-width='6'/></svg>"); }
+
+/* France — vertical tricolore bleu / blanc / rouge. */
+.flag-fr { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'><rect width='20' height='40' fill='%230055A4'/><rect x='20' width='20' height='40' fill='%23fff'/><rect x='40' width='20' height='40' fill='%23EF4135'/></svg>"); }
+
+/* Algeria — green/white vertical halves with red crescent + 5-pt star centered. */
+.flag-ar { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'><rect width='30' height='40' fill='%23006233'/><rect x='30' width='30' height='40' fill='%23fff'/><circle cx='30' cy='20' r='10' fill='%23D21034'/><circle cx='32' cy='20' r='8' fill='%23fff'/><polygon fill='%23D21034' points='30,16 30.9,18.7 33.8,18.8 31.5,20.5 32.4,23.2 30,21.6 27.6,23.2 28.5,20.5 26.2,18.8 29.1,18.7'/></svg>"); }

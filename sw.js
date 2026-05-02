@@ -1,5 +1,12 @@
-// sw.js — Service Worker for micro:bit Playground PWA
-const CACHE_NAME = 'microbit-playground-v10';
+// sw.js — Service Worker for Maqueen Lab PWA
+//
+// Cache strategy: per-asset `add().catch()` instead of atomic `addAll()`.
+// Reason: `addAll` is all-or-nothing — one missing asset (e.g. a model file
+// that was deleted in a refactor) aborts the entire install and the PWA
+// never caches anything. This was happening before — the previous ASSETS
+// list referenced 5 deleted files (makecode.ts + 4 models) so cache install
+// silently failed on every page load.
+const CACHE_NAME = 'maqueen-lab-v11';
 const ASSETS = [
     'index.html',
     'styles.css',
@@ -13,11 +20,6 @@ const ASSETS = [
     'js/graph.js',
     'js/board3d.js',
     'js/models/microbit.js',
-    'js/models/buggy.js',
-    'js/models/arm.js',
-    'js/models/balance.js',
-    'js/models/weather.js',
-    'makecode.ts',
     'docs/guide.html',
     'assets/logo.svg',
     'manifest.json',
@@ -28,7 +30,14 @@ const ASSETS = [
 
 self.addEventListener('install', (e) => {
     e.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+        caches.open(CACHE_NAME).then(cache =>
+            // Per-asset add with .catch — one 404 doesn't kill the whole install.
+            Promise.all(ASSETS.map(asset =>
+                cache.add(asset).catch(err =>
+                    console.warn('[sw] skip ' + asset + ':', err && err.message || err)
+                )
+            ))
+        )
     );
     self.skipWaiting();
 });

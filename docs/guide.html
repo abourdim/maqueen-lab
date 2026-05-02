@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Robi-9 Lab — Pilot's Handbook</title>
+<title>Maqueen Lab — Pilot's Handbook</title>
 <link rel="stylesheet" href="../workshops/theme.css">
 <script src="../workshops/newtab.js" defer></script>
 <style>
@@ -417,6 +417,18 @@
     font-weight: 700;
   }
   .site-header__nav .lang-pill:hover { color: #fff; text-decoration: none; }
+  /* Theme picker — styled to match .lang-pill so it sits naturally in the nav. */
+  .site-header__nav .theme-pill {
+    padding: 5px 11px;
+    background: rgba(74,222,128,0.06);
+    border: 1px solid rgba(74,222,128,0.25);
+    border-radius: 999px;
+    color: var(--text-dim);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .site-header__nav .theme-pill:hover { color: #fff; border-color: rgba(74,222,128,0.5); }
   .site-header__nav .gh-link {
     margin-left: 8px;
     padding: 5px 11px;
@@ -553,17 +565,24 @@
      scrolled deep into a section.
      ============================================================ -->
 <header class="site-header">
-  <a href="../index.html" class="site-header__brand" aria-label="Robi-9 Lab home">
+  <a href="../index.html" class="site-header__brand" aria-label="Maqueen Lab home">
     <span class="site-header__logo" style="display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; background:linear-gradient(135deg, #4ade80, #38bdf8); color:#0a1018; font-weight:800; font-size:24px; border-radius:11px; box-shadow:0 6px 22px rgba(74,222,128,0.18);">▣</span>
     <div>
       <div class="site-header__title">ROBI-9 LAB</div>
       <div class="site-header__sub">Pilot's Handbook</div>
     </div>
   </a>
-  <nav class="site-header__nav" aria-label="Language switcher">
-    <a href="guide.html"    class="lang-pill active">🇬🇧 EN</a>
-    <a href="guide.fr.html" class="lang-pill">🇫🇷 FR</a>
-    <a href="guide.ar.html" class="lang-pill">🇩🇿 AR</a>
+  <nav class="site-header__nav" aria-label="Language and theme switcher">
+    <a href="guide.html"    class="lang-pill active"><span class="flag flag-en"></span>EN</a>
+    <a href="guide.fr.html" class="lang-pill"><span class="flag flag-fr"></span>FR</a>
+    <a href="guide.ar.html" class="lang-pill"><span class="flag flag-ar"></span>AR</a>
+    <select class="theme-pill" id="themeSelect" aria-label="Theme">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
     <a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener" class="gh-link">⭐ GitHub</a>
   </nav>
 </header>
@@ -626,7 +645,7 @@
   <h1>Pilot's Handbook</h1>
   <p class="pitch">
     Welcome aboard, <b>future roboticist</b>.
-    This is your manual for <b>Robi-9 Lab</b> — the live cockpit for your DFRobot Maqueen Lite v4 robot.
+    This is your manual for <b>Maqueen Lab</b> — the live cockpit for your DFRobot Maqueen Lite v4 robot.
     No prior experience needed. Just curiosity and a 🤖.
   </p>
   <div class="cta-row">
@@ -858,7 +877,7 @@
       <b>Power up the robot.</b> Flip the slide switch on the back of the Maqueen Lite to <code>ON</code>. The micro:bit screen wakes up. <span style="color:var(--green);"><span class="pulse-dot"></span>green light = healthy.</span>
     </li>
     <li>
-      <b>Open Robi-9 Lab</b> in <b>Chrome</b> or <b>Edge</b> (Web Bluetooth doesn't work on Safari or Firefox — those browsers can't talk to the robot).
+      <b>Open Maqueen Lab</b> in <b>Chrome</b> or <b>Edge</b> (Web Bluetooth doesn't work on Safari or Firefox — those browsers can't talk to the robot).
       → <a href="../index.html">Click here to launch the app.</a>
     </li>
     <li>
@@ -1985,7 +2004,7 @@
   <h2><span class="num">27</span> For parents &amp; teachers 👨‍🏫</h2>
 
   <h3>What's the curriculum value?</h3>
-  <p>Robi-9 Lab covers a real CS / engineering curriculum disguised as play:</p>
+  <p>Maqueen Lab covers a real CS / engineering curriculum disguised as play:</p>
   <ul>
     <li><b>Computational thinking</b> — sequences (Simon Says), loops (line follower), conditionals (auto-wander)</li>
     <li><b>Mathematics</b> — d=v·t (Math the Distance), trigonometry (autopilot bearing), modular arithmetic (heading)</li>
@@ -2045,7 +2064,7 @@
       <div class="site-footer__brand">
         <span style="display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; background:linear-gradient(135deg, #4ade80, #38bdf8); color:#0a1018; font-weight:800; font-size:24px; border-radius:11px;">▣</span>
         <div>
-          <div class="site-footer__brand-name">Robi-9 Lab</div>
+          <div class="site-footer__brand-name">Maqueen Lab</div>
           <div class="site-footer__brand-tag">Workshop DIY · MIT licensed</div>
         </div>
       </div>
@@ -2114,15 +2133,28 @@
 <footer class="wd-footer">
   <span>powered by <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
   <span class="sep">·</span>
-  <span>Robi-9 Lab · User Guide</span>
+  <span>Maqueen Lab · User Guide</span>
 </footer>
 
 <script>
-  // Theme inherit from main app (no picker on guide — too many native styles)
-  try {
-    const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme');
-    if (t) document.documentElement.setAttribute('data-theme', t);
-  } catch (e) {}
+  // Theme picker — wired to the <select id="themeSelect"> in the site-header nav.
+  // Shares localStorage('robi.theme') with hub.html / docs/index.html / labs/index.html
+  // so the kid's choice persists across hubs. The handbook's own :root variables
+  // dominate body color, so the visual swap is subtle but the picker is present
+  // for parity with the hub-style header.
+  (function() {
+    const themeSel = document.getElementById('themeSelect');
+    function applyTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      if (themeSel) themeSel.value = t;
+      try { localStorage.setItem('robi.theme', t); } catch (e) {}
+    }
+    if (themeSel) themeSel.addEventListener('change', e => applyTheme(e.target.value));
+    try {
+      const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme');
+      if (t) applyTheme(t);
+    } catch (e) {}
+  })();
 </script>
 
 </body>

@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lights Lab · Maqueen Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<link rel="stylesheet" href="lab-logger.css?v=6">
+<style>
+  /* ---------- THEME ---------- */
+  :root {
+    --card: #141e14;
+    --card2: #1a261a;
+    --border: #1e3a1e;
+    --accent: #a3e635;
+    --accent2: #fb923c;
+    --text: #e2e8e0;
+    --muted: #94a394;
+    --warn: #fbbf24;
+    --good: #22c55e;
+    --bad: #ef4444;
+    --info: #38bdf8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  html[dir="rtl"] body { font-family: 'Segoe UI', Tahoma, 'Noto Naskh Arabic', sans-serif; }
+
+  /* ---------- HEADER ---------- */
+  .wd-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .wd-header h1 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .wd-header h1 .em { font-size: 1.4rem; }
+  .wd-header select,
+  .wd-header .pill,
+  .wd-header a.btn {
+    background: var(--card2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: .88rem;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .wd-header a.btn:hover, .wd-header .pill:hover { border-color: var(--accent); }
+  .lang-pills { display: inline-flex; gap: 4px; }
+  .lang-pills .pill.active { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; }
+
+  /* ---------- LAYOUT ---------- */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 14px;
+    padding: 14px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  @media (max-width: 880px) {
+    .app-layout { grid-template-columns: 1fr; }
+  }
+  .sidebar, .stage {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .sidebar h2, .stage h2 {
+    font-size: .95rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 10px;
+  }
+
+  /* ---------- TIER BANNER ---------- */
+  .tier-banner {
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    font-size: .85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tier-banner.preview {
+    background: rgba(251, 191, 36, .12);
+    color: var(--warn);
+    border: 1px dashed var(--warn);
+  }
+  .tier-banner.live {
+    background: rgba(34, 197, 94, .12);
+    color: var(--good);
+    border: 1px solid var(--good);
+  }
+
+  /* ---------- BLE CONTROLS ---------- */
+  .ble-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .btn-connect {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(163,230,53,.25);
+  }
+  .btn-connect:hover { box-shadow: 0 6px 20px rgba(163,230,53,.4); }
+  .btn-connect.connected { background: var(--good); box-shadow: 0 4px 14px rgba(34,197,94,.25); }
+  .conn-pill {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    font-size: .82rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  .conn-pill.online { color: var(--good); border-color: var(--good); }
+
+  .btn-stop {
+    background: var(--bad);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .btn-stop:hover { filter: brightness(1.1); }
+
+  /* ---------- CATEGORY TABS ---------- */
+  .cat-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+  .cat-tab {
+    flex: 1;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 8px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: .9rem;
+    font-weight: 700;
+    text-align: center;
+  }
+  .cat-tab.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+
+  /* ---------- MODE LIST ---------- */
+  .mode-list { display: flex; flex-direction: column; gap: 6px; }
+  .mode-btn {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: .92rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform .08s ease;
+  }
+  .mode-btn:hover { border-color: var(--accent); transform: translateX(2px); }
+  html[dir="rtl"] .mode-btn:hover { transform: translateX(-2px); }
+  .mode-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .mode-btn .em { font-size: 1.3rem; }
+
+  /* ---------- STAGE ---------- */
+  .stage-leds {
+    background: radial-gradient(ellipse at center, color-mix(in srgb, var(--text, #000) 8%, var(--bg-card, #050805)) 0%, color-mix(in srgb, var(--text, #000) 14%, var(--bg-card, #000)) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px 16px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    min-height: 180px;
+    margin-bottom: 16px;
+  }
+  .stage-leds svg { width: 84px; height: 84px; }
+  .stage-info {
+    color: var(--muted);
+    font-size: .85rem;
+    margin-bottom: 12px;
+    min-height: 1.4em;
+  }
+
+  /* ---------- PAINTER ---------- */
+  .painter { display: none; }
+  .painter.show { display: block; }
+  .painter-grid {
+    display: grid;
+    grid-template-columns: 70px repeat(8, 1fr);
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .painter-grid .row-label {
+    color: var(--muted);
+    font-size: .8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card2);
+    border-radius: 6px;
+    font-weight: 700;
+  }
+  .painter-grid .row-label.head { background: transparent; }
+  .painter-grid .step-head {
+    color: var(--muted);
+    font-size: .75rem;
+    text-align: center;
+    padding: 4px 0;
+    border-radius: 6px;
+    background: var(--card2);
+  }
+  .painter-grid .step-head.playing {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 800;
+  }
+  .cell {
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    background: color-mix(in srgb, var(--text, #000) 30%, var(--bg-card, #0a0a0a));
+  }
+  .cell:hover { border-color: var(--accent); }
+  .palette { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .swatch {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    border: 3px solid var(--border);
+    cursor: pointer;
+  }
+  .swatch.active { border-color: var(--accent); transform: scale(1.08); }
+  .painter-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .painter-controls button, .painter-controls label {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: .88rem;
+  }
+  .painter-controls button.primary {
+    background: var(--accent); color: var(--bg); font-weight: 700; border-color: var(--accent);
+  }
+  .painter-controls input[type="range"] { vertical-align: middle; }
+  .slot-row { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .slot-btn {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: .82rem;
+  }
+  .slot-btn:hover { border-color: var(--accent); }
+  .slot-btn.filled { border-color: var(--accent2); color: var(--accent2); }
+
+  /* ---------- TIPS ---------- */
+  .tips {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--muted);
+    font-size: .82rem;
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+  .tips strong { color: var(--accent); }
+  kbd {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: monospace;
+    font-size: .85em;
+  }
+
+  html[dir="rtl"] .wd-header h1 { margin-right: 0; margin-left: auto; }
+  html[dir="rtl"] .mode-btn { text-align: right; }
+  /* Theme bridge — maps workshops/theme.css output to this lab's local variable
+     names so [data-theme="carbon|forest|steel|paper|pearl"] actually recolors
+     every surface (sidebar, stage, cards, painter cells, footer). */
+  :root {
+    --card:   var(--bg-card,  #141e14);
+    --card2:  var(--bg-soft,  #1a261a);
+    --border: var(--border,   #1e3a1e);
+    --text:   var(--text,     #e2e8e0);
+    --muted:  var(--steel,    #94a394);
+  }
+  /* Also derive --accent from the theme's primary so per-theme accents show through.
+     Carbon/Steel default to --cyan; Forest/Paper/Pearl already redefine --neon and friends. */
+  :root { --accent: var(--neon, #a3e635); }
+  html[data-theme="carbon"] { --accent: var(--cyan, #22d3ee); }
+  [data-theme="steel"]  :root, html[data-theme="steel"]  { --accent: var(--cyan, #22d3ee); }
+  [data-theme="paper"]  :root, html[data-theme="paper"]  { --accent: var(--amber, #f59e0b); }
+  [data-theme="pearl"]  :root, html[data-theme="pearl"]  { --accent: var(--cyan, #22d3ee); }
+</style>
+</head>
+<body>
+
+<header class="wd-header">
+  <h1><span class="em">💡</span><span data-i18n="title">Lights Lab</span></h1>
+  <select class="wd-select" id="themeSelect" aria-label="Theme">
+    <option value="carbon">▣ Carbon</option>
+    <option value="forest">▣ Forest</option>
+    <option value="steel">▣ Steel</option>
+    <option value="paper">☼ Paper</option>
+    <option value="pearl">☼ Pearl</option>
+  </select>
+  <div class="lang-pills" role="radiogroup" aria-label="Language">
+    <button type="button" class="lang-pill pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+    <button type="button" class="lang-pill pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+    <button type="button" class="lang-pill pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+  </div>
+  <a class="btn" href="../index.html" data-i18n="robotApp">🤖 Robot App</a>
+  <a class="btn" href="../docs/index.html" data-i18n="catalog">🗂️ Catalog</a>
+  <a class="btn" href="index.html" data-i18n="labs">🧪 Labs</a>
+  <a class="btn" href="../workshops/hub.html" data-i18n="hub">🏠 Hub</a>
+</header>
+
+<div class="app-layout">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="sidebar">
+    <div id="tierBanner" class="tier-banner preview">
+      <span data-i18n="tierPreview">⚡ PREVIEW (browser-only)</span>
+    </div>
+
+    <div class="ble-row">
+      <button id="btnConnect" class="btn-connect" data-i18n="connect">🔌 Connect</button>
+      <span id="connPill" class="conn-pill" data-i18n="notConnected">not connected</span>
+      <button id="btnAllOff" class="btn-stop" data-i18n="allOff">🛑 ALL OFF</button>
+    </div>
+
+    <h2 data-i18n="categories">Categories</h2>
+    <div class="cat-tabs">
+      <button class="cat-tab active" data-cat="mood" data-i18n="catMood">🎭 Mood</button>
+      <button class="cat-tab" data-cat="painter" data-i18n="catPainter">🎨 Painter</button>
+    </div>
+
+    <h2 data-i18n="modes">Modes</h2>
+    <div class="mode-list" id="modeList"></div>
+
+    <div class="tips">
+      <strong data-i18n="tipsTitle">Tips:</strong>
+      <span data-i18n="tipsBody"></span>
+    </div>
+  </aside>
+
+  <!-- ============== STAGE ============== -->
+  <section class="stage">
+    <h2 id="stageTitle">—</h2>
+    <div class="stage-info" id="stageInfo"></div>
+
+    <div class="stage-leds" id="stageLeds">
+      <!-- 4 SVG LED dots injected by JS -->
+    </div>
+
+    <!-- ===== PAINTER PANEL ===== -->
+    <div class="painter" id="painter">
+      <div class="palette" id="palette"></div>
+
+      <div class="painter-grid" id="painterGrid"></div>
+
+      <div class="painter-controls">
+        <button id="painterPlay" class="primary">▶ <span data-i18n="play">Play</span></button>
+        <button id="painterStop">⏹ <span data-i18n="stop">Stop</span></button>
+        <button id="painterClear">🧹 <span data-i18n="clear">Clear</span></button>
+        <label>
+          <span data-i18n="bpm">BPM</span>:
+          <input type="range" id="bpm" min="60" max="180" value="120" />
+          <span id="bpmVal">120</span>
+        </label>
+      </div>
+
+      <div class="slot-row" id="slotRow">
+        <span style="color: var(--muted); font-size: .85rem; align-self: center;" data-i18n="slots">Saved patterns:</span>
+        <button class="slot-btn" data-slot="1">1</button>
+        <button class="slot-btn" data-slot="2">2</button>
+        <button class="slot-btn" data-slot="3">3</button>
+        <button class="slot-btn" data-slot="4">4</button>
+        <button class="slot-btn" id="slotSave">💾 <span data-i18n="save">Save</span></button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div id="labLogger" class="lab-logger-host"></div>
+
+<!-- ============== BLE SHIM (#N prefix routing) ============== -->
+<script src="../js/ble-shim.js"></script>
+<script src="../js/ble.js"></script>
+<script src="lab-logger.js?v=6" defer></script>
+
+<script>
+/* ============================================================
+   I18N
+   ============================================================ */
+const T = {
+  en: {
+    title: "Lights Lab",
+    robotApp: "🤖 Robot App",
+    catalog: "📚 Catalog",
+    labs: "🧪 Labs",
+    hub: "🏠 Hub",
+    tierPreview: "⚡ PREVIEW (no robot connected — browser simulation)",
+    tierLive: "🟢 LIVE (compatibility mode — Co-Pilot Lab gateway recommended for full 4-LED support)",
+    connect: "🔌 Connect",
+    connecting: "connecting…",
+    connected: "🟢 connected",
+    notConnected: "not connected",
+    disconnect: "🔌 Disconnect",
+    allOff: "🛑 ALL OFF",
+    categories: "Categories",
+    modes: "Modes",
+    catMood: "🎭 Mood",
+    catPainter: "🎨 Painter",
+    play: "Play",
+    stop: "Stop",
+    clear: "Clear",
+    save: "Save",
+    bpm: "BPM",
+    slots: "Saved patterns:",
+    tipsTitle: "Tips",
+    tipsBody: "Press Spacebar for ALL OFF. Live mode throttled to 4 Hz.",
+    /* mood scenes */
+    mCalm: "Calm", mCalmDesc: "Slow blue breathing — relaxing cyan pulse (4 s).",
+    mAlert: "Alert", mAlertDesc: "Red strobe — 200 ms on / 200 ms off.",
+    mFocus: "Focus", mFocusDesc: "Steady warm white — 100 % brightness.",
+    mSleepy: "Sleepy", mSleepyDesc: "Slow amber breathing — gentle 8 s pulse.",
+    mStorm: "Storm", mStormDesc: "Random short white flashes — like lightning.",
+    mOff: "Off", mOffDesc: "All LEDs off.",
+    mPainter: "Step Painter", mPainterDesc: "8-step × 4-LED grid. Click cells, hit Play.",
+    /* painter palette */
+    pOff: "Off", pRed: "Red", pAmber: "Amber", pCyan: "Cyan", pGreen: "Green", pWhite: "White",
+    saved: "Saved to slot",
+    loaded: "Loaded slot",
+    empty: "Empty slot",
+    cleared: "Cleared",
+    bleSent: "Sent",
+    throttled: "throttled — 4 Hz cap",
+    ll_title:"Message Log", ll_subtitle:"Raw UART messages", ll_clear:"Clear", ll_export:"Export", ll_copy:"Copy", ll_pin:"Pin"
+  },
+  fr: {
+    title: "Labo Lumières",
+    robotApp: "🤖 App Robot",
+    catalog: "📚 Catalogue",
+    labs: "🧪 Labos",
+    hub: "🏠 Hub",
+    tierPreview: "⚡ APERÇU (aucun robot connecté — simulation navigateur)",
+    tierLive: "🟢 EN DIRECT (mode compatibilité — passerelle Co-Pilot Lab recommandée pour 4 LED)",
+    connect: "🔌 Connecter",
+    connecting: "connexion…",
+    connected: "🟢 connecté",
+    notConnected: "non connecté",
+    disconnect: "🔌 Déconnecter",
+    allOff: "🛑 TOUT ÉTEINDRE",
+    categories: "Catégories",
+    modes: "Modes",
+    catMood: "🎭 Ambiance",
+    catPainter: "🎨 Peintre",
+    play: "Jouer",
+    stop: "Arrêter",
+    clear: "Effacer",
+    save: "Enregistrer",
+    bpm: "BPM",
+    slots: "Motifs enregistrés :",
+    tipsTitle: "Astuces",
+    tipsBody: "Espace = TOUT ÉTEINDRE. Mode direct limité à 4 Hz.",
+    mCalm: "Calme", mCalmDesc: "Respiration bleue lente — pulsation cyan douce (4 s).",
+    mAlert: "Alerte", mAlertDesc: "Stroboscope rouge — 200 ms allumé / 200 ms éteint.",
+    mFocus: "Focus", mFocusDesc: "Blanc chaud fixe — 100 % de luminosité.",
+    mSleepy: "Endormi", mSleepyDesc: "Respiration ambre lente — pulsation 8 s.",
+    mStorm: "Orage", mStormDesc: "Éclairs blancs courts et aléatoires.",
+    mOff: "Éteint", mOffDesc: "Toutes les LED éteintes.",
+    mPainter: "Peintre par étapes", mPainterDesc: "Grille 8 étapes × 4 LED. Clique puis Joue.",
+    pOff: "Éteint", pRed: "Rouge", pAmber: "Ambre", pCyan: "Cyan", pGreen: "Vert", pWhite: "Blanc",
+    saved: "Enregistré dans le slot",
+    loaded: "Slot chargé",
+    empty: "Slot vide",
+    cleared: "Effacé",
+    bleSent: "Envoyé",
+    throttled: "limité — plafond 4 Hz",
+    ll_title:"Journal", ll_subtitle:"Messages UART bruts", ll_clear:"Effacer", ll_export:"Exporter", ll_copy:"Copier", ll_pin:"Épingler"
+  },
+  ar: {
+    title: "مختبر الأضواء",
+    robotApp: "🤖 تطبيق الروبوت",
+    catalog: "📚 الفهرس",
+    labs: "🧪 مختبرات",
+    hub: "🏠 المركز",
+    tierPreview: "⚡ معاينة (لا يوجد روبوت متصل — محاكاة في المتصفح)",
+    tierLive: "🟢 مباشر (وضع التوافق — يُنصح ببوابة Co-Pilot Lab لدعم 4 LED كامل)",
+    connect: "🔌 اتصال",
+    connecting: "جاري الاتصال…",
+    connected: "🟢 متصل",
+    notConnected: "غير متصل",
+    disconnect: "🔌 قطع الاتصال",
+    allOff: "🛑 إطفاء الكل",
+    categories: "الفئات",
+    modes: "الأوضاع",
+    catMood: "🎭 الأجواء",
+    catPainter: "🎨 الرسام",
+    play: "تشغيل",
+    stop: "إيقاف",
+    clear: "مسح",
+    save: "حفظ",
+    bpm: "BPM",
+    slots: "الأنماط المحفوظة:",
+    tipsTitle: "نصائح",
+    tipsBody: "مسطرة المسافة = إطفاء الكل. الوضع المباشر مقيّد بـ 4 هرتز.",
+    mCalm: "هدوء", mCalmDesc: "تنفس أزرق بطيء — نبضة سماوية لطيفة (4 ث).",
+    mAlert: "تنبيه", mAlertDesc: "وميض أحمر — 200 مللي ث تشغيل / 200 مللي ث إطفاء.",
+    mFocus: "تركيز", mFocusDesc: "أبيض دافئ ثابت — سطوع 100٪.",
+    mSleepy: "نعسان", mSleepyDesc: "تنفس كهرماني بطيء — نبضة 8 ث.",
+    mStorm: "عاصفة", mStormDesc: "ومضات بيضاء قصيرة عشوائية.",
+    mOff: "إطفاء", mOffDesc: "جميع الأضواء مطفأة.",
+    mPainter: "رسام الخطوات", mPainterDesc: "شبكة 8 خطوات × 4 LED. انقر ثم شغّل.",
+    pOff: "مطفأ", pRed: "أحمر", pAmber: "كهرماني", pCyan: "سماوي", pGreen: "أخضر", pWhite: "أبيض",
+    saved: "تم الحفظ في الخانة",
+    loaded: "تم تحميل الخانة",
+    empty: "خانة فارغة",
+    cleared: "تم المسح",
+    bleSent: "أُرسل",
+    throttled: "مقيّد — حد 4 هرتز",
+    ll_title:"سجل الرسائل", ll_subtitle:"رسائل UART الخام", ll_clear:"مسح", ll_export:"تصدير", ll_copy:"نسخ", ll_pin:"تثبيت"
+  }
+};
+
+let LANG = localStorage.getItem('robi.lang') || 'en';
+let THEME = localStorage.getItem('robi.theme') || 'carbon';
+
+function tr(k) { return (T[LANG] && T[LANG][k]) || (T.en[k] || k); }
+
+function setL(lang) {
+  LANG = lang;
+  localStorage.setItem('robi.lang', lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (T[LANG] && T[LANG][k] != null) el.textContent = tr(k);
+  });
+  document.querySelectorAll('.lang-pills .pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.lang === lang);
+  });
+  buildModeList();
+  refreshStageLabels();
+}
+
+function applyTheme(theme) {
+    // Defensive: workshops/theme.css only knows these 5 themes. If a value
+    // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+    // fall back to carbon so we never apply a theme this stylesheet ignores.
+    var _validThemes = ['carbon','forest','steel','paper','pearl'];
+    if (_validThemes.indexOf(theme) === -1) theme = 'carbon';
+  THEME = theme;
+  try { localStorage.setItem('robi.theme', theme); } catch(e){}
+  document.documentElement.setAttribute('data-theme', theme);
+  const sel = document.getElementById('themeSelect');
+  if (sel) sel.value = theme;
+  /* Repaint LEDs and any rebuilt UI so theme-aware "off" colors and stroke
+     pick up the new theme immediately. */
+  try {
+    const c = document.querySelector('#stageLeds svg circle');
+    if (c) {
+      const _stroke = (getComputedStyle(document.documentElement).getPropertyValue('--border') || '').trim();
+      if (_stroke) document.querySelectorAll('#stageLeds svg circle').forEach(el => el.setAttribute('stroke', _stroke));
+    }
+    if (typeof ledState !== 'undefined' && Array.isArray(ledState)) {
+      for (let i = 0; i < ledState.length; i++) {
+        const [r, g, b] = ledState[i];
+        if (typeof paintLed === 'function') paintLed(i, r, g, b);
+      }
+    }
+  } catch (e) { /* leds not built yet — fine */ }
+}
+
+/* ============================================================
+   PALETTE — engineering only (NO rainbow / pink / violet)
+   ============================================================ */
+const PALETTE = [
+  // "Off" pixel: theme-tracking surface so Paper/Pearl don't show black islands.
+  // The CSS variable resolves at paint time; the hex fallback is used if --bg-soft is undefined.
+  { key: 'pOff',   rgb: [0, 0, 0],         hex: 'var(--bg-soft, #0a0a0a)' },
+  { key: 'pRed',   rgb: [255, 0, 0],       hex: '#ff0000' },
+  { key: 'pAmber', rgb: [255, 140, 0],     hex: '#ff8c00' },
+  { key: 'pCyan',  rgb: [0, 200, 255],     hex: '#00c8ff' },
+  { key: 'pGreen', rgb: [0, 255, 70],      hex: '#00ff46' },
+  { key: 'pWhite', rgb: [255, 240, 220],   hex: '#fff0dc' },
+];
+
+/* ============================================================
+   MODES
+   ============================================================ */
+const MODES = [
+  { id: 'calm',    cat: 'mood',    em: '😌', titleK: 'mCalm',    descK: 'mCalmDesc'    },
+  { id: 'alert',   cat: 'mood',    em: '🚨', titleK: 'mAlert',   descK: 'mAlertDesc'   },
+  { id: 'focus',   cat: 'mood',    em: '🎯', titleK: 'mFocus',   descK: 'mFocusDesc'   },
+  { id: 'sleepy',  cat: 'mood',    em: '😴', titleK: 'mSleepy',  descK: 'mSleepyDesc'  },
+  { id: 'storm',   cat: 'mood',    em: '⛈',  titleK: 'mStorm',   descK: 'mStormDesc'   },
+  { id: 'off',     cat: 'mood',    em: '⏹',  titleK: 'mOff',     descK: 'mOffDesc'     },
+  { id: 'painter', cat: 'painter', em: '🎨', titleK: 'mPainter', descK: 'mPainterDesc' },
+];
+
+let activeCat  = localStorage.getItem('robi.lights.cat')  || 'mood';
+let activeMode = localStorage.getItem('robi.lights.mode') || 'calm';
+
+function buildModeList() {
+  const list = document.getElementById('modeList');
+  list.innerHTML = '';
+  MODES.filter(m => m.cat === activeCat).forEach(m => {
+    const b = document.createElement('button');
+    b.className = 'mode-btn' + (m.id === activeMode ? ' active' : '');
+    b.dataset.mode = m.id;
+    b.innerHTML = `<span class="em">${m.em}</span><span>${tr(m.titleK)}</span>`;
+    b.addEventListener('click', () => selectMode(m.id));
+    list.appendChild(b);
+  });
+}
+
+function selectMode(id) {
+  const m = MODES.find(x => x.id === id);
+  if (!m) return;
+  activeMode = id;
+  localStorage.setItem('robi.lights.mode', id);
+  // ensure category matches
+  if (m.cat !== activeCat) {
+    activeCat = m.cat;
+    localStorage.setItem('robi.lights.cat', activeCat);
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === activeCat));
+    buildModeList();
+  }
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === id));
+  startMode(id);
+  refreshStageLabels();
+}
+
+function refreshStageLabels() {
+  const m = MODES.find(x => x.id === activeMode);
+  if (!m) return;
+  document.getElementById('stageTitle').textContent = `${m.em} ${tr(m.titleK)}`;
+  document.getElementById('stageInfo').textContent = tr(m.descK);
+  document.getElementById('painter').classList.toggle('show', m.id === 'painter');
+}
+
+/* ============================================================
+   STAGE LEDs — 4 SVG dots
+   ============================================================ */
+const NUM_LEDS = 4;
+const ledState = [ [0,0,0], [0,0,0], [0,0,0], [0,0,0] ]; // current rgb per LED
+
+function buildStageLeds() {
+  const wrap = document.getElementById('stageLeds');
+  wrap.innerHTML = '';
+  for (let i = 0; i < NUM_LEDS; i++) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 100 100');
+    svg.dataset.idx = i;
+    const defs = document.createElementNS(ns, 'defs');
+    const grad = document.createElementNS(ns, 'radialGradient');
+    grad.id = 'led-grad-' + i;
+    grad.setAttribute('cx', '50%'); grad.setAttribute('cy', '50%'); grad.setAttribute('r', '50%');
+    /* Initial stops use theme-aware off colors; paintLed() overwrites them on demand. */
+    const _off0 = (() => { try { return _themeOffStops(); } catch (e) { return { inner: '#1a261a', outer: '#0a0a0a' }; } })();
+    const s1 = document.createElementNS(ns, 'stop'); s1.setAttribute('offset', '0%');  s1.setAttribute('stop-color', _off0.inner);
+    const s2 = document.createElementNS(ns, 'stop'); s2.setAttribute('offset', '60%'); s2.setAttribute('stop-color', _off0.inner);
+    const s3 = document.createElementNS(ns, 'stop'); s3.setAttribute('offset', '100%'); s3.setAttribute('stop-color', _off0.outer);
+    grad.appendChild(s1); grad.appendChild(s2); grad.appendChild(s3);
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', 50); c.setAttribute('cy', 50); c.setAttribute('r', 38);
+    c.setAttribute('fill', `url(#led-grad-${i})`);
+    /* Stroke = the theme's --border so the LED outline tints with theme. */
+    const _stroke = (getComputedStyle(document.documentElement).getPropertyValue('--border') || '').trim() || '#0a0a0a';
+    c.setAttribute('stroke', _stroke); c.setAttribute('stroke-width', '4');
+    c.dataset.idx = i;
+    svg.appendChild(c);
+    wrap.appendChild(svg);
+  }
+}
+
+/* Theme-aware "off" colors so OFF LEDs don't render as pure black islands
+   on Paper/Pearl. We sample the current theme's surface vars at paint time
+   so theme changes propagate immediately. */
+function _themeOffStops() {
+  const cs = getComputedStyle(document.documentElement);
+  const bgSoft = (cs.getPropertyValue('--bg-soft') || '').trim() || '#1a261a';
+  const bgCard = (cs.getPropertyValue('--bg-card') || '').trim() || '#0a0a0a';
+  return { inner: bgSoft, outer: bgCard };
+}
+
+function paintLed(idx, r, g, b) {
+  ledState[idx] = [r, g, b];
+  const svg = document.querySelectorAll('#stageLeds svg')[idx];
+  if (!svg) return;
+  const circ = svg.querySelector('circle');
+  const cssCol = `rgb(${r|0},${g|0},${b|0})`;
+  const intensity = Math.max(r, g, b) / 255;
+  const glow = Math.round(8 + 32 * intensity);
+  const grad = svg.querySelector('radialGradient');
+  if (intensity === 0) {
+    // OFF — paint with theme-aware grays so Paper/Pearl don't show black islands.
+    const off = _themeOffStops();
+    grad.children[0].setAttribute('stop-color', off.inner);
+    grad.children[1].setAttribute('stop-color', off.inner);
+    grad.children[2].setAttribute('stop-color', off.outer);
+    svg.style.filter = 'none';
+  } else {
+    grad.children[0].setAttribute('stop-color', cssCol);
+    grad.children[1].setAttribute('stop-color', `rgb(${(r*0.4)|0},${(g*0.4)|0},${(b*0.4)|0})`);
+    grad.children[2].setAttribute('stop-color', '#000');
+    svg.style.filter = `drop-shadow(0 0 ${glow}px ${cssCol})`;
+  }
+}
+
+function paintAll(r, g, b) {
+  for (let i = 0; i < NUM_LEDS; i++) paintLed(i, r, g, b);
+}
+
+/* ============================================================
+   BLE — throttled LED:R,G,B + STOP
+   ============================================================ */
+const MIN_SEND_GAP_MS = 250;
+let lastSendAt = 0;
+let bleConnected = false;
+
+function bleSend(payload, force) {
+  // Tier-2 LIVE only — preview is browser-only
+  if (!bleConnected) return false;
+  const now = performance.now();
+  if (!force && (now - lastSendAt) < MIN_SEND_GAP_MS) return false;
+  lastSendAt = now;
+  try {
+    // Bare-name lookup: sendLine/isConnected from ble.js script-globals
+    if (typeof sendLine === 'function' && typeof isConnected !== 'undefined' && isConnected){
+      sendLine(payload);
+    } else if (window.bleSend) {
+      window.bleSend(payload);
+    }
+  } catch (e) { /* swallow */ }
+  return true;
+}
+
+function sendLED(r, g, b, force) {
+  return bleSend(`LED:${r|0},${g|0},${b|0}`, force);
+}
+function sendSTOP() { return bleSend('STOP', true); }
+
+function updateConnUI() {
+  const pill = document.getElementById('connPill');
+  const btn  = document.getElementById('btnConnect');
+  const ban  = document.getElementById('tierBanner');
+  if (bleConnected) {
+    pill.textContent = tr('connected');
+    pill.classList.add('online');
+    btn.textContent = tr('disconnect');
+    btn.classList.add('connected');
+    ban.className = 'tier-banner live';
+    ban.innerHTML = `<span>${tr('tierLive')}</span>`;
+  } else {
+    pill.textContent = tr('notConnected');
+    pill.classList.remove('online');
+    btn.textContent = tr('connect');
+    btn.classList.remove('connected');
+    ban.className = 'tier-banner preview';
+    ban.innerHTML = `<span>${tr('tierPreview')}</span>`;
+  }
+}
+
+async function toggleConnect() {
+  if (typeof isConnected !== 'undefined' && isConnected) {
+    try { if (typeof disconnect === 'function') disconnect(); } catch (e) {}
+    return;
+  }
+  const pill = document.getElementById('connPill');
+  pill.textContent = tr('connecting');
+  try {
+    if (typeof connect === 'function') {
+      await connect();
+    } else {
+      // No driver available — stay in preview
+      bleConnected = false;
+      updateConnUI();
+    }
+  } catch (e) {
+    bleConnected = false;
+    updateConnUI();
+  }
+}
+
+/* ============================================================
+   ANIMATION LOOP — ~30 Hz preview, mood scenes accumulate dt
+   ============================================================ */
+let rafId = null;
+let modeStart = 0;
+let lastFrameAt = 0;
+let stormState = { nextAt: 0, flashUntil: 0 };
+let lastBleAccumAt = 0; // for throttled LIVE LED: sends per scene
+
+function startMode(id) {
+  cancelAnimationFrame(rafId);
+  modeStart = performance.now();
+  lastFrameAt = modeStart;
+  lastBleAccumAt = 0;
+  stormState = { nextAt: 0, flashUntil: 0 };
+  // tear down any LIVE LEDs that were on
+  if (bleConnected) sendLED(0, 0, 0, true);
+  paintAll(0, 0, 0);
+  if (id === 'off') return;
+  rafId = requestAnimationFrame(tick);
+}
+
+function tick(now) {
+  rafId = requestAnimationFrame(tick);
+  const t = (now - modeStart) / 1000; // seconds since mode start
+  const m = MODES.find(x => x.id === activeMode);
+  if (!m) return;
+
+  let r = 0, g = 0, b = 0;
+  let perLed = null;
+
+  switch (activeMode) {
+    case 'calm': {
+      // cyan breathing, period 4s, intensity 30-80%
+      const phase = (Math.sin(2 * Math.PI * t / 4) + 1) / 2; // 0..1
+      const k = 0.30 + 0.50 * phase;
+      r = 0; g = Math.round(200 * k); b = Math.round(255 * k);
+      paintAll(r, g, b);
+      break;
+    }
+    case 'alert': {
+      // 200 ms on / 200 ms off red strobe
+      const on = (Math.floor(t * 1000 / 200) % 2) === 0;
+      if (on) { r = 255; } else { r = 0; }
+      paintAll(r, 0, 0);
+      break;
+    }
+    case 'focus': {
+      // steady warm white 100%
+      r = 255; g = 240; b = 220;
+      paintAll(r, g, b);
+      break;
+    }
+    case 'sleepy': {
+      // amber breathing, period 8s, intensity 10-40%
+      const phase = (Math.sin(2 * Math.PI * t / 8) + 1) / 2;
+      const k = 0.10 + 0.30 * phase;
+      r = Math.round(255 * k); g = Math.round(140 * k); b = 0;
+      paintAll(r, g, b);
+      break;
+    }
+    case 'storm': {
+      const ms = now;
+      if (ms >= stormState.nextAt) {
+        const flashLen = 60 + Math.random() * 100; // 60-160 ms
+        stormState.flashUntil = ms + flashLen;
+        stormState.nextAt = ms + 200 + Math.random() * 1800; // 200-2000 ms
+      }
+      const flashing = ms < stormState.flashUntil;
+      if (flashing) { r = 255; g = 240; b = 220; }
+      paintAll(r, g, b);
+      break;
+    }
+    case 'painter': {
+      perLed = painterTick(now);
+      if (perLed) {
+        for (let i = 0; i < NUM_LEDS; i++) {
+          paintLed(i, perLed[i][0], perLed[i][1], perLed[i][2]);
+        }
+        // for BLE we send the first non-off pixel as representative
+        const first = perLed.find(p => p[0] || p[1] || p[2]) || [0, 0, 0];
+        r = first[0]; g = first[1]; b = first[2];
+      }
+      break;
+    }
+  }
+
+  // Throttled LIVE send (4 Hz). Use representative color (mood = uniform; painter = first lit).
+  if (bleConnected) {
+    const dt = now - lastBleAccumAt;
+    if (dt >= MIN_SEND_GAP_MS) {
+      sendLED(r, g, b, false);
+      lastBleAccumAt = now;
+    }
+  }
+  lastFrameAt = now;
+}
+
+/* ============================================================
+   PAINTER
+   ============================================================ */
+const STEPS = 8;
+const painterColorIdx = [];   // [led][step] -> palette index
+let activePaletteIdx = 1;     // default red
+let painterPlaying = false;
+let painterStepIdx = 0;
+let painterStepStartAt = 0;
+let bpm = 120;
+
+function initPainter() {
+  for (let i = 0; i < NUM_LEDS; i++) {
+    painterColorIdx[i] = new Array(STEPS).fill(0);
+  }
+  buildPalette();
+  buildPainterGrid();
+  document.getElementById('bpm').addEventListener('input', e => {
+    bpm = +e.target.value;
+    document.getElementById('bpmVal').textContent = bpm;
+  });
+  document.getElementById('painterPlay').addEventListener('click', () => {
+    painterPlaying = true;
+    painterStepIdx = 0;
+    painterStepStartAt = performance.now();
+  });
+  document.getElementById('painterStop').addEventListener('click', () => {
+    painterPlaying = false;
+    paintAll(0, 0, 0);
+    if (bleConnected) sendLED(0, 0, 0, true);
+    highlightPlayingStep(-1);
+  });
+  document.getElementById('painterClear').addEventListener('click', () => {
+    for (let i = 0; i < NUM_LEDS; i++) painterColorIdx[i].fill(0);
+    refreshPainterGrid();
+  });
+  document.getElementById('slotSave').addEventListener('click', saveCurrentSlot);
+  document.querySelectorAll('.slot-btn[data-slot]').forEach(btn => {
+    btn.addEventListener('click', () => loadSlot(+btn.dataset.slot));
+    refreshSlotBtn(+btn.dataset.slot);
+  });
+}
+
+function buildPalette() {
+  const wrap = document.getElementById('palette');
+  wrap.innerHTML = '';
+  PALETTE.forEach((p, idx) => {
+    const sw = document.createElement('div');
+    sw.className = 'swatch' + (idx === activePaletteIdx ? ' active' : '');
+    sw.style.background = p.hex;
+    sw.title = tr(p.key);
+    sw.addEventListener('click', () => {
+      activePaletteIdx = idx;
+      document.querySelectorAll('.palette .swatch').forEach((el, i) => el.classList.toggle('active', i === idx));
+    });
+    wrap.appendChild(sw);
+  });
+}
+
+function buildPainterGrid() {
+  const grid = document.getElementById('painterGrid');
+  grid.innerHTML = '';
+  // header row
+  const corner = document.createElement('div');
+  corner.className = 'row-label head';
+  grid.appendChild(corner);
+  for (let s = 0; s < STEPS; s++) {
+    const h = document.createElement('div');
+    h.className = 'step-head';
+    h.dataset.step = s;
+    h.textContent = String(s + 1);
+    grid.appendChild(h);
+  }
+  // LED rows
+  for (let i = 0; i < NUM_LEDS; i++) {
+    const lab = document.createElement('div');
+    lab.className = 'row-label';
+    lab.textContent = 'LED ' + (i + 1);
+    grid.appendChild(lab);
+    for (let s = 0; s < STEPS; s++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.led = i;
+      cell.dataset.step = s;
+      cell.style.background = PALETTE[painterColorIdx[i][s]].hex;
+      cell.addEventListener('click', () => {
+        painterColorIdx[i][s] = activePaletteIdx;
+        cell.style.background = PALETTE[activePaletteIdx].hex;
+      });
+      grid.appendChild(cell);
+    }
+  }
+}
+
+function refreshPainterGrid() {
+  document.querySelectorAll('#painterGrid .cell').forEach(c => {
+    const i = +c.dataset.led, s = +c.dataset.step;
+    c.style.background = PALETTE[painterColorIdx[i][s]].hex;
+  });
+}
+
+function highlightPlayingStep(stepIdx) {
+  document.querySelectorAll('#painterGrid .step-head').forEach(h => {
+    h.classList.toggle('playing', +h.dataset.step === stepIdx);
+  });
+}
+
+function painterTick(now) {
+  if (!painterPlaying) {
+    // show static current grid as step 0 preview
+    return painterStepColors(0);
+  }
+  // step duration = max(60000/bpm, 250) ms
+  const stepMs = Math.max(60000 / bpm, 250);
+  const elapsed = now - painterStepStartAt;
+  if (elapsed >= stepMs) {
+    painterStepIdx = (painterStepIdx + 1) % STEPS;
+    painterStepStartAt = now;
+    highlightPlayingStep(painterStepIdx);
+  }
+  return painterStepColors(painterStepIdx);
+}
+
+function painterStepColors(stepIdx) {
+  const out = [];
+  for (let i = 0; i < NUM_LEDS; i++) {
+    const idx = painterColorIdx[i][stepIdx] || 0;
+    out.push(PALETTE[idx].rgb.slice());
+  }
+  return out;
+}
+
+/* ============================================================
+   SLOT PERSISTENCE
+   ============================================================ */
+function slotKey(n) { return `robi.lights.slot.${n}`; }
+
+function saveCurrentSlot() {
+  // pick first empty slot, else slot 1
+  let target = 1;
+  for (let n = 1; n <= 4; n++) {
+    if (!localStorage.getItem(slotKey(n))) { target = n; break; }
+  }
+  const data = JSON.stringify({ bpm, grid: painterColorIdx });
+  localStorage.setItem(slotKey(target), data);
+  refreshSlotBtn(target);
+  flashStageInfo(`${tr('saved')} ${target}`);
+}
+
+function loadSlot(n) {
+  const raw = localStorage.getItem(slotKey(n));
+  if (!raw) { flashStageInfo(`${tr('empty')} ${n}`); return; }
+  try {
+    const data = JSON.parse(raw);
+    if (data.bpm) {
+      bpm = data.bpm;
+      document.getElementById('bpm').value = bpm;
+      document.getElementById('bpmVal').textContent = bpm;
+    }
+    if (Array.isArray(data.grid)) {
+      for (let i = 0; i < NUM_LEDS; i++) {
+        for (let s = 0; s < STEPS; s++) {
+          painterColorIdx[i][s] = (data.grid[i] && data.grid[i][s]) | 0;
+        }
+      }
+      refreshPainterGrid();
+    }
+    flashStageInfo(`${tr('loaded')} ${n}`);
+  } catch (e) {
+    flashStageInfo(`${tr('empty')} ${n}`);
+  }
+}
+
+function refreshSlotBtn(n) {
+  const btn = document.querySelector(`.slot-btn[data-slot="${n}"]`);
+  if (!btn) return;
+  btn.classList.toggle('filled', !!localStorage.getItem(slotKey(n)));
+}
+
+let infoFlashTimer = null;
+function flashStageInfo(msg) {
+  const el = document.getElementById('stageInfo');
+  const prev = el.textContent;
+  el.textContent = msg;
+  clearTimeout(infoFlashTimer);
+  infoFlashTimer = setTimeout(() => { el.textContent = prev; refreshStageLabels(); }, 1400);
+}
+
+/* ============================================================
+   ALL OFF (master)
+   ============================================================ */
+function allOff() {
+  cancelAnimationFrame(rafId);
+  rafId = null;
+  painterPlaying = false;
+  highlightPlayingStep(-1);
+  paintAll(0, 0, 0);
+  if (bleConnected) {
+    sendLED(0, 0, 0, true); // bypass throttle
+  }
+  // restart current mode loop in idle (so user can pick again)
+  if (activeMode !== 'off') {
+    rafId = requestAnimationFrame(tick);
+    modeStart = performance.now();
+  }
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+function boot() {
+  applyTheme(THEME);
+  { const _ts = document.getElementById('themeSelect'); if (_ts) _ts.addEventListener('change', e => applyTheme(e.target.value)); }
+  document.querySelectorAll('.lang-pills .pill').forEach(p => {
+    p.addEventListener('click', () => setL(p.dataset.lang));
+  });
+
+  // category tabs
+  document.querySelectorAll('.cat-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.cat === activeCat);
+    t.addEventListener('click', () => {
+      activeCat = t.dataset.cat;
+      localStorage.setItem('robi.lights.cat', activeCat);
+      document.querySelectorAll('.cat-tab').forEach(x => x.classList.toggle('active', x.dataset.cat === activeCat));
+      // pick first mode in category if current is wrong cat
+      const m = MODES.find(x => x.id === activeMode);
+      if (!m || m.cat !== activeCat) {
+        const first = MODES.find(x => x.cat === activeCat);
+        if (first) selectMode(first.id);
+      }
+      buildModeList();
+      refreshStageLabels();
+    });
+  });
+
+  document.getElementById('btnConnect').addEventListener('click', toggleConnect);
+  document.getElementById('btnAllOff').addEventListener('click', allOff);
+
+  // spacebar = ALL OFF
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space' && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) {
+      e.preventDefault();
+      allOff();
+    }
+  });
+
+  // BLE shim wiring — assign onStatus hook on window.RobiBle
+  window.RobiBle = window.RobiBle || {};
+  window.RobiBle.onStatus = (c) => { bleConnected = !!c; updateConnUI(); };
+
+  buildStageLeds();
+  initPainter();
+  setL(LANG);
+  updateConnUI();
+
+  // start with persisted mode (default calm)
+  selectMode(activeMode);
+
+  if (window.LabLogger) LabLogger.mount('#labLogger', { surface: 'Lights Lab' });
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+
+</body>
+</html>

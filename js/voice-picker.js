@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   ROBI-9 LAB · Voice Picker — central TTS voice selection
+   MAQUEEN LAB · Voice Picker — central TTS voice selection
    ═══════════════════════════════════════════════════════════════════
    Exposes window.RobiVoice with:
      - pick(lang)            → SpeechSynthesisVoice or null

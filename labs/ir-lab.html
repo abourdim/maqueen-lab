@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IR Lab · Maqueen Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css" />
+<link rel="stylesheet" href="lab-logger.css?v=6">
+<link rel="stylesheet" href="../docs/doc-shell.css" />
+<style>
+  /* ---------- Fallback shell (used when theme.css/doc-shell.css missing) ---------- */
+  :root{
+    --panel:#121821; --panel2:#1a2230; --ink:#e8eef6; --muted:#90a0b3;
+    --line:#26313f; --cyan:#22d3ee; --amber:#f59e0b; --neon:#a3e635; --red:#ef4444;
+    --white:#ffffff; --accent:var(--cyan);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif}
+  a{color:var(--accent);text-decoration:none}
+  .wd-header{display:flex;gap:12px;align-items:center;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  .wd-header h1{font-size:16px;margin:0 8px 0 0;color:var(--accent)}
+  .wd-header .grow{flex:1}
+  .wd-header select,.wd-header button,.lang-pill,.theme-link{
+    background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+    border-radius:6px;padding:6px 10px;cursor:pointer;font:inherit
+  }
+  .lang-pills{display:inline-flex;gap:4px}
+  .lang-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}
+  .app-layout{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:calc(100vh - 52px)}
+  .sidebar{background:var(--panel);border-right:1px solid var(--line);padding:12px;overflow-y:auto}
+  .stage{padding:18px;overflow-y:auto}
+  .cat-title{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 4px 6px}
+  .cat-tab{display:block;padding:10px 12px;margin:4px 0;background:var(--panel2);border:1px solid var(--line);
+    border-radius:8px;cursor:pointer;color:var(--ink);user-select:none}
+  .cat-tab:hover{border-color:var(--accent)}
+  .cat-tab.active{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--panel2))}
+  .cat-tab .ic{font-size:16px;margin-right:6px}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;border:1px solid var(--line);background:var(--panel2)}
+  .pill.ok{background:color-mix(in srgb,var(--neon) 28%,var(--panel2));border-color:var(--neon);color:var(--ink)}
+  .pill.bad{background:color-mix(in srgb,var(--red) 28%,var(--panel2));border-color:var(--red);color:var(--ink)}
+  .pill.warn{background:color-mix(in srgb,var(--amber) 28%,var(--panel2));border-color:var(--amber);color:var(--ink)}
+  .btn{background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer}
+  .btn.ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line);font-weight:500}
+  .btn.danger{background:var(--red);color:#fff}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  .card h2{margin:0 0 4px;font-size:18px;color:var(--accent)}
+  .card .sub{color:var(--muted);margin-bottom:12px;font-size:13px}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .row.gap-lg{gap:24px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  input[type=range]{accent-color:var(--accent);width:100%}
+  input[type=number],select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font:inherit}
+  .meter{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+  .meter .lbl{color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  .meter .val{font-size:28px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+  .verdict{padding:14px;border-radius:10px;text-align:center;font-weight:700;font-size:16px;border:2px solid var(--line)}
+  .verdict.line  {background:color-mix(in srgb,var(--cyan) 28%,var(--panel2));border-color:var(--cyan)}
+  .verdict.floor {background:color-mix(in srgb,var(--white) 14%,var(--panel2));border-color:var(--white)}
+  .verdict.edge  {background:color-mix(in srgb,var(--amber) 28%,var(--panel2));border-color:var(--amber)}
+  .truth{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center}
+  .truth .cell{padding:10px;border:1px solid var(--line);border-radius:8px;text-align:center;background:var(--panel2)}
+  .truth .cell.hl{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 22%,var(--panel2))}
+  .truth .head{color:var(--muted);font-size:12px;text-align:center}
+  html[dir=rtl] .app-layout{grid-template-columns:1fr 260px}
+  html[dir=rtl] .sidebar{border-right:none;border-left:1px solid var(--line)}
+  .arrow{font-size:42px;text-align:center;color:var(--accent)}
+  .step{display:none}
+  .step.active{display:block}
+  .step .num{display:inline-block;background:var(--accent);color:#000;border-radius:999px;width:24px;height:24px;text-align:center;line-height:24px;font-weight:700;margin-right:6px}
+  .swatches{display:flex;gap:6px}
+  .swatch{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);cursor:pointer}
+  .swatch.cyan{background:#22d3ee}
+  .swatch.amber{background:#f59e0b}
+  .swatch.neon{background:#a3e635}
+  .swatch.red{background:#ef4444}
+  .swatch.white{background:#ffffff}
+  .swatch.active{outline:2px solid var(--accent);outline-offset:2px}
+  .hide{display:none !important}
+  .mock-banner{background:color-mix(in srgb,var(--amber) 22%,var(--panel2));border:1px dashed var(--amber);padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:10px}
+  kbd{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-family:inherit;font-size:12px}
+  /* Theme bridge — maps workshops/theme.css output to local variable names so
+     [data-theme="carbon|forest|steel|paper|pearl"] actually changes colors. */
+  :root {
+    --panel:  var(--bg-card,  #121821);
+    --panel2: var(--bg-soft,  #1a2230);
+    --line:   var(--border,   #26313f);
+    --muted:  var(--steel,    #90a0b3);
+    --ink:    var(--text,     #e8eef6);
+  }
+  /* Also derive --accent from the theme's primary so per-theme accents show through.
+     Carbon/Steel default to --cyan; Forest/Paper/Pearl already redefine --neon and friends. */
+  :root { --accent: var(--cyan, #22d3ee); }
+  html[data-theme="forest"] { --accent: var(--neon, #a3e635); }
+  html[data-theme="paper"]  { --accent: var(--amber, #f59e0b); }
+</style>
+</head>
+<body>
+
+<header class="wd-header">
+  <h1 data-i18n="title">IR Lab</h1>
+  <span class="pill" id="connPill" data-i18n="disconnected">Disconnected</span>
+  <span class="grow"></span>
+  <select class="wd-select" id="themeSelect" aria-label="Theme">
+    <option value="carbon">▣ Carbon</option>
+    <option value="forest">▣ Forest</option>
+    <option value="steel">▣ Steel</option>
+    <option value="paper">☼ Paper</option>
+    <option value="pearl">☼ Pearl</option>
+  </select>
+  <div class="lang-pills" role="radiogroup" aria-label="Language">
+    <button type="button" class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+    <button type="button" class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+    <button type="button" class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+  </div>
+  <a class="theme-link" href="../index.html" data-i18n="robotApp">🤖 Robot App</a>
+  <a class="theme-link" href="../docs/index.html" data-i18n="catalog">🗂️ Catalog</a>
+  <a class="theme-link" href="index.html" data-i18n="labs">🧪 Labs</a>
+  <a class="theme-link" href="../workshops/hub.html" data-i18n="hub">🏠 Hub</a>
+</header>
+
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <button class="btn" id="connectBtn" style="width:100%" data-i18n="connect">🔌 Connect</button>
+    <div style="margin-top:10px" class="row">
+      <label><input type="checkbox" id="mockChk" /> <span data-i18n="mockMode">Mock mode</span></label>
+    </div>
+
+    <div class="cat-title" data-i18n="catDiag">📊 Diagnostics</div>
+    <div class="cat-tab active" data-mode="live"><span class="ic">📈</span><span data-i18n="modeLive">Live Readings</span></div>
+    <div class="cat-tab" data-mode="threshold"><span class="ic">🎚️</span><span data-i18n="modeThreshold">Threshold Tuner</span></div>
+
+    <div class="cat-title" data-i18n="catAuto">🐍 Autonomy</div>
+    <div class="cat-tab" data-mode="auto"><span class="ic">🤖</span><span data-i18n="modeAuto">Auto Line Follow</span></div>
+    <div class="cat-tab" data-mode="calib"><span class="ic">🧪</span><span data-i18n="modeCalib">Calibration Wizard</span></div>
+    <div class="cat-tab" data-mode="sandbox"><span class="ic">🎛️</span><span data-i18n="modeSandbox">Decision Sandbox</span></div>
+
+    <div style="margin-top:18px;color:var(--muted);font-size:12px">
+      <span data-i18n="hintStop">Press</span> <kbd>Space</kbd> = STOP
+    </div>
+  </aside>
+
+  <main class="stage">
+    <div id="mockBanner" class="mock-banner hide" data-i18n="mockBanner">
+      Mock mode active — sliders below simulate IR sensors (no robot needed).
+    </div>
+
+    <div id="mockCtl" class="card hide">
+      <h2 data-i18n="mockTitle">🧪 Mock IR Inputs</h2>
+      <div class="grid2">
+        <div>
+          <label>L: <span id="mockLval">512</span></label>
+          <input type="range" id="mockL" min="0" max="1023" value="512" />
+        </div>
+        <div>
+          <label>R: <span id="mockRval">512</span></label>
+          <input type="range" id="mockR" min="0" max="1023" value="512" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ MODE: LIVE READINGS ============ -->
+    <section id="mode-live" class="mode-pane">
+      <div class="card">
+        <h2 data-i18n="liveTitle">📈 Live Readings</h2>
+        <div class="sub" data-i18n="liveSub">Real-time IR sensor values polled at 5 Hz. Subscribe to <code>IR:&lt;L&gt;,&lt;R&gt;</code> notifications.</div>
+        <div class="grid2">
+          <div class="meter">
+            <div class="lbl" data-i18n="leftSensor">Left Sensor</div>
+            <svg viewBox="0 0 200 110" width="100%" height="120">
+              <path d="M20 100 A 80 80 0 0 1 180 100" stroke="var(--line)" stroke-width="14" fill="none" stroke-linecap="round"/>
+              <path id="dialL" d="M20 100 A 80 80 0 0 1 180 100" stroke="var(--cyan)" stroke-width="14" fill="none"
+                stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+              <text id="dialLtxt" x="100" y="80" text-anchor="middle" font-size="22" fill="var(--ink)" font-weight="700">0</text>
+            </svg>
+            <div class="val" id="liveL">0</div>
+          </div>
+          <div class="meter">
+            <div class="lbl" data-i18n="rightSensor">Right Sensor</div>
+            <svg viewBox="0 0 200 110" width="100%" height="120">
+              <path d="M20 100 A 80 80 0 0 1 180 100" stroke="var(--line)" stroke-width="14" fill="none" stroke-linecap="round"/>
+              <path id="dialR" d="M20 100 A 80 80 0 0 1 180 100" stroke="var(--amber)" stroke-width="14" fill="none"
+                stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+              <text id="dialRtxt" x="100" y="80" text-anchor="middle" font-size="22" fill="var(--ink)" font-weight="700">0</text>
+            </svg>
+            <div class="val" id="liveR">0</div>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="lbl" style="color:var(--muted);font-size:12px;margin-bottom:4px" data-i18n="sparkline">Last 50 samples</div>
+          <svg id="spark" viewBox="0 0 500 80" width="100%" height="80" preserveAspectRatio="none"
+            style="background:var(--panel2);border:1px solid var(--line);border-radius:6px">
+            <polyline id="sparkL" fill="none" stroke="var(--cyan)" stroke-width="2" points=""/>
+            <polyline id="sparkR" fill="none" stroke="var(--amber)" stroke-width="2" points=""/>
+          </svg>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn ghost" id="livePauseBtn" data-i18n="pause">⏸ Pause</button>
+          <span class="pill" id="liveRate">5 Hz</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODE: THRESHOLD TUNER ============ -->
+    <section id="mode-threshold" class="mode-pane hide">
+      <div class="card">
+        <h2 data-i18n="thrTitle">🎚️ Threshold Tuner</h2>
+        <div class="sub" data-i18n="thrSub">Set the line/no-line cut-off. Verdict updates live for each sensor.</div>
+        <label>Threshold: <strong id="thrVal">512</strong></label>
+        <input type="range" id="thrSlider" min="0" max="1023" value="512" />
+        <div class="row" style="margin-top:6px">
+          <span class="pill" data-i18n="thrEdgeBand">Edge band ±</span>
+          <input type="number" id="thrEdge" value="60" min="0" max="500" style="width:80px" />
+          <button class="btn ghost" id="thrSaveBtn" data-i18n="save">💾 Save</button>
+          <span class="pill ok hide" id="thrSaved" data-i18n="saved">Saved!</span>
+        </div>
+        <div class="grid2" style="margin-top:14px">
+          <div>
+            <div class="lbl" style="color:var(--muted);font-size:12px" data-i18n="leftSensor">Left Sensor</div>
+            <div class="val" id="thrLval" style="font-size:24px">0</div>
+            <div class="verdict floor" id="thrLverdict">FLOOR</div>
+          </div>
+          <div>
+            <div class="lbl" style="color:var(--muted);font-size:12px" data-i18n="rightSensor">Right Sensor</div>
+            <div class="val" id="thrRval" style="font-size:24px">0</div>
+            <div class="verdict floor" id="thrRverdict">FLOOR</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODE: AUTO LINE FOLLOW ============ -->
+    <section id="mode-auto" class="mode-pane hide">
+      <div class="card">
+        <h2 data-i18n="autoTitle">🤖 Auto Line Follow</h2>
+        <div class="sub" data-i18n="autoSub">Bidirectional steering: both → forward, one only → soft turn, neither → stop.</div>
+        <div class="row gap-lg">
+          <button class="btn" id="autoStartBtn" data-i18n="start">▶ START</button>
+          <button class="btn danger" id="autoStopBtn" data-i18n="stop">■ STOP</button>
+          <span class="pill" id="autoState" data-i18n="idle">IDLE</span>
+        </div>
+        <div style="margin-top:12px">
+          <label data-i18n="speed">Speed: <strong id="autoSpdVal">160</strong></label>
+          <input type="range" id="autoSpd" min="50" max="255" value="160" />
+        </div>
+        <div class="grid4" style="margin-top:14px">
+          <div class="meter"><div class="lbl">L</div><div class="val" id="autoLval">0</div></div>
+          <div class="meter"><div class="lbl">R</div><div class="val" id="autoRval">0</div></div>
+          <div class="meter"><div class="lbl" data-i18n="decision">Decision</div><div class="val" id="autoDecide">—</div></div>
+          <div class="meter"><div class="arrow" id="autoArrow">·</div></div>
+        </div>
+        <div class="sub" style="margin-top:10px" data-i18n="autoNote">
+          Decision logic: L&lt;thr &amp; R&lt;thr → FWD · L&lt;thr only → soft RIGHT · R&lt;thr only → soft LEFT · neither → STOP.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODE: CALIBRATION WIZARD ============ -->
+    <section id="mode-calib" class="mode-pane hide">
+      <div class="card">
+        <h2 data-i18n="calTitle">🧪 Calibration Wizard</h2>
+        <div class="sub" data-i18n="calSub">Three-step capture to compute a clean threshold midpoint.</div>
+
+        <div class="step active" data-step="1">
+          <p><span class="num">1</span><strong data-i18n="cal1">Place both sensors over WHITE floor.</strong></p>
+          <div class="row gap-lg">
+            <div class="meter"><div class="lbl">L</div><div class="val" id="calLwhite">—</div></div>
+            <div class="meter"><div class="lbl">R</div><div class="val" id="calRwhite">—</div></div>
+            <button class="btn" id="calCapWhite" data-i18n="captureWhite">📸 Capture White</button>
+          </div>
+        </div>
+
+        <div class="step" data-step="2">
+          <p><span class="num">2</span><strong data-i18n="cal2">Place both sensors over BLACK line.</strong></p>
+          <div class="row gap-lg">
+            <div class="meter"><div class="lbl">L</div><div class="val" id="calLblack">—</div></div>
+            <div class="meter"><div class="lbl">R</div><div class="val" id="calRblack">—</div></div>
+            <button class="btn" id="calCapBlack" data-i18n="captureBlack">📸 Capture Black</button>
+          </div>
+        </div>
+
+        <div class="step" data-step="3">
+          <p><span class="num">3</span><strong data-i18n="cal3">Review midpoint &amp; save.</strong></p>
+          <div class="meter">
+            <div class="lbl" data-i18n="computedThr">Computed threshold (midpoint)</div>
+            <div class="val" id="calMid">—</div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="calSaveBtn" data-i18n="saveCalib">💾 Save Calibration</button>
+            <button class="btn ghost" id="calRestartBtn" data-i18n="restart">↻ Restart</button>
+            <span class="pill ok hide" id="calSaved" data-i18n="saved">Saved!</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODE: DECISION SANDBOX ============ -->
+    <section id="mode-sandbox" class="mode-pane hide">
+      <div class="card">
+        <h2 data-i18n="sbTitle">🎛️ Decision Sandbox</h2>
+        <div class="sub" data-i18n="sbSub">Map each (L,R) state to a motor policy. Live cell highlights current sensor state.</div>
+        <div class="truth">
+          <div></div>
+          <div class="head">R = FLOOR</div>
+          <div class="head">R = LINE</div>
+
+          <div class="head">L = FLOOR</div>
+          <div class="cell" id="cell-00">
+            <div class="lbl">FLOOR / FLOOR</div>
+            <select data-cell="00">
+              <option>STOP</option><option>FORWARD</option><option>BACKWARD</option>
+              <option>SOFT_LEFT</option><option>SOFT_RIGHT</option><option>HARD_LEFT</option><option>HARD_RIGHT</option>
+            </select>
+          </div>
+          <div class="cell" id="cell-01">
+            <div class="lbl">FLOOR / LINE</div>
+            <select data-cell="01">
+              <option>STOP</option><option>FORWARD</option><option>BACKWARD</option>
+              <option selected>SOFT_LEFT</option><option>SOFT_RIGHT</option><option>HARD_LEFT</option><option>HARD_RIGHT</option>
+            </select>
+          </div>
+
+          <div class="head">L = LINE</div>
+          <div class="cell" id="cell-10">
+            <div class="lbl">LINE / FLOOR</div>
+            <select data-cell="10">
+              <option>STOP</option><option>FORWARD</option><option>BACKWARD</option>
+              <option>SOFT_LEFT</option><option selected>SOFT_RIGHT</option><option>HARD_LEFT</option><option>HARD_RIGHT</option>
+            </select>
+          </div>
+          <div class="cell" id="cell-11">
+            <div class="lbl">LINE / LINE</div>
+            <select data-cell="11">
+              <option>STOP</option><option selected>FORWARD</option><option>BACKWARD</option>
+              <option>SOFT_LEFT</option><option>SOFT_RIGHT</option><option>HARD_LEFT</option><option>HARD_RIGHT</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="sbRunBtn" data-i18n="testRun">▶ Test Run (3 s)</button>
+          <span class="pill" id="sbState" data-i18n="idle">IDLE</span>
+          <span class="pill" id="sbPolicy">—</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="labLogger" class="lab-logger-host"></div>
+
+<!-- Optional BLE shim (loads if present; mock mode works without it) -->
+<script src="../js/ble-shim.js" onerror="window.__noShim=1"></script>
+<script src="../js/ble.js" onerror="window.__noBle=1"></script>
+<script src="lab-logger.js?v=6" defer></script>
+
+<script>
+/* ===================================================================
+ *  IR Lab — line-following + IR-sensor playground
+ * =================================================================== */
+
+/* Legacy localStorage migration: ir.* → robi.ir.* */
+try {
+  const _legacyThr = localStorage.getItem('ir.threshold');
+  if (_legacyThr && !localStorage.getItem('robi.ir.threshold')) {
+    localStorage.setItem('robi.ir.threshold', _legacyThr);
+    localStorage.removeItem('ir.threshold');
+  }
+  const _legacyCal = localStorage.getItem('ir.calibrated');
+  if (_legacyCal && !localStorage.getItem('robi.ir.calibrated')) {
+    localStorage.setItem('robi.ir.calibrated', _legacyCal);
+    localStorage.removeItem('ir.calibrated');
+  }
+} catch {}
+
+/* ---------- i18n ---------- */
+const T = {
+  en: {
+    title:"IR Lab", connect:"🔌 Connect", disconnected:"Disconnected", connected:"Connected",
+    robotApp:"Robot App", catalog:"Catalog", labs:"🧪 Labs", hub:"🏠 Hub", mockMode:"Mock mode",
+    catDiag:"📊 Diagnostics", catAuto:"🐍 Autonomy",
+    modeLive:"Live Readings", modeThreshold:"Threshold Tuner",
+    modeAuto:"Auto Line Follow", modeCalib:"Calibration Wizard", modeSandbox:"Decision Sandbox",
+    hintStop:"Press", mockBanner:"Mock mode active — sliders below simulate IR sensors (no robot needed).",
+    mockTitle:"🧪 Mock IR Inputs",
+    liveTitle:"📈 Live Readings", liveSub:"Real-time IR sensor values polled at 5 Hz.",
+    leftSensor:"Left Sensor", rightSensor:"Right Sensor", sparkline:"Last 50 samples", pause:"⏸ Pause", resume:"▶ Resume",
+    thrTitle:"🎚️ Threshold Tuner", thrSub:"Set the line/no-line cut-off. Verdict updates live.",
+    thrEdgeBand:"Edge band ±", save:"💾 Save", saved:"Saved!",
+    autoTitle:"🤖 Auto Line Follow", autoSub:"Bidirectional steering policy.",
+    start:"▶ START", stop:"■ STOP", idle:"IDLE", running:"RUNNING",
+    speed:"Speed", decision:"Decision",
+    autoNote:"Both LINE → FWD · L only → soft RIGHT · R only → soft LEFT · neither → STOP.",
+    calTitle:"🧪 Calibration Wizard", calSub:"Three steps to set a clean threshold.",
+    cal1:"Place both sensors over WHITE floor.", cal2:"Place both sensors over BLACK line.",
+    cal3:"Review midpoint & save.",
+    captureWhite:"📸 Capture White", captureBlack:"📸 Capture Black",
+    computedThr:"Computed threshold (midpoint)", saveCalib:"💾 Save Calibration", restart:"↻ Restart",
+    sbTitle:"🎛️ Decision Sandbox", sbSub:"Map each (L,R) sensor state to a motor policy.",
+    testRun:"▶ Test Run (3 s)",
+    ll_title:"Message Log", ll_subtitle:"Raw UART messages", ll_clear:"Clear", ll_export:"Export", ll_copy:"Copy", ll_pin:"Pin"
+  },
+  fr: {
+    title:"Labo IR", connect:"🔌 Connecter", disconnected:"Déconnecté", connected:"Connecté",
+    robotApp:"App Robot", catalog:"Catalogue", labs:"🧪 Labos", hub:"🏠 Hub", mockMode:"Mode simulation",
+    catDiag:"📊 Diagnostic", catAuto:"🐍 Autonomie",
+    modeLive:"Lectures en direct", modeThreshold:"Seuil",
+    modeAuto:"Suivi de ligne", modeCalib:"Assistant calibration", modeSandbox:"Bac à sable décisionnel",
+    hintStop:"Appuyez sur", mockBanner:"Mode simulation actif — les curseurs simulent les capteurs IR.",
+    mockTitle:"🧪 Entrées IR simulées",
+    liveTitle:"📈 Lectures en direct", liveSub:"Valeurs IR en temps réel à 5 Hz.",
+    leftSensor:"Capteur gauche", rightSensor:"Capteur droit", sparkline:"50 derniers échantillons",
+    pause:"⏸ Pause", resume:"▶ Reprendre",
+    thrTitle:"🎚️ Réglage du seuil", thrSub:"Définissez la limite ligne/sol.",
+    thrEdgeBand:"Bande de bord ±", save:"💾 Enregistrer", saved:"Enregistré !",
+    autoTitle:"🤖 Suivi de ligne auto", autoSub:"Politique de pilotage bidirectionnelle.",
+    start:"▶ DÉMARRER", stop:"■ STOP", idle:"REPOS", running:"EN MARCHE",
+    speed:"Vitesse", decision:"Décision",
+    autoNote:"Les deux LIGNE → AVANCER · L seul → DROITE douce · R seul → GAUCHE douce · aucun → STOP.",
+    calTitle:"🧪 Assistant de calibration", calSub:"Trois étapes pour un seuil propre.",
+    cal1:"Placez les capteurs sur le sol BLANC.", cal2:"Placez les capteurs sur la ligne NOIRE.",
+    cal3:"Vérifiez le point médian et enregistrez.",
+    captureWhite:"📸 Capturer blanc", captureBlack:"📸 Capturer noir",
+    computedThr:"Seuil calculé (médian)", saveCalib:"💾 Enregistrer", restart:"↻ Recommencer",
+    sbTitle:"🎛️ Bac à sable décisionnel", sbSub:"Associez chaque état (G,D) à une politique moteur.",
+    testRun:"▶ Test (3 s)",
+    ll_title:"Journal", ll_subtitle:"Messages UART bruts", ll_clear:"Effacer", ll_export:"Exporter", ll_copy:"Copier", ll_pin:"Épingler"
+  },
+  ar: {
+    title:"مختبر IR", connect:"🔌 اتصال", disconnected:"غير متصل", connected:"متصل",
+    robotApp:"تطبيق الروبوت", catalog:"الكتالوج", labs:"🧪 مختبرات", hub:"🏠 المركز", mockMode:"وضع المحاكاة",
+    catDiag:"📊 التشخيص", catAuto:"🐍 الاستقلالية",
+    modeLive:"قراءات مباشرة", modeThreshold:"ضبط العتبة",
+    modeAuto:"تتبع الخط الآلي", modeCalib:"معالج المعايرة", modeSandbox:"صندوق القرار",
+    hintStop:"اضغط", mockBanner:"وضع المحاكاة نشط — استخدم المنزلقات أدناه.",
+    mockTitle:"🧪 مدخلات IR محاكاة",
+    liveTitle:"📈 قراءات مباشرة", liveSub:"قيم حسّاسات IR في الزمن الحقيقي بـ 5 هرتز.",
+    leftSensor:"الحسّاس الأيسر", rightSensor:"الحسّاس الأيمن", sparkline:"آخر 50 عيّنة",
+    pause:"⏸ إيقاف مؤقت", resume:"▶ استئناف",
+    thrTitle:"🎚️ ضابط العتبة", thrSub:"حدّد عتبة الخط/الأرضية.",
+    thrEdgeBand:"نطاق الحافة ±", save:"💾 حفظ", saved:"تم الحفظ!",
+    autoTitle:"🤖 تتبع الخط الآلي", autoSub:"سياسة قيادة ثنائية الاتجاه.",
+    start:"▶ ابدأ", stop:"■ إيقاف", idle:"خامل", running:"قيد التشغيل",
+    speed:"السرعة", decision:"القرار",
+    autoNote:"كلاهما خط → للأمام · الأيسر فقط → يمين خفيف · الأيمن فقط → يسار خفيف · لا شيء → إيقاف.",
+    calTitle:"🧪 معالج المعايرة", calSub:"ثلاث خطوات لعتبة نظيفة.",
+    cal1:"ضع الحسّاسَين فوق الأرضية البيضاء.", cal2:"ضع الحسّاسَين فوق الخط الأسود.",
+    cal3:"راجع نقطة المنتصف واحفظ.",
+    captureWhite:"📸 التقاط الأبيض", captureBlack:"📸 التقاط الأسود",
+    computedThr:"العتبة المحسوبة (المنتصف)", saveCalib:"💾 احفظ", restart:"↻ إعادة",
+    sbTitle:"🎛️ صندوق القرار", sbSub:"اربط كل حالة (يسار،يمين) بسياسة محركات.",
+    testRun:"▶ تجربة (3ث)",
+    ll_title:"سجل الرسائل", ll_subtitle:"رسائل UART الخام", ll_clear:"مسح", ll_export:"تصدير", ll_copy:"نسخ", ll_pin:"تثبيت"
+  }
+};
+
+function setL(lang){
+  if(!T[lang]) lang = 'en';
+  localStorage.setItem('robi.lang', lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang==='ar') ? 'rtl' : 'ltr';
+    document.body.classList.toggle('rtl', lang === 'ar');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(T[lang][k]) el.textContent = T[lang][k];
+  });
+  document.querySelectorAll('.lang-pill').forEach(p=>{
+    p.classList.toggle('active', p.dataset.lang===lang);
+  });
+}
+
+function applyTheme(t){
+    // Defensive: workshops/theme.css only knows these 5 themes. If a value
+    // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+    // fall back to carbon so we never apply a theme this stylesheet ignores.
+    var _validThemes = ['carbon','forest','steel','paper','pearl'];
+    if (_validThemes.indexOf(t) === -1) t = 'carbon';
+  if(!t) t='carbon';
+  try { localStorage.setItem('robi.theme', t); } catch(e){}
+  document.documentElement.setAttribute('data-theme', t);
+  const sel = document.getElementById('themeSelect');
+  if(sel) sel.value = t;
+}
+
+/* ---------- Mode switching ---------- */
+const MODES = ['live','threshold','auto','calib','sandbox'];
+function showMode(m){
+  MODES.forEach(x=>{
+    const pane = document.getElementById('mode-'+x);
+    if(pane) pane.classList.toggle('hide', x!==m);
+  });
+  document.querySelectorAll('.cat-tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.mode===m);
+  });
+  state.mode = m;
+}
+
+/* ---------- BLE plumbing ---------- */
+function sendVerb(verb){
+  try{
+    if(window.bleScheduler && typeof bleScheduler.send==='function'){ bleScheduler.send(verb); return; }
+    // Bare-name lookup: sendLine is a script-global from ble.js
+    if(typeof sendLine === 'function' && typeof isConnected !== 'undefined' && isConnected){
+      sendLine(verb); return;
+    }
+  }catch(e){ console.warn('sendVerb failed',e); }
+}
+function subscribeRx(cb){
+  window.RobiBle = window.RobiBle || {};
+  window.RobiBle.onRxLine = cb;
+  return true;
+}
+
+/* ---------- App state ---------- */
+const state = {
+  mode:'live', mock:false, connected:false,
+  L:0, R:0, hist:[], paused:false,
+  threshold: parseInt(localStorage.getItem('robi.ir.threshold')||'512',10),
+  edge: 60,
+  autoRunning:false, autoSpeed:160,
+  cal:{ wL:null, wR:null, bL:null, bR:null, step:1 },
+  sb:{ '00':'STOP', '01':'SOFT_LEFT', '10':'SOFT_RIGHT', '11':'FORWARD' }
+};
+
+/* ---------- Mock IR generator ---------- */
+function readMockIR(){
+  return [
+    parseInt(document.getElementById('mockL').value,10),
+    parseInt(document.getElementById('mockR').value,10)
+  ];
+}
+
+/* ---------- Polling loop @ 5 Hz ---------- */
+let pollTimer = null;
+function startPoll(){
+  if(pollTimer) return;
+  pollTimer = setInterval(()=>{
+    if(state.paused) return;
+    if(state.mock){
+      const [l,r] = readMockIR();
+      onIR(l,r);
+    } else if(state.connected){
+      sendVerb('POLL IR');
+    }
+  }, 200);
+}
+function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer=null; } }
+
+function onIR(l,r){
+  state.L=l; state.R=r;
+  state.hist.push([l,r]);
+  if(state.hist.length>50) state.hist.shift();
+  updateLive(); updateThreshold(); updateAuto(); updateSandbox();
+}
+
+/* ---------- LIVE mode UI ---------- */
+function updateLive(){
+  document.getElementById('liveL').textContent = state.L;
+  document.getElementById('liveR').textContent = state.R;
+  setDial('dialL', state.L); setDial('dialR', state.R);
+  document.getElementById('dialLtxt').textContent = state.L;
+  document.getElementById('dialRtxt').textContent = state.R;
+  // sparkline
+  const w=500,h=80,n=state.hist.length||1;
+  const pts = (idx)=> state.hist.map((p,i)=> `${(i/(n-1||1))*w},${h-(p[idx]/1023)*h}`).join(' ');
+  document.getElementById('sparkL').setAttribute('points', pts(0));
+  document.getElementById('sparkR').setAttribute('points', pts(1));
+}
+function setDial(id, v){
+  const el = document.getElementById(id);
+  const len = 251.3;
+  const off = len - (v/1023)*len;
+  el.setAttribute('stroke-dashoffset', off.toFixed(1));
+}
+
+/* ---------- THRESHOLD mode ---------- */
+function verdict(v){
+  const t = state.threshold, e = state.edge;
+  if(Math.abs(v-t) <= e) return 'edge';
+  return v < t ? 'line' : 'floor';
+}
+function updateThreshold(){
+  document.getElementById('thrLval').textContent = state.L;
+  document.getElementById('thrRval').textContent = state.R;
+  ['L','R'].forEach(side=>{
+    const v = state[side];
+    const k = verdict(v);
+    const node = document.getElementById('thr'+side+'verdict');
+    node.className = 'verdict '+k;
+    node.textContent = k.toUpperCase();
+  });
+}
+
+/* ---------- AUTO mode ---------- */
+function decideMotion(L,R){
+  const t = state.threshold;
+  const lOn = L < t, rOn = R < t;
+  if(lOn && rOn) return {name:'FORWARD', arrow:'⬆', cmd:`M:${state.autoSpeed},${state.autoSpeed}`};
+  if(lOn && !rOn) return {name:'SOFT_RIGHT', arrow:'↗', cmd:`M:${state.autoSpeed},${Math.floor(state.autoSpeed*0.4)}`};
+  if(!lOn && rOn) return {name:'SOFT_LEFT', arrow:'↖', cmd:`M:${Math.floor(state.autoSpeed*0.4)},${state.autoSpeed}`};
+  return {name:'STOP', arrow:'■', cmd:'STOP'};
+}
+function updateAuto(){
+  document.getElementById('autoLval').textContent = state.L;
+  document.getElementById('autoRval').textContent = state.R;
+  const d = decideMotion(state.L, state.R);
+  document.getElementById('autoDecide').textContent = d.name;
+  document.getElementById('autoArrow').textContent = d.arrow;
+  if(state.autoRunning && state.mode==='auto'){
+    sendVerb(d.cmd);
+  }
+}
+
+/* ---------- CALIBRATION ---------- */
+function calStep(n){
+  state.cal.step = n;
+  document.querySelectorAll('#mode-calib .step').forEach(s=>{
+    s.classList.toggle('active', parseInt(s.dataset.step,10)===n);
+  });
+}
+function calRefresh(){
+  if(state.cal.wL!==null){ document.getElementById('calLwhite').textContent=state.cal.wL; document.getElementById('calRwhite').textContent=state.cal.wR; }
+  if(state.cal.bL!==null){ document.getElementById('calLblack').textContent=state.cal.bL; document.getElementById('calRblack').textContent=state.cal.bR; }
+  if(state.cal.wL!==null && state.cal.bL!==null){
+    const mid = Math.round(((state.cal.wL+state.cal.wR)/2 + (state.cal.bL+state.cal.bR)/2)/2);
+    document.getElementById('calMid').textContent = mid;
+    state.cal.mid = mid;
+  }
+}
+
+/* ---------- DECISION SANDBOX ---------- */
+function sbKey(L,R){
+  const t = state.threshold;
+  const lOn = L < t ? 1 : 0, rOn = R < t ? 1 : 0;
+  return ''+lOn+rOn;
+}
+function updateSandbox(){
+  const k = sbKey(state.L, state.R);
+  ['00','01','10','11'].forEach(c=>{
+    document.getElementById('cell-'+c).classList.toggle('hl', c===k);
+  });
+  document.getElementById('sbPolicy').textContent = state.sb[k];
+}
+function policyToCmd(p){
+  const s = state.autoSpeed;
+  switch(p){
+    case 'FORWARD':    return `M:${s},${s}`;
+    case 'BACKWARD':   return `M:-${s},-${s}`;
+    case 'SOFT_LEFT':  return `M:${Math.floor(s*0.4)},${s}`;
+    case 'SOFT_RIGHT': return `M:${s},${Math.floor(s*0.4)}`;
+    case 'HARD_LEFT':  return `M:-${s},${s}`;
+    case 'HARD_RIGHT': return `M:${s},-${s}`;
+    default:           return 'STOP';
+  }
+}
+
+/* ---------- BOOT ---------- */
+window.addEventListener('DOMContentLoaded', ()=>{
+  // theme + lang
+  applyTheme(localStorage.getItem('robi.theme')||'carbon');
+  setL(localStorage.getItem('robi.lang')||'en');
+  const _ts = document.getElementById('themeSelect');
+  if(_ts) _ts.addEventListener('change', e=> applyTheme(e.target.value));
+  document.querySelectorAll('.lang-pill').forEach(p=>{
+    p.addEventListener('click', ()=> setL(p.dataset.lang));
+  });
+
+  // mode tabs
+  document.querySelectorAll('.cat-tab').forEach(t=>{
+    t.addEventListener('click', ()=> showMode(t.dataset.mode));
+  });
+
+  // mock toggle
+  const mockChk = document.getElementById('mockChk');
+  const mockBanner = document.getElementById('mockBanner');
+  const mockCtl = document.getElementById('mockCtl');
+  mockChk.addEventListener('change', ()=>{
+    state.mock = mockChk.checked;
+    mockBanner.classList.toggle('hide', !state.mock);
+    mockCtl.classList.toggle('hide', !state.mock);
+  });
+  document.getElementById('mockL').addEventListener('input', e=>{
+    document.getElementById('mockLval').textContent = e.target.value;
+  });
+  document.getElementById('mockR').addEventListener('input', e=>{
+    document.getElementById('mockRval').textContent = e.target.value;
+  });
+
+  // Connect button — calls bare-name globals from ble.js
+  document.getElementById('connectBtn').addEventListener('click', async ()=>{
+    try{
+      if(typeof isConnected !== 'undefined' && isConnected){
+        if(typeof disconnect === 'function') disconnect();
+      } else if(typeof connect === 'function'){
+        await connect();
+      } else {
+        alert('BLE driver not available — enable Mock mode to test.');
+      }
+    }catch(e){ alert('Connect failed: '+e.message); }
+  });
+  // Status hook from ble-shim
+  window.RobiBle = window.RobiBle || {};
+  window.RobiBle.onStatus = (c) => {
+    state.connected = !!c;
+    const pill = document.getElementById('connPill');
+    if(!pill) return;
+    const lang = localStorage.getItem('robi.lang') || 'en';
+    pill.textContent = c ? T[lang].connected : T[lang].disconnected;
+    pill.classList.toggle('ok', !!c);
+  };
+
+  // BLE Rx subscription: parse "IR:<L>,<R>"
+  subscribeRx(line=>{
+    const m = /^IR:\s*(-?\d+)\s*,\s*(-?\d+)/.exec(String(line||'').trim());
+    if(m){ onIR(parseInt(m[1],10), parseInt(m[2],10)); }
+  });
+
+  // Live pause
+  document.getElementById('livePauseBtn').addEventListener('click', e=>{
+    state.paused = !state.paused;
+    e.target.textContent = state.paused
+      ? T[localStorage.getItem('robi.lang')||'en'].resume
+      : T[localStorage.getItem('robi.lang')||'en'].pause;
+  });
+
+  // Threshold tuner
+  const thrSlider = document.getElementById('thrSlider');
+  thrSlider.value = state.threshold;
+  document.getElementById('thrVal').textContent = state.threshold;
+  thrSlider.addEventListener('input', e=>{
+    state.threshold = parseInt(e.target.value,10);
+    document.getElementById('thrVal').textContent = state.threshold;
+    updateThreshold(); updateSandbox();
+  });
+  document.getElementById('thrEdge').addEventListener('input', e=>{
+    state.edge = parseInt(e.target.value,10) || 0;
+    updateThreshold();
+  });
+  document.getElementById('thrSaveBtn').addEventListener('click', ()=>{
+    localStorage.setItem('robi.ir.threshold', String(state.threshold));
+    const tag = document.getElementById('thrSaved');
+    tag.classList.remove('hide'); setTimeout(()=>tag.classList.add('hide'), 1500);
+  });
+
+  // Auto follow
+  document.getElementById('autoSpd').addEventListener('input', e=>{
+    state.autoSpeed = parseInt(e.target.value,10);
+    document.getElementById('autoSpdVal').textContent = state.autoSpeed;
+  });
+  document.getElementById('autoStartBtn').addEventListener('click', ()=>{
+    state.autoRunning = true;
+    document.getElementById('autoState').textContent = T[localStorage.getItem('robi.lang')||'en'].running;
+    document.getElementById('autoState').classList.add('ok');
+  });
+  document.getElementById('autoStopBtn').addEventListener('click', ()=>{
+    state.autoRunning = false;
+    sendVerb('STOP');
+    document.getElementById('autoState').textContent = T[localStorage.getItem('robi.lang')||'en'].idle;
+    document.getElementById('autoState').classList.remove('ok');
+  });
+
+  // Calibration wizard
+  document.getElementById('calCapWhite').addEventListener('click', ()=>{
+    state.cal.wL = state.L; state.cal.wR = state.R; calRefresh(); calStep(2);
+  });
+  document.getElementById('calCapBlack').addEventListener('click', ()=>{
+    state.cal.bL = state.L; state.cal.bR = state.R; calRefresh(); calStep(3);
+  });
+  document.getElementById('calSaveBtn').addEventListener('click', ()=>{
+    if(state.cal.mid!=null){
+      localStorage.setItem('robi.ir.threshold', String(state.cal.mid));
+      localStorage.setItem('robi.ir.calibrated', '1');
+      state.threshold = state.cal.mid;
+      thrSlider.value = state.cal.mid;
+      document.getElementById('thrVal').textContent = state.cal.mid;
+      const tag = document.getElementById('calSaved');
+      tag.classList.remove('hide'); setTimeout(()=>tag.classList.add('hide'), 1500);
+    }
+  });
+  document.getElementById('calRestartBtn').addEventListener('click', ()=>{
+    state.cal = { wL:null, wR:null, bL:null, bR:null, step:1 };
+    ['calLwhite','calRwhite','calLblack','calRblack','calMid'].forEach(id=>document.getElementById(id).textContent='—');
+    calStep(1);
+  });
+
+  // Sandbox dropdowns
+  document.querySelectorAll('select[data-cell]').forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      state.sb[sel.dataset.cell] = sel.value;
+      updateSandbox();
+    });
+  });
+  document.getElementById('sbRunBtn').addEventListener('click', ()=>{
+    const k = sbKey(state.L, state.R);
+    const cmd = policyToCmd(state.sb[k]);
+    sendVerb(cmd);
+    document.getElementById('sbState').textContent = 'RUN: '+state.sb[k];
+    document.getElementById('sbState').classList.add('ok');
+    setTimeout(()=>{
+      sendVerb('STOP');
+      document.getElementById('sbState').textContent = T[localStorage.getItem('robi.lang')||'en'].idle;
+      document.getElementById('sbState').classList.remove('ok');
+    }, 3000);
+  });
+
+  // Spacebar = STOP
+  document.addEventListener('keydown', e=>{
+    if(e.code==='Space' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
+      e.preventDefault();
+      state.autoRunning = false;
+      sendVerb('STOP');
+      document.getElementById('autoState').textContent = T[localStorage.getItem('robi.lang')||'en'].idle;
+      document.getElementById('autoState').classList.remove('ok');
+    }
+  });
+
+  startPoll();
+
+  if (window.LabLogger) LabLogger.mount('#labLogger', { surface: 'IR Lab' });
+});
+</script>
+</body>
+</html>

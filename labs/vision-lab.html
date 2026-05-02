@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vision Lab · Maqueen Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css" />
+<link rel="stylesheet" href="lab-logger.css?v=6">
+<link rel="stylesheet" href="../docs/doc-shell.css" />
+<style>
+  /* ──────────────────────────────────────────────────────────────
+     Vision Lab — palette: cyan / amber / neon / red / white only
+     ────────────────────────────────────────────────────────────── */
+  :root{
+    /* Vision Lab namespace — bridged to workshops/theme.css output so the
+       theme picker (Carbon/Forest/Steel/Paper/Pearl) actually swaps colors.
+       Each var falls back to a hardcoded default when theme.css is missing. */
+    --vl-bg:        var(--bg,      #07090f);
+    --vl-panel:     var(--bg-card, #0d1219);
+    --vl-panel-2:   var(--bg-soft, #131b25);
+    --vl-border:    var(--border,  rgba(255,255,255,.10));
+    --vl-text:      var(--text,    #e7eef5);
+    --vl-muted:     var(--steel,   #8aa0b4);
+    --vl-cyan:      #22d3ee;
+    --vl-amber:     #f59e0b;
+    --vl-neon:      #a3e635;
+    --vl-red:       #ef4444;
+    --vl-white:     #ffffff;
+    --vl-radius:    14px;
+    --vl-shadow:    0 8px 28px rgba(0,0,0,.45);
+  }
+  html,body{background:var(--vl-bg);color:var(--vl-text);}
+  body{font-family:'Tajawal',system-ui,sans-serif;margin:0;}
+  html[lang="ar"] body{direction:rtl;font-family:'Tajawal','Amiri',sans-serif;}
+
+  .wd-header{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:10px 18px;background:var(--vl-panel);
+    border-bottom:1px solid var(--vl-border);position:sticky;top:0;z-index:50;
+  }
+  .wd-header .brand{font-family:'Orbitron',sans-serif;font-weight:700;color:var(--vl-cyan);font-size:18px;letter-spacing:.5px;}
+  .wd-header .spacer{flex:1;}
+  .wd-header select,
+  .wd-header .lang-pills,
+  .wd-header a.btn{
+    background:var(--vl-panel-2);color:var(--vl-text);
+    border:1px solid var(--vl-border);border-radius:8px;
+    padding:6px 10px;font-size:13px;text-decoration:none;
+  }
+  .wd-header a.btn:hover{border-color:var(--vl-cyan);color:var(--vl-cyan);}
+  .lang-pills{display:inline-flex;gap:4px;padding:3px;}
+  .lang-pills button{
+    background:transparent;border:0;color:var(--vl-muted);
+    padding:4px 9px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;
+  }
+  .lang-pills button.active{background:var(--vl-cyan);color:#001;}
+
+  .app-layout{display:grid;grid-template-columns:300px 1fr;gap:0;min-height:calc(100vh - 54px);}
+  html[lang="ar"] .app-layout{grid-template-columns:1fr 300px;}
+  .sidebar{
+    background:var(--vl-panel);border-right:1px solid var(--vl-border);
+    padding:16px;overflow-y:auto;
+  }
+  html[lang="ar"] .sidebar{border-right:0;border-left:1px solid var(--vl-border);}
+  .sidebar h2{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;
+    color:var(--vl-muted);margin:18px 0 8px;font-weight:700;}
+  .sidebar h2:first-child{margin-top:0;}
+  .mode-btn{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:start;
+    background:var(--vl-panel-2);color:var(--vl-text);
+    border:1px solid var(--vl-border);border-radius:10px;
+    padding:10px 12px;margin-bottom:6px;cursor:pointer;font-size:14px;
+    transition:all .15s ease;
+  }
+  .mode-btn:hover{border-color:var(--vl-cyan);transform:translateX(2px);}
+  html[lang="ar"] .mode-btn:hover{transform:translateX(-2px);}
+  .mode-btn.active{background:var(--vl-cyan);color:#001;border-color:var(--vl-cyan);font-weight:700;}
+  .mode-btn .ico{font-size:18px;}
+
+  .stage{padding:22px;overflow-y:auto;}
+  .stage h1{font-family:'Orbitron',sans-serif;color:var(--vl-cyan);
+    margin:0 0 6px;font-size:26px;letter-spacing:.5px;}
+  .lede{color:var(--vl-muted);margin:0 0 18px;font-size:14px;}
+
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+  .btn-big{
+    background:var(--vl-amber);color:#1a1000;border:0;border-radius:12px;
+    padding:14px 20px;font-size:15px;font-weight:700;cursor:pointer;
+    box-shadow:var(--vl-shadow);transition:transform .1s;
+  }
+  .btn-big:hover{transform:translateY(-1px);}
+  .btn-big.connect{background:var(--vl-neon);color:#0a1400;}
+  .btn-big.cam{background:var(--vl-cyan);color:#001520;}
+  .btn-big.stop{background:var(--vl-red);color:#fff;}
+  .btn-big[disabled]{opacity:.5;cursor:not-allowed;}
+
+  .pill{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--vl-panel-2);border:1px solid var(--vl-border);
+    border-radius:999px;padding:6px 12px;font-size:12px;color:var(--vl-muted);
+  }
+  .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--vl-muted);}
+  .pill.ok{color:var(--vl-neon);border-color:var(--vl-neon);}
+  .pill.ok .dot{background:var(--vl-neon);box-shadow:0 0 8px var(--vl-neon);}
+  .pill.err{color:var(--vl-red);border-color:var(--vl-red);}
+  .pill.err .dot{background:var(--vl-red);}
+
+  .card{
+    background:var(--vl-panel);border:1px solid var(--vl-border);
+    border-radius:var(--vl-radius);padding:16px;margin-bottom:14px;
+    box-shadow:var(--vl-shadow);
+  }
+  .card h3{margin:0 0 10px;color:var(--vl-amber);font-size:15px;}
+
+  .stage-grid{display:grid;grid-template-columns:1fr 320px;gap:14px;}
+  @media (max-width:880px){
+    .app-layout{grid-template-columns:1fr;}
+    .sidebar{border-right:0;border-bottom:1px solid var(--vl-border);}
+    .stage-grid{grid-template-columns:1fr;}
+  }
+
+  .video-wrap{position:relative;background:color-mix(in srgb, var(--text, #000) 12%, var(--bg-card, #000));border-radius:var(--vl-radius);
+    overflow:hidden;aspect-ratio:4/3;border:1px solid var(--vl-border);}
+  .video-wrap video,.video-wrap canvas{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  }
+  .video-wrap canvas{pointer-events:none;}
+  .video-wrap .placeholder{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--vl-muted);font-size:14px;text-align:center;padding:20px;
+  }
+
+  .swatches{display:flex;flex-wrap:wrap;gap:8px;}
+  .sw{
+    width:46px;height:46px;border-radius:10px;border:3px solid transparent;
+    cursor:pointer;transition:transform .1s;
+  }
+  .sw:hover{transform:scale(1.07);}
+  .sw.active{border-color:var(--vl-white);box-shadow:0 0 14px currentColor;}
+  .sw.red    {background:#ef4444;color:#ef4444;}
+  .sw.green  {background:#22c55e;color:#22c55e;}
+  .sw.blue   {background:#3b82f6;color:#3b82f6;}
+  .sw.yellow {background:#eab308;color:#eab308;}
+  .sw.cyan   {background:#22d3ee;color:#22d3ee;}
+  .sw.white  {background:#ffffff;color:#ffffff;}
+  .sw.off    {background:#1f2937;color:#1f2937;border-style:dashed;border-color:#475569;}
+
+  .meter{
+    height:14px;background:var(--bg-soft,#0a0f16);border:1px solid var(--vl-border);
+    border-radius:7px;overflow:hidden;
+  }
+  .meter > i{display:block;height:100%;background:var(--vl-cyan);width:0%;
+    transition:width .15s ease;}
+
+  .qr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .qr-card{
+    background:#fff;color:#000;border-radius:10px;padding:10px;text-align:center;
+    font-weight:700;font-size:12px;
+  }
+  .qr-card .box{
+    width:100%;aspect-ratio:1;background:repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 8px 8px;
+    border-radius:6px;margin-bottom:6px;
+  }
+  .privacy{
+    font-size:12px;color:var(--vl-muted);margin-top:14px;
+    border-top:1px dashed var(--vl-border);padding-top:10px;
+  }
+  .privacy::before{content:"🔒 ";}
+
+  .warn{
+    background:rgba(239,68,68,.10);border:1px solid var(--vl-red);
+    color:#ffd1d1;padding:10px 14px;border-radius:10px;font-size:13px;margin:8px 0;
+  }
+  .kbd{
+    display:inline-block;background:var(--bg-soft,#000a14);border:1px solid var(--vl-border);
+    border-radius:4px;padding:1px 6px;font-family:monospace;font-size:11px;color:var(--vl-cyan);
+  }
+  .telem{font-family:'Orbitron',monospace;font-size:13px;color:var(--vl-neon);}
+  .row{display:flex;justify-content:space-between;align-items:center;
+    padding:6px 0;border-bottom:1px dashed var(--vl-border);font-size:13px;}
+  .row:last-child{border-bottom:0;}
+  /* Theme bridge — maps workshops/theme.css output to local variable names so
+     [data-theme="carbon|forest|steel|paper|pearl"] actually changes colors. */
+  :root {
+    --panel:  var(--bg-card,  #121821);
+    --panel2: var(--bg-soft,  #1a2230);
+    --line:   var(--border,   #26313f);
+    --muted:  var(--steel,    #90a0b3);
+    --ink:    var(--text,     #e8eef6);
+  }
+  /* Also derive --accent from the theme's primary so per-theme accents show through.
+     Carbon/Steel default to --cyan; Forest/Paper/Pearl already redefine --neon and friends. */
+  :root { --accent: var(--cyan, #22d3ee); }
+  html[data-theme="forest"] { --accent: var(--neon, #a3e635); }
+  html[data-theme="paper"]  { --accent: var(--amber, #f59e0b); }
+</style>
+</head>
+<body>
+
+<header class="wd-header" role="banner">
+  <span class="brand">👁 VISION LAB</span>
+  <span class="spacer"></span>
+
+  <select class="wd-select" id="themeSelect" aria-label="Theme">
+    <option value="carbon">▣ Carbon</option>
+    <option value="forest">▣ Forest</option>
+    <option value="steel">▣ Steel</option>
+    <option value="paper">☼ Paper</option>
+    <option value="pearl">☼ Pearl</option>
+  </select>
+
+  <div class="lang-pills" role="radiogroup" aria-label="Language">
+    <button type="button" class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+    <button type="button" class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+    <button type="button" class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+  </div>
+
+  <a class="btn" href="../index.html" data-i18n="navRobot">🤖 Robot App</a>
+  <a class="btn" href="../docs/index.html" data-i18n="navCatalog">🗂️ Catalog</a>
+  <a class="btn" href="index.html" data-i18n="navLabs">🧪 Labs</a>
+  <a class="btn" href="../workshops/hub.html" data-i18n="navHub">🏠 Hub</a>
+</header>
+
+<div class="app-layout">
+
+  <aside class="sidebar" aria-label="Modes">
+    <h2 data-i18n="catColor">🎨 Color &amp; Light</h2>
+    <button class="mode-btn active" data-mode="colorzone">
+      <span class="ico">🎯</span><span data-i18n="modeColorzone">Color Zone</span>
+    </button>
+    <button class="mode-btn" data-mode="light">
+      <span class="ico">💡</span><span data-i18n="modeLight">Light Sensor</span>
+    </button>
+
+    <h2 data-i18n="catGesture">✋ Gesture &amp; Code</h2>
+    <button class="mode-btn" data-mode="facesteer">
+      <span class="ico">😀</span><span data-i18n="modeFace">Face Steer</span>
+    </button>
+    <button class="mode-btn" data-mode="cards">
+      <span class="ico">🃏</span><span data-i18n="modeCards">QR Card Reader</span>
+    </button>
+    <button class="mode-btn" data-mode="handwave">
+      <span class="ico">👋</span><span data-i18n="modeHand">Hand Wave</span>
+    </button>
+
+    <p class="privacy" data-i18n="privacy">Camera feed never leaves your device.</p>
+  </aside>
+
+  <main class="stage" role="main">
+    <h1 id="modeTitle">Color Zone</h1>
+    <p class="lede" id="modeLede" data-i18n="ledeColorzone">Pick a target color. The camera tracks matching pixels and steers the robot toward them.</p>
+
+    <div class="toolbar">
+      <button id="btnConnect"  class="btn-big connect">🔌 <span data-i18n="btnConnect">Connect</span></button>
+      <button id="btnCam"      class="btn-big cam">🎥 <span data-i18n="btnCam">Start camera</span></button>
+      <button id="btnStop"     class="btn-big stop">🛑 <span data-i18n="btnStop">STOP</span></button>
+      <span id="pillBle"  class="pill"><span class="dot"></span><span data-i18n="bleOff">BLE off</span></span>
+      <span id="pillCam"  class="pill"><span class="dot"></span><span data-i18n="camOff">Camera off</span></span>
+      <span id="pillMode" class="pill"><span class="dot"></span><span class="telem" id="telem">L:0 R:0</span></span>
+    </div>
+
+    <div id="warnBox"></div>
+
+    <div class="stage-grid">
+      <section class="card">
+        <h3 data-i18n="lblPreview">📺 Preview</h3>
+        <div class="video-wrap">
+          <video id="vid" autoplay playsinline muted></video>
+          <canvas id="ovl"></canvas>
+          <div class="placeholder" id="vidPh" data-i18n="placeholder">Press “Start camera” to begin.</div>
+        </div>
+        <p class="privacy" data-i18n="privacy2">Your camera feed never leaves your device — all processing runs locally in the browser.</p>
+      </section>
+
+      <aside class="card" id="ctrlPanel">
+        <h3 data-i18n="lblControls">🎛 Controls</h3>
+        <div id="ctrlBody"></div>
+        <div class="row"><span data-i18n="rowFps">FPS</span><span class="telem" id="fps">0</span></div>
+        <div class="row"><span data-i18n="rowSpace">Stop</span><span><span class="kbd">SPACE</span></span></div>
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+<div id="labLogger" class="lab-logger-host"></div>
+
+<!-- BLE shim + adapter (handles #N prefix automatically) -->
+<script src="../js/ble-shim.js" defer></script>
+<script src="../js/ble.js" defer></script>
+<!-- Reuse shared camera-input registry -->
+<script src="../js/camera-inputs.js" defer></script>
+<script src="lab-logger.js?v=6" defer></script>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   Vision Lab — boot, i18n, theme, mode dispatch, BLE glue
+   ────────────────────────────────────────────────────────────── */
+(function(){
+  'use strict';
+
+  // ── Trilingual strings (~50 keys) ─────────────────────────
+  const T = {
+    en: {
+      navRobot:'🤖 Robot App', navCatalog:'📚 Catalog', navLabs:'🧪 Labs', navHub:'🏠 Hub',
+      catColor:'🎨 Color & Light', catGesture:'✋ Gesture & Code',
+      modeColorzone:'Color Zone', modeLight:'Light Sensor',
+      modeFace:'Face Steer', modeCards:'QR Card Reader', modeHand:'Hand Wave',
+      btnConnect:'Connect', btnCam:'Start camera', btnStop:'STOP',
+      bleOff:'BLE off', bleOn:'BLE connected',
+      camOff:'Camera off', camOn:'Camera live',
+      lblPreview:'📺 Preview', lblControls:'🎛 Controls',
+      placeholder:'Press “Start camera” to begin.',
+      privacy:'Camera feed never leaves your device.',
+      privacy2:'Your camera feed never leaves your device — all processing runs locally in the browser.',
+      titleColorzone:'Color Zone', titleLight:'Light Sensor',
+      titleFace:'Face Steer', titleCards:'QR Card Reader', titleHand:'Hand Wave',
+      ledeColorzone:'Pick a target color. The camera tracks matching pixels and steers the robot toward them.',
+      ledeLight:'Average frame brightness sets motor speed. Bright = fast, dark = slow.',
+      ledeFace:'Your face X position steers; vertical position controls speed.',
+      ledeCards:'Print 6 QR cards (forward / back / left / right / spin / stop). Show one to the camera to drive.',
+      ledeHand:'Wave your hand. Position drives the bot left or right.',
+      lblTarget:'Target color', lblSpeed:'Max speed', lblThreshold:'Match threshold',
+      lblFaceGain:'Steering gain', lblScanRate:'Scan rate',
+      rowFps:'FPS', rowSpace:'Stop',
+      cmdFwd:'forward', cmdBack:'back', cmdLeft:'left', cmdRight:'right',
+      cmdSpin:'spin', cmdStop:'stop',
+      warnFD:'⚠ Your browser does not support FaceDetector. Face Steer will not run here. Try Chrome on Android, or use another mode.',
+      warnBD:'⚠ Your browser does not support BarcodeDetector. QR Card Reader will not run here.',
+      warnCam:'⚠ Could not start camera. Check permissions and try again.',
+      lastCmd:'Last command',
+      ll_title:'Message Log', ll_subtitle:'Raw UART messages', ll_clear:'Clear', ll_export:'Export', ll_copy:'Copy', ll_pin:'Pin'
+    },
+    fr: {
+      navRobot:'🤖 App Robot', navCatalog:'📚 Catalogue', navLabs:'🧪 Labos', navHub:'🏠 Hub',
+      catColor:'🎨 Couleur & Lumière', catGesture:'✋ Gestes & Code',
+      modeColorzone:'Zone Couleur', modeLight:'Capteur de Lumière',
+      modeFace:'Pilotage Visage', modeCards:'Lecteur de Cartes QR', modeHand:'Geste de la Main',
+      btnConnect:'Connecter', btnCam:'Démarrer la caméra', btnStop:'STOP',
+      bleOff:'BLE inactif', bleOn:'BLE connecté',
+      camOff:'Caméra inactive', camOn:'Caméra en direct',
+      lblPreview:'📺 Aperçu', lblControls:'🎛 Commandes',
+      placeholder:'Appuyez sur « Démarrer la caméra » pour commencer.',
+      privacy:'Le flux caméra ne quitte jamais votre appareil.',
+      privacy2:'Votre flux caméra ne quitte jamais votre appareil — tout le traitement est local.',
+      titleColorzone:'Zone Couleur', titleLight:'Capteur de Lumière',
+      titleFace:'Pilotage Visage', titleCards:'Lecteur de Cartes QR', titleHand:'Geste de la Main',
+      ledeColorzone:'Choisissez une couleur cible. La caméra suit les pixels correspondants pour piloter le robot.',
+      ledeLight:'La luminosité moyenne règle la vitesse. Lumineux = rapide, sombre = lent.',
+      ledeFace:'La position X de votre visage dirige ; la position verticale contrôle la vitesse.',
+      ledeCards:'Imprimez 6 cartes QR (avancer / reculer / gauche / droite / pivoter / stop). Présentez-en une à la caméra.',
+      ledeHand:'Agitez votre main. Sa position pilote le robot à gauche ou à droite.',
+      lblTarget:'Couleur cible', lblSpeed:'Vitesse max', lblThreshold:'Seuil de correspondance',
+      lblFaceGain:'Gain de direction', lblScanRate:'Cadence de scan',
+      rowFps:'FPS', rowSpace:'Arrêt',
+      cmdFwd:'avancer', cmdBack:'reculer', cmdLeft:'gauche', cmdRight:'droite',
+      cmdSpin:'pivoter', cmdStop:'stop',
+      warnFD:'⚠ Votre navigateur ne supporte pas FaceDetector. Le pilotage par visage ne fonctionnera pas ici.',
+      warnBD:'⚠ Votre navigateur ne supporte pas BarcodeDetector. Le lecteur de cartes QR ne fonctionnera pas ici.',
+      warnCam:'⚠ Impossible de démarrer la caméra. Vérifiez les permissions.',
+      lastCmd:'Dernière commande',
+      ll_title:'Journal', ll_subtitle:'Messages UART bruts', ll_clear:'Effacer', ll_export:'Exporter', ll_copy:'Copier', ll_pin:'Épingler'
+    },
+    ar: {
+      navRobot:'🤖 تطبيق الروبوت', navCatalog:'📚 الفهرس', navLabs:'🧪 مختبرات', navHub:'🏠 المركز',
+      catColor:'🎨 لون و ضوء', catGesture:'✋ إشارة و رمز',
+      modeColorzone:'منطقة اللون', modeLight:'مستشعر الضوء',
+      modeFace:'التوجيه بالوجه', modeCards:'قارئ بطاقات QR', modeHand:'لوّح بيدك',
+      btnConnect:'اتصال', btnCam:'تشغيل الكاميرا', btnStop:'توقف',
+      bleOff:'BLE غير مفعل', bleOn:'BLE متصل',
+      camOff:'الكاميرا متوقفة', camOn:'الكاميرا تعمل',
+      lblPreview:'📺 المعاينة', lblControls:'🎛 التحكم',
+      placeholder:'اضغط « تشغيل الكاميرا » للبدء.',
+      privacy:'بثّ الكاميرا لا يغادر جهازك أبدًا.',
+      privacy2:'بثّ كاميرتك لا يغادر جهازك — كل المعالجة تتم محليًا في المتصفح.',
+      titleColorzone:'منطقة اللون', titleLight:'مستشعر الضوء',
+      titleFace:'التوجيه بالوجه', titleCards:'قارئ بطاقات QR', titleHand:'لوّح بيدك',
+      ledeColorzone:'اختر لونًا مستهدفًا. تتعقب الكاميرا البكسلات المطابقة وتوجّه الروبوت نحوها.',
+      ledeLight:'سطوع الإطار يضبط السرعة. ساطع = سريع، مظلم = بطيء.',
+      ledeFace:'موضع وجهك أفقيًا يوجّه؛ موضعه عموديًا يتحكم بالسرعة.',
+      ledeCards:'اطبع 6 بطاقات QR (أمام / خلف / يسار / يمين / دوران / توقف). أرها للكاميرا.',
+      ledeHand:'لوّح بيدك. موقعها يقود الروبوت يمينًا أو يسارًا.',
+      lblTarget:'اللون المستهدف', lblSpeed:'السرعة القصوى', lblThreshold:'عتبة التطابق',
+      lblFaceGain:'كسب التوجيه', lblScanRate:'معدل المسح',
+      rowFps:'FPS', rowSpace:'توقف',
+      cmdFwd:'أمام', cmdBack:'خلف', cmdLeft:'يسار', cmdRight:'يمين',
+      cmdSpin:'دوران', cmdStop:'توقف',
+      warnFD:'⚠ متصفحك لا يدعم FaceDetector. لن يعمل التوجيه بالوجه هنا.',
+      warnBD:'⚠ متصفحك لا يدعم BarcodeDetector. لن يعمل قارئ QR هنا.',
+      warnCam:'⚠ تعذر تشغيل الكاميرا. تحقق من الأذونات.',
+      lastCmd:'آخر أمر',
+      ll_title:'سجل الرسائل', ll_subtitle:'رسائل UART الخام', ll_clear:'مسح', ll_export:'تصدير', ll_copy:'نسخ', ll_pin:'تثبيت'
+    }
+  };
+
+  // ── State ─────────────────────────────────────────────────
+  const state = {
+    lang: localStorage.getItem('robi.lang') || 'en',
+    theme: localStorage.getItem('robi.theme') || 'carbon',
+    mode: 'colorzone',
+    stream: null,
+    runner: null,        // active mode controller
+    color: 'red',
+    speed: 180,
+    threshold: 60,
+    faceGain: 1.2,
+    scanRate: 6,         // Hz
+    lastSentAt: 0,
+    lastL:0, lastR:0,
+    fps: 0, fpsCount:0, fpsAt:performance.now(),
+    bleConnected:false
+  };
+
+  // ── i18n / theme helpers ──────────────────────────────────
+  function setL(lang){
+    state.lang = lang;
+    localStorage.setItem('robi.lang', lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang==='ar') ? 'rtl' : 'ltr';
+    document.body.classList.toggle('rtl', lang === 'ar');
+    const dict = T[lang] || T.en;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const k = el.getAttribute('data-i18n');
+      if (dict[k]!=null) el.textContent = dict[k];
+    });
+    document.querySelectorAll('.lang-pills button').forEach(b=>{
+      b.classList.toggle('active', b.dataset.lang===lang);
+    });
+    // refresh mode title + lede
+    const titleKey = 'title' + state.mode.charAt(0).toUpperCase() + state.mode.slice(1);
+    document.getElementById('modeTitle').textContent = dict[titleKey] || dict['mode'+state.mode] || state.mode;
+    const ledeKey = 'lede' + state.mode.charAt(0).toUpperCase() + state.mode.slice(1);
+    document.getElementById('modeLede').textContent = dict[ledeKey] || '';
+    renderControls();
+  }
+  function applyTheme(t){
+    // Defensive: workshops/theme.css only knows these 5 themes. If a value
+    // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+    // fall back to carbon so we never apply a theme this stylesheet ignores.
+    var _validThemes = ['carbon','forest','steel','paper','pearl'];
+    if (_validThemes.indexOf(t) === -1) t = 'carbon';
+    state.theme = t;
+    try { localStorage.setItem('robi.theme', t); } catch(e){}
+    document.documentElement.setAttribute('data-theme', t);
+    const sel = document.getElementById('themeSelect');
+    if (sel) sel.value = t;
+  }
+
+  function tr(k){ return (T[state.lang]||T.en)[k] || k; }
+
+  // ── BLE wrapper (uses #N prefix via ble-shim if present) ──
+  function bleSend(msg){
+    try {
+      // Bare-name lookup: sendLine/isConnected from ble.js script-globals
+      if (typeof sendLine === 'function' && typeof isConnected !== 'undefined' && isConnected){
+        sendLine(msg); return;
+      }
+    } catch(e){ /* swallow */ }
+  }
+  async function bleConnect(){
+    try {
+      if (typeof isConnected !== 'undefined' && isConnected){
+        if (typeof disconnect === 'function') disconnect();
+      } else if (typeof connect === 'function'){
+        await connect();
+      }
+    } catch(e){ state.bleConnected = false; refreshPills(); }
+  }
+  // Status hook
+  window.RobiBle = window.RobiBle || {};
+  window.RobiBle.onStatus = (c) => { state.bleConnected = !!c; refreshPills(); };
+  function sendMotors(L, R){
+    L = clamp(L|0,-255,255); R = clamp(R|0,-255,255);
+    state.lastL=L; state.lastR=R;
+    bleSend('M:'+L+','+R);
+    document.getElementById('telem').textContent = 'L:'+L+' R:'+R;
+  }
+  function sendStop(){ sendMotors(0,0); bleSend('STOP'); }
+  function sendLed(r,g,b){ bleSend('LED:'+(r|0)+','+(g|0)+','+(b|0)); }
+  function clamp(v,lo,hi){ return v<lo?lo:v>hi?hi:v; }
+
+  function refreshPills(){
+    const p = document.getElementById('pillBle');
+    p.classList.toggle('ok', state.bleConnected);
+    p.lastElementChild.textContent = state.bleConnected ? tr('bleOn') : tr('bleOff');
+    const c = document.getElementById('pillCam');
+    c.classList.toggle('ok', !!state.stream);
+    c.lastElementChild.textContent = state.stream ? tr('camOn') : tr('camOff');
+  }
+
+  // ── Camera ────────────────────────────────────────────────
+  async function startCamera(){
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode:'environment', width:{ideal:640}, height:{ideal:480} },
+        audio:false
+      });
+      state.stream = s;
+      const v = document.getElementById('vid');
+      v.srcObject = s;
+      document.getElementById('vidPh').style.display = 'none';
+      refreshPills();
+      restartRunner();
+    } catch(e){
+      warn(tr('warnCam'));
+    }
+  }
+  function stopCamera(){
+    if (state.stream){ state.stream.getTracks().forEach(t=>t.stop()); state.stream=null; }
+    document.getElementById('vidPh').style.display = '';
+    refreshPills();
+  }
+
+  function warn(msg){
+    const w = document.getElementById('warnBox');
+    w.innerHTML = '<div class="warn">'+msg+'</div>';
+  }
+  function clearWarn(){ document.getElementById('warnBox').innerHTML=''; }
+
+  // ── Mode controllers (reuse window.CameraInputs if present) ──
+  // Each returns { tick(video, ctx, w, h), stop() }
+  const COLORS = {
+    red:    [239,68,68],
+    green:  [34,197,94],
+    blue:   [59,130,246],
+    yellow: [234,179,8],
+    cyan:   [34,211,238],
+    white:  [255,255,255],
+    off:    [0,0,0]
+  };
+
+  function makeRunner(mode){
+    const CI = window.CameraInputs || {};
+    if (CI[mode] && typeof CI[mode] === 'function') {
+      try {
+        const r = CI[mode]({ state, sendMotors, sendStop, sendLed, COLORS, tr });
+        if (r) return r;
+      } catch(e){ console.warn('CameraInputs.'+mode+' failed, using fallback', e); }
+    }
+    // ── Inline fallbacks ─────────────────────────────────
+    if (mode==='colorzone') return runnerColorZone();
+    if (mode==='light')     return runnerLight();
+    if (mode==='facesteer') return runnerFaceSteer();
+    if (mode==='cards')     return runnerCards();
+    if (mode==='handwave')  return runnerHandWave();
+    return { tick(){}, stop(){} };
+  }
+
+  function runnerColorZone(){
+    return {
+      tick(video, ctx, w, h){
+        ctx.drawImage(video,0,0,w,h);
+        const img = ctx.getImageData(0,0,w,h).data;
+        const tgt = COLORS[state.color];
+        const thr = state.threshold;
+        let count=0, sx=0;
+        for (let y=0;y<h;y+=4){
+          for (let x=0;x<w;x+=4){
+            const i = (y*w+x)*4;
+            const dr=img[i]-tgt[0], dg=img[i+1]-tgt[1], db=img[i+2]-tgt[2];
+            const d = Math.sqrt(dr*dr+dg*dg+db*db);
+            if (d < thr){ count++; sx += x; }
+          }
+        }
+        if (state.color==='off' || count<6){ sendMotors(0,0); return; }
+        const cx = sx / count;
+        const off = (cx - w/2) / (w/2);   // -1..+1
+        const sp = state.speed;
+        const L = clamp(sp + off*sp, -255, 255);
+        const R = clamp(sp - off*sp, -255, 255);
+        // overlay marker
+        ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, h/2, 18, 0, Math.PI*2); ctx.stroke();
+        sendMotors(L, R);
+      },
+      stop(){ sendStop(); }
+    };
+  }
+  function runnerLight(){
+    return {
+      tick(video, ctx, w, h){
+        ctx.drawImage(video,0,0,w,h);
+        const img = ctx.getImageData(0,0,w,h).data;
+        let sum=0, n=0;
+        for (let i=0;i<img.length;i+=16){ sum += (img[i]+img[i+1]+img[i+2]); n++; }
+        const avg = sum / (n*3);          // 0..255
+        const norm = clamp(avg/255, 0, 1);
+        const sp = (norm * state.speed) | 0;
+        sendMotors(sp, sp);
+        // brightness bar
+        ctx.fillStyle = 'rgba(0,0,0,.5)';
+        ctx.fillRect(10, h-26, w-20, 16);
+        ctx.fillStyle = '#a3e635';
+        ctx.fillRect(12, h-24, (w-24)*norm, 12);
+      },
+      stop(){ sendStop(); }
+    };
+  }
+  function runnerFaceSteer(){
+    if (!('FaceDetector' in window)){
+      warn(tr('warnFD'));
+      return { tick(){}, stop(){ sendStop(); } };
+    }
+    const fd = new window.FaceDetector({fastMode:true, maxDetectedFaces:1});
+    let busy = false;
+    return {
+      tick(video, ctx, w, h){
+        ctx.drawImage(video,0,0,w,h);
+        if (busy) return; busy = true;
+        fd.detect(video).then(faces=>{
+          busy = false;
+          if (!faces.length){ sendMotors(0,0); return; }
+          const b = faces[0].boundingBox;
+          const cx = b.x + b.width/2, cy = b.y + b.height/2;
+          ctx.strokeStyle='#f59e0b'; ctx.lineWidth=3;
+          ctx.strokeRect(b.x, b.y, b.width, b.height);
+          const ox = (cx - w/2)/(w/2);
+          const oy = (cy - h/2)/(h/2);
+          const sp = state.speed * (1 - clamp(oy,-1,1)*0.5);
+          const L = clamp(sp + ox*sp*state.faceGain, -255,255);
+          const R = clamp(sp - ox*sp*state.faceGain, -255,255);
+          sendMotors(L,R);
+        }).catch(()=>{ busy=false; });
+      },
+      stop(){ sendStop(); }
+    };
+  }
+  function runnerCards(){
+    if (!('BarcodeDetector' in window)){
+      warn(tr('warnBD'));
+      return { tick(){}, stop(){ sendStop(); } };
+    }
+    const bd = new window.BarcodeDetector({formats:['qr_code']});
+    let busy=false, last='', lastAt=0;
+    const cmds = {
+      forward: ()=>sendMotors( state.speed,  state.speed),
+      back:    ()=>sendMotors(-state.speed, -state.speed),
+      left:    ()=>sendMotors(-state.speed,  state.speed),
+      right:   ()=>sendMotors( state.speed, -state.speed),
+      spin:    ()=>sendMotors( state.speed, -state.speed),
+      stop:    ()=>sendStop()
+    };
+    return {
+      tick(video, ctx, w, h){
+        ctx.drawImage(video,0,0,w,h);
+        if (busy) return; busy=true;
+        bd.detect(video).then(codes=>{
+          busy=false;
+          if (!codes.length) return;
+          const txt = (codes[0].rawValue||'').trim().toLowerCase();
+          codes.forEach(c=>{
+            if (c.cornerPoints && c.cornerPoints.length){
+              ctx.strokeStyle='#a3e635'; ctx.lineWidth=3;
+              ctx.beginPath();
+              ctx.moveTo(c.cornerPoints[0].x, c.cornerPoints[0].y);
+              for (let i=1;i<c.cornerPoints.length;i++)
+                ctx.lineTo(c.cornerPoints[i].x, c.cornerPoints[i].y);
+              ctx.closePath(); ctx.stroke();
+            }
+          });
+          const now = performance.now();
+          if (txt && cmds[txt] && (txt!==last || now-lastAt>700)){
+            cmds[txt](); last=txt; lastAt=now;
+            const el = document.getElementById('lastCmd');
+            if (el) el.textContent = txt;
+          }
+        }).catch(()=>{ busy=false; });
+      },
+      stop(){ sendStop(); }
+    };
+  }
+  function runnerHandWave(){
+    // Lightweight motion-centroid fallback (frame differencing on skin-ish hue)
+    let prev = null;
+    return {
+      tick(video, ctx, w, h){
+        ctx.drawImage(video,0,0,w,h);
+        const cur = ctx.getImageData(0,0,w,h).data;
+        if (!prev){ prev = new Uint8ClampedArray(cur); return; }
+        let sx=0, n=0;
+        for (let y=0;y<h;y+=6){
+          for (let x=0;x<w;x+=6){
+            const i = (y*w+x)*4;
+            const d = Math.abs(cur[i]-prev[i]) + Math.abs(cur[i+1]-prev[i+1]) + Math.abs(cur[i+2]-prev[i+2]);
+            if (d > 60){ sx += x; n++; }
+          }
+        }
+        prev = new Uint8ClampedArray(cur);
+        if (n < 12){ sendMotors(0,0); return; }
+        const cx = sx / n;
+        const off = (cx - w/2)/(w/2);
+        const sp = state.speed;
+        ctx.strokeStyle = '#22d3ee'; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+        sendMotors(clamp(sp+off*sp,-255,255), clamp(sp-off*sp,-255,255));
+      },
+      stop(){ sendStop(); }
+    };
+  }
+
+  // ── Main loop ─────────────────────────────────────────────
+  let raf = 0;
+  function loop(){
+    raf = requestAnimationFrame(loop);
+    const v = document.getElementById('vid');
+    if (!state.stream || v.readyState < 2 || !state.runner) return;
+    const c = document.getElementById('ovl');
+    const w = c.width  = v.videoWidth  || 640;
+    const h = c.height = v.videoHeight || 480;
+    const ctx = c.getContext('2d', { willReadFrequently:true });
+    try { state.runner.tick(v, ctx, w, h); } catch(e){ /* swallow */ }
+    state.fpsCount++;
+    const now = performance.now();
+    if (now - state.fpsAt > 500){
+      state.fps = (state.fpsCount * 1000 / (now-state.fpsAt))|0;
+      state.fpsCount = 0; state.fpsAt = now;
+      document.getElementById('fps').textContent = state.fps;
+    }
+  }
+
+  function restartRunner(){
+    if (state.runner && state.runner.stop) try{ state.runner.stop(); }catch(e){}
+    clearWarn();
+    state.runner = makeRunner(state.mode);
+  }
+
+  // ── Mode switch + per-mode control panel ──────────────────
+  function setMode(m){
+    state.mode = m;
+    document.querySelectorAll('.mode-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.mode===m);
+    });
+    setL(state.lang);                  // refreshes title/lede
+    restartRunner();
+  }
+
+  function renderControls(){
+    const body = document.getElementById('ctrlBody');
+    const m = state.mode;
+    let html = '';
+    if (m==='colorzone'){
+      html += '<div class="row"><span>'+tr('lblTarget')+'</span></div>';
+      html += '<div class="swatches" id="sw">';
+      ['red','green','blue','yellow','cyan','white','off'].forEach(c=>{
+        html += '<div class="sw '+c+(state.color===c?' active':'')+'" data-c="'+c+'" title="'+c+'"></div>';
+      });
+      html += '</div>';
+      html += sliderRow('lblThreshold','threshold',20,140,state.threshold);
+      html += sliderRow('lblSpeed','speed',60,255,state.speed);
+    } else if (m==='light'){
+      html += sliderRow('lblSpeed','speed',60,255,state.speed);
+    } else if (m==='facesteer'){
+      html += sliderRow('lblFaceGain','faceGain',5,25,(state.faceGain*10)|0,'/10');
+      html += sliderRow('lblSpeed','speed',60,255,state.speed);
+    } else if (m==='cards'){
+      html += '<div class="row"><span>'+tr('lastCmd')+'</span><span class="telem" id="lastCmd">—</span></div>';
+      html += sliderRow('lblSpeed','speed',60,255,state.speed);
+      html += '<div style="margin-top:10px"><div class="qr-grid">'
+        + ['cmdFwd','cmdBack','cmdLeft','cmdRight','cmdSpin','cmdStop']
+            .map(k=>'<div class="qr-card"><div class="box"></div>'+tr(k)+'</div>').join('')
+        +'</div></div>';
+    } else if (m==='handwave'){
+      html += sliderRow('lblSpeed','speed',60,255,state.speed);
+    }
+    body.innerHTML = html;
+
+    // Wire swatches
+    body.querySelectorAll('.sw').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        state.color = el.dataset.c;
+        body.querySelectorAll('.sw').forEach(s=>s.classList.toggle('active', s.dataset.c===state.color));
+        // mirror on robot LED for visual feedback
+        const c = COLORS[state.color]; sendLed(c[0],c[1],c[2]);
+      });
+    });
+    // Wire sliders
+    body.querySelectorAll('input[type=range]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const k = inp.dataset.k;
+        let v = +inp.value;
+        if (k==='faceGain') v = v/10;
+        state[k] = v;
+        const lab = body.querySelector('[data-v="'+k+'"]');
+        if (lab) lab.textContent = inp.value + (inp.dataset.suffix||'');
+      });
+    });
+  }
+  function sliderRow(labelKey, k, min, max, val, suffix){
+    suffix = suffix || '';
+    return '<div class="row"><span>'+tr(labelKey)+'</span>'+
+      '<span><input type="range" min="'+min+'" max="'+max+'" value="'+val+
+        '" data-k="'+k+'" data-suffix="'+suffix+'" /> '+
+      '<span class="telem" data-v="'+k+'">'+val+suffix+'</span></span></div>';
+  }
+
+  // ── Wire UI ───────────────────────────────────────────────
+  function wire(){
+    const _ts = document.getElementById('themeSelect');
+    if (_ts) _ts.addEventListener('change', e=>applyTheme(e.target.value));
+    document.querySelectorAll('.lang-pills button').forEach(b=>{
+      b.addEventListener('click', ()=>setL(b.dataset.lang));
+    });
+    document.querySelectorAll('.mode-btn').forEach(b=>{
+      b.addEventListener('click', ()=>setMode(b.dataset.mode));
+    });
+    document.getElementById('btnConnect').addEventListener('click', bleConnect);
+    document.getElementById('btnCam').addEventListener('click', ()=>{
+      if (state.stream) stopCamera(); else startCamera();
+    });
+    document.getElementById('btnStop').addEventListener('click', sendStop);
+    window.addEventListener('keydown', e=>{
+      if (e.code==='Space'){ e.preventDefault(); sendStop(); }
+    });
+  }
+
+  // ── Boot ──────────────────────────────────────────────────
+  function boot(){
+    applyTheme(state.theme);
+    const _ts2 = document.getElementById('themeSelect');
+    if (_ts2) _ts2.value = state.theme;
+    setL(state.lang);
+    setMode(state.mode);
+    wire();
+    refreshPills();
+    requestAnimationFrame(loop);
+    if (window.LabLogger) LabLogger.mount('#labLogger', { surface: 'Vision Lab' });
+  }
+  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+</body>
+</html>

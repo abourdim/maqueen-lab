@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-<title>Joystick Lab · Robi-9 Lab</title>
+<title>Joystick Lab · Maqueen Lab</title>
 <link rel="stylesheet" href="../workshops/theme.css">
-<link rel="stylesheet" href="doc-shell.css">
+<link rel="stylesheet" href="lab-logger.css?v=6">
+<link rel="stylesheet" href="../docs/doc-shell.css">
 <script src="../workshops/newtab.js" defer></script>
+<script src="lab-logger.js?v=6" defer></script>
 <!-- Reuse the main app's BLE module (ble.js) via a tiny shim. -->
 <script src="../js/ble-shim.js"></script>
 <script src="../js/ble.js"></script>
@@ -214,18 +216,27 @@
   <div class="title-block">
     <div class="logo-mark">▣</div>
     <div>
-      <h1 data-i18n="header_title">Robi-9 Lab // Joystick Lab</h1>
+      <h1 data-i18n="header_title">Maqueen Lab // Joystick Lab</h1>
       <div class="subtitle" data-i18n="header_sub">30 ways to drive your robot · pick your favorite</div>
     </div>
   </div>
   <div class="wd-header-right">
-    <select class="wd-select" id="langSelect" aria-label="Language" onchange="setL(this.value)">
-      <option value="en" selected>🇬🇧 EN</option>
-      <option value="fr">🇫🇷 FR</option>
-      <option value="ar">🇩🇿 AR</option>
+    <select class="wd-select" id="themeSelect" aria-label="Theme">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
     </select>
+    <div class="lang-pills" role="radiogroup" aria-label="Language">
+      <button type="button" class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+      <button type="button" class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+      <button type="button" class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+    </div>
     <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_robot_app">🤖 Robot App</a>
-    <a class="wd-select" href="index.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_catalog">🗂️ Catalog</a>
+    <a class="wd-select" href="../docs/index.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_catalog">🗂️ Catalog</a>
+    <a class="wd-select" href="index.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_labs">🧪 Labs</a>
+    <a class="wd-select" href="../workshops/hub.html" style="text-decoration:none; border-bottom:none;" data-i18n="header_hub">🏠 Hub</a>
   </div>
 </header>
 
@@ -314,7 +325,7 @@
 <footer class="wd-footer">
   <span>powered by <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
   <span class="sep">·</span>
-  <span>Robi-9 Lab · Joystick Lab</span>
+  <span>Maqueen Lab · Joystick Lab</span>
 </footer>
 
 <script>
@@ -335,10 +346,12 @@
   // the main app key so language carries across pages).
   const T = {
     en: {
-      header_title: 'Robi-9 Lab // Joystick Lab',
+      header_title: 'Maqueen Lab // Joystick Lab',
       header_sub: '30 ways to drive your robot · pick your favorite',
       header_robot_app: '🤖 Robot App',
       header_catalog: '🗂️ Catalog',
+      header_labs: '🧪 Labs',
+      header_hub: '🏠 Hub',
       hero_title: '🕹️ Joystick Lab',
       hero_pitch: 'Thirty different ways to pilot your Robi-9 — from classic pads to whistling, beatboxing, drawing on canvas, and full webcam-driven gestures. Pick one, drive your robot, then pick another. Each input fires the same <code>M:L,R</code> verb under the hood.',
       not_connected: 'NOT CONNECTED',
@@ -377,12 +390,15 @@
       m_gest_t:'Gesture Shapes',     m_gest_s:'draw a shape',
       m_pen_t:'Pendulum',            m_pen_s:'swing physics',
       m_polar_t:'Polar Pad',         m_polar_s:'radial joystick',
+      ll_title:'MESSAGE LOG', ll_subtitle:'Raw UART messages', ll_clear:'Clear', ll_copy:'Copy', ll_export:'Export', ll_pin:'Pin',
     },
     fr: {
-      header_title: 'Robi-9 Lab // Joystick Lab',
+      header_title: 'Maqueen Lab // Joystick Lab',
       header_sub: '30 façons de piloter ton robot · choisis ta préférée',
       header_robot_app: '🤖 App Robot',
       header_catalog: '🗂️ Catalogue',
+      header_labs: '🧪 Labos',
+      header_hub: '🏠 Hub',
       hero_title: '🕹️ Joystick Lab',
       hero_pitch: 'Trente façons différentes de piloter ton Robi-9 — du pad classique au sifflement, beatbox, dessin sur canvas, et gestes par webcam. Choisis-en une, conduis ton robot, puis change. Chaque entrée envoie le même verbe <code>M:L,R</code> sous le capot.',
       not_connected: 'NON CONNECTÉ',
@@ -421,12 +437,15 @@
       m_gest_t:'Formes gestuelles',  m_gest_s:'dessine forme',
       m_pen_t:'Pendule',             m_pen_s:'physique balancier',
       m_polar_t:'Pad polaire',       m_polar_s:'joystick radial',
+      ll_title:'JOURNAL', ll_subtitle:'Messages UART bruts', ll_clear:'Effacer', ll_copy:'Copier', ll_export:'Exporter', ll_pin:'Épingler',
     },
     ar: {
-      header_title: 'Robi-9 Lab // مختبر الجويستيك',
+      header_title: 'Maqueen Lab // مختبر الجويستيك',
       header_sub: '30 طريقة لقيادة روبوتك · اختر المفضّلة',
       header_robot_app: '🤖 تطبيق الروبوت',
       header_catalog: '🗂️ الفهرس',
+      header_labs: '🧪 مختبرات',
+      header_hub: '🏠 المركز',
       hero_title: '🕹️ مختبر الجويستيك',
       hero_pitch: 'ثلاثون طريقة مختلفة لقيادة روبوتك Robi-9 — من اللوحة الكلاسيكيّة إلى الصفير، البيت بوكس، الرسم على لوح، والإيماءات بالكاميرا. اختر واحدة، قُد روبوتك، ثمّ بدّل. كلّ مدخل يُرسل نفس الفعل <code>M:L,R</code> تحت الغطاء.',
       not_connected: 'غير متّصل',
@@ -465,6 +484,7 @@
       m_gest_t:'أشكال إيمائية',         m_gest_s:'ارسم شكلاً',
       m_pen_t:'البندول',                m_pen_s:'فيزياء التأرجح',
       m_polar_t:'لوح قطبيّ',            m_polar_s:'جويستيك دائري',
+      ll_title:'سجل الرسائل', ll_subtitle:'رسائل UART الخام', ll_clear:'مسح', ll_copy:'نسخ', ll_export:'تصدير', ll_pin:'تثبيت',
     },
   };
   let curLang = 'en';
@@ -481,11 +501,29 @@
     });
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    const sel = document.getElementById('langSelect');
-    if (sel) sel.value = lang;
+    document.body.classList.toggle('rtl', lang === 'ar');
+    document.querySelectorAll('.lang-pill[data-lang]').forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
     try { localStorage.setItem('robi.lang', lang); } catch (e) {}
   }
-  window.setL = setL; // exposed so the <select onchange> can call it
+  window.setL = setL;
+  document.querySelectorAll('.lang-pill[data-lang]').forEach(btn => btn.addEventListener('click', () => setL(btn.dataset.lang)));
+
+  // ---- Theme picker (matches hub.html pattern, shared localStorage key) ----
+  const themeSel = document.getElementById('themeSelect');
+  function applyTheme(t) {
+    // Defensive: workshops/theme.css only knows these 5 themes. If a value
+    // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+    // fall back to carbon so we never apply a theme this stylesheet ignores.
+    var _validThemes = ['carbon','forest','steel','paper','pearl'];
+    if (_validThemes.indexOf(t) === -1) t = 'carbon';
+    document.documentElement.setAttribute('data-theme', t);
+    if (themeSel) themeSel.value = t;
+    try { localStorage.setItem('robi.theme', t); } catch (e) {}
+  }
+  if (themeSel) themeSel.addEventListener('change', e => applyTheme(e.target.value));
+  try {
+    const th = localStorage.getItem('robi.theme'); if (th) applyTheme(th);
+  } catch (e) {}
 
   // ---- Sidebar category tabs — single active category at a time ----
   function wireCatPersistence() {
@@ -1077,8 +1115,12 @@
 
   // Theme + lang inherit + persist category collapse states
   try {
-    const t = localStorage.getItem('robi.theme') || localStorage.getItem('mb_theme');
-    if (t) document.documentElement.setAttribute('data-theme', t);
+    // Use the canonical lab theme key only — main app's mb_theme uses a
+    // different palette (cosmos/workshop/sky/mint/etc) that workshops/theme.css
+    // doesn't know, so cross-reading would apply a broken data-theme. Funnel
+    // through applyTheme() so the 5-theme sanitizer kicks in.
+    const t = localStorage.getItem('robi.theme');
+    if (t && typeof applyTheme === 'function') applyTheme(t);
   } catch (e) {}
   try {
     const lang = localStorage.getItem('robi.lang') || 'en';
@@ -1088,8 +1130,23 @@
 
   // Spacebar = STOP everywhere
   document.addEventListener('keydown', e => { if (e.key === ' ' && document.activeElement.tagName !== 'INPUT') { stop(); e.preventDefault(); } });
+
+  // ---- Mount the family-standard MESSAGE LOG (right rail by default on desktop)
+  // The existing .verb-log above stays — it's the in-stage live verb-feed.
+  // The lab-logger captures everything (BLE TX/RX/status/log) into a separate panel
+  // that pins to the right side, matching the main app's MESSAGE LOG pattern.
+  function _mountJoyLogger() {
+    if (window.LabLogger) LabLogger.mount('#labLogger', { surface: 'Joystick Lab' });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _mountJoyLogger);
+  } else {
+    _mountJoyLogger();
+  }
 })();
 </script>
+
+<div id="labLogger" class="lab-logger-host"></div>
 
 </body>
 </html>

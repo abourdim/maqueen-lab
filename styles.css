@@ -6548,6 +6548,38 @@ div[style*="Sweep speed"] {
   #mqFabConnect { width: 72px; height: 72px; left:  12px; bottom: 12px; }
 }
 
+/* --- FLOATING LABS --- small bottom-center shortcut to /labs/ hub.
+   Smaller than STOP/CONNECT so it doesn't compete for attention,
+   no pulse animation (not safety-critical). Visible at all times. */
+#mqFabLabs {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9000;
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #a5f3fc, #0891b2 60%, #164e63);
+  color: #fff;
+  border: 3px solid #fff;
+  box-shadow: 0 6px 20px rgba(8,145,178,0.55), 0 0 0 3px rgba(0,0,0,0.25);
+  cursor: pointer;
+  text-decoration: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900;
+  transition: transform 0.1s, box-shadow 0.15s;
+}
+#mqFabLabs .mq-fab-icon  { font-size: 22px; line-height: 1; }
+#mqFabLabs .mq-fab-label { font-size: 9px; letter-spacing: 0.1em; margin-top: 1px; }
+#mqFabLabs:hover  { transform: translateX(-50%) scale(1.1); box-shadow: 0 10px 28px rgba(8,145,178,0.8), 0 0 0 3px rgba(0,0,0,0.3); }
+#mqFabLabs:active { transform: translateX(-50%) scale(0.92); }
+@media (max-width: 640px) {
+  #mqFabLabs { width: 52px; height: 52px; bottom: 24px; }
+  #mqFabLabs .mq-fab-icon  { font-size: 19px; }
+  #mqFabLabs .mq-fab-label { font-size: 8px; }
+}
+
 /* --- DENSITY PICKER MENU -------------------------------------- */
 .mq-density-menu {
   background: var(--card-bg, #0f1f3d);
@@ -7609,4 +7641,381 @@ aside.log-rail.has-connect > .log-rail-collapse-btn { display: flex; }
   background: rgba(56,189,248,0.35) !important;
   transform: scale(0.95) !important;
   transition: background 0.05s, transform 0.05s;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Joystick skins — switch via #mqJoyZone[data-skin="..."].
+   Geometry stays inline; visuals live here so each skin can
+   restyle cleanly without inline overrides. All skins inherit
+   the active theme through var(--accent).
+   ───────────────────────────────────────────────────────────── */
+#mqJoyZone .joy-disc    { position:absolute; inset:0; border-radius:50%; }
+#mqJoyZone .joy-cross-v { position:absolute; left:50%; top:0; bottom:0; width:1px; }
+#mqJoyZone .joy-cross-h { position:absolute; top:50%; left:0; right:0; height:1px; }
+#mqJoyZone .joy-thumb {
+  position:absolute; left:50%; top:50%;
+  width:48px; height:48px; margin-left:-24px; margin-top:-24px;
+  border-radius:50%;
+  box-shadow:0 4px 12px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3);
+  cursor:grab;
+  transition:transform 0.15s ease-out;
+}
+
+/* Classic — restore the previous look as the default skin. */
+#mqJoyZone[data-skin="classic"] .joy-disc {
+  background: radial-gradient(circle at 30% 30%, var(--bg-soft, #1d3556), var(--bg-card, #0a1628));
+  border: 2px dashed var(--accent, #fb923c);
+}
+#mqJoyZone[data-skin="classic"] .joy-cross-v,
+#mqJoyZone[data-skin="classic"] .joy-cross-h {
+  background: color-mix(in srgb, var(--accent, #fb923c) 22%, transparent);
+}
+#mqJoyZone[data-skin="classic"] .joy-thumb {
+  background: radial-gradient(circle at 30% 30%,
+    color-mix(in srgb, var(--accent, #fb923c) 15%, #ffffff),
+    var(--accent, #fb923c) 60%,
+    color-mix(in srgb, var(--accent, #fb923c) 70%, #000000));
+  border: 2px solid color-mix(in srgb, var(--accent, #fb923c) 65%, #000000);
+}
+
+/* Reactor — dark well, glowing accent orb, rotating containment ring. */
+#mqJoyZone[data-skin="reactor"] .joy-disc {
+  background: radial-gradient(circle at 50% 50%, #0a0a14 0%, #000 80%);
+  border: 1px solid color-mix(in srgb, var(--accent, #fb923c) 40%, #000);
+  overflow: hidden;
+}
+#mqJoyZone[data-skin="reactor"] .joy-disc::before {
+  content:''; position:absolute; inset:6px; border-radius:50%;
+  border: 2px dashed color-mix(in srgb, var(--accent, #fb923c) 60%, transparent);
+  animation: joyReactorSpin 6s linear infinite;
+  pointer-events:none;
+}
+#mqJoyZone[data-skin="reactor"] .joy-cross-v,
+#mqJoyZone[data-skin="reactor"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="reactor"] .joy-thumb {
+  background: radial-gradient(circle at 35% 35%, #ffffff,
+    var(--accent, #fb923c) 50%,
+    color-mix(in srgb, var(--accent, #fb923c) 50%, #000) 100%);
+  border: 1px solid color-mix(in srgb, var(--accent, #fb923c) 70%, #000);
+  animation: joyReactorPulse 1.6s ease-in-out infinite;
+}
+@keyframes joyReactorSpin { to { transform: rotate(360deg); } }
+@keyframes joyReactorPulse {
+  0%, 100% { box-shadow:
+    0 0 10px var(--accent, #fb923c),
+    0 0 20px color-mix(in srgb, var(--accent, #fb923c) 40%, transparent),
+    inset 0 -3px 6px rgba(0,0,0,0.3);
+  }
+  50% { box-shadow:
+    0 0 18px var(--accent, #fb923c),
+    0 0 36px color-mix(in srgb, var(--accent, #fb923c) 60%, transparent),
+    inset 0 -3px 6px rgba(0,0,0,0.3);
+  }
+}
+
+/* Eye tracker — sclera + iris/pupil, periodic blink. */
+#mqJoyZone[data-skin="eye"] .joy-disc {
+  background: radial-gradient(circle at 50% 50%, #ffffff 60%, #e2e8f0 100%);
+  border: 2px solid #1f2937;
+  overflow: hidden;
+}
+#mqJoyZone[data-skin="eye"] .joy-cross-v,
+#mqJoyZone[data-skin="eye"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="eye"] .joy-thumb {
+  width:56px; height:56px; margin-left:-28px; margin-top:-28px;
+  background: radial-gradient(circle at 50% 50%,
+    #0a0a14 28%,
+    var(--accent, #fb923c) 30%,
+    var(--accent, #fb923c) 78%,
+    color-mix(in srgb, var(--accent, #fb923c) 60%, #000) 100%);
+  border: 1px solid #1f2937;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.45);
+}
+/* Eyelid — flesh-tone disc that flicks shut briefly. */
+#mqJoyZone[data-skin="eye"]::before {
+  content:''; position:absolute; inset:0; border-radius:50%;
+  background: linear-gradient(180deg, #f5cf9c 0%, #e6b87a 100%);
+  z-index: 4; pointer-events:none;
+  transform: scaleY(0); transform-origin: center;
+  animation: joyEyeBlink 4.5s ease-in-out infinite;
+  border: 2px solid #1f2937;
+}
+@keyframes joyEyeBlink {
+  0%, 95%, 100% { transform: scaleY(0); }
+  97%, 98%      { transform: scaleY(1); }
+}
+
+/* Radar scope — concentric range rings + sweeping beam, reticle thumb. */
+#mqJoyZone[data-skin="radar"] .joy-disc {
+  background:
+    radial-gradient(circle at 50% 50%,
+      transparent 0, transparent 23%,
+      color-mix(in srgb, var(--accent, #fb923c) 28%, transparent) 23%,
+      color-mix(in srgb, var(--accent, #fb923c) 28%, transparent) 24%,
+      transparent 24%, transparent 46%,
+      color-mix(in srgb, var(--accent, #fb923c) 28%, transparent) 46%,
+      color-mix(in srgb, var(--accent, #fb923c) 28%, transparent) 47%,
+      transparent 47%, transparent 70%,
+      color-mix(in srgb, var(--accent, #fb923c) 28%, transparent) 70%,
+      color-mix(in srgb, var(--accent, #fb923c) 28%, transparent) 71%,
+      transparent 71%),
+    radial-gradient(circle at 50% 50%, #021014 0%, #051d22 100%);
+  border: 2px solid color-mix(in srgb, var(--accent, #fb923c) 60%, #000);
+  overflow: hidden;
+}
+#mqJoyZone[data-skin="radar"] .joy-disc::before {
+  content:''; position:absolute; inset:0; border-radius:50%;
+  background: conic-gradient(from 0deg,
+    transparent 0deg,
+    color-mix(in srgb, var(--accent, #fb923c) 65%, transparent) 25deg,
+    transparent 60deg,
+    transparent 360deg);
+  animation: joyRadarSweep 3s linear infinite;
+  mix-blend-mode: screen;
+  pointer-events:none;
+}
+#mqJoyZone[data-skin="radar"] .joy-cross-v,
+#mqJoyZone[data-skin="radar"] .joy-cross-h {
+  background: color-mix(in srgb, var(--accent, #fb923c) 35%, transparent);
+}
+#mqJoyZone[data-skin="radar"] .joy-thumb {
+  width:26px; height:26px; margin-left:-13px; margin-top:-13px;
+  background: transparent;
+  border: 2px solid var(--accent, #fb923c);
+  box-shadow: 0 0 8px var(--accent, #fb923c), inset 0 0 0 1px rgba(255,255,255,0.2);
+}
+#mqJoyZone[data-skin="radar"] .joy-thumb::before {
+  content:''; position:absolute; inset:8px; border-radius:50%;
+  background: var(--accent, #fb923c);
+}
+@keyframes joyRadarSweep { to { transform: rotate(360deg); } }
+
+/* Hex grid pad — industrial honeycomb tile + black knurled knob with accent dot. */
+#mqJoyZone[data-skin="hex"] .joy-disc {
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32' fill='none' stroke='%23394150' stroke-width='1.2'><polygon points='14,2 26,9 26,23 14,30 2,23 2,9'/></svg>") 0 0/16px 18px,
+    radial-gradient(circle at 50% 50%, #1a1d24, #0a0c10);
+  border: 1px solid color-mix(in srgb, var(--accent, #fb923c) 35%, #000);
+}
+#mqJoyZone[data-skin="hex"] .joy-cross-v,
+#mqJoyZone[data-skin="hex"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="hex"] .joy-thumb {
+  background: radial-gradient(circle at 30% 30%, #4a4a52, #1a1a20 60%, #000);
+  border: 2px solid #000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.7), inset 0 -3px 6px rgba(0,0,0,0.5);
+}
+#mqJoyZone[data-skin="hex"] .joy-thumb::before {
+  content:''; position:absolute; left:50%; top:50%; width:10px; height:10px; margin:-5px;
+  border-radius:50%; background: var(--accent, #fb923c);
+  box-shadow: 0 0 8px var(--accent, #fb923c);
+}
+
+/* Crosshair scope — clean tactical look with inner reticle ring and accent crosshairs. */
+#mqJoyZone[data-skin="crosshair"] .joy-disc {
+  background: radial-gradient(circle, #0a0e12, #000);
+  border: 2px solid color-mix(in srgb, var(--accent, #fb923c) 70%, #000);
+}
+#mqJoyZone[data-skin="crosshair"] .joy-disc::before {
+  content:''; position:absolute; inset:30%; border-radius:50%;
+  border: 1px solid color-mix(in srgb, var(--accent, #fb923c) 55%, transparent);
+  pointer-events:none;
+}
+#mqJoyZone[data-skin="crosshair"] .joy-cross-v,
+#mqJoyZone[data-skin="crosshair"] .joy-cross-h {
+  background: color-mix(in srgb, var(--accent, #fb923c) 75%, transparent);
+}
+#mqJoyZone[data-skin="crosshair"] .joy-thumb {
+  width:14px; height:14px; margin-left:-7px; margin-top:-7px;
+  background: var(--accent, #fb923c);
+  border: 1px solid #000;
+  box-shadow: 0 0 8px var(--accent, #fb923c);
+}
+
+/* Gauge dial — speedometer face, accent zone arc, needle thumb. */
+#mqJoyZone[data-skin="gauge"] .joy-disc {
+  background:
+    conic-gradient(from 225deg,
+      transparent 0deg, transparent 235deg,
+      color-mix(in srgb, var(--accent, #fb923c) 70%, transparent) 235deg,
+      color-mix(in srgb, var(--accent, #fb923c) 70%, transparent) 270deg,
+      transparent 270deg),
+    radial-gradient(circle at 50% 50%, #f4f4f5 0%, #d4d4d8 100%);
+  border: 4px solid #18181b;
+  box-shadow: inset 0 0 0 2px #71717a;
+}
+#mqJoyZone[data-skin="gauge"] .joy-cross-v,
+#mqJoyZone[data-skin="gauge"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="gauge"] .joy-thumb {
+  width:8px; height:54px; margin-left:-4px; margin-top:-27px;
+  background: linear-gradient(to top, #18181b 0%, #18181b 55%, #dc2626 55%, #dc2626 100%);
+  border-radius: 4px;
+  border: 1px solid #18181b;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+#mqJoyZone[data-skin="gauge"] .joy-thumb::before {
+  content:''; position:absolute; left:50%; top:50%; width:14px; height:14px; margin:-7px;
+  border-radius:50%; background:#18181b;
+  box-shadow: inset 0 0 0 2px var(--accent, #fb923c);
+}
+
+/* Holo-pad — translucent scanlines + accent glow + chrome puck thumb. */
+#mqJoyZone[data-skin="holo"] .joy-disc {
+  background:
+    repeating-linear-gradient(0deg,
+      transparent 0, transparent 4px,
+      color-mix(in srgb, var(--accent, #fb923c) 14%, transparent) 4px,
+      color-mix(in srgb, var(--accent, #fb923c) 14%, transparent) 5px),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent, #fb923c) 22%, transparent), transparent 70%),
+    radial-gradient(circle at 50% 50%, #0a0f1f, #050810);
+  border: 1px solid color-mix(in srgb, var(--accent, #fb923c) 50%, transparent);
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--accent, #fb923c) 35%, transparent),
+    inset 0 0 24px color-mix(in srgb, var(--accent, #fb923c) 22%, transparent);
+}
+#mqJoyZone[data-skin="holo"] .joy-cross-v,
+#mqJoyZone[data-skin="holo"] .joy-cross-h {
+  background: color-mix(in srgb, var(--accent, #fb923c) 45%, transparent);
+}
+#mqJoyZone[data-skin="holo"] .joy-thumb {
+  background: radial-gradient(circle at 30% 30%, #f4f4f5, #a1a1aa 60%, #52525b);
+  border: 1px solid #71717a;
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--accent, #fb923c) 70%, transparent),
+    0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* Mech cockpit — square frame with corner brackets, caution-stripe knob. */
+#mqJoyZone[data-skin="mech"] .joy-disc {
+  background: linear-gradient(135deg, #1f2937, #0f1419);
+  border: 2px solid #4b5563;
+  border-radius: 12px;
+}
+#mqJoyZone[data-skin="mech"] .joy-disc::before {
+  content:''; position:absolute; inset:6px; pointer-events:none;
+  background:
+    linear-gradient(to right, var(--accent, #fb923c) 0, var(--accent, #fb923c) 18px, transparent 18px) top left/100% 2px no-repeat,
+    linear-gradient(to bottom, var(--accent, #fb923c) 0, var(--accent, #fb923c) 18px, transparent 18px) top left/2px 100% no-repeat,
+    linear-gradient(to left, var(--accent, #fb923c) 0, var(--accent, #fb923c) 18px, transparent 18px) top right/100% 2px no-repeat,
+    linear-gradient(to bottom, var(--accent, #fb923c) 0, var(--accent, #fb923c) 18px, transparent 18px) top right/2px 100% no-repeat,
+    linear-gradient(to right, var(--accent, #fb923c) 0, var(--accent, #fb923c) 18px, transparent 18px) bottom left/100% 2px no-repeat,
+    linear-gradient(to top, var(--accent, #fb923c) 0, var(--accent, #fb923c) 18px, transparent 18px) bottom left/2px 100% no-repeat,
+    linear-gradient(to left, var(--accent, #fb923c) 0, var(--accent, #fb923c) 18px, transparent 18px) bottom right/100% 2px no-repeat,
+    linear-gradient(to top, var(--accent, #fb923c) 0, var(--accent, #fb923c) 18px, transparent 18px) bottom right/2px 100% no-repeat;
+}
+#mqJoyZone[data-skin="mech"] .joy-cross-v,
+#mqJoyZone[data-skin="mech"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="mech"] .joy-thumb {
+  background:
+    linear-gradient(to bottom,
+      #4b5563 0%, #4b5563 35%,
+      #fbbf24 35%, #fbbf24 38%,
+      #18181b 38%, #18181b 42%,
+      #fbbf24 42%, #fbbf24 45%,
+      #4b5563 45%, #1f2937 100%);
+  border: 2px solid #1f2937;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 -3px 6px rgba(0,0,0,0.4);
+}
+
+/* Arcade ball-top — black octagonal restrictor, glossy spherical thumb. */
+#mqJoyZone[data-skin="arcade"] .joy-disc {
+  background: #0a0a0a;
+  border-radius: 0;
+  clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+  box-shadow:
+    inset 0 0 0 6px #1a1a1a,
+    inset 0 0 0 8px var(--accent, #fb923c);
+}
+#mqJoyZone[data-skin="arcade"] .joy-cross-v,
+#mqJoyZone[data-skin="arcade"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="arcade"] .joy-thumb {
+  width:60px; height:60px; margin-left:-30px; margin-top:-30px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 28%),
+    radial-gradient(circle at 30% 30%,
+      color-mix(in srgb, var(--accent, #fb923c) 30%, #fff),
+      var(--accent, #fb923c) 50%,
+      color-mix(in srgb, var(--accent, #fb923c) 50%, #000));
+  border: 2px solid color-mix(in srgb, var(--accent, #fb923c) 60%, #000);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.7), inset 0 -6px 10px rgba(0,0,0,0.4);
+}
+
+/* D-pad cross — Nintendo-style + shape with accent center thumb. */
+#mqJoyZone[data-skin="dpad"] .joy-disc {
+  background: linear-gradient(180deg, #18181b, #0a0a0a);
+  border-radius: 0;
+  clip-path: polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%);
+  box-shadow: inset 0 0 0 2px var(--accent, #fb923c);
+}
+#mqJoyZone[data-skin="dpad"] .joy-cross-v,
+#mqJoyZone[data-skin="dpad"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="dpad"] .joy-thumb {
+  width:36px; height:36px; margin-left:-18px; margin-top:-18px;
+  background: radial-gradient(circle at 35% 35%,
+    color-mix(in srgb, var(--accent, #fb923c) 25%, #fff),
+    var(--accent, #fb923c) 60%);
+  border: 2px solid #fff;
+  box-shadow: 0 0 12px var(--accent, #fb923c);
+}
+
+/* Pixel art — chunky 8-bit checkerboard, square sprite thumb. */
+#mqJoyZone[data-skin="pixel"] .joy-disc {
+  background: repeating-conic-gradient(#1a1a1a 0% 25%, #2a2a2a 0% 50%) 0 0/14px 14px;
+  border-radius: 0;
+  border: 3px solid var(--accent, #fb923c);
+  image-rendering: pixelated;
+}
+#mqJoyZone[data-skin="pixel"] .joy-cross-v,
+#mqJoyZone[data-skin="pixel"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="pixel"] .joy-thumb {
+  width:24px; height:24px; margin-left:-12px; margin-top:-12px;
+  background: var(--accent, #fb923c);
+  border-radius: 0;
+  border: 2px solid #fff;
+  box-shadow: 4px 4px 0 #000;
+}
+
+/* Compass — brass/parchment face with N/E/S/W cardinal letters and red needle. */
+#mqJoyZone[data-skin="compass"] .joy-disc {
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g font-family='Georgia,serif' font-size='12' font-weight='bold' fill='%23451a03' text-anchor='middle'><text x='50' y='15'>N</text><text x='50' y='94'>S</text><text x='9' y='54'>W</text><text x='91' y='54'>E</text></g></svg>") 0 0/100% 100% no-repeat,
+    radial-gradient(circle at 50% 50%, #fef3c7 0%, #d97706 100%);
+  border: 4px solid #78350f;
+  box-shadow: inset 0 0 0 2px #92400e;
+}
+#mqJoyZone[data-skin="compass"] .joy-cross-v,
+#mqJoyZone[data-skin="compass"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="compass"] .joy-thumb {
+  width:10px; height:64px; margin-left:-5px; margin-top:-32px;
+  background: linear-gradient(to bottom, #dc2626 0%, #dc2626 50%, #f4f4f5 50%, #f4f4f5 100%);
+  border-radius: 5px;
+  border: 1px solid #18181b;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+#mqJoyZone[data-skin="compass"] .joy-thumb::before {
+  content:''; position:absolute; left:50%; top:50%; width:14px; height:14px; margin:-7px;
+  border-radius:50%; background:#18181b;
+  box-shadow: inset 0 0 0 2px #fbbf24;
+}
+
+/* Hover puck — chrome disc floating over a soft accent halo on the pad. */
+#mqJoyZone[data-skin="puck"] .joy-disc {
+  background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050510 100%);
+  border: 1px solid #1f2937;
+  box-shadow: inset 0 0 30px color-mix(in srgb, var(--accent, #fb923c) 28%, transparent);
+}
+#mqJoyZone[data-skin="puck"] .joy-disc::before {
+  content:''; position:absolute; inset:38%; border-radius:50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent, #fb923c) 60%, transparent), transparent 70%);
+  filter: blur(4px);
+  pointer-events:none;
+}
+#mqJoyZone[data-skin="puck"] .joy-cross-v,
+#mqJoyZone[data-skin="puck"] .joy-cross-h { display:none; }
+#mqJoyZone[data-skin="puck"] .joy-thumb {
+  width:50px; height:50px; margin-left:-25px; margin-top:-25px;
+  background: radial-gradient(circle at 30% 30%, #f4f4f5 0%, #a1a1aa 50%, #52525b 100%);
+  border: 2px solid #71717a;
+  box-shadow:
+    0 12px 20px rgba(0,0,0,0.7),
+    0 0 14px color-mix(in srgb, var(--accent, #fb923c) 70%, transparent);
 }

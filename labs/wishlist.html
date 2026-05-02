@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Wishlist · Maqueen Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<script src="../workshops/newtab.js" defer></script>
+<style>
+  /* Wishlist hub — sibling of /labs/index.html. Same theme palette and
+     mascot family; dimmer card surface and a "WISHLIST" badge instead of
+     "COMING SOON" so it reads as proposed-not-promised. Voting is local
+     (localStorage) — kids see their tally instantly; team gets a real
+     signal via the "Send my picks" mailto button at the bottom.          */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); }
+  body {
+    font-family: var(--font-body);
+    line-height: 1.55;
+    min-height: 100vh;
+    padding-bottom: 80px;
+    background:
+      radial-gradient(ellipse at 15% -10%, var(--hero-glow), transparent 55%),
+      radial-gradient(ellipse at 90% 110%, var(--hero-glow), transparent 60%),
+      var(--bg);
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 22px; }
+
+  .hero { text-align: center; padding: 36px 22px 16px; max-width: 900px; margin: 0 auto; }
+  .hero .badge-line {
+    display: inline-block;
+    background: var(--bg-card);
+    border: 2px solid var(--amber);
+    color: var(--amber);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-family: var(--font-tech);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .hero .robi { width: 120px; height: 120px; margin: 6px auto 14px; }
+  .hero .robi svg { width: 100%; height: 100%; filter: drop-shadow(0 6px 22px var(--hero-glow)); }
+  @keyframes robi-blink   { 0%, 92%, 100% { opacity: 1; } 95% { opacity: 0; } }
+  @keyframes robi-antenna { 0%, 100% { transform: scale(1); fill: var(--amber); } 50% { transform: scale(1.4); fill: var(--orange); } }
+  @keyframes robi-led     { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .hero .robi .eyes circle { animation: robi-blink 4s ease-in-out infinite; transform-origin: center; }
+  .hero .robi .antenna     { animation: robi-antenna 1.6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  .hero .robi .led-l       { animation: robi-led 1.4s ease-in-out infinite; }
+  .hero .robi .led-r       { animation: robi-led 1.4s ease-in-out 0.7s infinite; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    color: var(--amber);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .hero .sub { color: var(--text); font-size: 1rem; max-width: 640px; margin: 0 auto 14px; }
+
+  /* Live tally banner — shows star count vs cap (3) + total vote count */
+  .tally {
+    display: inline-flex; align-items: center; gap: 14px;
+    padding: 8px 16px;
+    background: var(--bg-card);
+    border: 1px solid rgba(251,191,36,0.35);
+    border-radius: 999px;
+    font-size: 0.9rem;
+  }
+  .tally b { color: var(--amber); font-weight: 700; }
+
+  /* Cluster section — same shell as labs/index.html .sec but with subtle tint
+     per cluster so the hub feels organized without rainbows. */
+  .sec {
+    margin-top: 30px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-card);
+  }
+  .sec h2 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+  .sec .lead { color: var(--text); font-size: 0.88rem; margin-bottom: 14px; opacity: 0.75; }
+  .sec.play  { border-color: rgba(56,189,248,0.40); }   /* cyan   */
+  .sec.smart { border-color: rgba(74,222,128,0.40); }   /* neon   */
+  .sec.hack  { border-color: rgba(34,211,238,0.40); }   /* sky    */
+  .sec.build { border-color: rgba(251,191,36,0.40); }   /* amber  */
+  .sec.sense { border-color: rgba(167,139,250,0.40); }  /* steel  — used as muted accent */
+  .sec.play  h2 { color: var(--cyan); }
+  .sec.smart h2 { color: var(--neon); }
+  .sec.hack  h2 { color: #22d3ee; }
+  .sec.build h2 { color: var(--amber); }
+  .sec.sense h2 { color: var(--steel); }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+
+  .idea {
+    background: var(--bg-soft);
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    padding: 14px 16px 12px;
+    color: var(--text);
+    display: flex; flex-direction: column;
+    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+    position: relative;
+  }
+  .idea:hover { transform: translateY(-2px); border-color: var(--amber); box-shadow: 0 6px 18px rgba(251,191,36,0.12); }
+  .idea.starred { border-color: var(--amber); background: linear-gradient(135deg, var(--bg-soft), rgba(251,191,36,0.05)); border-style: solid; }
+  .idea .top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+  .idea .ic {
+    font-size: 1.35rem; line-height: 1;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .idea h3 { font-family: var(--font-display); font-size: 1rem; color: var(--text); line-height: 1.2; margin-bottom: 2px; }
+  .idea .pitch { font-size: 0.86rem; color: var(--text); opacity: 0.85; line-height: 1.4; margin: 4px 0 10px; }
+
+  /* Top-right pair of small badges: hardware needs + skill tier */
+  .badges { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
+  .badge {
+    font-size: 0.62rem; font-weight: 800; letter-spacing: 0.05em;
+    padding: 2px 6px; border-radius: 999px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--steel);
+  }
+  .badge.parts { color: var(--amber); border-color: rgba(251,191,36,0.4); }
+  .badge.bare  { color: var(--neon);  border-color: rgba(74,222,128,0.4); }
+  .badge.beg   { color: var(--cyan);  border-color: rgba(56,189,248,0.4); }
+  .badge.std   { color: var(--neon);  border-color: rgba(74,222,128,0.4); }
+  .badge.hack  { color: #22d3ee;      border-color: rgba(34,211,238,0.4); }
+
+  /* Vote row at bottom — 👍 + count + ⭐ toggle */
+  .vote-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+  }
+  .vote-btn, .star-btn {
+    flex: 1;
+    padding: 6px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font: inherit; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+  }
+  .vote-btn:hover { border-color: var(--neon); color: var(--neon); }
+  .vote-btn .count { font-family: var(--font-tech); font-weight: 700; }
+  .star-btn:hover { border-color: var(--amber); color: var(--amber); }
+  .idea.starred .star-btn { background: var(--amber); color: var(--ink); border-color: var(--amber); }
+  .star-btn .star-glyph { transition: transform 0.15s; }
+  .idea.starred .star-glyph { transform: scale(1.15); }
+
+  /* Send-picks footer */
+  .send-row {
+    margin-top: 30px;
+    padding: 22px;
+    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1.5px solid rgba(251,191,36,0.4);
+    text-align: center;
+  }
+  .send-row h2 { font-family: var(--font-display); font-size: 1.2rem; color: var(--amber); margin-bottom: 8px; }
+  .send-row .picks-preview { font-size: 0.85rem; opacity: 0.85; margin-bottom: 14px; min-height: 1.4em; }
+  .send-row .send-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 22px;
+    background: var(--amber); color: var(--ink);
+    border: 2px solid var(--amber);
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .send-row .send-btn:hover  { background: var(--orange); transform: translateY(-1px); }
+  .send-row .send-btn[aria-disabled="true"] { opacity: 0.45; pointer-events: none; }
+  .send-row .gh-link { display: inline-block; margin-left: 12px; font-size: 0.85rem; color: var(--steel); text-decoration: none; }
+  .send-row .gh-link:hover { color: var(--neon); }
+
+  /* Back link */
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 24px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .back:hover { border-color: var(--neon); color: var(--neon); }
+</style>
+</head>
+<body>
+
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1 data-i18n="header_title">Maqueen Lab // Wishlist</h1>
+      <div class="subtitle" data-i18n="header_subtitle">Vote on the labs we should build next</div>
+    </div>
+  </div>
+  <div class="wd-header-right">
+    <select class="wd-select" id="themeSelect" aria-label="Theme">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <div class="lang-pills" role="radiogroup" aria-label="Language">
+      <button type="button" class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+      <button type="button" class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+      <button type="button" class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+    </div>
+    <a href="../index.html"      class="wd-select" style="text-decoration:none;">🤖 Robot App</a>
+    <a href="../docs/index.html" class="wd-select" style="text-decoration:none;">🗂️ Catalog</a>
+    <a href="index.html"         class="wd-select" style="text-decoration:none;">🧪 Labs</a>
+    <a href="../workshops/hub.html" class="wd-select" style="text-decoration:none;">🏠 Hub</a>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="badge-line" data-i18n="hero_badge">▸ WISHLIST</span>
+  <div class="robi" aria-hidden="true">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <line x1="60" y1="6" x2="60" y2="22" stroke="var(--cyan)" stroke-width="3" stroke-linecap="round"/>
+      <circle class="antenna" cx="60" cy="5" r="4" fill="var(--amber)"/>
+      <circle cx="60" cy="5" r="7" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5"/>
+      <rect x="26" y="22" width="68" height="50" rx="14" fill="var(--bg-soft)" stroke="var(--amber)" stroke-width="2.5"/>
+      <rect x="34" y="34" width="52" height="24" rx="6" fill="var(--ink)" stroke="var(--cyan)" stroke-width="2"/>
+      <g class="eyes">
+        <circle cx="46" cy="46" r="3.5" fill="var(--amber)"/>
+        <circle cx="74" cy="46" r="3.5" fill="var(--amber)"/>
+      </g>
+      <circle cx="46" cy="46" r="6" fill="var(--amber)" opacity="0.15"/>
+      <circle cx="74" cy="46" r="6" fill="var(--amber)" opacity="0.15"/>
+      <path d="M 42 66 L 78 66" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="48" cy="66" r="1.2" fill="var(--cyan)"/>
+      <circle cx="60" cy="66" r="1.2" fill="var(--cyan)"/>
+      <circle cx="72" cy="66" r="1.2" fill="var(--cyan)"/>
+      <rect x="32" y="72" width="56" height="28" rx="6" fill="var(--bg-soft)" stroke="var(--amber)" stroke-width="2"/>
+      <rect x="38" y="78" width="44" height="14" rx="3" fill="var(--ink)" stroke="var(--border)"/>
+      <line x1="42" y1="85" x2="56" y2="85" stroke="var(--amber)" stroke-width="1.5"/>
+      <line x1="42" y1="88" x2="62" y2="88" stroke="var(--cyan)" stroke-width="1.2" opacity="0.7"/>
+      <circle class="led-l" cx="44" cy="96" r="2" fill="var(--amber)"/>
+      <circle class="led-r" cx="76" cy="96" r="2" fill="var(--orange)"/>
+      <rect x="14" y="76" width="14" height="18" rx="4" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>
+      <rect x="92" y="76" width="14" height="18" rx="4" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>
+      <ellipse cx="40" cy="106" rx="8" ry="4" fill="var(--ink)" stroke="var(--amber)" stroke-width="1.5"/>
+      <ellipse cx="80" cy="106" rx="8" ry="4" fill="var(--ink)" stroke="var(--amber)" stroke-width="1.5"/>
+    </svg>
+  </div>
+  <h1 data-i18n="hero_title">Lab Wishlist</h1>
+  <p class="sub" data-i18n="hero_sub">27 lab ideas waiting to be built. Click 👍 to vote — pick up to <b>3 favorites</b> with the ⭐ button — then send your top 3 to the team. We build what kids ask for.</p>
+  <div class="tally">
+    <span><b id="starCount">0</b> / 3 <span data-i18n="tally_starred">starred</span></span>
+    <span><b id="totalVotes">0</b> <span data-i18n="tally_votes">votes</span></span>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <!-- ============ 🎮 PLAY ============ -->
+  <section class="sec play">
+    <h2 data-i18n="cl_play_h">🎮 Play</h2>
+    <p class="lead" data-i18n="cl_play_lead">Game-style labs. Print a track, grab a pen, find a friend with another bot.</p>
+    <div class="cards">
+      <div class="idea" data-id="swarm">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts">+BOTS</span><span class="badge std" data-i18n="badge_std">STANDARD</span></div>
+        <div class="top"><div class="ic">🐙</div><div><h3 data-i18n="i_swarm_h">Swarm Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_swarm_p">Control 2–4 bots from one phone. Formations, follow-the-leader, mirror mode, simultaneous start. Two-kid social play.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="drawing">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts_pen">+PEN</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">✏️</div><div><h3 data-i18n="i_drawing_h">Drawing Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_drawing_p">Clip a felt-tip pen to the bot. Spirograph mode (math), polygon mode (geometry), free mode (art). Take the drawing home.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="race">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">🏁</div><div><h3 data-i18n="i_race_h">Race Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_race_p">Line-following race on a printed track. Lap timer, leaderboard, ghost replay. Race siblings.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="sumo">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts">+BOTS</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">🥊</div><div><h3 data-i18n="i_sumo_h">Sumo Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_sumo_p">Two bots, one ring. Push the other off the IR-marked edge. 60-second matches. Brackets and championship mode.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="story">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts_cards">+CARDS</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">📜</div><div><h3 data-i18n="i_story_h">Storyteller Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_story_p">Bot drives between scene-cards on the floor. Each card triggers a sound, light, motion. Kid scripts the narrative.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="slow">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">🐌</div><div><h3 data-i18n="i_slow_h">Slow Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_slow_p">Move as slowly as possible. Smoothness scoring. Surprisingly meditative; tests motor calibration in disguise.</p>
+        <div class="vote-row"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 🐙 SMART & SOCIAL ============ -->
+  <section class="sec smart">
+    <h2 data-i18n="cl_smart_h">🐙 Smart &amp; social</h2>
+    <p class="lead" data-i18n="cl_smart_lead">Train it, mimic it, give it a personality. Single-bot or multi-bot.</p>
+    <div class="cards">
+      <div class="idea" data-id="behavior">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge std" data-i18n="badge_std">STANDARD</span></div>
+        <div class="top"><div class="ic">🎯</div><div><h3 data-i18n="i_behavior_h">Behavior Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_behavior_p">Drag-block visual programming. <em>If wall → turn. If line lost → beep.</em> Generates equivalent MakeCode at the bottom.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="trick">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">🐾</div><div><h3 data-i18n="i_trick_h">Trick Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_trick_p">Train your bot. Clap a pattern → bot learns. <em>Clap-clap = spin.</em> Kid teaches robot, not the other way around.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="hunt">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">🗺</div><div><h3 data-i18n="i_hunt_h">Treasure Hunt Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_hunt_p">Phone shows virtual map; bot is "blind". Kid pieces together what's in the room from sensor reports. Pirate vibes.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="mirror">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts">+BOTS</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">🪞</div><div><h3 data-i18n="i_mirror_h">Mirror Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_mirror_p">One bot mimics another via radio. Pure two-bot symmetry play. Foundation for swarm work.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="personality">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">🧠</div><div><h3 data-i18n="i_pers_h">Personality Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_pers_p">Mix your own robot personality. 4 sliders (boldness · chattiness · sleepiness · explorer-ness). Save as named profiles.</p>
+        <div class="vote-row"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 🥷 HACK ============ -->
+  <section class="sec hack">
+    <h2 data-i18n="cl_hack_h">🥷 Hack — see the matrix</h2>
+    <p class="lead" data-i18n="cl_hack_lead">Look under the hood. Sniff packets, bend protocols, clone signals, encrypt bot-chat.</p>
+    <div class="cards">
+      <div class="idea" data-id="ble">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">📡</div><div><h3 data-i18n="i_ble_h">BLE Sniffer Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_ble_p">Live hex dump of every byte phone ↔ bot. Annotated decoder. Replay any past command. Mr. Robot vibes.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="protocol">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">🧬</div><div><h3 data-i18n="i_proto_h">Protocol Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_proto_p">Invent your own command verbs. Define <code>WIGGLE</code> = motors L=100, R=−100 for 200ms. Compiles and runs.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="fuzz">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">🥷</div><div><h3 data-i18n="i_fuzz_h">Fuzz Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_fuzz_p">Send malformed bytes; see what breaks. Auto-stops on real damage. Leaderboard for smallest crashing payload.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="identity">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">🎭</div><div><h3 data-i18n="i_id_h">Identity Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_id_p">Change the bot's BLE name &amp; MAC. Pretend to be <code>NotARobot</code>. Save multiple identities.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="ircap">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">🔓</div><div><h3 data-i18n="i_ircap_h">IR Capture Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_ircap_p">Clone any TV/AC remote. Point, capture, replay. Bot becomes a universal remote. Includes mischief mode.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="cipher">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts">+BOTS</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">🔐</div><div><h3 data-i18n="i_cipher_h">Cipher Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_cipher_p">Two bots talk in encrypted radio. Caesar → ROT13 → XOR. Kid breaks the cipher. Crypto kindergarten.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="walkie">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts">+BOTS</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">📻</div><div><h3 data-i18n="i_walkie_h">Walkie Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_walkie_p">Off-grid bot ↔ bot radio chat. No phone. Foundation for swarm work.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="worm">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts">+BOTS</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">🦠</div><div><h3 data-i18n="i_worm_h">Worm Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_worm_p">Multi-bot radio chain propagation. Visualize the spread on phone. Then: build a stop-the-worm command.</p>
+        <div class="vote-row"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 🔧 BUILD ============ -->
+  <section class="sec build">
+    <h2 data-i18n="cl_build_h">🔧 Build — extend the hardware</h2>
+    <p class="lead" data-i18n="cl_build_lead">Add components, print accessories, measure power. The lab kit grows with the kid.</p>
+    <div class="cards">
+      <div class="idea" data-id="copilot">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts_mb">+MICRO:BIT</span><span class="badge std" data-i18n="badge_std">STANDARD</span></div>
+        <div class="top"><div class="ic">🛰</div><div><h3 data-i18n="i_copilot_h">Co-Pilot Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_copilot_p">Pair a 2nd micro:bit as a radio gateway. <strong>Foundation lab</strong> — unlocks Lights wand, Walkie, Cipher, Worm, Add-on. Sidesteps BLE/NeoPixel timing limits.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="mod">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts_kit">+KIT</span><span class="badge std" data-i18n="badge_std">STANDARD</span></div>
+        <div class="top"><div class="ic">🛠</div><div><h3 data-i18n="i_mod_h">Mod Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_mod_p">Interactive wiring guide for add-ons: 2nd servo · OLED · gas sensor · color sensor. SVG schematics + MakeCode + "test it" buttons.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="cad">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts_3d">+3D PRINT</span><span class="badge std" data-i18n="badge_std">STANDARD</span></div>
+        <div class="top"><div class="ic">📐</div><div><h3 data-i18n="i_cad_h">CAD Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_cad_p">Gallery of 3D-printable bot accessories: servo claw, sensor mount, FPV phone holder, parade hat. Download STL.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="power">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">⚡</div><div><h3 data-i18n="i_power_h">Power Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_power_p">Real-time current draw + runtime simulator. <em>"What if I add 10 NeoPixels?"</em> Engineering-grade.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="addon">
+        <div class="badges"><span class="badge parts" data-i18n="badge_parts_i2c">+I²C SENSOR</span><span class="badge hack" data-i18n="badge_hack">HACKER</span></div>
+        <div class="top"><div class="ic">🤖</div><div><h3 data-i18n="i_addon_h">Add-on Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_addon_p">Plug-and-play I²C sensor pairing wizard. Detects gas / IMU / color / ToF. Exposes new readings to other labs.</p>
+        <div class="vote-row"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 👁 SENSE ============ -->
+  <section class="sec sense">
+    <h2 data-i18n="cl_sense_h">👁 Sense — the bot's superpowers</h2>
+    <p class="lead" data-i18n="cl_sense_lead">Compass, logging, diagnostics. The grown-up engineering side of the toolkit.</p>
+    <div class="cards">
+      <div class="idea" data-id="compass">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge beg" data-i18n="badge_beg">EASY</span></div>
+        <div class="top"><div class="ic">🧭</div><div><h3 data-i18n="i_comp_h">Compass Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_comp_p">Drive due north. Magnetic treasure hunt with metal objects. Uses the built-in micro:bit compass.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="logger">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge std" data-i18n="badge_std">STANDARD</span></div>
+        <div class="top"><div class="ic">📊</div><div><h3 data-i18n="i_log_h">Logger Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_log_p">Record all sensor readings, plot multi-line graphs, export CSV. For older kids and STEM teachers.</p>
+        <div class="vote-row"></div>
+      </div>
+      <div class="idea" data-id="diag">
+        <div class="badges"><span class="badge bare" data-i18n="badge_bare">USES YOUR BOT</span><span class="badge std" data-i18n="badge_std">STANDARD</span></div>
+        <div class="top"><div class="ic">🩺</div><div><h3 data-i18n="i_diag_h">Diagnostic Lab</h3></div></div>
+        <p class="pitch" data-i18n="i_diag_p">Robot Checkup. Tests every subsystem. Green/yellow/red per system. Sells reliability to teachers.</p>
+        <div class="vote-row"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Send picks -->
+  <div class="send-row">
+    <h2 data-i18n="send_h">📩 Send your top 3 picks</h2>
+    <p class="picks-preview" id="picksPreview" data-i18n="send_empty">Star up to 3 ideas above, then click below to email your picks.</p>
+    <a id="sendBtn" class="send-btn" href="#" aria-disabled="true" data-i18n="send_btn">📩 Send my picks</a>
+    <a class="gh-link" href="https://github.com/abourdim/maqueen-lab/issues/new?labels=lab-idea&title=New+lab+idea&body=Describe+your+lab+idea+here..." target="_blank" rel="noopener" data-i18n="gh_link">🐛 Or open a GitHub issue with a brand-new idea →</a>
+  </div>
+
+  <a class="back" href="index.html" data-i18n="back_labs">← Back to Labs hub</a>
+</div>
+
+<script>
+// ===== Wishlist state =====================================================
+// Per-device, persisted in localStorage. No backend; the team gets a real
+// signal via the mailto button at the bottom (kid lists their top 3).
+// Two stores:
+//   robi.wishlist.votes    {id: count}   — every 👍 click increments
+//   robi.wishlist.starred  [id, id, id]  — max 3, FIFO when overflow
+// ==========================================================================
+const KEY_VOTES   = 'robi.wishlist.votes';
+const KEY_STARRED = 'robi.wishlist.starred';
+let votes   = (() => { try { return JSON.parse(localStorage.getItem(KEY_VOTES))   || {}; } catch { return {}; } })();
+let starred = (() => { try { return JSON.parse(localStorage.getItem(KEY_STARRED)) || []; } catch { return []; } })();
+function saveVotes()   { try { localStorage.setItem(KEY_VOTES,   JSON.stringify(votes));   } catch (e) {} }
+function saveStarred() { try { localStorage.setItem(KEY_STARRED, JSON.stringify(starred)); } catch (e) {} }
+
+// Build vote rows in every .idea card (keeps the markup short above)
+document.querySelectorAll('.idea').forEach(card => {
+  const id = card.dataset.id;
+  const row = card.querySelector('.vote-row');
+  row.innerHTML =
+    '<button class="vote-btn"  data-act="vote" type="button">👍 <span class="count" data-count></span></button>' +
+    '<button class="star-btn"  data-act="star" type="button"><span class="star-glyph">⭐</span> <span data-i18n="star_label">Top 3</span></button>';
+});
+
+function paint() {
+  document.querySelectorAll('.idea').forEach(card => {
+    const id = card.dataset.id;
+    const c  = card.querySelector('[data-count]');
+    if (c) c.textContent = String(votes[id] || 0);
+    card.classList.toggle('starred', starred.includes(id));
+  });
+  // Tally
+  const total = Object.values(votes).reduce((a, b) => a + b, 0);
+  document.getElementById('totalVotes').textContent = String(total);
+  document.getElementById('starCount').textContent  = String(starred.length);
+  // Send-picks button + preview
+  const btn  = document.getElementById('sendBtn');
+  const prev = document.getElementById('picksPreview');
+  if (starred.length === 0) {
+    btn.setAttribute('aria-disabled', 'true');
+    btn.removeAttribute('href');
+    prev.textContent = (T[currentLang] && T[currentLang].send_empty) || 'Star up to 3 ideas above, then click below to email your picks.';
+  } else {
+    btn.removeAttribute('aria-disabled');
+    const names = starred.map(id => {
+      const card = document.querySelector('.idea[data-id="' + id + '"]');
+      return card ? card.querySelector('h3').textContent.trim() : id;
+    });
+    const subject = encodeURIComponent('My top 3 lab wishes');
+    const body    = encodeURIComponent('I want these labs:\n\n' +
+      names.map((n, i) => (i + 1) + '. ' + n).join('\n') +
+      '\n\n— sent from the Maqueen Lab wishlist');
+    btn.href = 'mailto:contact@workshop-diy.org?subject=' + subject + '&body=' + body;
+    prev.textContent = ((T[currentLang] && T[currentLang].send_picked) || 'Your picks: ') + names.join(' · ');
+  }
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-act]');
+  if (!btn) return;
+  const card = btn.closest('.idea');
+  if (!card) return;
+  const id   = card.dataset.id;
+  const act  = btn.dataset.act;
+  if (act === 'vote') {
+    votes[id] = (votes[id] || 0) + 1;
+    saveVotes();
+  } else if (act === 'star') {
+    const i = starred.indexOf(id);
+    if (i >= 0) {
+      starred.splice(i, 1);
+    } else {
+      starred.push(id);
+      if (starred.length > 3) starred.shift(); // FIFO when over cap
+    }
+    saveStarred();
+  }
+  paint();
+});
+
+// ===== i18n table (mirrors hub.html pattern) ==============================
+const T = {
+  en: {
+    header_title:    'Maqueen Lab // Wishlist',
+    header_subtitle: 'Vote on the labs we should build next',
+    hero_badge:      '▸ WISHLIST',
+    hero_title:      'Lab Wishlist',
+    hero_sub:        '27 lab ideas waiting to be built. Click 👍 to vote — pick up to <b>3 favorites</b> with the ⭐ button — then send your top 3 to the team. We build what kids ask for.',
+    tally_starred:   'starred',
+    tally_votes:     'votes',
+    star_label:      'Top 3',
+    cl_play_h:       '🎮 Play',
+    cl_play_lead:    'Game-style labs. Print a track, grab a pen, find a friend with another bot.',
+    cl_smart_h:      '🐙 Smart & social',
+    cl_smart_lead:   'Train it, mimic it, give it a personality. Single-bot or multi-bot.',
+    cl_hack_h:       '🥷 Hack — see the matrix',
+    cl_hack_lead:    'Look under the hood. Sniff packets, bend protocols, clone signals, encrypt bot-chat.',
+    cl_build_h:      '🔧 Build — extend the hardware',
+    cl_build_lead:   'Add components, print accessories, measure power. The lab kit grows with the kid.',
+    cl_sense_h:      "👁 Sense — the bot's superpowers",
+    cl_sense_lead:   'Compass, logging, diagnostics. The grown-up engineering side of the toolkit.',
+    badge_parts:        '+BOTS',
+    badge_parts_pen:    '+PEN',
+    badge_parts_cards:  '+CARDS',
+    badge_parts_kit:    '+KIT',
+    badge_parts_3d:     '+3D PRINT',
+    badge_parts_i2c:    '+I²C SENSOR',
+    badge_parts_mb:     '+MICRO:BIT',
+    badge_bare:         'USES YOUR BOT',
+    badge_beg:          'EASY',
+    badge_std:          'STANDARD',
+    badge_hack:         'HACKER',
+    // Play
+    i_swarm_h: 'Swarm Lab',
+    i_swarm_p: 'Control 2–4 bots from one phone. Formations, follow-the-leader, mirror mode, simultaneous start. Two-kid social play.',
+    i_drawing_h: 'Drawing Lab',
+    i_drawing_p: 'Clip a felt-tip pen to the bot. Spirograph mode (math), polygon mode (geometry), free mode (art). Take the drawing home.',
+    i_race_h: 'Race Lab',
+    i_race_p: 'Line-following race on a printed track. Lap timer, leaderboard, ghost replay. Race siblings.',
+    i_sumo_h: 'Sumo Lab',
+    i_sumo_p: 'Two bots, one ring. Push the other off the IR-marked edge. 60-second matches. Brackets and championship mode.',
+    i_story_h: 'Storyteller Lab',
+    i_story_p: 'Bot drives between scene-cards on the floor. Each card triggers a sound, light, motion. Kid scripts the narrative.',
+    i_slow_h: 'Slow Lab',
+    i_slow_p: 'Move as slowly as possible. Smoothness scoring. Surprisingly meditative; tests motor calibration in disguise.',
+    // Smart
+    i_behavior_h: 'Behavior Lab',
+    i_behavior_p: 'Drag-block visual programming. <em>If wall → turn. If line lost → beep.</em> Generates equivalent MakeCode at the bottom.',
+    i_trick_h: 'Trick Lab',
+    i_trick_p: 'Train your bot. Clap a pattern → bot learns. <em>Clap-clap = spin.</em> Kid teaches robot, not the other way around.',
+    i_hunt_h: 'Treasure Hunt Lab',
+    i_hunt_p: 'Phone shows virtual map; bot is "blind". Kid pieces together what\'s in the room from sensor reports. Pirate vibes.',
+    i_mirror_h: 'Mirror Lab',
+    i_mirror_p: 'One bot mimics another via radio. Pure two-bot symmetry play. Foundation for swarm work.',
+    i_pers_h: 'Personality Lab',
+    i_pers_p: 'Mix your own robot personality. 4 sliders (boldness · chattiness · sleepiness · explorer-ness). Save as named profiles.',
+    // Hack
+    i_ble_h: 'BLE Sniffer Lab',
+    i_ble_p: 'Live hex dump of every byte phone ↔ bot. Annotated decoder. Replay any past command. Mr. Robot vibes.',
+    i_proto_h: 'Protocol Lab',
+    i_proto_p: 'Invent your own command verbs. Define <code>WIGGLE</code> = motors L=100, R=−100 for 200ms. Compiles and runs.',
+    i_fuzz_h: 'Fuzz Lab',
+    i_fuzz_p: 'Send malformed bytes; see what breaks. Auto-stops on real damage. Leaderboard for smallest crashing payload.',
+    i_id_h: 'Identity Lab',
+    i_id_p: "Change the bot's BLE name & MAC. Pretend to be <code>NotARobot</code>. Save multiple identities.",
+    i_ircap_h: 'IR Capture Lab',
+    i_ircap_p: 'Clone any TV/AC remote. Point, capture, replay. Bot becomes a universal remote. Includes mischief mode.',
+    i_cipher_h: 'Cipher Lab',
+    i_cipher_p: 'Two bots talk in encrypted radio. Caesar → ROT13 → XOR. Kid breaks the cipher. Crypto kindergarten.',
+    i_walkie_h: 'Walkie Lab',
+    i_walkie_p: 'Off-grid bot ↔ bot radio chat. No phone. Foundation for swarm work.',
+    i_worm_h: 'Worm Lab',
+    i_worm_p: 'Multi-bot radio chain propagation. Visualize the spread on phone. Then: build a stop-the-worm command.',
+    // Build
+    i_copilot_h: 'Co-Pilot Lab',
+    i_copilot_p: 'Pair a 2nd micro:bit as a radio gateway. <strong>Foundation lab</strong> — unlocks Lights wand, Walkie, Cipher, Worm, Add-on. Sidesteps BLE/NeoPixel timing limits.',
+    i_mod_h: 'Mod Lab',
+    i_mod_p: 'Interactive wiring guide for add-ons: 2nd servo · OLED · gas sensor · color sensor. SVG schematics + MakeCode + "test it" buttons.',
+    i_cad_h: 'CAD Lab',
+    i_cad_p: 'Gallery of 3D-printable bot accessories: servo claw, sensor mount, FPV phone holder, parade hat. Download STL.',
+    i_power_h: 'Power Lab',
+    i_power_p: 'Real-time current draw + runtime simulator. <em>"What if I add 10 NeoPixels?"</em> Engineering-grade.',
+    i_addon_h: 'Add-on Lab',
+    i_addon_p: 'Plug-and-play I²C sensor pairing wizard. Detects gas / IMU / color / ToF. Exposes new readings to other labs.',
+    // Sense
+    i_comp_h: 'Compass Lab',
+    i_comp_p: 'Drive due north. Magnetic treasure hunt with metal objects. Uses the built-in micro:bit compass.',
+    i_log_h: 'Logger Lab',
+    i_log_p: 'Record all sensor readings, plot multi-line graphs, export CSV. For older kids and STEM teachers.',
+    i_diag_h: 'Diagnostic Lab',
+    i_diag_p: 'Robot Checkup. Tests every subsystem. Green/yellow/red per system. Sells reliability to teachers.',
+    send_h:        '📩 Send your top 3 picks',
+    send_empty:    'Star up to 3 ideas above, then click below to email your picks.',
+    send_picked:   'Your picks: ',
+    send_btn:      '📩 Send my picks',
+    gh_link:       '🐛 Or open a GitHub issue with a brand-new idea →',
+    back_labs:     '← Back to Labs hub'
+  },
+  fr: {
+    header_title:    'Maqueen Lab // Wishlist',
+    header_subtitle: 'Vote pour les labos à construire en priorité',
+    hero_badge:      '▸ WISHLIST',
+    hero_title:      'Wishlist des Labos',
+    hero_sub:        "27 idées de labos à construire. Clique sur 👍 pour voter — choisis jusqu'à <b>3 favoris</b> avec ⭐ — puis envoie ton top 3 à l'équipe. On construit ce que les enfants demandent.",
+    tally_starred:   'favoris',
+    tally_votes:     'votes',
+    star_label:      'Top 3',
+    cl_play_h:       '🎮 Jouer',
+    cl_play_lead:    "Labos style jeu. Imprime une piste, prends un stylo, trouve un copain avec un autre bot.",
+    cl_smart_h:      '🐙 Intelligent et social',
+    cl_smart_lead:   "Entraîne-le, imite-le, donne-lui une personnalité. Un bot ou plusieurs.",
+    cl_hack_h:       '🥷 Hack — vois la matrice',
+    cl_hack_lead:    "Regarde sous le capot. Sniffe les paquets, plie les protocoles, clone les signaux, chiffre les conversations.",
+    cl_build_h:      '🔧 Construire — étendre le matériel',
+    cl_build_lead:   "Ajoute des composants, imprime des accessoires, mesure la puissance. Le kit grandit avec l'enfant.",
+    cl_sense_h:      '👁 Sentir — les super-pouvoirs du bot',
+    cl_sense_lead:   "Boussole, journalisation, diagnostics. Le côté ingénierie pour les grands.",
+    badge_parts:        '+BOTS',
+    badge_parts_pen:    '+STYLO',
+    badge_parts_cards:  '+CARTES',
+    badge_parts_kit:    '+KIT',
+    badge_parts_3d:     '+IMPRESSION 3D',
+    badge_parts_i2c:    '+CAPTEUR I²C',
+    badge_parts_mb:     '+MICRO:BIT',
+    badge_bare:         "AVEC TON BOT",
+    badge_beg:          'FACILE',
+    badge_std:          'STANDARD',
+    badge_hack:         'HACKER',
+    i_swarm_h: 'Labo Essaim',
+    i_swarm_p: "Pilote 2 à 4 bots depuis un seul téléphone. Formations, suivre le chef, mode miroir, départ simultané. Jeu social à deux enfants.",
+    i_drawing_h: 'Labo Dessin',
+    i_drawing_p: "Fixe un feutre au bot. Mode spirographe (maths), mode polygone (géométrie), mode libre (art). Ramène le dessin à la maison.",
+    i_race_h: 'Labo Course',
+    i_race_p: "Course de suivi de ligne sur piste imprimée. Chrono de tour, classement, replay fantôme. Cours contre tes frères et sœurs.",
+    i_sumo_h: 'Labo Sumo',
+    i_sumo_p: "Deux bots, un ring. Pousse l'autre hors du bord marqué en IR. Matchs de 60 secondes. Tournoi par brackets.",
+    i_story_h: 'Labo Conteur',
+    i_story_p: "Le bot se déplace entre des cartes de scène posées au sol. Chaque carte déclenche un son, une lumière, un mouvement. L'enfant écrit l'histoire.",
+    i_slow_h: 'Labo Lent',
+    i_slow_p: "Bouge le plus lentement possible. Score de fluidité. Étonnamment méditatif ; teste le calibrage moteur en douce.",
+    i_behavior_h: 'Labo Comportement',
+    i_behavior_p: "Programmation visuelle par blocs. <em>Si mur → tourne. Si ligne perdue → bipe.</em> Génère le MakeCode équivalent en bas.",
+    i_trick_h: 'Labo Tour de Magie',
+    i_trick_p: "Entraîne ton bot. Tape un motif → le bot apprend. <em>Tape-tape = pirouette.</em> L'enfant apprend au robot, pas l'inverse.",
+    i_hunt_h: 'Labo Chasse au Trésor',
+    i_hunt_p: "Le téléphone montre une carte virtuelle ; le bot est « aveugle ». L'enfant reconstitue la pièce à partir des relevés capteurs. Ambiance pirate.",
+    i_mirror_h: 'Labo Miroir',
+    i_mirror_p: "Un bot imite un autre via radio. Pur jeu de symétrie à deux bots. Fondation pour le travail en essaim.",
+    i_pers_h: 'Labo Personnalité',
+    i_pers_p: "Mixe ta propre personnalité de robot. 4 curseurs (audace · bavardage · somnolence · exploration). Sauve sous des noms.",
+    i_ble_h: 'Labo Sniffer BLE',
+    i_ble_p: "Hex dump en direct de chaque octet entre téléphone ↔ bot. Décodeur annoté. Replay de toute commande passée. Vibes Mr. Robot.",
+    i_proto_h: 'Labo Protocole',
+    i_proto_p: "Invente tes propres verbes de commande. Définis <code>WIGGLE</code> = moteurs G=100, D=−100 pendant 200ms. Compile et exécute.",
+    i_fuzz_h: 'Labo Fuzz',
+    i_fuzz_p: "Envoie des octets malformés ; vois ce qui casse. S'arrête auto en cas de vrai dégât. Classement pour le payload de crash le plus court.",
+    i_id_h: "Labo Identité",
+    i_id_p: "Change le nom et la MAC BLE du bot. Fais-le passer pour <code>NotARobot</code>. Sauve plusieurs identités.",
+    i_ircap_h: 'Labo Capture IR',
+    i_ircap_p: "Clone n'importe quelle télécommande TV/clim. Pointe, capture, rejoue. Le bot devient une télécommande universelle. Mode malice inclus.",
+    i_cipher_h: 'Labo Chiffrement',
+    i_cipher_p: "Deux bots se parlent en radio chiffrée. Caesar → ROT13 → XOR. L'enfant casse le chiffrement. Crypto maternelle.",
+    i_walkie_h: 'Labo Talkie',
+    i_walkie_p: "Chat radio bot ↔ bot hors-ligne. Sans téléphone. Fondation pour le travail en essaim.",
+    i_worm_h: 'Labo Ver',
+    i_worm_p: "Propagation en chaîne radio multi-bots. Visualise la diffusion sur le téléphone. Puis : construis une commande stop-the-worm.",
+    i_copilot_h: 'Labo Co-Pilote',
+    i_copilot_p: "Apparie un 2e micro:bit comme passerelle radio. <strong>Labo fondation</strong> — débloque la Baguette Lumineuse, le Talkie, le Chiffrement, le Ver, les Add-ons. Contourne les limites de timing BLE/NeoPixel.",
+    i_mod_h: 'Labo Mod',
+    i_mod_p: "Guide de câblage interactif pour add-ons : 2e servo · OLED · capteur de gaz · capteur de couleur. Schémas SVG + MakeCode + boutons « teste-le ».",
+    i_cad_h: 'Labo CAO',
+    i_cad_p: "Galerie d'accessoires bot imprimables en 3D : pince servo, support capteur, support téléphone FPV, chapeau de parade. Télécharge le STL.",
+    i_power_h: 'Labo Énergie',
+    i_power_p: "Consommation de courant en temps réel + simulateur d'autonomie. <em>« Et si j'ajoute 10 NeoPixels ? »</em> Niveau ingénierie.",
+    i_addon_h: 'Labo Add-on',
+    i_addon_p: "Assistant de pairage capteur I²C plug-and-play. Détecte gaz / IMU / couleur / ToF. Expose les nouvelles lectures aux autres labos.",
+    i_comp_h: 'Labo Boussole',
+    i_comp_p: "Roule plein nord. Chasse au trésor magnétique avec objets en métal. Utilise la boussole intégrée du micro:bit.",
+    i_log_h: 'Labo Logger',
+    i_log_p: "Enregistre toutes les lectures capteurs, trace des graphes multi-lignes, exporte en CSV. Pour les plus grands et les profs STEM.",
+    i_diag_h: 'Labo Diagnostic',
+    i_diag_p: "Check-up Robot. Teste chaque sous-système. Vert/jaune/rouge par système. Vend la fiabilité aux profs.",
+    send_h:        '📩 Envoie ton top 3',
+    send_empty:    "Mets jusqu'à 3 idées en favoris au-dessus, puis clique pour les envoyer.",
+    send_picked:   'Tes choix : ',
+    send_btn:      '📩 Envoyer mes choix',
+    gh_link:       "🐛 Ou ouvre une issue GitHub avec une idée toute neuve →",
+    back_labs:     '← Retour au hub Labos'
+  },
+  ar: {
+    header_title:    'مكوين لاب // قائمة الأمنيات',
+    header_subtitle: 'صوّت على المختبرات التي يجب بناؤها تالياً',
+    hero_badge:      '▸ قائمة الأمنيات',
+    hero_title:      'قائمة أمنيات المختبرات',
+    hero_sub:        '٢٧ فكرة مختبر تنتظر البناء. اضغط 👍 للتصويت — اختر حتى <b>٣ مفضلين</b> بزر ⭐ — ثم أرسل أفضل ٣ إلى الفريق. نبني ما يطلبه الأطفال.',
+    tally_starred:   'مفضل',
+    tally_votes:     'صوت',
+    star_label:      'أفضل ٣',
+    cl_play_h:       '🎮 لعب',
+    cl_play_lead:    'مختبرات أسلوب اللعب. اطبع مساراً، خذ قلماً، ابحث عن صديق لديه بوت آخر.',
+    cl_smart_h:      '🐙 ذكاء وتفاعل اجتماعي',
+    cl_smart_lead:   'درّبه، قلّده، امنحه شخصية. بوت واحد أو عدة.',
+    cl_hack_h:       '🥷 هاك — انظر إلى المصفوفة',
+    cl_hack_lead:    'انظر تحت الغطاء. اشتمّ الحزم، اعكس البروتوكولات، استنسخ الإشارات، شفّر دردشة البوتات.',
+    cl_build_h:      '🔧 بناء — توسيع العتاد',
+    cl_build_lead:   'أضِف مكوّنات، اطبع ملحقات، قِس الطاقة. عُدّة المختبر تنمو مع الطفل.',
+    cl_sense_h:      '👁 إحساس — قوى البوت الخارقة',
+    cl_sense_lead:   'بوصلة، تسجيل، تشخيصات. الجانب الهندسي للأكبر سنّاً.',
+    badge_parts:        '+بوتات',
+    badge_parts_pen:    '+قلم',
+    badge_parts_cards:  '+بطاقات',
+    badge_parts_kit:    '+طقم',
+    badge_parts_3d:     '+طباعة 3D',
+    badge_parts_i2c:    '+مستشعر I²C',
+    badge_parts_mb:     '+micro:bit',
+    badge_bare:         'ببوتك فقط',
+    badge_beg:          'سهل',
+    badge_std:          'قياسي',
+    badge_hack:         'هاكر',
+    i_swarm_h: 'مختبر السرب',
+    i_swarm_p: 'تحكّم في ٢ إلى ٤ بوتات من هاتف واحد. تشكيلات، اتباع القائد، وضع مرآة، انطلاق متزامن. لعب اجتماعي لطفلَين.',
+    i_drawing_h: 'مختبر الرسم',
+    i_drawing_p: 'ثبّت قلم لبّاد على البوت. وضع سبيروغراف (رياضيات)، وضع مضلّع (هندسة)، وضع حر (فن). خذ الرسم إلى البيت.',
+    i_race_h: 'مختبر السباق',
+    i_race_p: 'سباق متابعة خط على مسار مطبوع. مؤقّت لفّة، لوحة صدارة، إعادة شبح. سابق إخوتك.',
+    i_sumo_h: 'مختبر السومو',
+    i_sumo_p: 'بوتان، حلبة واحدة. ادفع الآخر خارج الحافة المعلَّمة بـIR. مباريات ٦٠ ثانية. أقسام وبطولة.',
+    i_story_h: 'مختبر الحاكي',
+    i_story_p: 'البوت يتنقّل بين بطاقات مشاهد على الأرض. كل بطاقة تطلق صوتاً وضوءاً وحركة. الطفل يكتب القصة.',
+    i_slow_h: 'مختبر البطيء',
+    i_slow_p: 'تحرّك ببطء قدر الإمكان. تسجيل سلاسة. مدهش الهدوء؛ يختبر معايرة المحركات بالخفاء.',
+    i_behavior_h: 'مختبر السلوك',
+    i_behavior_p: 'برمجة بصرية بكتل سحب وإفلات. <em>إذا جدار ← التف. إذا فقدت الخط ← أصدر صفيراً.</em> يولّد MakeCode المكافئ في الأسفل.',
+    i_trick_h: 'مختبر الحِيَل',
+    i_trick_p: 'درّب بوتك. صفّق نمطاً ← يتعلّمه البوت. <em>تصفيقتان = دوران.</em> الطفل يعلّم الروبوت، لا العكس.',
+    i_hunt_h: 'مختبر البحث عن الكنز',
+    i_hunt_p: 'الهاتف يعرض خريطة افتراضية؛ البوت «أعمى». الطفل يكوّن صورة الغرفة من تقارير المستشعرات. أجواء قراصنة.',
+    i_mirror_h: 'مختبر المرآة',
+    i_mirror_p: 'بوت يقلّد آخر عبر الراديو. لعب تماثل ثنائي صرف. أساس لعمل السرب.',
+    i_pers_h: 'مختبر الشخصية',
+    i_pers_p: 'امزج شخصية الروبوت الخاصة بك. ٤ شرائط (جرأة · ثرثرة · نعاس · استكشاف). احفظ كملفات بأسماء.',
+    i_ble_h: 'مختبر اعتراض BLE',
+    i_ble_p: 'تفريغ ست عشري حيّ لكل بايت بين الهاتف والبوت. مفسّر مشروح. إعادة لأي أمر سابق. أجواء Mr. Robot.',
+    i_proto_h: 'مختبر البروتوكول',
+    i_proto_p: 'اخترع أفعال أوامرك. عرّف <code>WIGGLE</code> = محركات Y=100، L=−100 لمدة 200ms. يُترجَم ويعمل.',
+    i_fuzz_h: 'مختبر الفَزّ',
+    i_fuzz_p: 'أرسل بايتات مشوّهة؛ شاهد ما ينكسر. يتوقف تلقائياً عند تلف فعلي. لوحة صدارة لأقصر حمولة تُعطّل.',
+    i_id_h: 'مختبر الهوية',
+    i_id_p: 'غيّر اسم BLE وعنوان MAC للبوت. ادّعِ أنك <code>NotARobot</code>. احفظ هويات متعدّدة.',
+    i_ircap_h: 'مختبر التقاط IR',
+    i_ircap_p: 'استنسخ أي ريموت تلفاز/مكيّف. وجّه، التقط، أعِد. يصبح البوت ريموتاً عالمياً. وضع مشاكسة مدمج.',
+    i_cipher_h: 'مختبر التشفير',
+    i_cipher_p: 'بوتان يتحدّثان عبر راديو مشفّر. قيصر ← ROT13 ← XOR. الطفل يكسر الشيفرة. روضة تشفير.',
+    i_walkie_h: 'مختبر اللاسلكي',
+    i_walkie_p: 'دردشة راديو بوت ↔ بوت دون شبكة. بدون هاتف. أساس لعمل السرب.',
+    i_worm_h: 'مختبر الدودة',
+    i_worm_p: 'انتشار سلسلة راديو متعدّد البوتات. اعرض الانتشار على الهاتف. ثم: ابنِ أمر أوقف-الدودة.',
+    i_copilot_h: 'مختبر الطيار المساعد',
+    i_copilot_p: 'أقرِن micro:bit ثانياً كبوّابة راديو. <strong>مختبر أساس</strong> — يفتح عصا الضوء، اللاسلكي، التشفير، الدودة، الإضافات. يتجاوز قيود توقيت BLE/NeoPixel.',
+    i_mod_h: 'مختبر التعديل',
+    i_mod_p: 'دليل توصيل تفاعلي للملحقات: سيرفو ثانٍ · OLED · مستشعر غاز · مستشعر لون. مخططات SVG + MakeCode + أزرار «جرّبه».',
+    i_cad_h: 'مختبر CAD',
+    i_cad_p: 'معرض ملحقات بوت قابلة للطباعة 3D: ملقط سيرفو، حامل مستشعر، حامل هاتف FPV، قبعة استعراض. حمّل ملف STL.',
+    i_power_h: 'مختبر الطاقة',
+    i_power_p: 'سحب التيار الحيّ + محاكي الاستقلالية. <em>«ماذا لو أضفت ١٠ NeoPixels؟»</em> مستوى هندسي.',
+    i_addon_h: 'مختبر الإضافات',
+    i_addon_p: 'معالج إقران مستشعر I²C تركيب-ولعب. يكتشف غاز / IMU / لون / ToF. يكشف القراءات الجديدة لباقي المختبرات.',
+    i_comp_h: 'مختبر البوصلة',
+    i_comp_p: 'قُد نحو الشمال. بحث عن كنز مغناطيسي بأشياء معدنية. يستخدم بوصلة micro:bit المدمجة.',
+    i_log_h: 'مختبر السجلات',
+    i_log_p: 'سجّل كل قراءات المستشعرات، ارسم رسوماً متعدّدة الخطوط، صدّر CSV. للأكبر سنّاً ومعلّمي STEM.',
+    i_diag_h: 'مختبر التشخيص',
+    i_diag_p: 'فحص الروبوت. يختبر كل نظام فرعي. أخضر/أصفر/أحمر لكل نظام. يبيع الموثوقية للمعلّمين.',
+    send_h:        '📩 أرسل أفضل ٣ اختيارات',
+    send_empty:    'ضع نجمة على ٣ أفكار في الأعلى، ثم اضغط للإرسال.',
+    send_picked:   'اختياراتك: ',
+    send_btn:      '📩 أرسل اختياراتي',
+    gh_link:       '🐛 أو افتح إصدار GitHub بفكرة جديدة كلّياً ←',
+    back_labs:     '← الرجوع إلى مركز المختبرات'
+  }
+};
+
+let currentLang = 'en';
+function setL(lang) {
+  currentLang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (T[lang] && T[lang][k]) el.innerHTML = T[lang][k];
+  });
+  document.body.classList.toggle('rtl', lang === 'ar');
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = (lang === 'ar') ? 'rtl' : 'ltr';
+  document.querySelectorAll('.lang-pill').forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
+  try { localStorage.setItem('robi.lang', lang); } catch (e) {}
+  paint(); // refresh send-picks preview text in new lang
+}
+document.querySelectorAll('.lang-pill').forEach(btn => btn.addEventListener('click', () => setL(btn.dataset.lang)));
+
+// Theme picker (matches hub.html, shared localStorage key)
+const themeSel = document.getElementById('themeSelect');
+function applyTheme(t) {
+  // Defensive: workshops/theme.css only knows these 5 themes. If a value
+  // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+  // fall back to carbon so we never apply a theme this stylesheet ignores.
+  var _validThemes = ['carbon','forest','steel','paper','pearl'];
+  if (_validThemes.indexOf(t) === -1) t = 'carbon';
+  document.documentElement.setAttribute('data-theme', t);
+  if (themeSel) themeSel.value = t;
+  try { localStorage.setItem('robi.theme', t); } catch (e) {}
+}
+if (themeSel) themeSel.addEventListener('change', e => applyTheme(e.target.value));
+
+// Boot
+try {
+  const sav = localStorage.getItem('robi.lang');  if (sav) setL(sav); else paint();
+  const th  = localStorage.getItem('robi.theme'); if (th)  applyTheme(th);
+} catch (e) { paint(); }
+paint(); // ensure tally renders even if no localStorage
+</script>
+
+</body>
+</html>

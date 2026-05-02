@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Servo Lab · Maqueen Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<link rel="stylesheet" href="lab-logger.css?v=6">
+<style>
+  :root{
+    --panel:#0f1822; --panel2:#13202d; --border:#1e3548;
+    --cyan:#22d3ee; --amber:#fbbf24; --neon:#a3e635; --red:#ef4444;
+    --text:#e6f0f5; --muted:#7d93a6; --white:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.4}
+  html[lang="ar"] body{direction:rtl}
+
+  /* Header */
+  .wd-header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-wrap:wrap}
+  .wd-header h1{font-size:1.15rem;color:var(--cyan);display:flex;align-items:center;gap:8px}
+  .wd-header h1 .dot{color:var(--amber)}
+  .wd-header .spacer{flex:1}
+  .wd-header select,.wd-header .pill,.wd-header a.btn{
+    background:var(--panel2);color:var(--text);border:1px solid var(--border);
+    border-radius:8px;padding:6px 10px;font-size:.85rem;cursor:pointer;text-decoration:none
+  }
+  .wd-header a.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+  .lang-pills{display:inline-flex;gap:4px}
+  .lang-pills button{
+    background:var(--panel2);color:var(--muted);border:1px solid var(--border);
+    border-radius:6px;padding:4px 10px;font-size:.8rem;cursor:pointer
+  }
+  .lang-pills button.on{background:var(--cyan);color:#001018;border-color:var(--cyan);font-weight:700}
+
+  /* Layout */
+  .app-layout{display:grid;grid-template-columns:280px 1fr;gap:14px;padding:14px}
+  @media(max-width:780px){.app-layout{grid-template-columns:1fr}}
+  .sidebar{display:flex;flex-direction:column;gap:10px}
+  .stage{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;min-height:540px}
+
+  /* Sidebar cards */
+  .conn-block{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+  .btn-connect{
+    background:var(--cyan);color:#001018;border:none;border-radius:10px;
+    padding:12px 16px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px
+  }
+  .btn-connect:hover{filter:brightness(1.1)}
+  .btn-connect.connected{background:var(--neon)}
+  .btn-stop{
+    background:var(--red);color:#fff;border:none;border-radius:10px;
+    padding:10px 14px;font-weight:700;cursor:pointer
+  }
+  .btn-stop:hover{filter:brightness(1.1)}
+  .pill-status{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;background:var(--panel2);border:1px solid var(--border);font-size:.8rem;color:var(--muted)}
+  .pill-status.ok{color:var(--neon);border-color:var(--neon)}
+  .pill-status.err{color:var(--red);border-color:var(--red)}
+  .pill-status .led{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+  .pill-status.ok .led{background:var(--neon);box-shadow:0 0 8px var(--neon)}
+  .pill-status.err .led{background:var(--red)}
+
+  .cat-title{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:6px 4px 2px}
+  .cat-tab{
+    background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;
+    font-size:.92rem;color:var(--text);transition:all .15s
+  }
+  .cat-tab:hover{border-color:var(--cyan)}
+  .cat-tab.active{background:var(--panel2);border-color:var(--cyan);color:var(--cyan);font-weight:700;box-shadow:0 0 0 1px var(--cyan) inset}
+  .cat-tab .ico{font-size:1.1rem}
+
+  /* Stage */
+  .mode-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .mode-h h2{font-size:1.3rem;color:var(--amber)}
+  .mode-h .hint{color:var(--muted);font-size:.88rem}
+  .panel{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+  .panel h3{font-size:1rem;color:var(--cyan);margin-bottom:8px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .col{display:flex;flex-direction:column;gap:6px}
+  label{font-size:.8rem;color:var(--muted)}
+  input[type=number],input[type=text],select{
+    background:var(--panel);color:var(--text);border:1px solid var(--border);
+    border-radius:6px;padding:6px 8px;font-size:.9rem
+  }
+  input[type=range]{accent-color:var(--cyan)}
+  button.act{
+    background:var(--panel);color:var(--text);border:1px solid var(--border);
+    border-radius:8px;padding:8px 12px;font-size:.9rem;cursor:pointer
+  }
+  button.act:hover{border-color:var(--cyan);color:var(--cyan)}
+  button.act.primary{background:var(--cyan);color:#001018;border-color:var(--cyan);font-weight:700}
+  button.act.danger{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
+  button.act.amber{background:var(--amber);color:#1a1000;border-color:var(--amber);font-weight:700}
+
+  /* Live trim sliders */
+  .servo-bay{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:14px;align-items:start}
+  @media(max-width:680px){.servo-bay{grid-template-columns:1fr}}
+  .servo-col{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+  .servo-col h4{color:var(--amber);margin-bottom:8px;font-size:.95rem}
+  .v-slider{display:flex;align-items:center;justify-content:center;height:240px}
+  .v-slider input[type=range]{
+    -webkit-appearance:slider-vertical;writing-mode:bt-lr;width:42px;height:220px
+  }
+  .deg-display{font-size:2rem;color:var(--cyan);font-weight:700;margin-top:6px}
+  .deg-display .u{font-size:1rem;color:var(--muted)}
+  .trim-row{display:flex;gap:6px;justify-content:center;margin-top:8px;font-size:.78rem;color:var(--muted)}
+  .trim-row input{width:54px}
+
+  /* Mock servo SVG */
+  .mock-stage{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;justify-content:center}
+  .mock-stage svg{width:100%;max-width:280px;height:240px;display:block}
+
+  /* Sweep */
+  .sweep-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:680px){.sweep-grid{grid-template-columns:1fr}}
+  .sweep-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px}
+  .sweep-card h4{color:var(--amber);font-size:.92rem;margin-bottom:8px}
+  .sweep-card .row{margin-bottom:6px}
+  .sweep-card label{flex:0 0 80px}
+  .sweep-card input[type=range]{flex:1;min-width:80px}
+  .sweep-card .val{flex:0 0 50px;text-align:right;color:var(--cyan);font-weight:600;font-size:.85rem}
+  .sweep-graph{background:color-mix(in srgb, var(--text, #000) 12%, var(--bg-card, #0a0a0a));border:1px solid var(--border);border-radius:8px;height:120px;width:100%;display:block;margin-top:10px}
+
+  /* Keyframe */
+  .kf-bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+  .kf-rec{background:var(--red);color:#fff;border:none;border-radius:50%;width:46px;height:46px;font-size:1.4rem;cursor:pointer;font-weight:700}
+  .kf-rec.recording{animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--red)}50%{box-shadow:0 0 0 12px transparent}}
+  .kf-time{font-family:monospace;color:var(--neon);font-size:1.1rem;min-width:80px}
+  .kf-track{height:46px;background:color-mix(in srgb, var(--text, #000) 12%, var(--bg-card, #0a0a0a));border:1px solid var(--border);border-radius:8px;position:relative;overflow:hidden}
+  .kf-track .marker{position:absolute;top:0;bottom:0;width:2px;background:var(--cyan)}
+  .kf-track .play-head{position:absolute;top:0;bottom:0;width:2px;background:var(--amber);box-shadow:0 0 6px var(--amber)}
+
+  /* Scenes */
+  .scene-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .scene-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;transition:all .15s}
+  .scene-card:hover{border-color:var(--cyan);transform:translateY(-2px)}
+  .scene-card h5{color:var(--amber);font-size:.92rem;margin-bottom:4px}
+  .scene-card .meta{font-size:.75rem;color:var(--muted);margin-bottom:6px}
+  .scene-card svg{width:100%;height:60px;background:color-mix(in srgb, var(--text, #000) 12%, var(--bg-card, #0a0a0a));border-radius:6px}
+  .scene-card .acts{display:flex;gap:4px;margin-top:6px}
+  .scene-card .acts button{flex:1;font-size:.72rem;padding:4px 6px}
+
+  /* Trigger */
+  .trig-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:6px}
+  @media(max-width:680px){.trig-row{grid-template-columns:1fr 1fr}}
+  .trig-row .ts{font-family:monospace;color:var(--neon);font-size:.78rem}
+
+  .hidden{display:none !important}
+  .center{text-align:center}
+  .small{font-size:.78rem;color:var(--muted)}
+  kbd{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:.78rem;color:var(--amber)}
+  /* Theme bridge — maps workshops/theme.css output to this lab's local variable
+     names so [data-theme="carbon|forest|steel|paper|pearl"] actually recolors
+     every surface (sidebar, stage, panels, servo bays, scene cards). */
+  :root {
+    --panel:  var(--bg-card,  #0f1822);
+    --panel2: var(--bg-soft,  #13202d);
+    --border: var(--border,   #1e3548);
+    --text:   var(--text,     #e6f0f5);
+    --muted:  var(--steel,    #7d93a6);
+    /* Legacy aliases */
+    --line:   var(--border,   #1e3548);
+    --ink:    var(--text,     #e6f0f5);
+  }
+  /* Also derive --accent from the theme's primary so per-theme accents show through.
+     Carbon/Steel default to --cyan; Forest/Paper/Pearl already redefine --neon and friends. */
+  :root { --accent: var(--cyan, #22d3ee); }
+  html[data-theme="forest"] { --accent: var(--neon, #a3e635); }
+  html[data-theme="paper"]  { --accent: var(--amber, #f59e0b); }
+</style>
+</head>
+<body>
+
+<header class="wd-header">
+  <h1>🦾 <span data-i18n="title">Servo Lab</span> <span class="dot">·</span> <span class="small" data-i18n="subtitle">two-servo choreography</span></h1>
+  <div class="spacer"></div>
+  <select class="wd-select" id="themeSelect" aria-label="Theme">
+    <option value="carbon">▣ Carbon</option>
+    <option value="forest">▣ Forest</option>
+    <option value="steel">▣ Steel</option>
+    <option value="paper">☼ Paper</option>
+    <option value="pearl">☼ Pearl</option>
+  </select>
+  <div class="lang-pills" id="langPills" role="radiogroup" aria-label="Language">
+    <button type="button" class="lang-pill active" data-l="en" data-lang="en"><span class="flag flag-en"></span>EN</button>
+    <button type="button" class="lang-pill"        data-l="fr" data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+    <button type="button" class="lang-pill"        data-l="ar" data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+  </div>
+  <a class="btn" href="../index.html" data-i18n="navRobot">🤖 Robot App</a>
+  <a class="btn" href="../docs/index.html" data-i18n="navCatalog">🗂️ Catalog</a>
+  <a class="btn" href="index.html" data-i18n="navLabs">🧪 Labs</a>
+  <a class="btn" href="../workshops/hub.html" data-i18n="navHub">🏠 Hub</a>
+</header>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="conn-block">
+      <button id="connBtn" class="btn-connect">🔌 <span data-i18n="connect">Connect</span></button>
+      <span id="connPill" class="pill-status"><span class="led"></span><span data-i18n="disconnected">Disconnected</span></span>
+      <button id="stopBtn" class="btn-stop">⏹ <span data-i18n="stopCenter">STOP / CENTER</span> <kbd>SPACE</kbd></button>
+    </div>
+
+    <div class="cat-title" data-i18n="catDirect">🎚 Direct Control</div>
+    <div class="cat-tab active" data-mode="trim"><span class="ico">🎚</span><span data-i18n="modeTrim">Live Trim</span></div>
+    <div class="cat-tab" data-mode="sweep"><span class="ico">〰️</span><span data-i18n="modeSweep">Sweep Generator</span></div>
+
+    <div class="cat-title" data-i18n="catChoreo">🎬 Choreography</div>
+    <div class="cat-tab" data-mode="kf"><span class="ico">⏺</span><span data-i18n="modeKf">Keyframe Recorder</span></div>
+    <div class="cat-tab" data-mode="scene"><span class="ico">🎞</span><span data-i18n="modeScene">Scene Library</span></div>
+    <div class="cat-tab" data-mode="trigger"><span class="ico">⚡</span><span data-i18n="modeTrig">Trigger Mapper</span></div>
+
+    <div class="conn-block">
+      <label class="small"><input type="checkbox" id="mockChk" checked /> <span data-i18n="mockMode">Mock mode (visual only)</span></label>
+      <div class="small" data-i18n="ble">BLE: SRV:&lt;idx&gt;,&lt;deg&gt;</div>
+    </div>
+  </aside>
+
+  <main class="stage">
+
+    <!-- TRIM MODE -->
+    <section id="mode-trim" class="mode">
+      <div class="mode-h"><h2 data-i18n="modeTrim">Live Trim</h2><span class="hint" data-i18n="trimHint">Drag sliders, send live to S1 / S2</span></div>
+      <div class="servo-bay">
+        <div class="servo-col">
+          <h4>S1</h4>
+          <div class="v-slider"><input type="range" id="s1" min="0" max="180" value="90" /></div>
+          <div class="deg-display"><span id="s1v">90</span><span class="u">°</span></div>
+          <div class="trim-row">
+            <span data-i18n="min">min</span> <input type="number" id="s1min" min="0" max="180" value="0" />
+            <span data-i18n="max">max</span> <input type="number" id="s1max" min="0" max="180" value="180" />
+          </div>
+        </div>
+        <div class="servo-col">
+          <h4>S2</h4>
+          <div class="v-slider"><input type="range" id="s2" min="0" max="180" value="90" /></div>
+          <div class="deg-display"><span id="s2v">90</span><span class="u">°</span></div>
+          <div class="trim-row">
+            <span data-i18n="min">min</span> <input type="number" id="s2min" min="0" max="180" value="0" />
+            <span data-i18n="max">max</span> <input type="number" id="s2max" min="0" max="180" value="180" />
+          </div>
+        </div>
+        <div class="mock-stage">
+          <svg id="mockSvg" viewBox="0 0 280 240">
+            <!-- base -->
+            <rect x="40" y="200" width="200" height="20" fill="#1e3548" rx="4"/>
+            <!-- S1 pivot -->
+            <circle cx="90" cy="200" r="8" fill="#22d3ee"/>
+            <g id="armS1" transform="rotate(0 90 200)">
+              <rect x="86" y="120" width="8" height="80" fill="#fbbf24" rx="2"/>
+              <circle cx="90" cy="120" r="5" fill="#a3e635"/>
+            </g>
+            <text x="90" y="234" text-anchor="middle" fill="#7d93a6" font-size="11">S1</text>
+            <!-- S2 pivot -->
+            <circle cx="190" cy="200" r="8" fill="#22d3ee"/>
+            <g id="armS2" transform="rotate(0 190 200)">
+              <rect x="186" y="120" width="8" height="80" fill="#fbbf24" rx="2"/>
+              <circle cx="190" cy="120" r="5" fill="#a3e635"/>
+            </g>
+            <text x="190" y="234" text-anchor="middle" fill="#7d93a6" font-size="11">S2</text>
+          </svg>
+        </div>
+      </div>
+      <p class="small center" style="margin-top:10px" data-i18n="trimSavedHint">Trim limits saved to localStorage. Click 90 to center.</p>
+    </section>
+
+    <!-- SWEEP MODE -->
+    <section id="mode-sweep" class="mode hidden">
+      <div class="mode-h"><h2 data-i18n="modeSweep">Sweep Generator</h2><span class="hint" data-i18n="sweepHint">Sine / triangle / square per servo, 30Hz</span></div>
+      <div class="row" style="margin-bottom:10px">
+        <button class="act primary" id="sweepStart">▶ <span data-i18n="start">Start</span></button>
+        <button class="act danger" id="sweepStop">⏸ <span data-i18n="stop">Stop</span></button>
+      </div>
+      <div class="sweep-grid">
+        <div class="sweep-card" data-sw="1">
+          <h4>S1</h4>
+          <div class="row"><label><input type="checkbox" class="sw-en" /> <span data-i18n="enable">Enable</span></label>
+            <select class="sw-wave"><option value="sine">Sine</option><option value="tri">Triangle</option><option value="sq">Square</option></select></div>
+          <div class="row"><label data-i18n="amp">Amp</label><input type="range" class="sw-amp" min="0" max="90" value="45"/><span class="val sw-amp-v">45</span></div>
+          <div class="row"><label data-i18n="period">Period</label><input type="range" class="sw-per" min="200" max="4000" value="2000"/><span class="val sw-per-v">2000</span></div>
+          <div class="row"><label data-i18n="phase">Phase</label><input type="range" class="sw-pha" min="0" max="360" value="0"/><span class="val sw-pha-v">0</span></div>
+          <div class="row"><label data-i18n="offset">Offset</label><input type="range" class="sw-off" min="0" max="180" value="90"/><span class="val sw-off-v">90</span></div>
+        </div>
+        <div class="sweep-card" data-sw="2">
+          <h4>S2</h4>
+          <div class="row"><label><input type="checkbox" class="sw-en" /> <span data-i18n="enable">Enable</span></label>
+            <select class="sw-wave"><option value="sine">Sine</option><option value="tri">Triangle</option><option value="sq">Square</option></select></div>
+          <div class="row"><label data-i18n="amp">Amp</label><input type="range" class="sw-amp" min="0" max="90" value="45"/><span class="val sw-amp-v">45</span></div>
+          <div class="row"><label data-i18n="period">Period</label><input type="range" class="sw-per" min="200" max="4000" value="2000"/><span class="val sw-per-v">2000</span></div>
+          <div class="row"><label data-i18n="phase">Phase</label><input type="range" class="sw-pha" min="0" max="360" value="180"/><span class="val sw-pha-v">180</span></div>
+          <div class="row"><label data-i18n="offset">Offset</label><input type="range" class="sw-off" min="0" max="180" value="90"/><span class="val sw-off-v">90</span></div>
+        </div>
+      </div>
+      <canvas id="sweepGraph" class="sweep-graph"></canvas>
+    </section>
+
+    <!-- KEYFRAME MODE -->
+    <section id="mode-kf" class="mode hidden">
+      <div class="mode-h"><h2 data-i18n="modeKf">Keyframe Recorder</h2><span class="hint" data-i18n="kfHint">RECORD then move sliders. STOP to play back.</span></div>
+      <div class="kf-bar">
+        <button class="kf-rec" id="kfRec" title="Record">⏺</button>
+        <button class="act primary" id="kfPlay">▶ <span data-i18n="play">Play</span></button>
+        <button class="act danger" id="kfClear">🗑 <span data-i18n="clear">Clear</span></button>
+        <span class="kf-time" id="kfTime">00:00.0</span>
+        <span class="small" id="kfCount">0 frames</span>
+      </div>
+      <div class="kf-track" id="kfTrack"></div>
+      <div class="row" style="margin-top:10px">
+        <input type="text" id="kfName" placeholder="Scene name…" />
+        <button class="act amber" id="kfSave">💾 <span data-i18n="saveScene">Save Scene</span></button>
+        <span class="small" data-i18n="kfMax">Up to 4 named scenes saved.</span>
+      </div>
+    </section>
+
+    <!-- SCENE LIBRARY -->
+    <section id="mode-scene" class="mode hidden">
+      <div class="mode-h"><h2 data-i18n="modeScene">Scene Library</h2><span class="hint" data-i18n="sceneHint">Pre-baked + your own. Click play.</span></div>
+      <div class="scene-grid" id="sceneGrid"></div>
+    </section>
+
+    <!-- TRIGGER MAPPER -->
+    <section id="mode-trigger" class="mode hidden">
+      <div class="mode-h"><h2 data-i18n="modeTrig">Trigger Mapper</h2><span class="hint" data-i18n="trigHint">Map a scene to a button / distance / BLE event</span></div>
+      <div class="row" style="margin-bottom:10px">
+        <button class="act primary" id="trigAdd">+ <span data-i18n="addMap">Add Mapping</span></button>
+        <button class="act" id="trigPoll">📏 <span data-i18n="pollDist">Poll Dist</span></button>
+        <span class="small" id="trigDist">— cm</span>
+      </div>
+      <div id="trigList"></div>
+    </section>
+
+  </main>
+</div>
+
+<div id="labLogger" class="lab-logger-host"></div>
+
+<!-- BLE shim + ble (resolved at runtime; absent in mock mode) -->
+<script src="../js/ble-shim.js" onerror="window.__noShim=1"></script>
+<script src="../js/ble.js" onerror="window.__noBle=1"></script>
+<script src="lab-logger.js?v=6" defer></script>
+
+<script>
+"use strict";
+
+// ============== i18n ==============
+const T = {
+  en:{
+    title:"Servo Lab", subtitle:"two-servo choreography",
+    navRobot:"🤖 Robot App", navCatalog:"📚 Catalog", navLabs:"🧪 Labs", navHub:"🏠 Hub",
+    connect:"Connect", connecting:"Connecting…", connected:"Connected", disconnected:"Disconnected",
+    stopCenter:"STOP / CENTER",
+    catDirect:"🎚 Direct Control", catChoreo:"🎬 Choreography",
+    modeTrim:"Live Trim", modeSweep:"Sweep Generator", modeKf:"Keyframe Recorder",
+    modeScene:"Scene Library", modeTrig:"Trigger Mapper",
+    mockMode:"Mock mode (visual only)", ble:"BLE: SRV:<idx>,<deg>",
+    trimHint:"Drag sliders, send live to S1 / S2",
+    trimSavedHint:"Trim limits saved to localStorage. Click 90 to center.",
+    min:"min", max:"max",
+    sweepHint:"Sine / triangle / square per servo, 30Hz",
+    start:"Start", stop:"Stop", enable:"Enable",
+    amp:"Amp", period:"Period", phase:"Phase", offset:"Offset",
+    kfHint:"RECORD then move sliders. STOP to play back.",
+    play:"Play", clear:"Clear", saveScene:"Save Scene",
+    kfMax:"Up to 4 named scenes saved.",
+    sceneHint:"Pre-baked + your own. Click play.",
+    play2:"Play", del:"Del",
+    trigHint:"Map a scene to a button / distance / BLE event",
+    addMap:"Add Mapping", pollDist:"Poll Dist",
+    trigType:"Type", trigScene:"Scene", trigParam:"Param", trigLast:"Last",
+    typeBtn:"Button", typeDist:"Distance<", typeBle:"BLE event",
+    fire:"Fire", remove:"Remove",
+    sceneWave:"Wave hello", sceneLook:"Look around", sceneBow:"Bow",
+    notSaved:"No name", maxScenes:"Max 4 scenes saved",
+    notConn:"Not connected — using mock",
+    ll_title:"Message Log", ll_subtitle:"Raw UART messages", ll_clear:"Clear", ll_export:"Export", ll_copy:"Copy", ll_pin:"Pin"
+  },
+  fr:{
+    title:"Labo Servo", subtitle:"chorégraphie deux servos",
+    navRobot:"🤖 Appli Robot", navCatalog:"📚 Catalogue", navLabs:"🧪 Labos", navHub:"🏠 Hub",
+    connect:"Connecter", connecting:"Connexion…", connected:"Connecté", disconnected:"Déconnecté",
+    stopCenter:"STOP / CENTRER",
+    catDirect:"🎚 Contrôle Direct", catChoreo:"🎬 Chorégraphie",
+    modeTrim:"Réglage Direct", modeSweep:"Générateur d'Onde", modeKf:"Enregistreur",
+    modeScene:"Bibliothèque", modeTrig:"Déclencheurs",
+    mockMode:"Mode simulation", ble:"BLE: SRV:<idx>,<deg>",
+    trimHint:"Glisser, envoyé en direct à S1 / S2",
+    trimSavedHint:"Limites sauvegardées. Clic 90 pour centrer.",
+    min:"min", max:"max",
+    sweepHint:"Sinus / triangle / carré par servo, 30Hz",
+    start:"Démarrer", stop:"Arrêter", enable:"Activer",
+    amp:"Ampl", period:"Période", phase:"Phase", offset:"Décalage",
+    kfHint:"REC puis bouger. STOP pour rejouer.",
+    play:"Jouer", clear:"Vider", saveScene:"Sauver Scène",
+    kfMax:"Jusqu'à 4 scènes nommées.",
+    sceneHint:"Préfaites + les vôtres. Clic pour jouer.",
+    play2:"Jouer", del:"Suppr",
+    trigHint:"Lier une scène à un bouton / distance / événement BLE",
+    addMap:"Ajouter", pollDist:"Mesure",
+    trigType:"Type", trigScene:"Scène", trigParam:"Param", trigLast:"Dernier",
+    typeBtn:"Bouton", typeDist:"Distance<", typeBle:"Événement BLE",
+    fire:"Lancer", remove:"X",
+    sceneWave:"Coucou", sceneLook:"Regarde", sceneBow:"Salut",
+    notSaved:"Sans nom", maxScenes:"Max 4 scènes",
+    notConn:"Non connecté — simulation",
+    ll_title:"Journal", ll_subtitle:"Messages UART bruts", ll_clear:"Effacer", ll_export:"Exporter", ll_copy:"Copier", ll_pin:"Épingler"
+  },
+  ar:{
+    title:"مختبر السرفو", subtitle:"تصميم حركة سرفوين",
+    navRobot:"🤖 تطبيق الروبوت", navCatalog:"📚 الكتالوج", navLabs:"🧪 مختبرات", navHub:"🏠 المركز",
+    connect:"اتصال", connecting:"جارٍ الاتصال…", connected:"متصل", disconnected:"غير متصل",
+    stopCenter:"إيقاف / وسط",
+    catDirect:"🎚 تحكم مباشر", catChoreo:"🎬 تصميم حركة",
+    modeTrim:"ضبط مباشر", modeSweep:"مولّد التموّج", modeKf:"المسجّل",
+    modeScene:"المكتبة", modeTrig:"المشغّلات",
+    mockMode:"وضع المحاكاة", ble:"BLE: SRV:<idx>,<deg>",
+    trimHint:"اسحب لإرسال مباشر إلى S1 / S2",
+    trimSavedHint:"تم حفظ الحدود. اضغط 90 للتوسيط.",
+    min:"دنيا", max:"قصوى",
+    sweepHint:"جيب/مثلث/مربع لكل سرفو، 30Hz",
+    start:"ابدأ", stop:"قف", enable:"فعّل",
+    amp:"السعة", period:"المدة", phase:"الطور", offset:"الإزاحة",
+    kfHint:"REC ثم حرّك. STOP للتشغيل.",
+    play:"تشغيل", clear:"مسح", saveScene:"حفظ المشهد",
+    kfMax:"حتى 4 مشاهد مسماة.",
+    sceneHint:"جاهزة + خاصة بك. اضغط للتشغيل.",
+    play2:"تشغيل", del:"حذف",
+    trigHint:"اربط مشهدًا بزر / مسافة / حدث BLE",
+    addMap:"إضافة", pollDist:"قِس المسافة",
+    trigType:"النوع", trigScene:"المشهد", trigParam:"المعامل", trigLast:"الأخير",
+    typeBtn:"زر", typeDist:"المسافة<", typeBle:"حدث BLE",
+    fire:"شغّل", remove:"حذف",
+    sceneWave:"تحية", sceneLook:"انظر حولك", sceneBow:"انحناء",
+    notSaved:"بلا اسم", maxScenes:"حد أقصى 4",
+    notConn:"غير متصل — محاكاة",
+    ll_title:"سجل الرسائل", ll_subtitle:"رسائل UART الخام", ll_clear:"مسح", ll_export:"تصدير", ll_copy:"نسخ", ll_pin:"تثبيت"
+  }
+};
+let LANG = localStorage.getItem("robi.lang") || "en";
+
+function setL(l){
+  if(!T[l]) l="en";
+  LANG = l;
+  localStorage.setItem("robi.lang", l);
+  document.documentElement.lang = l;
+  document.documentElement.dir  = (l === 'ar') ? 'rtl' : 'ltr';
+  document.body.classList.toggle('rtl', l === 'ar');
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.dataset.i18n;
+    if(T[l][k]) el.textContent = T[l][k];
+  });
+  document.querySelectorAll("#langPills button").forEach(b=>{
+    b.classList.toggle("on", b.dataset.l===l);
+  });
+  // refresh dynamic
+  renderScenes();
+  renderTriggers();
+}
+
+// ============== Theme ==============
+function applyTheme(t){
+  // Resolve from localStorage first when caller passes nothing.
+  if(!t) t = localStorage.getItem("robi.theme") || "carbon";
+  // Defensive: workshops/theme.css only knows these 5 themes. If a value
+  // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+  // fall back to carbon so we never apply a theme this stylesheet ignores.
+  var _validThemes = ['carbon','forest','steel','paper','pearl'];
+  if (_validThemes.indexOf(t) === -1) t = 'carbon';
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem("robi.theme", t); } catch(e){}
+  const sel = document.getElementById("themeSelect");
+  if(sel) sel.value = t;
+}
+
+// ============== BLE wrapper (bare-name globals from ble.js) ==============
+const BLE = {
+  connected:false,
+  async connect(){
+    if(typeof connect === 'function'){
+      try{ await connect(); return true; }
+      catch(e){ console.warn("BLE connect failed", e); return false; }
+    }
+    return false;
+  },
+  disconnect(){
+    if(typeof disconnect === 'function'){ try{ disconnect(); }catch(e){} }
+  },
+  send(cmd){
+    if(typeof sendLine === 'function' && typeof isConnected !== 'undefined' && isConnected){
+      try{ sendLine(cmd); }catch(e){ console.warn("send fail",e); }
+    }
+    // mock mode → no-op
+  }
+};
+// Bridge ble-shim status → wrapper + UI
+window.RobiBle = window.RobiBle || {};
+window.RobiBle.onStatus = (c) => {
+  BLE.connected = !!c;
+  if (typeof setConnUI === 'function') setConnUI(c ? 'on' : 'off');
+};
+
+// ============== Connect UI ==============
+const connBtn = document.getElementById("connBtn");
+const connPill = document.getElementById("connPill");
+function setConnUI(state){
+  // state: "off"|"on"|"connecting"|"err"
+  connPill.classList.remove("ok","err");
+  const led = connPill.querySelector(".led");
+  const lbl = connPill.querySelector("span:last-child");
+  if(state==="on"){ connPill.classList.add("ok"); lbl.textContent = T[LANG].connected; connBtn.classList.add("connected"); }
+  else if(state==="connecting"){ lbl.textContent = T[LANG].connecting; }
+  else if(state==="err"){ connPill.classList.add("err"); lbl.textContent = T[LANG].disconnected; connBtn.classList.remove("connected"); }
+  else { lbl.textContent = T[LANG].disconnected; connBtn.classList.remove("connected"); }
+}
+connBtn.addEventListener("click", async ()=>{
+  if(typeof isConnected !== 'undefined' && isConnected){
+    BLE.disconnect();
+    return;
+  }
+  setConnUI("connecting");
+  const ok = await BLE.connect();
+  if(!ok) setConnUI("err");
+});
+
+// ============== Mode switch ==============
+document.querySelectorAll(".cat-tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll(".cat-tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    const m = tab.dataset.mode;
+    document.querySelectorAll(".mode").forEach(s=>s.classList.add("hidden"));
+    document.getElementById("mode-"+m).classList.remove("hidden");
+    if(m==="scene") renderScenes();
+    if(m==="trigger") renderTriggers();
+  });
+});
+
+// ============== Servo send (throttled 20Hz) ==============
+let lastSendT = {1:0, 2:0};
+function sendServo(idx, deg){
+  deg = Math.max(0, Math.min(180, Math.round(deg)));
+  const now = performance.now();
+  if(now - lastSendT[idx] < 50) return; // 20Hz
+  lastSendT[idx] = now;
+  BLE.send(`SRV:${idx},${deg}`);
+  updateMock(idx, deg);
+}
+function updateMock(idx, deg){
+  // 0..180 maps to -90..+90 SVG rotation (relative to vertical)
+  const ang = deg - 90;
+  const arm = document.getElementById("armS"+idx);
+  if(arm){
+    const cx = idx===1?90:190;
+    arm.setAttribute("transform", `rotate(${ang} ${cx} 200)`);
+  }
+}
+
+// ============== TRIM mode ==============
+const s1 = document.getElementById("s1"), s2 = document.getElementById("s2");
+const s1v = document.getElementById("s1v"), s2v = document.getElementById("s2v");
+const s1min = document.getElementById("s1min"), s1max = document.getElementById("s1max");
+const s2min = document.getElementById("s2min"), s2max = document.getElementById("s2max");
+
+function loadTrim(){
+  const v = (k,d)=> { const x = localStorage.getItem(k); return x!=null?parseInt(x,10):d; };
+  s1min.value = v("robi.servo.S1min", 0);
+  s1max.value = v("robi.servo.S1max", 180);
+  s2min.value = v("robi.servo.S2min", 0);
+  s2max.value = v("robi.servo.S2max", 180);
+  applyTrimToSliders();
+}
+function applyTrimToSliders(){
+  s1.min = s1min.value; s1.max = s1max.value;
+  s2.min = s2min.value; s2.max = s2max.value;
+  if(+s1.value < +s1.min) s1.value = s1.min;
+  if(+s1.value > +s1.max) s1.value = s1.max;
+  if(+s2.value < +s2.min) s2.value = s2.min;
+  if(+s2.value > +s2.max) s2.value = s2.max;
+  s1v.textContent = s1.value;
+  s2v.textContent = s2.value;
+  updateMock(1, +s1.value);
+  updateMock(2, +s2.value);
+}
+[s1min,s1max,s2min,s2max].forEach(el=>{
+  el.addEventListener("change", ()=>{
+    localStorage.setItem("robi.servo.S1min", s1min.value);
+    localStorage.setItem("robi.servo.S1max", s1max.value);
+    localStorage.setItem("robi.servo.S2min", s2min.value);
+    localStorage.setItem("robi.servo.S2max", s2max.value);
+    applyTrimToSliders();
+  });
+});
+s1.addEventListener("input", ()=>{ s1v.textContent = s1.value; sendServo(1, +s1.value); recordKf(); });
+s2.addEventListener("input", ()=>{ s2v.textContent = s2.value; sendServo(2, +s2.value); recordKf(); });
+s1v.parentElement.addEventListener("click", ()=>{ s1.value=90; s1.dispatchEvent(new Event("input")); });
+s2v.parentElement.addEventListener("click", ()=>{ s2.value=90; s2.dispatchEvent(new Event("input")); });
+
+// ============== STOP / CENTER ==============
+function stopCenter(){
+  BLE.send("STOP");
+  s1.value = 90; s2.value = 90;
+  s1v.textContent = 90; s2v.textContent = 90;
+  sendServo(1,90); sendServo(2,90);
+}
+document.getElementById("stopBtn").addEventListener("click", stopCenter);
+window.addEventListener("keydown", e=>{
+  if(e.code==="Space" && e.target.tagName!=="INPUT" && e.target.tagName!=="TEXTAREA"){
+    e.preventDefault(); stopCenter();
+  }
+});
+
+// ============== SWEEP ==============
+const sweepCards = document.querySelectorAll(".sweep-card");
+let sweepRun = false, sweepT0 = 0, sweepRaf = 0;
+const sweepHist = {1:[], 2:[]};
+sweepCards.forEach(card=>{
+  card.querySelectorAll("input[type=range]").forEach(r=>{
+    r.addEventListener("input", ()=>{
+      const cls = [...r.classList].find(c=>c.startsWith("sw-") && c!=="sw-en")?.replace("sw-","");
+      const v = card.querySelector(".sw-"+cls+"-v");
+      if(v) v.textContent = r.value;
+    });
+  });
+});
+function sweepValue(card, t){
+  const wave = card.querySelector(".sw-wave").value;
+  const A = +card.querySelector(".sw-amp").value;
+  const P = +card.querySelector(".sw-per").value;
+  const ph = +card.querySelector(".sw-pha").value * Math.PI/180;
+  const off = +card.querySelector(".sw-off").value;
+  const x = (2*Math.PI*t)/P + ph;
+  let y = 0;
+  if(wave==="sine") y = Math.sin(x);
+  else if(wave==="tri"){ const m = ((x/(Math.PI))%2+2)%2; y = m<1 ? 2*m-1 : 3-2*m; }
+  else { y = Math.sin(x)>=0?1:-1; }
+  return Math.max(0, Math.min(180, off + A*y));
+}
+function sweepTick(){
+  if(!sweepRun) return;
+  const t = performance.now() - sweepT0;
+  sweepCards.forEach(card=>{
+    const idx = +card.dataset.sw;
+    if(card.querySelector(".sw-en").checked){
+      const deg = sweepValue(card, t);
+      sendServo(idx, deg);
+      sweepHist[idx].push(deg);
+      if(sweepHist[idx].length>200) sweepHist[idx].shift();
+    }
+  });
+  drawSweep();
+  sweepRaf = setTimeout(sweepTick, 33); // ~30Hz
+}
+function drawSweep(){
+  const cv = document.getElementById("sweepGraph");
+  if(!cv) return;
+  const W = cv.width = cv.clientWidth, H = cv.height = cv.clientHeight;
+  const ctx = cv.getContext("2d");
+  ctx.fillStyle = "#000"; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle = "#1e3548"; ctx.beginPath();
+  ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+  [["1","#22d3ee"],["2","#fbbf24"]].forEach(([k,col])=>{
+    const arr = sweepHist[k];
+    if(!arr.length) return;
+    ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath();
+    for(let i=0;i<arr.length;i++){
+      const x = (i/(arr.length-1||1))*W;
+      const y = H - (arr[i]/180)*H;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  });
+}
+document.getElementById("sweepStart").addEventListener("click", ()=>{
+  if(sweepRun) return;
+  sweepRun = true; sweepT0 = performance.now();
+  sweepHist[1] = []; sweepHist[2] = [];
+  sweepTick();
+});
+document.getElementById("sweepStop").addEventListener("click", ()=>{
+  sweepRun = false; clearTimeout(sweepRaf);
+});
+
+// ============== KEYFRAME RECORDER ==============
+let kfRecording = false, kfStartT = 0, kfFrames = [], kfPlayT = null;
+const kfRec = document.getElementById("kfRec");
+const kfTime = document.getElementById("kfTime");
+const kfCount = document.getElementById("kfCount");
+const kfTrack = document.getElementById("kfTrack");
+let kfTickH = 0;
+
+function fmtTime(ms){
+  const s = Math.floor(ms/1000), tenths = Math.floor((ms%1000)/100);
+  const mm = String(Math.floor(s/60)).padStart(2,"0");
+  const ss = String(s%60).padStart(2,"0");
+  return `${mm}:${ss}.${tenths}`;
+}
+function recordKf(){
+  if(!kfRecording) return;
+}
+function kfStart(){
+  kfRecording = true;
+  kfStartT = performance.now();
+  kfFrames = [];
+  kfRec.classList.add("recording");
+  kfTickH = setInterval(()=>{
+    const t = performance.now() - kfStartT;
+    kfFrames.push({t, s1:+s1.value, s2:+s2.value});
+    kfTime.textContent = fmtTime(t);
+    kfCount.textContent = kfFrames.length + " frames";
+    drawKfTrack();
+    if(t>30000) kfStop(); // hard cap 30s
+  }, 100);
+}
+function kfStop(){
+  kfRecording = false;
+  kfRec.classList.remove("recording");
+  clearInterval(kfTickH);
+}
+kfRec.addEventListener("click", ()=>{ kfRecording ? kfStop() : kfStart(); });
+function drawKfTrack(playMs){
+  kfTrack.innerHTML = "";
+  if(!kfFrames.length) return;
+  const tot = kfFrames[kfFrames.length-1].t || 1;
+  // sample every 10 frames for markers
+  for(let i=0;i<kfFrames.length;i+=5){
+    const f = kfFrames[i];
+    const x = (f.t/tot)*100;
+    const m = document.createElement("div");
+    m.className = "marker";
+    m.style.left = x + "%";
+    m.style.opacity = 0.4;
+    kfTrack.appendChild(m);
+  }
+  if(playMs!=null){
+    const ph = document.createElement("div");
+    ph.className = "play-head";
+    ph.style.left = ((playMs/tot)*100) + "%";
+    kfTrack.appendChild(ph);
+  }
+}
+function playFrames(frames, onDone){
+  if(!frames || !frames.length){ if(onDone) onDone(); return; }
+  const t0 = performance.now();
+  function step(){
+    const t = performance.now() - t0;
+    // interpolate
+    let i = 0;
+    while(i<frames.length-1 && frames[i+1].t < t) i++;
+    const f = frames[i];
+    s1.value = f.s1; s2.value = f.s2;
+    s1v.textContent = f.s1; s2v.textContent = f.s2;
+    sendServo(1, f.s1); sendServo(2, f.s2);
+    drawKfTrack(t);
+    if(t < frames[frames.length-1].t){
+      requestAnimationFrame(step);
+    } else {
+      if(onDone) onDone();
+    }
+  }
+  step();
+}
+document.getElementById("kfPlay").addEventListener("click", ()=> playFrames(kfFrames));
+document.getElementById("kfClear").addEventListener("click", ()=>{
+  kfFrames = []; kfTime.textContent = "00:00.0"; kfCount.textContent = "0 frames"; kfTrack.innerHTML = "";
+});
+document.getElementById("kfSave").addEventListener("click", ()=>{
+  const name = (document.getElementById("kfName").value||"").trim() || T[LANG].notSaved;
+  if(!kfFrames.length) return;
+  const scenes = loadScenes();
+  const userScenes = scenes.filter(s=>!s.baked);
+  if(userScenes.length>=4){
+    alert(T[LANG].maxScenes);
+    return;
+  }
+  scenes.push({name, frames: kfFrames.slice(), duration: kfFrames[kfFrames.length-1].t});
+  saveScenes(scenes.filter(s=>!s.baked));
+  renderScenes();
+});
+
+// ============== SCENES ==============
+const BAKED = [
+  { baked:true, key:"sceneWave", duration:1800, frames: makeBaked("wave") },
+  { baked:true, key:"sceneLook", duration:2400, frames: makeBaked("look") },
+  { baked:true, key:"sceneBow",  duration:1600, frames: makeBaked("bow") }
+];
+function makeBaked(kind){
+  const out = [];
+  if(kind==="wave"){
+    for(let t=0;t<=1800;t+=100){
+      out.push({t, s1: 90 + 40*Math.sin(t/180), s2: 90});
+    }
+  } else if(kind==="look"){
+    for(let t=0;t<=2400;t+=100){
+      out.push({t, s1: 90 + 60*Math.sin(t/300), s2: 90 + 30*Math.sin(t/600)});
+    }
+  } else { // bow
+    for(let t=0;t<=1600;t+=100){
+      const k = t/1600;
+      out.push({t, s1:90, s2: 90 - 60*Math.sin(k*Math.PI)});
+    }
+  }
+  return out;
+}
+function loadScenes(){
+  let user = [];
+  try{ user = JSON.parse(localStorage.getItem("robi.servo.scenes")||"[]"); }catch(e){}
+  return [...BAKED, ...user];
+}
+function saveScenes(userScenes){
+  localStorage.setItem("robi.servo.scenes", JSON.stringify(userScenes));
+}
+function thumbSvg(frames){
+  if(!frames.length) return "";
+  const W=140, H=50;
+  const tot = frames[frames.length-1].t || 1;
+  const pts1 = frames.map(f=>`${(f.t/tot*W).toFixed(1)},${(H-(f.s1/180)*H).toFixed(1)}`).join(" ");
+  const pts2 = frames.map(f=>`${(f.t/tot*W).toFixed(1)},${(H-(f.s2/180)*H).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}"><polyline points="${pts1}" fill="none" stroke="#22d3ee" stroke-width="1.5"/><polyline points="${pts2}" fill="none" stroke="#fbbf24" stroke-width="1.5"/></svg>`;
+}
+function renderScenes(){
+  const grid = document.getElementById("sceneGrid");
+  if(!grid) return;
+  const scenes = loadScenes();
+  grid.innerHTML = "";
+  scenes.forEach((s, i)=>{
+    const name = s.baked ? T[LANG][s.key] : s.name;
+    const card = document.createElement("div");
+    card.className = "scene-card";
+    card.innerHTML = `
+      <h5>${escapeHtml(name)}</h5>
+      <div class="meta">${(s.duration/1000).toFixed(1)}s · ${s.frames.length} kf ${s.baked?"· ⭐":""}</div>
+      ${thumbSvg(s.frames)}
+      <div class="acts">
+        <button class="act primary">▶ ${T[LANG].play2}</button>
+        ${s.baked?"":`<button class="act danger">${T[LANG].del}</button>`}
+      </div>
+    `;
+    card.querySelector(".acts .primary").addEventListener("click", e=>{
+      e.stopPropagation();
+      playFrames(s.frames);
+    });
+    const delBtn = card.querySelector(".acts .danger");
+    if(delBtn){
+      delBtn.addEventListener("click", e=>{
+        e.stopPropagation();
+        const user = scenes.filter(x=>!x.baked);
+        const idx = user.indexOf(s);
+        if(idx>=0){ user.splice(idx,1); saveScenes(user); renderScenes(); renderTriggers(); }
+      });
+    }
+    card.addEventListener("click", ()=> playFrames(s.frames));
+    grid.appendChild(card);
+  });
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+// ============== TRIGGERS ==============
+let triggers = [];
+try{ triggers = JSON.parse(localStorage.getItem("robi.servo.triggers")||"[]"); }catch(e){ triggers=[]; }
+function saveTriggers(){ localStorage.setItem("robi.servo.triggers", JSON.stringify(triggers)); }
+function renderTriggers(){
+  const list = document.getElementById("trigList");
+  if(!list) return;
+  const scenes = loadScenes();
+  list.innerHTML = "";
+  triggers.forEach((tr, i)=>{
+    const row = document.createElement("div");
+    row.className = "trig-row";
+    const sceneOpts = scenes.map((s, si)=>{
+      const nm = s.baked? T[LANG][s.key] : s.name;
+      const key = s.baked ? "b:"+s.key : "u:"+si;
+      return `<option value="${escapeHtml(key)}" ${key===tr.scene?"selected":""}>${escapeHtml(nm)}</option>`;
+    }).join("");
+    row.innerHTML = `
+      <select class="t-type">
+        <option value="btn" ${tr.type==="btn"?"selected":""}>${T[LANG].typeBtn}</option>
+        <option value="dist" ${tr.type==="dist"?"selected":""}>${T[LANG].typeDist}</option>
+        <option value="ble" ${tr.type==="ble"?"selected":""}>${T[LANG].typeBle}</option>
+      </select>
+      <select class="t-scene">${sceneOpts}</select>
+      <input class="t-param" type="text" placeholder="${tr.type==='dist'?'cm':'name'}" value="${escapeHtml(tr.param||"")}" />
+      <span class="ts">${tr.last?new Date(tr.last).toLocaleTimeString():"—"}</span>
+      <span>
+        <button class="act primary t-fire">${T[LANG].fire}</button>
+        <button class="act danger t-del">×</button>
+      </span>
+    `;
+    row.querySelector(".t-type").addEventListener("change", e=>{ tr.type = e.target.value; saveTriggers(); });
+    row.querySelector(".t-scene").addEventListener("change", e=>{ tr.scene = e.target.value; saveTriggers(); });
+    row.querySelector(".t-param").addEventListener("change", e=>{ tr.param = e.target.value; saveTriggers(); });
+    row.querySelector(".t-fire").addEventListener("click", ()=> fireTrigger(i));
+    row.querySelector(".t-del").addEventListener("click", ()=>{ triggers.splice(i,1); saveTriggers(); renderTriggers(); });
+    list.appendChild(row);
+  });
+}
+function fireTrigger(i){
+  const tr = triggers[i]; if(!tr) return;
+  const scenes = loadScenes();
+  let scene = null;
+  if(tr.scene && tr.scene.startsWith("b:")){
+    scene = scenes.find(s=>s.baked && s.key===tr.scene.slice(2));
+  } else if(tr.scene && tr.scene.startsWith("u:")){
+    const idx = +tr.scene.slice(2);
+    scene = scenes[idx];
+  }
+  if(!scene) return;
+  tr.last = Date.now();
+  saveTriggers();
+  renderTriggers();
+  playFrames(scene.frames);
+}
+document.getElementById("trigAdd").addEventListener("click", ()=>{
+  triggers.push({type:"btn", scene:"b:sceneWave", param:"", last:0});
+  saveTriggers(); renderTriggers();
+});
+document.getElementById("trigPoll").addEventListener("click", async ()=>{
+  BLE.send("POLL DIST");
+  // mock: random distance
+  const cm = Math.floor(20 + Math.random()*200);
+  document.getElementById("trigDist").textContent = cm + " cm";
+  triggers.forEach((tr, i)=>{
+    if(tr.type==="dist"){
+      const thr = parseFloat(tr.param);
+      if(!isNaN(thr) && cm < thr) fireTrigger(i);
+    }
+  });
+});
+
+// Listen for incoming BLE events via shim hook
+window.RobiBle = window.RobiBle || {};
+{
+  const prevRx = window.RobiBle.onRxLine;
+  window.RobiBle.onRxLine = (msg) => {
+    if (typeof prevRx === 'function') { try { prevRx(msg); } catch(_){} }
+    triggers.forEach((tr, i)=>{
+      if(tr.type==="ble" && msg && String(msg).includes(tr.param||"")) fireTrigger(i);
+    });
+  };
+}
+
+// ============== BOOT ==============
+{ const _ts = document.getElementById("themeSelect"); if (_ts) _ts.addEventListener("change", e=> applyTheme(e.target.value)); }
+document.querySelectorAll("#langPills button").forEach(b=>{
+  b.addEventListener("click", ()=> setL(b.dataset.l));
+});
+
+applyTheme();
+setL(LANG);
+loadTrim();
+renderScenes();
+renderTriggers();
+setConnUI("off");
+window.addEventListener("resize", drawSweep);
+
+/* DOMContentLoaded wrapper — `lab-logger.js` is loaded with `defer`, so it
+   executes after document parsing. The bare inline call here would run at
+   parse time when window.LabLogger is still undefined. */
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.LabLogger) LabLogger.mount('#labLogger', { surface: 'Servo Lab' });
+});
+</script>
+</body>
+</html>

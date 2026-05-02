@@ -218,10 +218,6 @@
       // Pinout, User Guide) used to be injected here. They are now in the Help
       // drawer (📖 Help button), where they belong — Tools is for actions only
       // (Share QR, Pair 2 robots, Reset).
-      // Bogus guard kept so the closing brace below still has a matching block.
-      if (false) {
-        toolsMount.appendChild(userGuide);
-      }
       return true;
     }
     let tries2 = 0;

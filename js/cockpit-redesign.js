@@ -169,10 +169,130 @@
     wireConnect();
   }
 
+  // ---- Floating LABS FAB -------------------------------------
+  // Small bottom-center button → opens the Labs hub (joystick lab,
+  // ir lab, …) in a new tab. Discoverability shortcut so a kid
+  // doesn't need to scroll back to the workshop banner to find labs.
+  function addFloatingLabs() {
+    if (document.getElementById('mqFabLabs')) return;
+    const a = document.createElement('a');
+    a.id = 'mqFabLabs';
+    a.href = 'labs/index.html';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.title = 'Open Labs — interactive playgrounds';
+    a.setAttribute('aria-label', 'Open Labs hub');
+    a.innerHTML = '<span class="mq-fab-icon">🧪</span><span class="mq-fab-label">LABS</span>';
+    // Anchors are draggable=true by default — that triggers browser's native
+    // drag-to-bookmark BEFORE our pointer events fire, killing the FAB drag.
+    // Disable it so makeDraggable() can take over.
+    a.draggable = false;
+    a.addEventListener('dragstart', e => e.preventDefault());
+    a.style.userSelect = 'none';
+    document.body.appendChild(a);
+  }
+
+  // ---- Make a FAB draggable ----------------------------------
+  // Pointer-drag any element by its body. Persists position in localStorage
+  // under the supplied key. Click-vs-drag distinction: movement under 8px
+  // is treated as a click (the button's regular handler still fires).
+  // Restores saved position on next visit; clamped to viewport.
+  function makeDraggable(el, storageKey) {
+    if (!el) return;
+    const KEY = storageKey || ('mq.fab.' + el.id);
+    const PAD = 6;  // keep this many px from viewport edges
+    const DRAG_THRESHOLD = 8;
+    let dragging = false;
+    let startX = 0, startY = 0;
+    let elStartX = 0, elStartY = 0;
+    let moved = false;
+
+    function clamp(x, y) {
+      const r = el.getBoundingClientRect();
+      const maxX = window.innerWidth  - r.width  - PAD;
+      const maxY = window.innerHeight - r.height - PAD;
+      return [
+        Math.max(PAD, Math.min(maxX, x)),
+        Math.max(PAD, Math.min(maxY, y))
+      ];
+    }
+
+    function applyPos(x, y) {
+      const [cx, cy] = clamp(x, y);
+      // Switch from CSS-corner positioning (bottom/right/left) to absolute
+      // top/left so the FAB tracks freely. We zero the corner anchors first.
+      el.style.left   = cx + 'px';
+      el.style.top    = cy + 'px';
+      el.style.right  = 'auto';
+      el.style.bottom = 'auto';
+    }
+
+    function savePos(x, y) {
+      try { localStorage.setItem(KEY, JSON.stringify({ x, y })); } catch (e) {}
+    }
+
+    // Restore saved position on init
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (saved && typeof saved.x === 'number' && typeof saved.y === 'number') {
+        // Use rAF so the FAB has a measured size before clamp() runs.
+        requestAnimationFrame(() => applyPos(saved.x, saved.y));
+      }
+    } catch (e) {}
+
+    el.style.touchAction = 'none';   // prevent pointercancel from native scroll
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;   // left button only
+      dragging = true; moved = false;
+      const r = el.getBoundingClientRect();
+      startX = e.clientX; startY = e.clientY;
+      elStartX = r.left;  elStartY = r.top;
+      el.setPointerCapture(e.pointerId);
+      el.style.transition = 'none';   // disable hover/active transitions during drag
+    });
+
+    el.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (!moved && (Math.abs(dx) + Math.abs(dy)) > DRAG_THRESHOLD) moved = true;
+      if (moved) applyPos(elStartX + dx, elStartY + dy);
+    });
+
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      el.style.transition = '';
+      try { el.releasePointerCapture(e.pointerId); } catch (err) {}
+      if (moved) {
+        const r = el.getBoundingClientRect();
+        savePos(r.left, r.top);
+        // Suppress the upcoming click that would otherwise fire after drag
+        const suppress = (ev) => { ev.stopPropagation(); ev.preventDefault(); el.removeEventListener('click', suppress, true); };
+        el.addEventListener('click', suppress, true);
+      }
+    }
+    el.addEventListener('pointerup', endDrag);
+    el.addEventListener('pointercancel', endDrag);
+
+    // Re-clamp on window resize so the FAB doesn't end up offscreen.
+    window.addEventListener('resize', () => {
+      const r = el.getBoundingClientRect();
+      if (r.left || r.top) applyPos(r.left, r.top);
+    });
+  }
+
   // ---- init --------------------------------------------------
   function init() {
     addFloatingStop();
     addFloatingConnect();
+    addFloatingLabs();
+    // Make all 3 FABs draggable + position-persistent.
+    requestAnimationFrame(() => {
+      makeDraggable(document.getElementById('mqFabStop'),    'mq.fab.stop.pos');
+      makeDraggable(document.getElementById('mqFabConnect'), 'mq.fab.connect.pos');
+      makeDraggable(document.getElementById('mqFabLabs'),    'mq.fab.labs.pos');
+    });
     // Density chooser used to live as a standalone chip in the header.
     // It now lives inside the Settings (⚙) panel — see settings-panel.js.
     // We just apply the saved density on boot here; buildDensityChooser

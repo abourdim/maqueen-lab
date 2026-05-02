@@ -11,6 +11,16 @@
     <script>
       (function () {
         try {
+          /* Pre-paint theme bootstrap — read mb_theme synchronously so the
+             first frame already has the right palette (no workshop-orange
+             flash on cold loads). Default = cosmos.
+             NOTE: main app uses its OWN theme palette (cosmos/workshop/sky/
+             mint/night/forest/arctic/blaze) defined in styles.css. Labs/docs/
+             workshops use a SEPARATE 5-theme palette (carbon/forest/steel/
+             paper/pearl) defined in workshops/theme.css. Do NOT propagate
+             between the two — the palettes don't overlap (only "forest"
+             matches by name), so cross-surface theme propagation breaks the
+             receiving surface. Each surface owns its own key. */
           var saved = localStorage.getItem('mb_theme');
           var theme = saved || 'cosmos';
           if (theme === 'workshop' || theme === 'stealth') {
@@ -243,7 +253,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
       <a href="start.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:#fbbf24; color:#0a1018 !important; border-radius:8px; text-decoration:none !important; font-weight:700; font-size:0.9rem; border:1.5px solid #0a1018; box-shadow:2px 2px 0 rgba(0,0,0,0.3); white-space:nowrap;">🚀 First Day</a>
       <a href="docs/schematics-kids.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:#38bdf8; color:#0a1018 !important; border-radius:8px; text-decoration:none !important; font-weight:700; font-size:0.9rem; border:1.5px solid #0a1018; box-shadow:2px 2px 0 rgba(0,0,0,0.3); white-space:nowrap;">🤖 Meet Robot</a>
       <a href="workshops/booklet.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:#fb923c; color:#0a1018 !important; border-radius:8px; text-decoration:none !important; font-weight:700; font-size:0.9rem; border:1.5px solid #0a1018; box-shadow:2px 2px 0 rgba(0,0,0,0.3); white-space:nowrap;">🎒 Kid Journal</a>
-      <a href="docs/joystick-lab.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:linear-gradient(135deg,#a855f7,#ec4899); color:#fff !important; border-radius:8px; text-decoration:none !important; font-weight:700; font-size:0.9rem; border:1.5px solid #0a1018; box-shadow:2px 2px 0 rgba(0,0,0,0.3); white-space:nowrap;" title="10 different ways to drive your robot">🕹️ Joystick Lab</a>
+      <a href="labs/index.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:#22d3ee; color:#0a1018 !important; border-radius:8px; text-decoration:none !important; font-weight:700; font-size:0.9rem; border:1.5px solid #0a1018; box-shadow:2px 2px 0 rgba(0,0,0,0.3); white-space:nowrap;" title="Interactive playgrounds — Joystick Lab, IR Lab, Vision Lab, …">🧪 Labs</a>
       <span style="width:1px; height:22px; background:rgba(148,163,184,0.35);"></span>
       <!-- FOR TEACHERS / PARENTS — workshop facilitator resources -->
       <span style="font-size:11px; font-weight:800; color:#fbbf24; letter-spacing:0.08em; padding:3px 8px; background:rgba(251,191,36,0.15); border:1px solid rgba(251,191,36,0.4); border-radius:6px; white-space:nowrap; text-transform:uppercase;">👨‍🏫 For teachers</span>
@@ -1205,17 +1215,51 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                                 <text x="140" y="208" text-anchor="middle" fill="var(--text, #93a8c4)" font-size="8" font-family="JetBrains Mono, monospace">I²C 0x10 → motor driver TB6612FNG</text>
                                             </svg>
                                         </div>
-                                        <!-- Analog joystick -->
+                                        <!-- Analog joystick — 4 swappable skins via [data-skin] attribute.
+                                             Visual styling lives in styles.css under "Joystick skins"; this markup
+                                             keeps geometry only so each skin restyles cleanly. Skin choice persists
+                                             to localStorage('mq.joySkin'). All skins inherit theme via --accent. -->
                                         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                                            <div id="mqJoyZone" style="width:140px; height:140px; position:relative; touch-action:none; user-select:none;">
-                                                <div style="position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 30% 30%, #1d3556, #0a1628); border:2px dashed rgba(251,146,60,0.4);"></div>
-                                                <!-- crosshair guides -->
-                                                <div style="position:absolute; left:50%; top:0; bottom:0; width:1px; background:rgba(251,146,60,0.15);"></div>
-                                                <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:rgba(251,146,60,0.15);"></div>
-                                                <div id="mqJoyThumb" style="position:absolute; left:50%; top:50%; width:48px; height:48px; margin-left:-24px; margin-top:-24px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #fb923c, #c2410c); box-shadow:0 4px 12px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3); cursor:grab; transition:transform 0.15s ease-out;"></div>
+                                            <select id="mqJoySkin" aria-label="Joystick skin" style="font-size:10px; padding:2px 8px; border-radius:6px; background:rgba(0,0,0,0.35); color:var(--text-secondary, #93a8c4); border:1px solid color-mix(in srgb, var(--accent, #fb923c) 35%, transparent); cursor:pointer;">
+                                                <option value="classic">● Classic</option>
+                                                <option value="reactor">⚛ Reactor</option>
+                                                <option value="eye">👁 Eye</option>
+                                                <option value="radar">📡 Radar</option>
+                                                <option value="hex">⬡ Hex grid</option>
+                                                <option value="crosshair">🎯 Crosshair</option>
+                                                <option value="gauge">🕒 Gauge</option>
+                                                <option value="holo">✨ Holo-pad</option>
+                                                <option value="mech">🤖 Mech</option>
+                                                <option value="arcade">🕹 Arcade</option>
+                                                <option value="dpad">✚ D-pad</option>
+                                                <option value="pixel">👾 Pixel</option>
+                                                <option value="compass">🧭 Compass</option>
+                                                <option value="puck">🛸 Puck</option>
+                                            </select>
+                                            <div id="mqJoyZone" data-skin="classic" style="width:140px; height:140px; position:relative; touch-action:none; user-select:none;">
+                                                <div class="joy-disc"></div>
+                                                <div class="joy-cross-v"></div>
+                                                <div class="joy-cross-h"></div>
+                                                <div id="mqJoyThumb" class="joy-thumb"></div>
                                             </div>
                                             <div style="font-size:10px; color:var(--text-secondary, #93a8c4); text-align:center;">drag to drive · release = stop</div>
                                         </div>
+                                        <script>
+                                            // Joystick skin picker — restore last choice and persist on change.
+                                            (() => {
+                                                const sel = document.getElementById('mqJoySkin');
+                                                const zone = document.getElementById('mqJoyZone');
+                                                if (!sel || !zone) return;
+                                                let saved = 'classic';
+                                                try { saved = localStorage.getItem('mq.joySkin') || 'classic'; } catch {}
+                                                sel.value = saved;
+                                                zone.dataset.skin = saved;
+                                                sel.addEventListener('change', () => {
+                                                    zone.dataset.skin = sel.value;
+                                                    try { localStorage.setItem('mq.joySkin', sel.value); } catch {}
+                                                });
+                                            })();
+                                        </script>
                                     </div>
 
                                     <!-- 🎭 Robot personality presets — one-tap bundle that
@@ -4265,7 +4309,6 @@ serial.writeLine("GRAPH:Force:" + force)</code></pre>
                   <a href="start.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 12px; background:rgba(56,189,248,0.10); border:1px solid rgba(56,189,248,0.35); border-radius:8px; color:#e6eef9; text-decoration:none; font-size:12px; font-weight:600;">🚀 <span>First Day</span></a>
                   <a href="docs/schematics-kids.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 12px; background:rgba(56,189,248,0.10); border:1px solid rgba(56,189,248,0.35); border-radius:8px; color:#e6eef9; text-decoration:none; font-size:12px; font-weight:600;">🤖 <span>Meet robot</span></a>
                   <a href="workshops/booklet.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 12px; background:rgba(56,189,248,0.10); border:1px solid rgba(56,189,248,0.35); border-radius:8px; color:#e6eef9; text-decoration:none; font-size:12px; font-weight:600;">🎒 <span>Journal</span></a>
-                  <a href="docs/joystick-lab.html" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; padding:7px 12px; background:linear-gradient(135deg, rgba(168,85,247,0.18), rgba(236,72,153,0.18)); border:1px solid rgba(168,85,247,0.45); border-radius:8px; color:#e6eef9; text-decoration:none; font-size:12px; font-weight:600;">🕹️ <span>Joystick Lab</span></a>
                 </div>
               </div>
 

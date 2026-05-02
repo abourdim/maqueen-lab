@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Maqueen Lite v4 — Référence des broches · Robi-9 Lab</title>
+<title>Maqueen Lite v4 — Référence des broches · Maqueen Lab</title>
 <link rel="stylesheet" href="../workshops/theme.css">
 <link rel="stylesheet" href="doc-shell.css">
 <script src="../workshops/newtab.js" defer></script>
@@ -15,7 +15,7 @@
   <div class="title-block">
     <div class="logo-mark">▣</div>
     <div>
-      <h1>Robi-9 Lab // Broches</h1>
+      <h1>Maqueen Lab // Broches</h1>
       <div class="subtitle">Référence · Maqueen Lite v4</div>
     </div>
   </div>
@@ -28,19 +28,22 @@
       <option value="pearl">☼ Pearl</option>
     </select>
     <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;">🤖 App Robot</a>
+    <a class="wd-select" href="index.html" style="text-decoration:none; border-bottom:none;">🗂️ Catalog</a>
+    <a class="wd-select" href="../labs/index.html" style="text-decoration:none; border-bottom:none;">🧪 Labs</a>
+    <a class="wd-select" href="../workshops/hub.html" style="text-decoration:none; border-bottom:none;">🏠 Hub</a>
   </div>
 </header>
 
 <div class="doc-wrap">
 
-<div class="langbar">
-  <a href="pinout.html">🇬🇧 EN</a>
-  <a href="pinout.fr.html" class="active">🇫🇷 FR</a>
-  <a href="pinout.ar.html">🇩🇿 AR</a>
+<div class="lang-pills" role="navigation" aria-label="Langue">
+  <a class="lang-pill"        href="pinout.html"><span class="flag flag-en"></span>EN</a>
+  <a class="lang-pill active" href="pinout.fr.html"><span class="flag flag-fr"></span>FR</a>
+  <a class="lang-pill"        href="pinout.ar.html"><span class="flag flag-ar"></span>AR</a>
 </div>
 
 <h1>Maqueen Lite v4 — Référence des broches</h1>
-<div class="subtitle">Source de vérité pour chaque broche utilisée par le firmware Robi-9 Lab et l'extension <code>pxt-maqueen</code> sous-jacente.</div>
+<div class="subtitle">Source de vérité pour chaque broche utilisée par le firmware Maqueen Lab et l'extension <code>pxt-maqueen</code> sous-jacente.</div>
 
 <h2>Références</h2>
 <ul class="ref-list">
@@ -65,7 +68,7 @@
     <li><code>maqueen.IR_read()</code> — lit les codes NEC depuis le récepteur IR embarqué via le wrapper C++ <code>maqueenIR.cpp</code>.</li>
     <li>LEDs RGB pilotées en I2C (4 pixels d'ambiance) accessibles au registre <code>0x32</code> du même chip <code>0x10</code> — <strong>ce ne sont pas</strong> des NeoPixels standards.</li>
   </ul>
-  <p>Le firmware v1 de Robi-9 Lab (<code>firmware/v1-maqueen-lib.ts</code>) utilise ces appels <code>maqueen.*</code> directement. Le futur firmware v2 les remplacera par des appels bruts <code>pins.*</code> et I2C — même protocole filaire, même app web, code bas-niveau affiché côte à côte dans chaque Component Explorer pour une progression pédagogique.</p>
+  <p>Le firmware v1 de Maqueen Lab (<code>firmware/v1-maqueen-lib.ts</code>) utilise ces appels <code>maqueen.*</code> directement. Le futur firmware v2 les remplacera par des appels bruts <code>pins.*</code> et I2C — même protocole filaire, même app web, code bas-niveau affiché côte à côte dans chaque Component Explorer pour une progression pédagogique.</p>
 </div>
 
 <div class="legend">
@@ -163,7 +166,7 @@
 <pre><code>git clone https://github.com/DFRobot/pxt-maqueen
 grep -nE "DigitalPin\.|0x10|0x14|0x15|0x32" pxt-maqueen/maqueen.ts</code></pre>
 
-<h2>Comment le firmware Robi-9 Lab les utilise</h2>
+<h2>Comment le firmware Maqueen Lab les utilise</h2>
 <table>
   <tr><th>Verbe (par BLE)</th><th>Code micro:bit</th></tr>
   <tr><td><code>M:L,R</code></td><td><code>maqueen.motorRun(M1, dir, |L|)</code> + idem pour M2</td></tr>
@@ -191,7 +194,7 @@ grep -nE "DigitalPin\.|0x10|0x14|0x15|0x32" pxt-maqueen/maqueen.ts</code></pre>
 <footer class="wd-footer">
   <span>propulsé par <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
   <span class="sep">·</span>
-  <span>Robi-9 Lab · Broches</span>
+  <span>Maqueen Lab · Broches</span>
 </footer>
 
 <script>

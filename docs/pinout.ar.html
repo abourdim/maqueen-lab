@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Maqueen Lite v4 — مرجع المنافذ · Robi-9 Lab</title>
+<title>Maqueen Lite v4 — مرجع المنافذ · Maqueen Lab</title>
 <link rel="stylesheet" href="../workshops/theme.css">
 <link rel="stylesheet" href="doc-shell.css">
 <script src="../workshops/newtab.js" defer></script>
@@ -15,7 +15,7 @@
   <div class="title-block">
     <div class="logo-mark">▣</div>
     <div>
-      <h1>Robi-9 Lab // المنافذ</h1>
+      <h1>Maqueen Lab // المنافذ</h1>
       <div class="subtitle">المرجع · Maqueen Lite v4</div>
     </div>
   </div>
@@ -28,19 +28,22 @@
       <option value="pearl">☼ Pearl</option>
     </select>
     <a class="wd-select" href="../index.html" style="text-decoration:none; border-bottom:none;">🤖 تطبيق الروبوت</a>
+    <a class="wd-select" href="index.html" style="text-decoration:none; border-bottom:none;">🗂️ Catalog</a>
+    <a class="wd-select" href="../labs/index.html" style="text-decoration:none; border-bottom:none;">🧪 Labs</a>
+    <a class="wd-select" href="../workshops/hub.html" style="text-decoration:none; border-bottom:none;">🏠 Hub</a>
   </div>
 </header>
 
 <div class="doc-wrap">
 
-<div class="langbar">
-  <a href="pinout.html">🇬🇧 EN</a>
-  <a href="pinout.fr.html">🇫🇷 FR</a>
-  <a href="pinout.ar.html" class="active">🇩🇿 AR</a>
+<div class="lang-pills" role="navigation" aria-label="لغة">
+  <a class="lang-pill"        href="pinout.html"><span class="flag flag-en"></span>EN</a>
+  <a class="lang-pill"        href="pinout.fr.html"><span class="flag flag-fr"></span>FR</a>
+  <a class="lang-pill active" href="pinout.ar.html"><span class="flag flag-ar"></span>AR</a>
 </div>
 
 <h1>Maqueen Lite v4 — مرجع المنافذ</h1>
-<div class="subtitle">مصدر الحقيقة لكل منفذ يستخدمه firmware Robi-9 Lab وامتداد <code>pxt-maqueen</code> الكامن وراءه.</div>
+<div class="subtitle">مصدر الحقيقة لكل منفذ يستخدمه firmware Maqueen Lab وامتداد <code>pxt-maqueen</code> الكامن وراءه.</div>
 
 <h2>المراجع</h2>
 <ul class="ref-list">
@@ -65,7 +68,7 @@
     <li><code>maqueen.IR_read()</code> — يقرأ رموز NEC من مستقبل IR المدمج عبر وسيط C++ <code>maqueenIR.cpp</code>.</li>
     <li>LEDs RGB مُتحكّم بها عبر I2C (4 بكسل محيطيّ) في السجلّ <code>0x32</code> من نفس الشريحة <code>0x10</code> — <strong>ليست</strong> NeoPixels قياسيّة.</li>
   </ul>
-  <p>firmware v1 الخاصّ بـ Robi-9 Lab (<code>firmware/v1-maqueen-lib.ts</code>) يستخدم استدعاءات <code>maqueen.*</code> هذه مباشرةً. firmware v2 المستقبليّ سيستبدلها باستدعاءات <code>pins.*</code> و I2C خامة — نفس البروتوكول السلكيّ، نفس تطبيق الويب، كود منخفض المستوى يُعرَض جنباً إلى جنب في كلّ Component Explorer للتقدّم التعليميّ.</p>
+  <p>firmware v1 الخاصّ بـ Maqueen Lab (<code>firmware/v1-maqueen-lib.ts</code>) يستخدم استدعاءات <code>maqueen.*</code> هذه مباشرةً. firmware v2 المستقبليّ سيستبدلها باستدعاءات <code>pins.*</code> و I2C خامة — نفس البروتوكول السلكيّ، نفس تطبيق الويب، كود منخفض المستوى يُعرَض جنباً إلى جنب في كلّ Component Explorer للتقدّم التعليميّ.</p>
 </div>
 
 <div class="legend">
@@ -163,7 +166,7 @@
 <pre><code>git clone https://github.com/DFRobot/pxt-maqueen
 grep -nE "DigitalPin\.|0x10|0x14|0x15|0x32" pxt-maqueen/maqueen.ts</code></pre>
 
-<h2>كيف يستخدمها firmware Robi-9 Lab</h2>
+<h2>كيف يستخدمها firmware Maqueen Lab</h2>
 <table>
   <tr><th>الفعل (عبر BLE)</th><th>كود micro:bit</th></tr>
   <tr><td><code>M:L,R</code></td><td><code>maqueen.motorRun(M1, dir, |L|)</code> + كذلك لـ M2</td></tr>
@@ -191,7 +194,7 @@ grep -nE "DigitalPin\.|0x10|0x14|0x15|0x32" pxt-maqueen/maqueen.ts</code></pre>
 <footer class="wd-footer">
   <span>مدعوم من <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
   <span class="sep">·</span>
-  <span>Robi-9 Lab · المنافذ</span>
+  <span>Maqueen Lab · المنافذ</span>
 </footer>
 
 <script>

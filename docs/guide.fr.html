@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robi-9 Lab — Guide complet</title>
+<title>Maqueen Lab — Guide complet</title>
 <link rel="stylesheet" href="../workshops/theme.css">
 <link rel="stylesheet" href="doc-shell.css">
 <script src="../workshops/newtab.js" defer></script>
@@ -13,6 +13,8 @@
   .gh-langbar a { padding: 5px 12px; border: 1.5px solid var(--border); border-radius: 999px; color: var(--steel); text-decoration: none; background: var(--bg-card); font-weight: 600; transition: border-color 0.15s, color 0.15s; }
   .gh-langbar a:hover { border-color: var(--neon); color: var(--text); }
   .gh-langbar a.active { color: var(--ink); background: var(--neon); border-color: var(--neon); }
+  .gh-langbar select { padding: 5px 12px; border: 1.5px solid var(--border); border-radius: 999px; color: var(--steel); background: var(--bg-card); font: inherit; font-weight: 600; cursor: pointer; }
+  .gh-langbar select:hover { border-color: var(--neon); color: var(--text); }
   .gh-langbar .grow { flex: 1; }
 </style>
 <style>
@@ -267,9 +269,16 @@ footer{text-align:center;padding:24px 20px;border-top:1px solid var(--border);
 <div class="wd-band wd-band-top"></div>
 
 <div class="gh-langbar">
-  <a href="guide.html">🇬🇧 EN</a>
-  <a href="guide.fr.html" class="active">🇫🇷 FR</a>
-  <a href="guide.ar.html">🇩🇿 AR</a>
+  <a href="guide.html"><span class="flag flag-en"></span>EN</a>
+  <a href="guide.fr.html" class="active"><span class="flag flag-fr"></span>FR</a>
+  <a href="guide.ar.html"><span class="flag flag-ar"></span>AR</a>
+  <select id="themeSelect" aria-label="Thème">
+    <option value="carbon">▣ Carbon</option>
+    <option value="forest">▣ Forest</option>
+    <option value="steel">▣ Steel</option>
+    <option value="paper">☼ Paper</option>
+    <option value="pearl">☼ Pearl</option>
+  </select>
   <span class="grow"></span>
   <a href="../index.html">🤖 App Robot</a>
   <a href="https://github.com/abourdim/maqueen-lab" target="_blank" rel="noopener">⭐ GitHub</a>
@@ -299,7 +308,7 @@ footer{text-align:center;padding:24px 20px;border-top:1px solid var(--border);
       <ellipse cx="80" cy="106" rx="8" ry="4" fill="#0a1220" stroke="#4ade80" stroke-width="1.5"/>
     </svg>
   </span>
-  <h1>Robi-9 Lab — Guide complet</h1>
+  <h1>Maqueen Lab — Guide complet</h1>
   <p>Explication détaillée de chaque bouton, mode, onglet et fonctionnalité — avec schémas et animations.</p>
   <div class="search-wrap">
     <input type="text" id="searchInput" placeholder="🔍  Recherche — ex. wander, tilt, sonar, SLAM…" autocomplete="off">
@@ -351,7 +360,7 @@ footer{text-align:center;padding:24px 20px;border-top:1px solid var(--border);
     <span class="sh-icon">🔗</span>
     <div class="sh-body">
       <h2>Connexion au robot</h2>
-      <p>Robi-9 Lab se connecte à ton robot via <strong>Bluetooth Low Energy (BLE)</strong> directement depuis le navigateur — pas d'installation, pas de câble.</p>
+      <p>Maqueen Lab se connecte à ton robot via <strong>Bluetooth Low Energy (BLE)</strong> directement depuis le navigateur — pas d'installation, pas de câble.</p>
     </div>
   </div>
 
@@ -1306,7 +1315,7 @@ footer{text-align:center;padding:24px 20px;border-top:1px solid var(--border);
 </div><!-- /layout -->
 
 <footer>
-  <p>🤖 <strong>Robi-9 Lab</strong> — Guide complet · <a href="../start.html" style="color:var(--accent)">🚀 Premiers pas</a> · <a href="../index.html" style="color:var(--accent)">Retour à l'app</a></p>
+  <p>🤖 <strong>Maqueen Lab</strong> — Guide complet · <a href="../start.html" style="color:var(--accent)">🚀 Premiers pas</a> · <a href="../index.html" style="color:var(--accent)">Retour à l'app</a></p>
   <p style="margin-top:6px;color:#4a6a8a">Robot DFRobot Maqueen + BBC micro:bit v1 &amp; v2 · Chrome &amp; Edge uniquement</p>
 </footer>
 
@@ -1314,7 +1323,7 @@ footer{text-align:center;padding:24px 20px;border-top:1px solid var(--border);
 <footer class="wd-footer">
   <span>propulsé par <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
   <span class="sep">·</span>
-  <span>Robi-9 Lab · Guide</span>
+  <span>Maqueen Lab · Guide</span>
 </footer>
 
 <script>

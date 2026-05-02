@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robi-9 // Robi-9 Lab</title>
+<title>Robi-9 // Maqueen Lab</title>
 <link rel="stylesheet" href="theme.css">
 <script src="newtab.js" defer></script>
 <style>
@@ -413,7 +413,7 @@
   <div class="title-block">
     <div class="logo-mark">▣</div>
     <div>
-      <h1>Robi-9 // Robi-9 Lab</h1>
+      <h1>Robi-9 // Maqueen Lab</h1>
       <div class="subtitle">All your robot workshops · Workshop DIY</div>
     </div>
   </div>
@@ -425,11 +425,11 @@
       <option value="paper">☼ Paper</option>
       <option value="pearl">☼ Pearl</option>
     </select>
-    <select class="wd-select" id="langSelect" aria-label="Language" onchange="setL(this.value)">
-      <option value="en" selected>🇬🇧 EN</option>
-      <option value="fr">🇫🇷 FR</option>
-      <option value="ar">🇩🇿 AR</option>
-    </select>
+    <div class="lang-pills" role="radiogroup" aria-label="Language">
+      <button type="button" class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+      <button type="button" class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+      <button type="button" class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+    </div>
   </div>
 </header>
 
@@ -712,7 +712,7 @@
 <footer class="wd-footer">
   <span data-i18n="foot_pow">powered by <a href="https://workshop-diy.org" target="_blank" rel="noopener">workshop-diy.org</a></span>
   <span class="sep">·</span>
-  <span>Robi-9 Lab</span>
+  <span>Maqueen Lab</span>
   <span class="sep">·</span>
   <span class="badge">v1.2</span>
 </footer>
@@ -906,9 +906,10 @@ function setL(lang) {
   document.body.classList.toggle('rtl', lang === 'ar');
   document.documentElement.lang = lang;
   document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-  document.getElementById('langSelect').value = lang;
+  document.querySelectorAll('.lang-pill[data-lang]').forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
   try { localStorage.setItem('robi.lang', lang); } catch (e) {}
 }
+document.querySelectorAll('.lang-pill[data-lang]').forEach(btn => btn.addEventListener('click', () => setL(btn.dataset.lang)));
 
 const themeSel = document.getElementById('themeSelect');
 function applyTheme(t) {

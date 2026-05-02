@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="carbon">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Labs · Maqueen Lab</title>
+<link rel="stylesheet" href="../workshops/theme.css">
+<script src="../workshops/newtab.js" defer></script>
+<style>
+  /* Labs hub — sibling of /docs/index.html. Shares the carbon theme,
+     hero badge, Robi-9 mascot, and card grid pattern so the three
+     hubs (App / Docs / Labs) look like a family. Cards link to
+     interactive playgrounds; "coming" cards stub future labs. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); }
+  body {
+    font-family: var(--font-body);
+    line-height: 1.55;
+    min-height: 100vh;
+    padding-bottom: 60px;
+    background:
+      radial-gradient(ellipse at 15% -10%, var(--hero-glow), transparent 55%),
+      radial-gradient(ellipse at 90% 110%, var(--hero-glow), transparent 60%),
+      var(--bg);
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 22px; }
+
+  .hero { text-align: center; padding: 36px 22px 24px; max-width: 900px; margin: 0 auto; }
+  .hero .badge-line {
+    display: inline-block;
+    background: var(--bg-card);
+    border: 2px solid var(--neon);
+    color: var(--neon);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-family: var(--font-tech);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .hero .robi { width: 140px; height: 140px; margin: 6px auto 14px; }
+  .hero .robi svg { width: 100%; height: 100%; filter: drop-shadow(0 6px 22px var(--hero-glow)); }
+  @keyframes robi-blink   { 0%, 92%, 100% { opacity: 1; } 95% { opacity: 0; } }
+  @keyframes robi-antenna { 0%, 100% { transform: scale(1); fill: var(--amber); } 50% { transform: scale(1.4); fill: var(--orange); } }
+  @keyframes robi-led     { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .hero .robi .eyes circle { animation: robi-blink 4s ease-in-out infinite; transform-origin: center; }
+  .hero .robi .antenna     { animation: robi-antenna 1.6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  .hero .robi .led-l       { animation: robi-led 1.4s ease-in-out infinite; }
+  .hero .robi .led-r       { animation: robi-led 1.4s ease-in-out 0.7s infinite; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--neon);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .hero .sub { color: var(--text); font-size: 1.05rem; max-width: 640px; margin: 0 auto 18px; }
+
+  .sec {
+    margin-top: 36px;
+    padding: 18px 22px;
+    border-radius: 16px;
+    border: 2px solid rgba(74,222,128,0.40);
+    background: linear-gradient(135deg, var(--bg-card), rgba(74,222,128,0.04));
+  }
+  .sec h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--neon);
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+  .sec .lead { color: var(--text); font-size: 0.95rem; margin-bottom: 16px; opacity: 0.85; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--bg-soft);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--text);
+    display: flex; flex-direction: column;
+    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+    position: relative;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--neon); box-shadow: 0 6px 18px rgba(74,222,128,0.15); }
+  .card .top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .card .ic {
+    font-size: 1.6rem; line-height: 1;
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card h3 { font-family: var(--font-display); font-size: 1.1rem; color: var(--text); line-height: 1.2; margin-bottom: 2px; }
+  .card .filename { font-family: var(--font-tech); font-size: 0.72rem; color: var(--steel); word-break: break-all; }
+  .card p { font-size: 0.92rem; color: var(--text); opacity: 0.85; margin: 6px 0 10px; line-height: 1.45; }
+  .card .meta-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+    font-size: 0.74rem;
+  }
+  .card .chip {
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 600;
+  }
+  .card .chip.lang { color: var(--neon);  border-color: rgba(74,222,128,0.35); }
+  .card .chip.use  { color: var(--amber); border-color: rgba(251,191,36,0.35); }
+  .card .chip.tag  { color: var(--cyan);  border-color: rgba(56,189,248,0.35); }
+
+  /* "Coming soon" stub — non-clickable, dimmed, dashed border. */
+  .card.coming {
+    pointer-events: none;
+    opacity: 0.55;
+    border-style: dashed;
+    background: transparent;
+  }
+  .card.coming::after {
+    content: 'COMING SOON';
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 1px solid var(--steel);
+    color: var(--steel);
+  }
+
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 30px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .back:hover { border-color: var(--neon); color: var(--neon); }
+</style>
+</head>
+<body>
+
+<div class="wd-band wd-band-top"></div>
+<header class="wd-header">
+  <div class="title-block">
+    <div class="logo-mark">▣</div>
+    <div>
+      <h1 data-i18n="header_title">Maqueen Lab // Labs</h1>
+      <div class="subtitle" data-i18n="header_subtitle">Interactive playgrounds — pair with the robot, try wild input ideas</div>
+    </div>
+  </div>
+  <div class="wd-header-right">
+    <select class="wd-select" id="themeSelect" aria-label="Theme">
+      <option value="carbon">▣ Carbon</option>
+      <option value="forest">▣ Forest</option>
+      <option value="steel">▣ Steel</option>
+      <option value="paper">☼ Paper</option>
+      <option value="pearl">☼ Pearl</option>
+    </select>
+    <div class="lang-pills" role="radiogroup" aria-label="Language">
+      <button type="button" class="lang-pill active" data-lang="en"><span class="flag flag-en"></span>EN</button>
+      <button type="button" class="lang-pill"        data-lang="fr"><span class="flag flag-fr"></span>FR</button>
+      <button type="button" class="lang-pill"        data-lang="ar"><span class="flag flag-ar"></span>AR</button>
+    </div>
+    <a href="../index.html"      class="wd-select" style="text-decoration:none;">🤖 Robot App</a>
+    <a href="../docs/index.html" class="wd-select" style="text-decoration:none;">🗂️ Catalog</a>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="badge-line" data-i18n="hero_badge">▸ LABS HUB</span>
+  <div class="robi" aria-hidden="true">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <line x1="60" y1="6" x2="60" y2="22" stroke="var(--cyan)" stroke-width="3" stroke-linecap="round"/>
+      <circle class="antenna" cx="60" cy="5" r="4" fill="var(--amber)"/>
+      <circle cx="60" cy="5" r="7" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5"/>
+      <rect x="26" y="22" width="68" height="50" rx="14" fill="var(--bg-soft)" stroke="var(--neon)" stroke-width="2.5"/>
+      <rect x="34" y="34" width="52" height="24" rx="6" fill="var(--ink)" stroke="var(--cyan)" stroke-width="2"/>
+      <g class="eyes">
+        <circle cx="46" cy="46" r="3.5" fill="var(--neon)"/>
+        <circle cx="74" cy="46" r="3.5" fill="var(--neon)"/>
+      </g>
+      <circle cx="46" cy="46" r="6" fill="var(--neon)" opacity="0.15"/>
+      <circle cx="74" cy="46" r="6" fill="var(--neon)" opacity="0.15"/>
+      <path d="M 42 66 L 78 66" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="48" cy="66" r="1.2" fill="var(--cyan)"/>
+      <circle cx="60" cy="66" r="1.2" fill="var(--cyan)"/>
+      <circle cx="72" cy="66" r="1.2" fill="var(--cyan)"/>
+      <rect x="32" y="72" width="56" height="28" rx="6" fill="var(--bg-soft)" stroke="var(--neon)" stroke-width="2"/>
+      <rect x="38" y="78" width="44" height="14" rx="3" fill="var(--ink)" stroke="var(--border)"/>
+      <line x1="42" y1="85" x2="56" y2="85" stroke="var(--neon)" stroke-width="1.5"/>
+      <line x1="42" y1="88" x2="62" y2="88" stroke="var(--cyan)" stroke-width="1.2" opacity="0.7"/>
+      <circle class="led-l" cx="44" cy="96" r="2" fill="var(--amber)"/>
+      <circle class="led-r" cx="76" cy="96" r="2" fill="var(--orange)"/>
+      <rect x="14" y="76" width="14" height="18" rx="4" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>
+      <rect x="92" y="76" width="14" height="18" rx="4" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>
+      <ellipse cx="40" cy="106" rx="8" ry="4" fill="var(--ink)" stroke="var(--neon)" stroke-width="1.5"/>
+      <ellipse cx="80" cy="106" rx="8" ry="4" fill="var(--ink)" stroke="var(--neon)" stroke-width="1.5"/>
+    </svg>
+  </div>
+  <h1 data-i18n="hero_title">Labs</h1>
+  <p class="sub" data-i18n="hero_sub">Standalone playgrounds that talk to the same robot. Each lab focuses on one wild idea: drive it 30 different ways, follow lines like a pro, see what the robot sees, jam to its buzzer. Pair from any lab — same Bluetooth path as the main app.</p>
+</section>
+
+<div class="wrap">
+  <section class="sec">
+    <h2 data-i18n="sec_h">🧪 Available Labs</h2>
+    <p class="lead" data-i18n="sec_lead">Open in a new tab. Each lab pairs with the robot independently using Web Bluetooth.</p>
+    <div class="cards">
+
+      <a class="card" href="joystick-lab.html">
+        <div class="top">
+          <div class="ic">🕹</div>
+          <div>
+            <h3 data-i18n="card_joy_h">Joystick Lab</h3>
+            <div class="filename">labs/joystick-lab.html</div>
+          </div>
+        </div>
+        <p data-i18n="card_joy_p"><strong>30 different ways to drive your robot</strong>, organized in 5 categories — touch &amp; pointer, hardware (tilt / keyboard / gamepad), audio (voice · whistle · beatbox), gaming-inspired (aim &amp; click · spring stick · combos · roulette · pendulum…), and camera (color tracker · face steer · pose · hand wave…).</p>
+        <div class="meta-row">
+          <span class="chip lang">EN · FR · AR</span>
+          <span class="chip use" data-i18n="card_joy_use">30 modes · 5 categories</span>
+          <span class="chip tag" data-i18n="card_joy_tag">Driving</span>
+        </div>
+      </a>
+
+      <a class="card" href="ir-lab.html">
+        <div class="top">
+          <div class="ic">📡</div>
+          <div>
+            <h3 data-i18n="card_ir_h">IR Lab</h3>
+            <div class="filename">labs/ir-lab.html</div>
+          </div>
+        </div>
+        <p data-i18n="card_ir_p">Line-following and IR-sensor playground. Live readings from both IR sensors, follow-the-line tuning sliders, threshold visualizer, "draw a track on paper and watch the robot trace it" mode.</p>
+        <div class="meta-row">
+          <span class="chip tag" data-i18n="card_ir_tag">Sensing</span>
+          <span class="chip use" data-i18n="card_ir_use">Line follow · IR tune</span>
+        </div>
+      </a>
+
+      <a class="card" href="vision-lab.html">
+        <div class="top">
+          <div class="ic">👀</div>
+          <div>
+            <h3 data-i18n="card_vision_h">Vision Lab</h3>
+            <div class="filename">labs/vision-lab.html</div>
+          </div>
+        </div>
+        <p data-i18n="card_vision_p">Through-the-camera mode for a phone or laptop pointed at the robot. Color zones, gesture triggers, QR-card commands, "if you see a red square, spin" rules.</p>
+        <div class="meta-row">
+          <span class="chip tag" data-i18n="card_vision_tag">Vision</span>
+          <span class="chip use" data-i18n="card_vision_use">Camera rules</span>
+        </div>
+      </a>
+
+      <a class="card" href="music-lab.html">
+        <div class="top">
+          <div class="ic">🎵</div>
+          <div>
+            <h3 data-i18n="card_music_h">Music Lab</h3>
+            <div class="filename">labs/music-lab.html</div>
+          </div>
+        </div>
+        <p data-i18n="card_music_p">Buzzer composer + step sequencer. Tap a grid, hear it play through the robot. Save tunes, link motions to beats, send the robot dancing.</p>
+        <div class="meta-row">
+          <span class="chip tag" data-i18n="card_music_tag">Audio</span>
+          <span class="chip use" data-i18n="card_music_use">Compose · sequence</span>
+        </div>
+      </a>
+
+      <a class="card" href="servo-lab.html">
+        <div class="top">
+          <div class="ic">🦾</div>
+          <div>
+            <h3 data-i18n="card_servo_h">Servo Lab</h3>
+            <div class="filename">labs/servo-lab.html</div>
+          </div>
+        </div>
+        <p data-i18n="card_servo_p">Two-servo choreography. Live trim, sweep generators, keyframe recorder, "scenes" that play back when triggered (button press, sensor hit, BLE event).</p>
+        <div class="meta-row">
+          <span class="chip tag" data-i18n="card_servo_tag">Motion</span>
+          <span class="chip use" data-i18n="card_servo_use">Choreograph · record</span>
+        </div>
+      </a>
+
+      <!-- Lights Lab — two-tier: Tier-1 preview works in-browser without extra hardware;
+           Tier-2 unlocks glitch-free real lighting with the optional 🪄 Light Wand kit
+           (extra micro:bit + 4 NeoPixels, dedicated co-processor that sidesteps the
+           BLE/NeoPixel timing collision on the main bot). -->
+      <a class="card" href="lights-lab.html">
+        <div class="top">
+          <div class="ic">🪄</div>
+          <div>
+            <h3 data-i18n="card_lights_h">Lights Lab</h3>
+            <div class="filename">labs/lights-lab.html</div>
+          </div>
+        </div>
+        <p data-i18n="card_lights_p">6 mood scenes (Calm · Alert · Focus · Sleepy · Storm · Off) plus an 8-step pixel painter for the Maqueen's NeoPixels. Works in <strong>preview mode</strong> without extra gear (browser canvas mirrors the wand). Add the optional 🪄 <strong>Light Wand kit</strong> (extra micro:bit + 4 NeoPixels) to light the wand for real — glitch-free, bypasses the BLE / NeoPixel timing clash. <em>Wand-mode requires the 🛰 Co-Pilot Lab gateway (see card below).</em></p>
+        <div class="meta-row">
+          <span class="chip tag" data-i18n="card_lights_tag">Lighting</span>
+          <span class="chip use" data-i18n="card_lights_use">6 scenes · 8-step painter</span>
+        </div>
+      </a>
+
+      <!-- Co-Pilot Lab — pairing wizard for a second micro:bit as a radio gateway.
+           This is the FOUNDATION lab that unlocks Lights wand, Walkie, Cipher, Worm,
+           and Add-on labs. Sidesteps the BLE / NeoPixel timing collision by handing
+           timing-critical work off to a dedicated co-processor. Reused architecture
+           = one explainer page instead of duplicating "what's the second micro:bit
+           for?" across every lab that needs it. -->
+      <a class="card" href="copilot-lab.html">
+        <div class="top">
+          <div class="ic">🛰</div>
+          <div>
+            <h3 data-i18n="card_copilot_h">Co-Pilot Lab</h3>
+            <div class="filename">labs/copilot-lab.html</div>
+          </div>
+        </div>
+        <p data-i18n="card_copilot_p">Pair a <strong>second micro:bit</strong> as a radio gateway. Sidesteps BLE timing limits and unlocks: 🪄 Lights wand · 📻 Walkie · 🔐 Cipher · 🦠 Worm · 🤖 Add-on labs. Includes pairing wizard, link-health monitor, capability matrix that lights up which other labs are now unlocked, range / packet-loss diagnostics.</p>
+        <div class="meta-row">
+          <span class="chip tag" data-i18n="card_copilot_tag">Foundation</span>
+          <span class="chip use" data-i18n="card_copilot_use">+1 micro:bit · unlocks 5 labs</span>
+        </div>
+      </a>
+
+      <!-- Distance Lab — single ultrasonic sensor, 11 modes (mirrors Joystick Lab's
+           sidebar pattern). All modes reuse the existing DIST poll exposed by the
+           main app's Maqueen Lite v4 panel. No extra hardware required for modes 1-8;
+           Sweep Mapper (mode 9) needs a servo-mounted sensor bracket from Mod Lab. -->
+      <a class="card" href="distance-lab.html">
+        <div class="top">
+          <div class="ic">📏</div>
+          <div>
+            <h3 data-i18n="card_distance_h">Distance Lab</h3>
+            <div class="filename">labs/distance-lab.html</div>
+          </div>
+        </div>
+        <p data-i18n="card_distance_p">Single ultrasonic sensor, <strong>11 ways to use it</strong> — 🦇 Sonar Scope · 🎵 Theremin · 🅿️ Parking Game · 🚨 Tripwire · 🔥 Hot/Cold · 📐 Tape Measure · 🚗 Cruise Control · 🐕 Follow-Me · 🗺 Sweep Mapper · 📊 Profile Logger · 🏷 Range Tag. Same sidebar layout as the Joystick Lab — pick a mode, see the sensor light up.</p>
+        <div class="meta-row">
+          <span class="chip tag" data-i18n="card_distance_tag">Sensing</span>
+          <span class="chip use" data-i18n="card_distance_use">11 modes · 1 sensor</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Wishlist link — vote on the next 26 lab ideas; lives on its own page so
+       it doesn't crowd the active grid above. -->
+  <p style="text-align:center; margin-top:24px; font-size:0.95rem;">
+    <a href="wishlist.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:999px; background:rgba(251,191,36,0.10); border:1.5px solid rgba(251,191,36,0.45); color:var(--amber); text-decoration:none; font-weight:700;" data-i18n="link_wishlist">💡 Wishlist — vote on what we build next →</a>
+  </p>
+
+  <a class="back" href="../index.html" data-i18n="back_app">← Back to Robot App</a>
+</div>
+
+<script>
+// ===== Hub-style theme + language pickers (mirrors workshops/hub.html) =====
+const T = {
+  en: {
+    header_title:    'Maqueen Lab // Labs',
+    header_subtitle: 'Interactive playgrounds — pair with the robot, try wild input ideas',
+    hero_badge:      '▸ LABS HUB',
+    hero_title:      'Labs',
+    hero_sub:        'Standalone playgrounds that talk to the same robot. Each lab focuses on one wild idea: drive it 30 different ways, follow lines like a pro, see what the robot sees, jam to its buzzer. Pair from any lab — same Bluetooth path as the main app.',
+    sec_h:           '🧪 Available Labs',
+    sec_lead:        'Open in a new tab. Each lab pairs with the robot independently using Web Bluetooth.',
+    card_joy_h:      'Joystick Lab',
+    card_joy_p:      '<strong>30 different ways to drive your robot</strong>, organized in 5 categories — touch &amp; pointer, hardware (tilt / keyboard / gamepad), audio (voice · whistle · beatbox), gaming-inspired (aim &amp; click · spring stick · combos · roulette · pendulum…), and camera (color tracker · face steer · pose · hand wave…).',
+    card_joy_use:    '30 modes · 5 categories',
+    card_joy_tag:    'Driving',
+    card_ir_h:       'IR Lab',
+    card_ir_p:       'Line-following and IR-sensor playground. Live readings from both IR sensors, follow-the-line tuning sliders, threshold visualizer, "draw a track on paper and watch the robot trace it" mode.',
+    card_ir_tag:     'Sensing',
+    card_ir_use:     'Line follow · IR tune',
+    card_vision_h:   'Vision Lab',
+    card_vision_p:   'Through-the-camera mode for a phone or laptop pointed at the robot. Color zones, gesture triggers, QR-card commands, "if you see a red square, spin" rules.',
+    card_vision_tag: 'Vision',
+    card_vision_use: 'Camera rules',
+    card_music_h:    'Music Lab',
+    card_music_p:    'Buzzer composer + step sequencer. Tap a grid, hear it play through the robot. Save tunes, link motions to beats, send the robot dancing.',
+    card_music_tag:  'Audio',
+    card_music_use:  'Compose · sequence',
+    card_servo_h:    'Servo Lab',
+    card_servo_p:    'Two-servo choreography. Live trim, sweep generators, keyframe recorder, "scenes" that play back when triggered (button press, sensor hit, BLE event).',
+    card_servo_tag:  'Motion',
+    card_servo_use:  'Choreograph · record',
+    card_lights_h:   'Lights Lab',
+    card_lights_p:   '6 mood scenes (Calm · Alert · Focus · Sleepy · Storm · Off) plus an 8-step pixel painter for the Maqueen\'s NeoPixels. Works in <strong>preview mode</strong> without extra gear (browser canvas mirrors the wand). Add the optional 🪄 <strong>Light Wand kit</strong> (extra micro:bit + 4 NeoPixels) to light the wand for real — glitch-free, bypasses the BLE / NeoPixel timing clash. <em>Wand-mode requires the 🛰 Co-Pilot Lab gateway (see card below).</em>',
+    card_lights_tag: 'Lighting',
+    card_lights_use: '6 scenes · 8-step painter',
+    card_copilot_h:   'Co-Pilot Lab',
+    card_copilot_p:   'Pair a <strong>second micro:bit</strong> as a radio gateway. Sidesteps BLE timing limits and unlocks: 🪄 Lights wand · 📻 Walkie · 🔐 Cipher · 🦠 Worm · 🤖 Add-on labs. Includes pairing wizard, link-health monitor, capability matrix that lights up which other labs are now unlocked, range / packet-loss diagnostics.',
+    card_copilot_tag: 'Foundation',
+    card_copilot_use: '+1 micro:bit · unlocks 5 labs',
+    card_distance_h:   'Distance Lab',
+    card_distance_p:   'Single ultrasonic sensor, <strong>11 ways to use it</strong> — 🦇 Sonar Scope · 🎵 Theremin · 🅿️ Parking Game · 🚨 Tripwire · 🔥 Hot/Cold · 📐 Tape Measure · 🚗 Cruise Control · 🐕 Follow-Me · 🗺 Sweep Mapper · 📊 Profile Logger · 🏷 Range Tag. Same sidebar layout as the Joystick Lab — pick a mode, see the sensor light up.',
+    card_distance_tag: 'Sensing',
+    card_distance_use: '11 modes · 1 sensor',
+    link_wishlist:   '💡 Wishlist — vote on what we build next →',
+    back_app:        '← Back to Robot App'
+  },
+  fr: {
+    header_title:    'Maqueen Lab // Labos',
+    header_subtitle: 'Terrains de jeu interactifs — connecte le robot, essaie des idées folles',
+    hero_badge:      '▸ HUB LABOS',
+    hero_title:      'Labos',
+    hero_sub:        "Des terrains de jeu autonomes qui parlent au même robot. Chaque labo se concentre sur une idée folle : le piloter de 30 façons, suivre des lignes comme un pro, voir ce que le robot voit, jouer avec son buzzer. Connecte-toi depuis n'importe quel labo — même chemin Bluetooth que l'app principale.",
+    sec_h:           '🧪 Labos Disponibles',
+    sec_lead:        'Ouvre dans un nouvel onglet. Chaque labo se connecte au robot indépendamment via Web Bluetooth.',
+    card_joy_h:      'Labo Joystick',
+    card_joy_p:      '<strong>30 façons différentes de piloter ton robot</strong>, classées en 5 catégories — toucher &amp; pointeur, matériel (gyro / clavier / manette), audio (voix · sifflet · beatbox), inspirées des jeux (visée &amp; clic · ressort · combos · roulette · pendule…), et caméra (suivi couleur · pilotage par visage · pose · agitement de main…).',
+    card_joy_use:    '30 modes · 5 catégories',
+    card_joy_tag:    'Pilotage',
+    card_ir_h:       'Labo IR',
+    card_ir_p:       'Terrain de jeu pour le suivi de ligne et les capteurs IR. Lectures en direct des deux capteurs IR, curseurs de réglage du suivi, visualiseur de seuil, mode « dessine une piste sur papier et regarde le robot la suivre ».',
+    card_ir_tag:     'Capteurs',
+    card_ir_use:     'Suivi ligne · réglage IR',
+    card_vision_h:   'Labo Vision',
+    card_vision_p:   'Mode à travers la caméra d\'un téléphone ou laptop pointé sur le robot. Zones de couleurs, déclencheurs gestuels, commandes par cartes QR, règles « si tu vois un carré rouge, tourne ».',
+    card_vision_tag: 'Vision',
+    card_vision_use: 'Règles caméra',
+    card_music_h:    'Labo Musique',
+    card_music_p:    'Compositeur de buzzer + séquenceur. Tape sur une grille, écoute jouer le robot. Sauvegarde tes mélodies, lie des mouvements aux temps, fais danser le robot.',
+    card_music_tag:  'Audio',
+    card_music_use:  'Compose · séquence',
+    card_servo_h:    'Labo Servos',
+    card_servo_p:    'Chorégraphie à deux servos. Trim en direct, générateurs de balayage, enregistreur de keyframes, « scènes » qui se rejouent quand déclenchées (bouton, capteur, événement BLE).',
+    card_servo_tag:  'Mouvement',
+    card_servo_use:  'Chorégraphie · enregistrement',
+    card_lights_h:   'Labo Lumières',
+    card_lights_p:   '6 ambiances (Calme · Alerte · Focus · Endormi · Orage · Off) plus un peintre pixel à 8 pas pour les NeoPixels du Maqueen. Fonctionne en <strong>mode aperçu</strong> sans matériel supplémentaire (le canvas du navigateur reproduit la baguette). Ajoute le kit optionnel 🪄 <strong>Baguette Lumineuse</strong> (micro:bit supplémentaire + 4 NeoPixels) pour éclairer la baguette pour de vrai — sans glitch, contourne le conflit de timing BLE / NeoPixel. <em>Le mode baguette nécessite la passerelle 🛰 Labo Co-Pilote (voir carte ci-dessous).</em>',
+    card_lights_tag: 'Éclairage',
+    card_lights_use: '6 ambiances · peintre 8 pas',
+    card_copilot_h:   'Labo Co-Pilote',
+    card_copilot_p:   'Apparie un <strong>deuxième micro:bit</strong> comme passerelle radio. Contourne les limites de timing BLE et débloque : 🪄 Baguette Lumineuse · 📻 Talkie · 🔐 Chiffrement · 🦠 Ver · 🤖 Add-on. Inclut assistant d\'appariement, moniteur de santé du lien, matrice de capacités qui s\'allume sur les labos débloqués, diagnostics portée / pertes de paquets.',
+    card_copilot_tag: 'Fondation',
+    card_copilot_use: '+1 micro:bit · débloque 5 labos',
+    card_distance_h:   'Labo Distance',
+    card_distance_p:   'Un seul capteur ultrason, <strong>11 façons de l\'utiliser</strong> — 🦇 Sonar · 🎵 Thérémine · 🅿️ Stationnement · 🚨 Alarme · 🔥 Chaud/Froid · 📐 Mètre Ruban · 🚗 Régulateur · 🐕 Suis-Moi · 🗺 Cartographe · 📊 Profileur · 🏷 Tag Distance. Même barre latérale que le Labo Joystick — choisis un mode, regarde le capteur s\'animer.',
+    card_distance_tag: 'Capteurs',
+    card_distance_use: '11 modes · 1 capteur',
+    link_wishlist:   '💡 Wishlist — vote pour ce qu\'on construit ensuite →',
+    back_app:        "← Retour à l'App Robot"
+  },
+  ar: {
+    header_title:    'مكوين لاب // مختبرات',
+    header_subtitle: 'ساحات لعب تفاعلية — اربط الروبوت وجرّب أفكاراً جامحة',
+    hero_badge:      '▸ مركز المختبرات',
+    hero_title:      'المختبرات',
+    hero_sub:        'ساحات لعب مستقلّة تتحدّث إلى الروبوت نفسه. كل مختبر يركّز على فكرة جامحة: قُده بثلاثين طريقة مختلفة، اتبع الخطوط كالمحترفين، شاهد ما يراه الروبوت، اعزف مع الجرّاس. اربط من أي مختبر — نفس مسار البلوتوث الذي تستخدمه التطبيق الرئيسي.',
+    sec_h:           '🧪 المختبرات المتوفّرة',
+    sec_lead:        'يفتح في علامة تبويب جديدة. كل مختبر يربط الروبوت باستقلالية عبر Web Bluetooth.',
+    card_joy_h:      'مختبر الجويستيك',
+    card_joy_p:      '<strong>ثلاثون طريقة مختلفة لقيادة روبوتك</strong>، مرتّبة في 5 فئات — لمس ومؤشر، عتاد (إمالة / لوحة مفاتيح / يد تحكم)، صوت (صوت · صفير · بيتبوكس)، مستوحاة من الألعاب (تصويب ونقر · عصا نابضة · تركيبات · روليت · بندول…)، وكاميرا (تتبع لون · توجيه بالوجه · وضعية · إيماءة يد…).',
+    card_joy_use:    '٣٠ نمطاً · ٥ فئات',
+    card_joy_tag:    'قيادة',
+    card_ir_h:       'مختبر الأشعة تحت الحمراء',
+    card_ir_p:       'ساحة لعب لتتبّع الخطوط ومستشعرات الأشعة تحت الحمراء. قراءات حيّة من المستشعرَين، شرائط ضبط للتتبّع، عارض عتبة، نمط «ارسم مساراً على ورق وشاهد الروبوت يتتبّعه».',
+    card_ir_tag:     'استشعار',
+    card_ir_use:     'تتبّع خطوط · ضبط IR',
+    card_vision_h:   'مختبر الرؤية',
+    card_vision_p:   'وضع عبر الكاميرا لهاتف أو لاب توب موجَّه نحو الروبوت. مناطق ألوان، مشغّلات إيماءات، أوامر بكروت QR، قواعد «إذا رأيت مربعاً أحمر، استدر».',
+    card_vision_tag: 'رؤية',
+    card_vision_use: 'قواعد كاميرا',
+    card_music_h:    'مختبر الموسيقى',
+    card_music_p:    'مؤلِّف جرس + مُسلسِل. اضغط على شبكة، استمع للروبوت يعزفها. احفظ الألحان، اربط الحركات بالنبضات، اجعل الروبوت يرقص.',
+    card_music_tag:  'صوت',
+    card_music_use:  'تأليف · تسلسل',
+    card_servo_h:    'مختبر السيرفو',
+    card_servo_p:    'كوريغرافيا بسيرفُوَين. ضبط حيّ، مولّدات تأرجح، مسجّل لقطات مفتاحية، «مشاهد» تُعاد عند التحفيز (ضغطة زر، إصابة مستشعر، حدث BLE).',
+    card_servo_tag:  'حركة',
+    card_servo_use:  'كوريغرافيا · تسجيل',
+    card_lights_h:   'مختبر الإضاءة',
+    card_lights_p:   '٦ مشاهد مزاجية (هدوء · تنبيه · تركيز · نعسان · عاصفة · إيقاف) بالإضافة إلى رسّام بكسل بثماني خطوات لمصابيح NeoPixel الخاصة بـ Maqueen. يعمل في <strong>وضع المعاينة</strong> دون عتاد إضافي (لوحة المتصفح تعكس العصا). أضِف طقم 🪄 <strong>عصا الضوء</strong> الاختياري (micro:bit إضافي + ٤ NeoPixels) لإنارة العصا فعلياً — بلا خلل، يتجاوز تعارض التوقيت بين BLE وNeoPixel. <em>وضع العصا يتطلّب بوّابة 🛰 مختبر الطيار المساعد (انظر البطاقة أدناه).</em>',
+    card_lights_tag: 'إضاءة',
+    card_lights_use: '٦ مشاهد · رسّام ٨ خطوات',
+    card_copilot_h:   'مختبر الطيار المساعد',
+    card_copilot_p:   'أقرِن <strong>micro:bit ثانياً</strong> كبوّابة راديو. يتجاوز قيود توقيت BLE ويفتح: 🪄 عصا الضوء · 📻 اللاسلكي · 🔐 التشفير · 🦠 الدودة · 🤖 الإضافات. يشمل معالج إقران، مراقب صحّة الوصلة، مصفوفة قدرات تضيء فيها المختبرات المُحرَّرة حديثاً، تشخيصات المدى وفقدان الحزم.',
+    card_copilot_tag: 'أساس',
+    card_copilot_use: '+micro:bit واحد · يفتح ٥ مختبرات',
+    card_distance_h:   'مختبر المسافة',
+    card_distance_p:   'مستشعر فوق صوتي واحد، <strong>١١ طريقة لاستخدامه</strong> — 🦇 سونار · 🎵 ثيرمين · 🅿️ ركن السيارة · 🚨 إنذار · 🔥 حار/بارد · 📐 شريط قياس · 🚗 مثبّت السرعة · 🐕 اتبعني · 🗺 مرسم خرائط · 📊 مسجّل البروفيل · 🏷 لعبة الإمساك. نفس الشريط الجانبي لمختبر الجويستيك — اختر نمطاً وشاهد المستشعر ينبض.',
+    card_distance_tag: 'استشعار',
+    card_distance_use: '١١ نمطاً · مستشعر واحد',
+    link_wishlist:   '💡 قائمة الأمنيات — صوّت لما نبنيه تالياً ←',
+    back_app:        '← الرجوع إلى تطبيق الروبوت'
+  }
+};
+
+function setL(lang) {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (T[lang] && T[lang][k]) el.innerHTML = T[lang][k];
+  });
+  document.body.classList.toggle('rtl', lang === 'ar');
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = (lang === 'ar') ? 'rtl' : 'ltr';
+  document.querySelectorAll('.lang-pill[data-lang]').forEach(p => p.classList.toggle('active', p.dataset.lang === lang));
+  try { localStorage.setItem('robi.lang', lang); } catch (e) {}
+}
+document.querySelectorAll('.lang-pill[data-lang]').forEach(btn => btn.addEventListener('click', () => setL(btn.dataset.lang)));
+
+const themeSel = document.getElementById('themeSelect');
+function applyTheme(t) {
+  // Defensive: workshops/theme.css only knows these 5 themes. If a value
+  // from another surface (main app uses cosmos/sky/mint/etc) leaked in,
+  // fall back to carbon so we never apply a theme this stylesheet ignores.
+  var _validThemes = ['carbon','forest','steel','paper','pearl'];
+  if (_validThemes.indexOf(t) === -1) t = 'carbon';
+  document.documentElement.setAttribute('data-theme', t);
+  if (themeSel) themeSel.value = t;
+  try { localStorage.setItem('robi.theme', t); } catch (e) {}
+}
+if (themeSel) themeSel.addEventListener('change', e => applyTheme(e.target.value));
+
+// Boot — restore saved lang/theme (shared keys with hub.html so choice persists across pages)
+try {
+  const sav = localStorage.getItem('robi.lang');  if (sav) setL(sav);
+  const th  = localStorage.getItem('robi.theme'); if (th)  applyTheme(th);
+} catch (e) {}
+</script>
+
+</body>
+</html>
