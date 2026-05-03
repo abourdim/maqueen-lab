@@ -140,16 +140,6 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
      │  muted gold, small, no chrome. Honors the maker's intention      │
      │  without demanding screen real estate. RTL-safe (uses dir=rtl).  │
      └──────────────────────────────────────────────────────────────────┘ -->
-<!-- Push the body down so the fixed bismillah doesn't overlap the header. -->
-<style>
-  body { padding-top: 26px !important; }
-  /* Compat banner (own position:fixed at top:0) — drop below the bismillah. */
-  #compat-banner { top: 26px !important; }
-</style>
-<div id="mq-bismillah" dir="rtl" lang="ar"
-     style="position:fixed; top:0; left:0; right:0; text-align:center; z-index:9998; padding:5px 12px 4px; font-family:'Amiri','Scheherazade New','Noto Naskh Arabic','Traditional Arabic',serif; font-size:14px; line-height:1; color:rgba(251,191,36,0.6); letter-spacing:0.02em; user-select:none; pointer-events:none; background:linear-gradient(to bottom, rgba(15,23,42,0.85), rgba(15,23,42,0));">
-    بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-</div>
 
 <!-- Compatibility banner: Web Bluetooth is only on Chromium-based browsers (Chrome/Edge/Opera).
      Shows once on Safari/Firefox/iOS, dismissable, persists via localStorage. -->
@@ -213,7 +203,14 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
          INSIDE the Settings section by header-cleanup.js so existing
          JS hooks (controls.js, lang.js) keep working unchanged.
          ============================================================ -->
-<div class="header">
+<div class="header" style="position:relative;">
+    <!-- Discrete bismillah inside the header, centered above the robot.
+         Tiny, soft amber; non-interactive. position:relative on .header is
+         set inline so we anchor here even before rail-cleanup.js sets it. -->
+    <div id="mq-bismillah" dir="rtl" lang="ar"
+         style="position:absolute; top:2px; left:0; right:0; text-align:center; z-index:5; font-family:'Amiri','Scheherazade New','Noto Naskh Arabic','Traditional Arabic',serif; font-size:11px; line-height:1; color:rgba(251,191,36,0.45); letter-spacing:0.02em; user-select:none; pointer-events:none;">
+        بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+    </div>
     <div class="title-block">
         <img src="assets/logo.svg" alt="Maqueen Lab Logo" class="site-logo animated-logo">
         <h1 data-i18n="app_title">Maqueen Lab</h1>
