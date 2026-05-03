@@ -7195,8 +7195,10 @@ body.mq-density-demo .mq-mode-dial {
   min-width: 0 !important;
   overflow: hidden !important;
   border-left: 1px solid rgba(148,163,184,0.25) !important;
-  padding-left: 12px !important;
-  margin-left: 6px !important;
+  padding: 0 0 0 12px !important;   /* zero vertical padding — shrinks the wrapper */
+  margin: 0 0 0 6px !important;
+  background: transparent !important; /* drop the box look — icons sit inline */
+  border-top: 0 !important; border-bottom: 0 !important; border-right: 0 !important;
 }
 /* Hide the "📡 BLE stack flow" label + stats. The label lives in an
    unnamed wrapper div — the *first* child of #mqStackFlow — so we target
@@ -7208,7 +7210,7 @@ body.mq-density-demo .mq-mode-dial {
 #mqConnectPanel #mqStackFlowSvg {
   width: 100% !important;
   height: auto !important;
-  min-height: 92px !important;
+  min-height: 80px !important;
   display: block !important;
 }
 /* BLE particle animations are visible in the connect panel */
