@@ -7086,6 +7086,11 @@ body.mq-density-demo .mq-mode-dial {
 #mqConnectPanel .connection-grid {
   display: flex !important; flex-direction: column !important;
   align-items: stretch !important; gap: 4px !important;
+  /* Center the 3-row stack (name / version / Firmware) within whatever
+     vertical space the stack-flow SVG forces the bar to. Otherwise the
+     pills hug the top edge while empty space sits below the button. */
+  justify-content: center !important;
+  align-self: center !important;
 }
 #mqConnectPanel .connection-main        { display: contents !important; }
 /* Visual order in the column stack: name first, version second, Firmware
