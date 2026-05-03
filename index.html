@@ -500,7 +500,7 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                             <span>📡 BLE stack flow</span>
                             <span id="mqStackFlowStats" style="margin-left:auto; color:var(--accent, #38bdf8);">— ms · — / —</span>
                         </div>
-                        <svg id="mqStackFlowSvg" viewBox="0 0 600 80" preserveAspectRatio="none" style="width:100%; height:64px; display:block;">
+                        <svg id="mqStackFlowSvg" viewBox="0 0 600 100" preserveAspectRatio="none" style="width:100%; height:64px; display:block;">
                             <defs>
                                 <linearGradient id="mqStackLine" x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="0%"  stop-color="var(--accent, #38bdf8)" stop-opacity="0.45"/>
@@ -513,36 +513,36 @@ html[dir="rtl"] .hint ol { padding-left: 0; padding-right: 20px; }
                                  and node radius 11→13 so the labels are actually readable
                                  in the narrow rail context. ViewBox grew 70→80 to give
                                  the bigger labels vertical room. -->
-                            <g font-family="JetBrains Mono, monospace" font-size="8" font-weight="400" text-anchor="middle">
+                            <g font-family="JetBrains Mono, monospace" font-size="14" font-weight="400" text-anchor="middle">
                                 <g transform="translate(40 30)">
-                                    <circle r="13" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
-                                    <text y="4" fill="var(--accent, #38bdf8)" font-size="13">🌐</text>
-                                    <text y="30" fill="var(--text, #93a8c4)" opacity="0.45">Browser</text>
+                                    <circle r="24" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
+                                    <text fill="var(--accent, #38bdf8)" font-size="24" y="8">🌐</text>
+                                    <text y="48" fill="var(--text, #93a8c4)" opacity="0.45">Browser</text>
                                 </g>
                                 <g transform="translate(144 30)">
-                                    <circle r="13" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
-                                    <text y="4" fill="var(--accent, #38bdf8)" font-size="13">⏳</text>
-                                    <text y="30" fill="var(--text, #93a8c4)" opacity="0.45">Queue</text>
+                                    <circle r="24" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
+                                    <text fill="var(--accent, #38bdf8)" font-size="24" y="8">⏳</text>
+                                    <text y="48" fill="var(--text, #93a8c4)" opacity="0.45">Queue</text>
                                 </g>
                                 <g transform="translate(248 30)">
-                                    <circle r="13" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
-                                    <text y="4" fill="var(--accent, #38bdf8)" font-size="13">📡</text>
-                                    <text y="30" fill="var(--text, #93a8c4)" opacity="0.45">BLE</text>
+                                    <circle r="24" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
+                                    <text fill="var(--accent, #38bdf8)" font-size="24" y="8">📡</text>
+                                    <text y="48" fill="var(--text, #93a8c4)" opacity="0.45">BLE</text>
                                 </g>
                                 <g transform="translate(352 30)">
-                                    <circle r="13" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
-                                    <text y="4" fill="var(--accent, #38bdf8)" font-size="13">🤖</text>
-                                    <text y="30" fill="var(--text, #93a8c4)" opacity="0.45">micro:bit</text>
+                                    <circle r="24" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
+                                    <text fill="var(--accent, #38bdf8)" font-size="24" y="8">🤖</text>
+                                    <text y="48" fill="var(--text, #93a8c4)" opacity="0.45">micro:bit</text>
                                 </g>
                                 <g transform="translate(456 30)">
-                                    <circle r="13" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
-                                    <text y="4" fill="var(--accent, #38bdf8)" font-size="13">⚙️</text>
-                                    <text y="30" fill="var(--text, #93a8c4)" opacity="0.45">Driver</text>
+                                    <circle r="24" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
+                                    <text fill="var(--accent, #38bdf8)" font-size="24" y="8">⚙️</text>
+                                    <text y="48" fill="var(--text, #93a8c4)" opacity="0.45">Driver</text>
                                 </g>
                                 <g transform="translate(560 30)">
-                                    <circle r="13" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
-                                    <text y="4" fill="var(--accent, #38bdf8)" font-size="13">🎯</text>
-                                    <text y="30" fill="var(--text, #93a8c4)" opacity="0.45">Output</text>
+                                    <circle r="24" fill="var(--card-bg-2, #0a1628)" stroke="var(--accent, #38bdf8)" stroke-width="1.4"/>
+                                    <text fill="var(--accent, #38bdf8)" font-size="24" y="8">🎯</text>
+                                    <text y="48" fill="var(--text, #93a8c4)" opacity="0.45">Output</text>
                                 </g>
                             </g>
                             <!-- Particle layer — JS appends animated dots here -->

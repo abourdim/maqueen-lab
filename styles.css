@@ -7191,7 +7191,7 @@ body.mq-density-demo .mq-mode-dial {
    This is THE primary action in the connect bar. */
 #mqConnectPanel #firmwareBtn {
   padding: 8px 22px !important;
-  font-size: 14px !important;
+  font-size: 18px !important;
   font-weight: 800 !important;
   letter-spacing: 0.04em !important;
   background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%) !important;
