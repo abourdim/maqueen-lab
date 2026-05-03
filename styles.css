@@ -7106,7 +7106,26 @@ body.mq-density-demo .mq-mode-dial {
   color: #38bdf8 !important;
   font-weight: 600 !important;
 }
-#mqConnectPanel .connection-details     { display: none !important; }
+/* The compact connect bar hides .connection-details by default — but we
+   surface the device-row inline (label + name) so the user always knows
+   which physical robot is paired. Other rows inside .connection-details
+   (#serialNumber, #serviceUuidDisplay, etc.) keep their own display:none. */
+#mqConnectPanel .connection-details     { display: contents !important; }
+#mqConnectPanel .connection-details .device-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 3px 10px !important;
+  margin: 0 6px !important;
+  border: 1px solid rgba(74,222,128,0.35) !important;
+  border-radius: 999px !important;
+  background: rgba(74,222,128,0.08) !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}
+#mqConnectPanel .connection-details .device-label::before { content: '🤖 '; }
+#mqConnectPanel .connection-details .device-label { color: var(--text-secondary, #93a8c4) !important; opacity: 0.85; }
+#mqConnectPanel .connection-details .device-value { color: var(--neon, #4ade80) !important; font-weight: 700 !important; font-family: 'JetBrains Mono', ui-monospace, monospace !important; }
 #mqConnectPanel .connection-footer {
   display: flex !important; flex-direction: row !important;
   align-items: center !important; gap: 6px !important;
