@@ -7077,32 +7077,35 @@ body.mq-density-demo .mq-mode-dial {
   flex-shrink: 0 !important;
 }
 #mqConnectPanel .card-header { display: none !important; }
-/* SINGLE TIGHT ROW — everything inline, one bar height.
-   Reads:  [🤖 [gutap]  ·  v0.1.60]   🚀 Firmware   | nodes ...|
-   The two pills sit side-by-side as one combined "device card", then the
-   Firmware button, then the stack-flow icons. Stays on one line at any
-   reasonable width; wraps only on very narrow viewports. */
+/* Two-row stack: top = device-name pill + version (compact info),
+   bottom = Firmware button (the actionable thing). Mirrors the sketch:
+     [ 🤖 [gutap]   v0.1.60 ]
+     [    🚀 Firmware       ]
+   The grid itself becomes a column container; the inner blocks become
+   single rows that read across. */
 #mqConnectPanel .connection-grid {
-  display: flex !important; flex-direction: row !important;
-  align-items: center !important; gap: 8px !important;
-  flex-wrap: nowrap !important;
+  display: flex !important; flex-direction: column !important;
+  align-items: stretch !important; gap: 4px !important;
 }
 #mqConnectPanel .connection-main        { display: contents !important; }
 #mqConnectPanel .connection-status-block {
-  /* Pills inline — name first (the "who"), version second (the "what"). */
-  display: inline-flex !important; flex-direction: row !important;
-  align-items: center !important; gap: 4px !important;
-  padding: 0 !important; margin: 0 !important; border: 0 !important;
+  /* Stack: name pill on top, version below — version no longer compete-
+     ing for the same line as the name. */
+  display: flex !important; flex-direction: column !important;
+  align-items: stretch !important; gap: 2px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
   flex-shrink: 0 !important;
 }
-/* Firmware button: prominent but content-sized (no full-width). */
+/* Bottom row: the Firmware button gets the full width. */
 #mqConnectPanel .connection-footer {
-  display: inline-flex !important; align-items: center !important;
+  display: flex !important; justify-content: stretch !important;
   margin: 0 !important; padding: 0 !important;
-  flex-shrink: 0 !important;
 }
 #mqConnectPanel .connection-footer #firmwareBtn {
-  width: auto !important;
+  flex: 1 !important;
+  width: 100% !important;
 }
 #mqConnectPanel .button-row             { display: none !important; }
 /* appBuildInfo hidden by JS (rail-cleanup.js rescues #fwVersionLine first) */
@@ -7168,18 +7171,19 @@ body.mq-density-demo .mq-mode-dial {
   padding: 3px 10px !important;
   font-size: 11px !important;
 }
-/* Firmware button — outstanding but compact (single-row constraint) */
+/* Firmware button — OUTSTANDING. Wider, bigger, brighter glow.
+   This is THE primary action in the connect bar. */
 #mqConnectPanel #firmwareBtn {
-  padding: 5px 16px !important;
-  font-size: 12px !important;
+  padding: 8px 22px !important;
+  font-size: 14px !important;
   font-weight: 800 !important;
   letter-spacing: 0.04em !important;
   background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%) !important;
   color: #fff !important;
   border: none !important;
-  border-radius: 999px !important;
-  box-shadow: 0 0 12px rgba(56,189,248,0.5), 0 1px 4px rgba(0,0,0,0.35) !important;
-  flex-shrink: 0 !important;
+  border-radius: 22px !important;
+  box-shadow: 0 0 18px rgba(56,189,248,0.55), 0 2px 6px rgba(0,0,0,0.35) !important;
+  letter-spacing: 0.04em !important;
 }
 /* Stack flow: compact + calm — scale down the SVG, suppress particles */
 /* BLE stack flow — inline on the same row.
@@ -7204,9 +7208,7 @@ body.mq-density-demo .mq-mode-dial {
 #mqConnectPanel #mqStackFlowSvg {
   width: 100% !important;
   height: auto !important;
-  /* Compact but readable. 56 px gives ~14 px node circles + label below. */
-  min-height: 56px !important;
-  max-height: 64px !important;
+  min-height: 72px !important;
   display: block !important;
 }
 /* BLE particle animations are visible in the connect panel */
