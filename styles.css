@@ -7208,7 +7208,7 @@ body.mq-density-demo .mq-mode-dial {
 #mqConnectPanel #mqStackFlowSvg {
   width: 100% !important;
   height: auto !important;
-  min-height: 72px !important;
+  min-height: 92px !important;
   display: block !important;
 }
 /* BLE particle animations are visible in the connect panel */
