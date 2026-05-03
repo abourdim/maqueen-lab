@@ -7089,9 +7089,10 @@ body.mq-density-demo .mq-mode-dial {
 }
 #mqConnectPanel .connection-main        { display: contents !important; }
 #mqConnectPanel .connection-status-block {
-  /* Top row: pill + version, no separator/border (was visually noisy). */
-  display: flex !important; flex-direction: row !important;
-  align-items: center !important; gap: 8px !important;
+  /* Stack: name pill on top, version below — version no longer compete-
+     ing for the same line as the name. */
+  display: flex !important; flex-direction: column !important;
+  align-items: stretch !important; gap: 2px !important;
   padding: 0 !important;
   margin: 0 !important;
   border: 0 !important;
@@ -7110,19 +7111,30 @@ body.mq-density-demo .mq-mode-dial {
 /* appBuildInfo hidden by JS (rail-cleanup.js rescues #fwVersionLine first) */
 #mqConnectPanel #appBuildInfo           { display: none !important; }
 #mqConnectPanel #fwVersionLine {
-  display: inline-flex !important; align-items: center !important;
+  /* Version chip — small, calm, monospace tag. Styled like a sibling of
+     the device-name pill but in cyan instead of neon-green so the eye
+     reads them as two related-but-different facts. */
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
   gap: 4px !important;
-  /* Kill the inline margin/padding/border the element inherited from its
-     original stacked-text-block placement inside #appBuildInfo. Without
-     these resets the version text rides ~6 px below true vertical center. */
-  margin: 0 !important; padding: 0 !important; border: 0 !important;
-  font-size: 11px !important; white-space: nowrap !important; opacity: 0.8 !important;
+  margin: 0 4px !important; padding: 1px 8px !important;
+  border: 1px solid rgba(56,189,248,0.35) !important;
+  border-radius: 999px !important;
+  background: rgba(56,189,248,0.08) !important;
+  font-size: 10px !important; white-space: nowrap !important; opacity: 1 !important;
+  align-self: flex-start !important;
 }
-/* version value — spaced out and accented so it doesn't merge with the label */
 #mqConnectPanel #fwVersion {
-  margin-left: 2px !important;
-  color: #38bdf8 !important;
-  font-weight: 600 !important;
+  margin: 0 !important;
+  color: var(--cyan, #38bdf8) !important;
+  font-weight: 700 !important;
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+}
+/* Hide the version-status badge ('✓ up to date' etc.) inside the compact
+   bar — it's redundant once you have the version + can re-flash. Move
+   the same info to a tooltip on the version pill via title attribute, but
+   that's a JS task; for now just keep the badge visually quiet. */
+#mqConnectPanel #fwVersionBadge {
+  display: none !important;
 }
 /* The compact connect bar hides .connection-details by default — but we
    surface ONLY the device-id (the unique [xxxxx] code) as a tight pill so
