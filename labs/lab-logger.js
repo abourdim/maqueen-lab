@@ -95,6 +95,9 @@
           '<div>' +
             '<div class="ll-title" data-i18n="ll_title">MESSAGE LOG</div>' +
             '<div class="ll-subtitle" data-i18n="ll_subtitle">Raw UART messages</div>' +
+            /* Connected-device pill — populated live from RobiBle.onStatus(state, name).
+               Hidden when disconnected (no name). */
+            '<div class="ll-device" id="llDevice" hidden></div>' +
           '</div>' +
         '</div>' +
         '<div class="ll-controls">' +
@@ -189,6 +192,18 @@
     lockShimHook('onStatus', function (connected, name) {
       const msg = connected ? '✓ Connected' + (name ? ' · ' + name : '') : '✗ Disconnected';
       addLogLine(msg, connected ? 'success' : 'warn');
+      /* Persistent device-name pill in the header. Survives log scrolling so
+         the user always knows which physical robot they're paired to. */
+      const pill = panelEl && panelEl.querySelector('#llDevice');
+      if (pill) {
+        if (connected && name) {
+          pill.textContent = '🤖 ' + name;
+          pill.hidden = false;
+        } else {
+          pill.textContent = '';
+          pill.hidden = true;
+        }
+      }
     });
   }
 

@@ -53,6 +53,21 @@
   font-size: 0.7rem; color: var(--steel, var(--muted, #93a8c4));
   margin-top: 2px;
 }
+/* Connected-device pill — populated by lab-logger.js onStatus hook */
+.lab-logger .ll-device {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-family: var(--font-tech, ui-monospace, monospace);
+  font-weight: 700;
+  background: var(--bg-soft, #1a2230);
+  color: var(--neon, #4ade80);
+  border: 1px solid var(--neon, rgba(74,222,128,0.45));
+  letter-spacing: 0.02em;
+}
+.lab-logger .ll-device[hidden] { display: none; }
 .lab-logger .ll-controls { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 
 /* Pill-shaped buttons matching the main app's `.secondary.small` */
