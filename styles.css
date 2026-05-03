@@ -7088,6 +7088,12 @@ body.mq-density-demo .mq-mode-dial {
   align-items: stretch !important; gap: 4px !important;
 }
 #mqConnectPanel .connection-main        { display: contents !important; }
+/* Visual order in the column stack: name first, version second, Firmware
+   button last. The source-order opposite (version, then name) is dictated
+   by index.html structure — flex `order` rewrites it without touching DOM. */
+#mqConnectPanel .connection-details      { order: 1 !important; }  /* name pill on top */
+#mqConnectPanel .connection-status-block { order: 2 !important; }  /* version below */
+#mqConnectPanel .connection-footer       { order: 3 !important; }  /* Firmware bottom */
 #mqConnectPanel .connection-status-block {
   /* Stack: name pill on top, version below — version no longer compete-
      ing for the same line as the name. */
